@@ -7,6 +7,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # Examples:
     url(r'^$', 'xmpplist.views.home', name='home'),
+    url(r'^users/', include('users.urls')),
     # url(r'^xmpplist/', include('xmpplist.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:

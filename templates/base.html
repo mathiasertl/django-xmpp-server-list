@@ -1,8 +1,30 @@
+{% load url from future %}
+
 <html>
 <head>
     <title>{% block title %}XMPP server list{% endblock %}</title>
 </head>
 <body>
-{%block content %}{% endblock %}
+<div class="header">
+{% block header %}
+    <div class="login">
+    {% block login %}
+    {% if user.is_authenticated %}
+            <a href="{% url "users_set_password"%}">set password</a> | 
+            <a href="{% url "users_edit"%}">edit profile</a> | 
+            <a href="{% url "django.contrib.auth.views.logout" %}?next={{ request.path }}">logout</a>
+    {% else %}
+        {% with view_path="django.contrib.auth.views.login" %}
+            <a href="{% url view_path %}?next={{ request.path }}">login</a>
+        {% endwith %}
+    {% endif %}
+    {% endblock %}
+    </div>
+{% endblock %}
+</div>
+
+<div class="content">
+{% block content %}{% endblock %}
+</div>
 </body>
 </html>
