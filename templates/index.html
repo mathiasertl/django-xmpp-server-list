@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+    
+Not yet pretty list of Jabber/XMPP services.
+<table>
+    <tr>
+        <th>Server</th>
+        <th>Country</th>
+        <th>CA</th>
+        <th>Deployed</th>
+        <th>Software</th>
+        <th>Contact</th>
+    </tr>
+{% for server in servers %}
+    <tr>
+        <td><a href="{{ server.website}}">{{ server.domain }}</a></td>
+        <td>{{ server.get_country.name }}</td>
+        <td><a href="{{ server.ca_authority.website }}">{{ server.ca_authority.name }}</a></td>
+        <td>{{ server.launched.year }}</td>
+        <td><a href="{{ server.software.website }}">{{ server.software.name }} {{ server.software_version }}</a></td>
+        <td>{% if server.contact_type == 'W' %}website
+        {% else %}
+            {% if server.contact_type == 'M' %}
+                <a href="http://speeqe.com/room/{{ sercer.contact }}/">{{ server.contact_name }}</a>
+            {% else %}
+                {% if server.contact_type == 'J' %}JID
+                {% else %}
+                    {% if server.contact_type == 'E' %}EMAIL
+                    {% else %} ELSE!
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        {% endif %}
+        </td>
+    </tr>
+{% endfor %}
+</table>
+{% endblock content %}
