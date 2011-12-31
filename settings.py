@@ -163,6 +163,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 LOGIN_REDIRECT_URL = '/users/'
+AUTH_PROFILE_MODULE = 'users.UserProfile'
+DEFAULT_FROM_EMAIL = 'test@example.com'
 
 try:
     from localsettings import *
