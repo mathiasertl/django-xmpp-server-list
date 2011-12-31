@@ -8,7 +8,7 @@ class MyUserCreationForm(UserCreationForm):
     email = forms.EmailField(max_length=30,
         help_text='Required, a confirmation email will be sent to this address.')
     
-    def save(self, request, commit=True):
+    def save(self, commit=True):
         user = super(MyUserCreationForm, self).save(commit=False)
         user.email = self.cleaned_data['email']
         if commit:
