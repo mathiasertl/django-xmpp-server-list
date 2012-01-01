@@ -30,8 +30,8 @@ td.no-borders img {
 }
 
 .button-save {
-    visibility: hidden;
+    display: none;
 }
 .button-cancel {
-    visibility: hidden;
+    display: none;
 }

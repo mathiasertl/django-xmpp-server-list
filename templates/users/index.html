@@ -1,5 +1,12 @@
 {% extends "base.html" %}
 
+{% block javascript %}
+    <script type="text/javascript">
+        var service_url = "{% url servers_ajax %}";
+    </script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/edit-table.js"></script>
+{% endblock %}
+
 {% block content %}
 <h1>Your ({{ user.username }}) servers</h1>
 <table>
@@ -17,7 +24,7 @@
         <th class="no-borders"></th>
     </tr>
 {% for server in user.servers.all %}
-    <tr>
+    <tr id="server_{{ server.id }}">
         <td>{{ server.domain }}</td>
         <td>{{ server.website }}</td>
         <td>{{ server.ca_authority}}</td>
@@ -38,5 +45,4 @@
     </tbody>
 </table>
 
- debug: {{ settings.DEBUG }}, {{ debug }}
 {% endblock %}
