@@ -20,3 +20,18 @@ td.no-borders, th.no-borders {
     border-bottom-style: hidden;
     border-bottom-width: 0px;
 }
+
+td.no-borders img {
+    vertical-align: middle;
+}
+
+.header .login {
+    float: right;
+}
+
+.button-save {
+    visibility: hidden;
+}
+.button-cancel {
+    visibility: hidden;
+}
