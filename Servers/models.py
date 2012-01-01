@@ -70,9 +70,6 @@ class Server(models.Model):
     def __unicode__(self):
         return self.domain
     
-    def get_edit_form(self):
-        return 'test'
-    
     def srv_lookup(self, service, proto='tcp'):
         """
         Function for doing SRV-lookups. Returns a list of host/port tuples for
