@@ -27,9 +27,16 @@
         <td>{{ server.contact }}</td>
         <td>{{ server.contact_name }}</td>
         <td>{{ server.contact_type }}</td>
-        <td class="no-borders"><img src="{{ STATIC_URL }}img/edit.png" /></td>
+        <td class="no-borders">
+            <img class="button-edit"   src="{{ STATIC_URL }}img/edit.png" alt="edit" title="edit" />
+            <img class="button-delete" src="{{ STATIC_URL }}img/delete.png" alt="delete" title="delete" />
+            <img class="button-save"   src="{{ STATIC_URL }}img/save.png" alt="save" title="save" />
+            <img class="button-cancel" src="{{ STATIC_URL }}img/cancel.png" alt="cancel" title="cancel" />
+        </td>
     </tr>
 {% endfor %}
     </tbody>
 </table>
+
+ debug: {{ settings.DEBUG }}, {{ debug }}
 {% endblock %}
