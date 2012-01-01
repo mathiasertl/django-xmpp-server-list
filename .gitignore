@@ -1,3 +1,5 @@
 *.pyc
 localsettings.py
 xmpplist.sqlite
+*.swp
+*.swo
