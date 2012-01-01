@@ -166,6 +166,8 @@ LOGIN_REDIRECT_URL = '/users/'
 AUTH_PROFILE_MODULE = 'users.UserProfile'
 DEFAULT_FROM_EMAIL = 'test@example.com'
 
+INTERNAL_IPS=('127.0.0.1')
+
 try:
     from localsettings import *
 except ImportError:
