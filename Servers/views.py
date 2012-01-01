@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseForbidden
 
 from models import Server
+from forms import ServerForm
 
 @login_required
 def ajax(request):
@@ -9,12 +10,21 @@ def ajax(request):
 
 @login_required
 def ajax_id(request, server_id):
+    server = Server.objects.get(id=server_id)
     if request.method == 'DELETE':
-        server = Server.objects.get(id=server_id)
         if server.user != request.user:
             return HttpResponseForbidden("Thou shal only delete your own server!")
         
         server.delete()
     elif request.method == 'POST':
-        print('doing a post...')
+        form = ServerForm(request.POST, instance=server)
+        if form.is_valid():
+            if server.user != request.user:
+                return HttpResponseForbidden("Thou shal only delete your own server!")
+            form.save()
+            return HttpResponse('ok')
+        
+        print(form)
+        return HttpResponseForbidden('error')
+        
     return HttpResponse('ok.')

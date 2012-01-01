@@ -21,24 +21,59 @@
         <th>Contact</th>
         <th>name</th>
         <th>type</th>
-        <th class="no-borders"></th>
+        <th class="no-borders">{% csrf_token %}</th>
     </tr>
-{% for server in user.servers.all %}
+{% for server, form in servers %}
     <tr id="server_{{ server.id }}">
-        <td>{{ server.domain }}</td>
-        <td>{{ server.website }}</td>
-        <td>{{ server.ca_authority}}</td>
-        <td>{{ server.launched }}</td>
-        <td>{{ server.longitude }}/{{ server.latitude }}</td>
-        <td>{{ server.ssl_port }}</td>
-        <td>{{ server.contact }}</td>
-        <td>{{ server.contact_name }}</td>
-        <td>{{ server.contact_type }}</td>
+        <td>
+            <div class="value-display">{{ server.domain }}</div>
+            <div class="value-edit">{{ form.domain }}</div>
+            <div class="value-error"></div>
+        </td>
+        <td>
+            <div class="value-display">{{ server.website }}</div>
+            <div class="value-edit">{{ form.website }}</div>
+            <div class="value-error"></div>
+        </td>
+        <td>
+            <div class="value-display">{{ server.ca_authority}}</div>
+            <div class="value-edit">{{ form.ca_authority }}</div>
+        </td>
+        <td>
+            <div class="value-display">{{ server.launched }}</div>
+            <div class="value-edit">{{ form.launched }}</div>
+            <div class="value-error"></div>
+        </td>
+        <td>
+            <div class="value-display">{{ server.longitude }}/{{ server.latitude }}</div>
+            <div class="value-edit">{{ form.longitude }}/{{ form.latitude}}</div>
+            <div class="value-error"></div>
+        </td>
+        <td>
+            <div class="value-display">{{ server.ssl_port }}</div>
+            <div class="value-edit">{{form.ssl_port }}</div>
+            <div class="value-error"></div>
+        </td>
+        <td>
+            <div class="value-display">{{ server.contact }}</div>
+            <div class="value-edit">{{ form.contact }}</div>
+            <div class="value-error"></div>
+        </td>
+        <td>
+            <div class="value-display">{{ server.contact_name }}</div>
+            <div class="value-edit">{{ form.contact_name }}</div>
+            <div class="value-error"></div>
+        </td>
+        <td>
+            <div class="value-display">{{ server.contact_type }}</div>
+            <div class="value-edit">{{ form.contact_type }}</div>
+        </td>
         <td class="no-borders">
             <img class="button-edit"   src="{{ STATIC_URL }}img/edit.png" alt="edit" title="edit" />
             <img class="button-delete" src="{{ STATIC_URL }}img/delete.png" alt="delete" title="delete" />
             <img class="button-save"   src="{{ STATIC_URL }}img/save.png" alt="save" title="save" />
             <img class="button-cancel" src="{{ STATIC_URL }}img/cancel.png" alt="cancel" title="cancel" />
+            <div style="display: none">{{ form.id }}</div>
         </td>
     </tr>
 {% endfor %}

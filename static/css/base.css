@@ -2,6 +2,7 @@ table {
     border-collapse: collapse;
     border-spacing: 1px;
     border-color: gray;
+    width: 100%;
 }
 td, th {
     padding: 4px;
@@ -34,4 +35,12 @@ td.no-borders img {
 }
 .button-cancel {
     display: none;
+}
+
+.value-edit {
+    display: none;
+}
+
+.value-edit input {
+    font-size: smaller;
 }

@@ -7,8 +7,14 @@ from django.contrib.auth.decorators import login_required
 from models import ConfirmationKey, get_random_key
 from forms import MyUserCreationForm
 
+from xmpplist.Servers.forms import ServerForm
+
 def index(request):
-    return render(request, 'users/index.html')
+    servers = []
+    for server in request.user.servers.all():
+        form = ServerForm(instance=server)
+        servers.append((server, form))
+    return render(request, 'users/index.html', {'servers': servers})
     
 def create(request):
     if request.method == 'POST':
