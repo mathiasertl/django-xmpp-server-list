@@ -1,0 +1,22 @@
+table {
+    border-collapse: collapse;
+    border-spacing: 1px;
+    border-color: gray;
+}
+td, th {
+    padding: 4px;
+    border-style: solid;
+    border-color: gray;
+    border-collapse: collapse;
+    border-width: 1px;
+    text-align: center;
+}
+
+td.no-borders, th.no-borders {
+    border-right-style: hidden;
+    border-right-width: 0px;
+    border-top-style: hidden;
+    border-top-width: 0px;
+    border-bottom-style: hidden;
+    border-bottom-width: 0px;
+}
