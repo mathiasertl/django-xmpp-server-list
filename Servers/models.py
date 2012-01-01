@@ -46,15 +46,15 @@ class Server(models.Model):
     latitude = models.FloatField()
     
     # queried information
-    srv_ok = models.BooleanField(default=False)
+    srv_ok = models.NullBooleanField(default=None)
     
-    software = models.ForeignKey(ServerSoftware, related_name='servers')
-    software_version = models.CharField(max_length=16)
+    software = models.ForeignKey(ServerSoftware, related_name='servers', blank=True, null=True)
+    software_version = models.CharField(max_length=16, blank=True, null=True)
     
-    support_plain = models.BooleanField(default=False)
-    support_ssl = models.BooleanField(default=False)
-    ssl_port = models.IntegerField(default=5222)
-    support_tls = models.BooleanField(default=False)
+    support_plain = models.NullBooleanField(default=None)
+    support_ssl = models.NullBooleanField(default=None)
+    ssl_port = models.PositiveIntegerField(default=None, blank=True, null=True)
+    support_tls = models.NullBooleanField(default=None)
     
     # contact information
     CONTACT_TYPE_CHOICES=(

@@ -75,10 +75,23 @@
             <img class="button-delete" src="{{ STATIC_URL }}img/delete.png" alt="delete" title="delete" />
             <img class="button-save"   src="{{ STATIC_URL }}img/save.png" alt="save" title="save" />
             <img class="button-cancel" src="{{ STATIC_URL }}img/cancel.png" alt="cancel" title="cancel" />
-            <div style="display: none">{{ form.id }}</div>
         </td>
     </tr>
 {% endfor %}
+    <tr class="Add new server">
+        <td>{{ new_form.domain }}</td>
+        <td>{{ new_form.website }}</td>
+        <td>{{ new_form.ca_authority }}</td>
+        <td>{{ new_form.launched }}</td>
+        <td>{{ new_form.longitude }}/{{ new_form.latitude }}</td>
+        <td>{{ new_form.ssl_port }}</td>
+        <td>{{ new_form.contact }}</td>
+        <td>{{ new_form.contact_name }}</td>
+        <td>{{ new_form.contact_type }}</td>
+        <td class="no-borders">
+            <img class="button-add" src="{{ STATIC_URL }}img/add.png" alt="add new server" title="add new server" />
+        </td>
+    </tr>
     </tbody>
 </table>
 

@@ -9,12 +9,14 @@ from forms import MyUserCreationForm
 
 from xmpplist.Servers.forms import ServerForm
 
+@login_required
 def index(request):
     servers = []
     for server in request.user.servers.all():
         form = ServerForm(instance=server)
         servers.append((server, form))
-    return render(request, 'users/index.html', {'servers': servers})
+        
+    return render(request, 'users/index.html', {'servers': servers, 'new_form': ServerForm()})
     
 def create(request):
     if request.method == 'POST':

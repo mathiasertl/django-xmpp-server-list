@@ -6,7 +6,16 @@ from forms import ServerForm
 
 @login_required
 def ajax(request):
-    pass
+    if request.method == 'POST':
+        form = ServerForm(request.POST)
+        if form.is_valid():
+            server = form.save(commit=False)
+            server.user = request.user
+            server.save()
+            return HttpResponse('ok.')
+            
+        print(form)
+        return HttpResponseForbidden('error')
 
 @login_required
 def ajax_id(request, server_id):
@@ -24,7 +33,6 @@ def ajax_id(request, server_id):
             form.save()
             return HttpResponse('ok')
         
-        print(form)
         return HttpResponseForbidden('error')
         
     return HttpResponse('ok.')

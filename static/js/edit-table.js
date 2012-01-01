@@ -85,4 +85,18 @@ $(document).ready(function() {
         switch_buttons($(this).parent());
         switch_values($(this).parent().parent());
     });
+    
+    $(".button-add").click(function() {
+        cell = $(this).parent();
+        row = cell.parent()
+        header_fields = row.parent().find('th.no-borders').find('input');
+        form_fields = row.find('input,select').add(header_fields);
+        $.post(service_url, form_fields.serialize())
+                .error(function() {
+                    alert('error');
+                })
+                .success(function() {
+                    alert('success');
+                });
+    });
 });

@@ -20,6 +20,7 @@ td.no-borders, th.no-borders {
     border-top-width: 0px;
     border-bottom-style: hidden;
     border-bottom-width: 0px;
+    text-align: left;
 }
 
 td.no-borders img {
