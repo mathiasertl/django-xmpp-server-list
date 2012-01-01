@@ -53,7 +53,7 @@ class Server(models.Model):
     
     support_plain = models.NullBooleanField(default=None)
     support_ssl = models.NullBooleanField(default=None)
-    ssl_port = models.PositiveIntegerField(default=None, blank=True, null=True)
+    ssl_port = models.PositiveIntegerField(default=5223, blank=True, null=True)
     support_tls = models.NullBooleanField(default=None)
     
     # contact information

@@ -9,7 +9,7 @@
 
 {% block content %}
 <h1>Your ({{ user.username }}) servers</h1>
-<table>
+<table class="your-servers">
     <tbody>
     <tr>
         <th>Server</th>
@@ -29,7 +29,7 @@
     <tr class="Add new server">
         <td>{{ new_form.domain }}</td>
         <td>{{ new_form.website }}</td>
-        <td>{{ new_form.ca_authority }}</td>
+        <td>{{ new_form.ca_authority }}<div class="value-error"></div></td>
         <td>{{ new_form.launched }}</td>
         <td>{{ new_form.longitude }}/{{ new_form.latitude }}</td>
         <td>{{ new_form.ssl_port }}</td>

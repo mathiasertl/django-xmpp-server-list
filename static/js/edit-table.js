@@ -35,20 +35,25 @@ function get_service_url(row) {
     return service_url + id.split('_')[1] + '/'
 }
 
+function edit_service(cell) {
+    switch_buttons(cell);
+    switch_values(cell.parent());
+}
+
 $(document).ready(function() {
-    $("input,select").change(function() {
+    $("table").on("change", "input,select", function() {
         row = $(this).parent().parent().parent();
         if (!row.hasClass('changed')) {
             row.addClass('changed');
         }
     });
     
-    $(".button-edit").click(function() {
+    $("table").on("click", ".button-edit", function() {
         switch_buttons($(this).parent());
         switch_values($(this).parent().parent());
     });
     
-    $(".button-delete").click(function() {
+    $("table").on("click", ".button-delete", function() {
         row = $(this).parent().parent();
         url = get_service_url(row);
         $.ajax({
@@ -60,16 +65,20 @@ $(document).ready(function() {
         })
     });
     
-    $(".button-save").click(function() {
+    $("table").on("click", ".button-save", function() {
         cell = $(this).parent();
         row = cell.parent()
         header_fields = row.parent().find('th.no-borders').find('input');
         form_fields = row.find('input,select').add(header_fields);
         
         if (row.hasClass('changed')) {
-            $.post(get_service_url(row), form_fields.serialize())
-                .error(function() {
+            $.post(get_service_url(row), form_fields.serialize(), function(data) {
+                row.replaceWith(data);
+            })
+/*
+                .error(function(dataTypeExpression) {
                     row.find('.value-error').hide();
+                    alert(data);
                     //TODO: display new errors
                 })
                 .success(function() {
@@ -78,13 +87,14 @@ $(document).ready(function() {
                     switch_values(row);
                     update_values(row);
                 });
+*/
         } else {
             switch_buttons(cell);
             switch_values(row);
         }
     });
     
-    $(".button-cancel").click(function() {
+    $("table").on("click", ".button-cancel", function() {
         switch_buttons($(this).parent());
         switch_values($(this).parent().parent());
     });
@@ -94,9 +104,10 @@ $(document).ready(function() {
         row = cell.parent()
         header_fields = row.parent().find('th.no-borders').find('input');
         form_fields = row.find('input,select').add(header_fields);
-        $.post(service_url, form_fields.serialize(), function(data, textStatus, jqXHR){
+        $.post(service_url, form_fields.serialize(), function(data, textStatus, jqXHR) {
             // append new row:
             row.before(data);
+            
             // clear add-row
             row.html(row.next().html());
         }).error(function() {

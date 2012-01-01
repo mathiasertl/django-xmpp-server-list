@@ -1,53 +1,56 @@
 <tr id="server_{{ server.id }}">
+    {% with field=form.domain %}
+        {% include "includes/server_table_cell.html" %}
+    {% endwith %}
+    {% with field=form.website %}
+        {% include "includes/server_table_cell.html" %}
+    {% endwith %}
     <td>
-        <div class="value-display {{ form.domain.html_name }}">{{ server.domain }}</div>
-        <div class="value-edit">{{ form.domain }}</div>
-        <div class="value-error"></div>
+        <div class="value-display {{ form.ca_authority.html_name}}"
+                {% if form.errors %}style="display: none;" {% endif %}>
+            {{ server.ca_authority.name }}
+        </div>
+        <div class="value-edit" {% if form.errors %}style="display: block;" {% endif %}>
+            {{ form.ca_authority }} {{ form.ca_authority.errors }}
+        </div>
     </td>
-    <td>
-        <div class="value-display {{ form.website.html_name }}">{{ server.website }}</div>
-        <div class="value-edit">{{ form.website }}</div>
-        <div class="value-error"></div>
-    </td>
-    <td>
-        <div class="value-display {{ form.ca_authority.html_name}}">{{ server.ca_authority}}</div>
-        <div class="value-edit">{{ form.ca_authority }}</div>
-    </td>
-    <td>
-        <div class="value-display {{ form.launched.html_name }}">{{ server.launched }}</div>
-        <div class="value-edit">{{ form.launched }}</div>
-        <div class="value-error"></div>
-    </td>
+    {% with field=form.launched %}
+        {% include "includes/server_table_cell.html" %}
+    {% endwith %}
     <td class="multivalue">
-        <div class="value-display">
+        <div class="value-display" {% if form.errors %}style="display: none;" {% endif %}>
             <span class="{{ form.longitude.html_name }}">{{ server.longitude }}</span>/<span class="{{ form.latitude.html_name }}">{{ server.latitude }}</span>
         </div>
-        <div class="value-edit">{{ form.longitude }}/{{ form.latitude}}</div>
-        <div class="value-error"></div>
+        <div class="value-edit" {% if form.errors %}style="display: block;" {% endif %}>
+            {{ form.longitude }}/{{ form.latitude}}
+        </div>
     </td>
+    {% with field=form.ssl_port %}
+        {% include "includes/server_table_cell.html" %}
+    {% endwith %}
+    {% with field=form.contact %}
+        {% include "includes/server_table_cell.html" %}
+    {% endwith %}
+    {% with field=form.contact_name %}
+        {% include "includes/server_table_cell.html" %}
+    {% endwith %}
     <td>
-        <div class="value-display {{ form.ssl_port.html_name }}">{{ server.ssl_port }}</div>
-        <div class="value-edit">{{form.ssl_port }}</div>
-        <div class="value-error"></div>
-    </td>
-    <td>
-        <div class="value-display {{ form.contact.html_name }}">{{ server.contact }}</div>
-        <div class="value-edit">{{ form.contact }}</div>
-        <div class="value-error"></div>
-    </td>
-    <td>
-        <div class="value-display {{ form.contact_name.html_name }}">{{ server.contact_name }}</div>
-        <div class="value-edit">{{ form.contact_name }}</div>
-        <div class="value-error"></div>
-    </td>
-    <td>
-        <div class="value-display {{ form.contact_type.html_name }}">{{ server.get_contact_type_display }}</div>
-        <div class="value-edit">{{ form.contact_type }}</div>
+        <div class="value-display {{ form.contact_type.html_name }}"
+                {% if form.errors %}style="display: none;" {% endif %}>
+            {{ server.get_contact_type_display }}
+        </div>
+        <div class="value-edit" {% if form.errors %}style="display: block;" {% endif %}>
+            {{ form.contact_type }}
+        </div>
     </td>
     <td class="no-borders">
-        <img class="button-edit"   src="{{ STATIC_URL }}img/edit.png" alt="edit" title="edit" />
-        <img class="button-delete" src="{{ STATIC_URL }}img/delete.png" alt="delete" title="delete" />
-        <img class="button-save"   src="{{ STATIC_URL }}img/save.png" alt="save" title="save" />
-        <img class="button-cancel" src="{{ STATIC_URL }}img/cancel.png" alt="cancel" title="cancel" />
+        <img class="button-edit"   src="{{ STATIC_URL }}img/edit.png" alt="edit" title="edit"
+            {% if form.errors %}style="display: none;" {% endif %} />
+        <img class="button-delete" src="{{ STATIC_URL }}img/delete.png" alt="delete" title="delete"
+             {% if form.errors %}style="display: none;" {% endif %} />
+        <img class="button-save"   src="{{ STATIC_URL }}img/save.png" alt="save" title="save"
+             {% if form.errors %}style="display: block;" {% endif %} />
+        <img class="button-cancel" src="{{ STATIC_URL }}img/cancel.png" alt="cancel" title="cancel"
+             {% if form.errors %}style="display: block;" {% endif %} />
     </td>
 </tr>

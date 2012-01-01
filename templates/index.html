@@ -1,7 +1,19 @@
 {% extends "base.html" %}
+{% load url from future %}
 
-{% block content %}    
-Not yet pretty list of Jabber/XMPP services.
+{% block content %}
+    
+<p>
+This is a list of public
+<a href="http://en.wikipedia.org/wiki/Extensible_Messaging_and_Presence_Protocol">XMPP</a> servers,
+free for everyone to use. XMPP is a open, free and decentralized instant messaging network.</p>
+
+<p>Due to its decentralized nature, there are thousands of XMPP servers available, from which to
+choose from. You may choose any of the listed servers or a different server altogether, you can
+always communicate with users on other servers. This list is kindly brought to you by
+<a href="https://jabber.at">jabber.at</a>, which is run by the
+<a href="https://fsinf.at">Fachschaft Informatik</a>.</p>
+
 <table>
     <tr>
         <th>Server</th>
@@ -35,4 +47,8 @@ Not yet pretty list of Jabber/XMPP services.
     </tr>
 {% endfor %}
 </table>
+
+<p>You can simply <a href="{% url "users_create" %}">create an account</a> and
+<a href="{% url "django.contrib.auth.views.login" %}?next={{ request.path }}">login</a> to add your
+own servers to this list.
 {% endblock content %}

@@ -2,8 +2,12 @@ table {
     border-collapse: collapse;
     border-spacing: 1px;
     border-color: gray;
+}
+
+table.your-servers {
     width: 100%;
 }
+
 table tr.default-row {
     display: none;
 }

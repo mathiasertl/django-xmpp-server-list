@@ -17,8 +17,7 @@ def ajax(request):
             new_form = ServerForm(instance=server)
             return render(request, 'ajax/server_table_row.html', {'server': server, 'form': form})
             
-        print(form)
-        return HttpResponseForbidden('error')
+        return HttpResponse(status=400)
 
 @login_required
 def ajax_id(request, server_id):
@@ -30,12 +29,18 @@ def ajax_id(request, server_id):
         server.delete()
     elif request.method == 'POST':
         form = ServerForm(request.POST, instance=server)
+        for field in form:
+            if field.name == 'ca_authority':
+                print field.as_text()
+                print field.name
+                print(field.data )
+                print(field.value())
+                
         if form.is_valid():
             if server.user != request.user:
-                return HttpResponseForbidden("Thou shal only delete your own server!")
+                return HttpResponseForbidden("Thou shal only edit your own server!")
             form.save()
-            return HttpResponse('ok')
         
-        return HttpResponseForbidden('error')
+        return render(request, 'ajax/server_table_row.html', {'server': server, 'form': form})
         
     return HttpResponse('ok.')
