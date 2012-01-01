@@ -1,5 +1,35 @@
 {% extends "base.html" %}
 
 {% block content %}
-{{ user.username }}
+<h1>Your ({{ user.username }}) servers</h1>
+<table>
+    <tbody>
+    <tr>
+        <th>Server</th>
+        <th>Domain</th>
+        <th>Certificate Provider</th>
+        <th>Launched</th>
+        <th>Coordinates</th>
+        <th>SSL port</th>
+        <th>Contact</th>
+        <th>name</th>
+        <th>type</th>
+        <th class="no-borders"></th>
+    </tr>
+{% for server in user.servers.all %}
+    <tr>
+        <td>{{ server.domain }}</td>
+        <td>{{ server.website }}</td>
+        <td>{{ server.ca_authority}}</td>
+        <td>{{ server.launched }}</td>
+        <td>{{ server.longitude }}/{{ server.latitude }}</td>
+        <td>{{ server.ssl_port }}</td>
+        <td>{{ server.contact }}</td>
+        <td>{{ server.contact_name }}</td>
+        <td>{{ server.contact_type }}</td>
+        <td class="no-borders"><img src="{{ STATIC_URL }}img/edit.png" /></td>
+    </tr>
+{% endfor %}
+    </tbody>
+</table>
 {% endblock %}
