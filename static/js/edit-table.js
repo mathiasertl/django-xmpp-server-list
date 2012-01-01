@@ -78,6 +78,9 @@ $(document).ready(function() {
                     switch_values(row);
                     update_values(row);
                 });
+        } else {
+            switch_buttons(cell);
+            switch_values(row);
         }
     });
     
