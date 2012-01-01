@@ -4,12 +4,22 @@
 <head>
     <title>{% block title %}XMPP server list{% endblock %}</title>
     
+    <script type="text/javascript" src="{{ STATIC_URL }}js/lib/jquery-1.7.1{% if debug %}.min{% endif %}.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/base.js"></script>
+    {% block javascript %}{% endblock %}
+    
     <link rel="stylesheet" href="{{ STATIC_URL }}css/base.css"/>
+    {% block css %}{% endblock %}
 </head>
 <body>
 <div class="header">
 {% block header %}
-    <div class="login">
+    <spam class="navigation">
+        {% block navication %}
+            <a href="{% url "home" %}">home</a>
+        {% endblock %}
+    </span>
+    <span class="login">
     {% block login %}
     {% if user.is_authenticated %}
             <a href="{% url "users_set_password"%}">set password</a> | 
@@ -21,7 +31,7 @@
         {% endwith %}
     {% endif %}
     {% endblock %}
-    </div>
+    </span>
 {% endblock %}
 </div>
 
