@@ -5,6 +5,7 @@ import dns.resolver
 from django.db import models
 from django.conf import settings
 
+from django.contrib.auth.models import User
 from django.contrib.gis.db import models as gismodels
 from django.contrib.gis.geos import Point
 
@@ -27,6 +28,9 @@ class ServerSoftware(models.Model):
         return self.name
 
 class Server(models.Model):
+    # who created this service:
+    user = models.ForeignKey(User, related_name='servers')
+    
     # information about the service:
     domain = models.CharField(unique=True, max_length=30)
     website = models.URLField()
