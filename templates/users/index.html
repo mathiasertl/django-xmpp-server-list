@@ -24,61 +24,23 @@
         <th class="no-borders">{% csrf_token %}</th>
     </tr>
 {% for server, form in servers %}
-    <tr id="server_{{ server.id }}">
-        <td>
-            <div class="value-display {{ form.domain.html_name }}">{{ server.domain }}</div>
-            <div class="value-edit">{{ form.domain }}</div>
-            <div class="value-error"></div>
-        </td>
-        <td>
-            <div class="value-display {{ form.website.html_name }}">{{ server.website }}</div>
-            <div class="value-edit">{{ form.website }}</div>
-            <div class="value-error"></div>
-        </td>
-        <td>
-            <div class="value-display {{ form.ca_authority.html_name}}">{{ server.ca_authority}}</div>
-            <div class="value-edit">{{ form.ca_authority }}</div>
-        </td>
-        <td>
-            <div class="value-display {{ form.launched.html_name }}">{{ server.launched }}</div>
-            <div class="value-edit">{{ form.launched }}</div>
-            <div class="value-error"></div>
-        </td>
-        <td class="multivalue">
-            <div class="value-display">
-                <span class="{{ form.longitude.html_name }}">{{ server.longitude }}</span>/<span class="{{ form.latitude.html_name }}">{{ server.latitude }}</span>
-            </div>
-            <div class="value-edit">{{ form.longitude }}/{{ form.latitude}}</div>
-            <div class="value-error"></div>
-        </td>
-        <td>
-            <div class="value-display {{ form.ssl_port.html_name }}">{{ server.ssl_port }}</div>
-            <div class="value-edit">{{form.ssl_port }}</div>
-            <div class="value-error"></div>
-        </td>
-        <td>
-            <div class="value-display {{ form.contact.html_name }}">{{ server.contact }}</div>
-            <div class="value-edit">{{ form.contact }}</div>
-            <div class="value-error"></div>
-        </td>
-        <td>
-            <div class="value-display {{ form.contact_name.html_name }}">{{ server.contact_name }}</div>
-            <div class="value-edit">{{ form.contact_name }}</div>
-            <div class="value-error"></div>
-        </td>
-        <td>
-            <div class="value-display {{ form.contact_type.html_name }}">{{ server.get_contact_type_display }}</div>
-            <div class="value-edit">{{ form.contact_type }}</div>
-        </td>
-        <td class="no-borders">
-            <img class="button-edit"   src="{{ STATIC_URL }}img/edit.png" alt="edit" title="edit" />
-            <img class="button-delete" src="{{ STATIC_URL }}img/delete.png" alt="delete" title="delete" />
-            <img class="button-save"   src="{{ STATIC_URL }}img/save.png" alt="save" title="save" />
-            <img class="button-cancel" src="{{ STATIC_URL }}img/cancel.png" alt="cancel" title="cancel" />
-        </td>
-    </tr>
+    {% include "includes/server_table_row.html" %}
 {% endfor %}
     <tr class="Add new server">
+        <td>{{ new_form.domain }}</td>
+        <td>{{ new_form.website }}</td>
+        <td>{{ new_form.ca_authority }}</td>
+        <td>{{ new_form.launched }}</td>
+        <td>{{ new_form.longitude }}/{{ new_form.latitude }}</td>
+        <td>{{ new_form.ssl_port }}</td>
+        <td>{{ new_form.contact }}</td>
+        <td>{{ new_form.contact_name }}</td>
+        <td>{{ new_form.contact_type }}</td>
+        <td class="no-borders">
+            <img class="button-add" src="{{ STATIC_URL }}img/add.png" alt="add new server" title="add new server" />
+        </td>
+    </tr>
+    <tr class="default-row">
         <td>{{ new_form.domain }}</td>
         <td>{{ new_form.website }}</td>
         <td>{{ new_form.ca_authority }}</td>

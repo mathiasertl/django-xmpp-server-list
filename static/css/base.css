@@ -4,6 +4,10 @@ table {
     border-color: gray;
     width: 100%;
 }
+table tr.default-row {
+    display: none;
+}
+
 td, th {
     padding: 4px;
     border-style: solid;

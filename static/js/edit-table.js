@@ -91,12 +91,13 @@ $(document).ready(function() {
         row = cell.parent()
         header_fields = row.parent().find('th.no-borders').find('input');
         form_fields = row.find('input,select').add(header_fields);
-        $.post(service_url, form_fields.serialize())
-                .error(function() {
-                    alert('error');
-                })
-                .success(function() {
-                    alert('success');
-                });
+        $.post(service_url, form_fields.serialize(), function(data, textStatus, jqXHR){
+            // append new row:
+            row.before(data);
+            // clear add-row
+            row.html(row.next().html());
+        }).error(function() {
+            alert('error');
+        })
     });
 });

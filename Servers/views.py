@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseForbidden
+from django.shortcuts import render
 
 from models import Server
 from forms import ServerForm
@@ -12,7 +13,9 @@ def ajax(request):
             server = form.save(commit=False)
             server.user = request.user
             server.save()
-            return HttpResponse('ok.')
+            
+            new_form = ServerForm(instance=server)
+            return render(request, 'ajax/server_table_row.html', {'server': server, 'form': form})
             
         print(form)
         return HttpResponseForbidden('error')
