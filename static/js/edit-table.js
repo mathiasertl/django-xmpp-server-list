@@ -10,12 +10,39 @@ function switch_values(row) {
     row.find('.value-edit').toggle()
 }
 
+function update_values(row) {
+    row.find('td').each(function(index) {
+        td = $(this);
+        $(this).find('input').each(function(index) {
+            value = $(this).val();
+            name = $(this).attr('name');
+            if (td.hasClass('multivalue')) {
+                td.find('.value-display .' + name).html(value);
+            } else {
+                td.find('.value-display.' + name).html(value);
+            }
+        });
+        $(this).find('select').each(function(index) {
+            value = $(this).find('option:selected').text();
+            name = $(this).attr('name');
+            td.find('.value-display.' + name).html(value);
+        });
+    });
+}
+
 function get_service_url(row) {
     id = row.attr('id');
     return service_url + id.split('_')[1] + '/'
 }
 
 $(document).ready(function() {
+    $("input,select").change(function() {
+        row = $(this).parent().parent().parent();
+        if (!row.hasClass('changed')) {
+            row.addClass('changed');
+        }
+    });
+    
     $(".button-edit").click(function() {
         switch_buttons($(this).parent());
         switch_values($(this).parent().parent());
@@ -36,19 +63,22 @@ $(document).ready(function() {
     $(".button-save").click(function() {
         cell = $(this).parent();
         row = cell.parent()
-        switch_buttons(cell);
-        switch_values(row);
         header_fields = row.parent().find('th.no-borders').find('input');
         form_fields = row.find('input,select').add(header_fields);
-//        alert(form_fields.serialize());
         
-        $.post(get_service_url(row), form_fields.serialize())
-            .error(function() {
-                // called on error.
-            })
-            .success(function() {
-                row.find('.value-error').hide();
-            });
+        if (row.hasClass('changed')) {
+            $.post(get_service_url(row), form_fields.serialize())
+                .error(function() {
+                    row.find('.value-error').hide();
+                    //TODO: display new errors
+                })
+                .success(function() {
+                    row.find('.value-error').hide();
+                    switch_buttons(cell);
+                    switch_values(row);
+                    update_values(row);
+                });
+        }
     });
     
     $(".button-cancel").click(function() {

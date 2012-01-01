@@ -26,46 +26,48 @@
 {% for server, form in servers %}
     <tr id="server_{{ server.id }}">
         <td>
-            <div class="value-display">{{ server.domain }}</div>
+            <div class="value-display {{ form.domain.html_name }}">{{ server.domain }}</div>
             <div class="value-edit">{{ form.domain }}</div>
             <div class="value-error"></div>
         </td>
         <td>
-            <div class="value-display">{{ server.website }}</div>
+            <div class="value-display {{ form.website.html_name }}">{{ server.website }}</div>
             <div class="value-edit">{{ form.website }}</div>
             <div class="value-error"></div>
         </td>
         <td>
-            <div class="value-display">{{ server.ca_authority}}</div>
+            <div class="value-display {{ form.ca_authority.html_name}}">{{ server.ca_authority}}</div>
             <div class="value-edit">{{ form.ca_authority }}</div>
         </td>
         <td>
-            <div class="value-display">{{ server.launched }}</div>
+            <div class="value-display {{ form.launched.html_name }}">{{ server.launched }}</div>
             <div class="value-edit">{{ form.launched }}</div>
             <div class="value-error"></div>
         </td>
-        <td>
-            <div class="value-display">{{ server.longitude }}/{{ server.latitude }}</div>
+        <td class="multivalue">
+            <div class="value-display">
+                <span class="{{ form.longitude.html_name }}">{{ server.longitude }}</span>/<span class="{{ form.latitude.html_name }}">{{ server.latitude }}</span>
+            </div>
             <div class="value-edit">{{ form.longitude }}/{{ form.latitude}}</div>
             <div class="value-error"></div>
         </td>
         <td>
-            <div class="value-display">{{ server.ssl_port }}</div>
+            <div class="value-display {{ form.ssl_port.html_name }}">{{ server.ssl_port }}</div>
             <div class="value-edit">{{form.ssl_port }}</div>
             <div class="value-error"></div>
         </td>
         <td>
-            <div class="value-display">{{ server.contact }}</div>
+            <div class="value-display {{ form.contact.html_name }}">{{ server.contact }}</div>
             <div class="value-edit">{{ form.contact }}</div>
             <div class="value-error"></div>
         </td>
         <td>
-            <div class="value-display">{{ server.contact_name }}</div>
+            <div class="value-display {{ form.contact_name.html_name }}">{{ server.contact_name }}</div>
             <div class="value-edit">{{ form.contact_name }}</div>
             <div class="value-error"></div>
         </td>
         <td>
-            <div class="value-display">{{ server.contact_type }}</div>
+            <div class="value-display {{ form.contact_type.html_name }}">{{ server.get_contact_type_display }}</div>
             <div class="value-edit">{{ form.contact_type }}</div>
         </td>
         <td class="no-borders">
