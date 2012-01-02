@@ -10,8 +10,9 @@ from django.contrib.auth.models import User
 from account.models import UserProfile
 from server.models import Server, ServerSoftware, CertificateAuthority
 
-u = User.objects.create(username='mati')
+u = User.objects.create(username='mati', email='mati@er.tl', is_superuser=True, is_staff=True)
 u.set_password('nopass')
+u.save()
 p = UserProfile.objects.create(user=u, email_confirmed=True)
 
 startssl = CertificateAuthority.objects.create(name='StartSSL', website='https://www.startssl.com')
