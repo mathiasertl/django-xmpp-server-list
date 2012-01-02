@@ -1,0 +1,8 @@
+CERTIFICATES_PATH='/home/mati/git/mati/xmpplist/static/certs'
+STATICFILES_DIRS = ('/home/mati/git/mati/xmpplist/static',)
+TEMPLATE_DIRS = (
+    '/home/mati/git/mati/xmpplist/templates',
+)
+
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = '/tmp/xmpplist' # change this to a proper location
