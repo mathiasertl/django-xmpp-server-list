@@ -9,7 +9,7 @@ from forms import ServerForm
 def index(request):
     servers = []
     for server in request.user.servers.all():
-        form = ServerForm(instance=server)
+        form = ServerForm(instance=server, prefix=server.id)
         servers.append((server, form))
         
     return render(request, 'server/index.html', {'servers': servers, 'new_form': ServerForm()})
@@ -28,7 +28,7 @@ def ajax(request):
             server.user = request.user
             server.save()
             
-            new_form = ServerForm(instance=server)
+            form = ServerForm(instance=server, prefix=server.id)
             return render(request, 'ajax/server_table_row.html', {'server': server, 'form': form})
             
         return HttpResponse(status=400)
@@ -42,11 +42,12 @@ def ajax_id(request, server_id):
         
         server.delete()
     elif request.method == 'POST':
-        form = ServerForm(request.POST, instance=server)
+        form = ServerForm(request.POST, instance=server, prefix=server.id)
         if form.is_valid():
             if server.user != request.user:
                 return HttpResponseForbidden("Thou shal only edit your own server!")
             form.save()
+            form = ServerForm(instance=server)
         
         return render(request, 'ajax/server_table_row.html', {'server': server, 'form': form})
         

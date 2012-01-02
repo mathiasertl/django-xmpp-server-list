@@ -26,7 +26,7 @@
 {% for server, form in servers %}
     {% include "includes/server_table_row.html" %}
 {% endfor %}
-    <tr class="Add new server">
+    <tr class="new-server">
         <td>{{ new_form.domain }}</td>
         <td>{{ new_form.website }}</td>
         <td>{{ new_form.ca }}<div class="value-error"></div></td>

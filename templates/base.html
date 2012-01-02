@@ -5,10 +5,12 @@
     <title>{% block title %}XMPP server list{% endblock %}</title>
     
     <script type="text/javascript" src="{{ STATIC_URL }}js/lib/jquery-1.7.1{% if debug %}.min{% endif %}.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/lib/js/jquery-ui-1.8.16.custom.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/base.js"></script>
     {% block javascript %}{% endblock %}
     
     <link rel="stylesheet" href="{{ STATIC_URL }}css/base.css"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/lib/jquery-ui/jquery-ui-1.8.16.custom.css" />
     {% block css %}{% endblock %}
 </head>
 <body>

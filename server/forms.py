@@ -16,5 +16,5 @@ class ServerForm(ModelForm):
             'latitude': TextInput(attrs={'size': 4}),
             'domain': TextInput(attrs={'size': 10}),
             'website': TextInput(attrs={'size': 16}),
-            'launched': DateInput(attrs={'size': 10}),
+            'launched': DateInput(attrs={'size': 8, 'class': 'datepicker'}, format='%Y-%m-%d'),
         }

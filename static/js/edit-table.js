@@ -30,9 +30,12 @@ function update_values(row) {
     });
 }
 
+function get_service_id(row) {
+    return row.attr('id').split('_')[1];
+}
+
 function get_service_url(row) {
-    id = row.attr('id');
-    return service_url + id.split('_')[1] + '/'
+    return service_url + get_service_id(row) + '/';
 }
 
 function edit_service(cell) {
@@ -105,13 +108,31 @@ $(document).ready(function() {
         header_fields = row.parent().find('th.no-borders').find('input');
         form_fields = row.find('input,select').add(header_fields);
         $.post(service_url, form_fields.serialize(), function(data, textStatus, jqXHR) {
+            new_row = $(data);
+            
             // append new row:
-            row.before(data);
+            row.before(new_row);
+            
+            // set datepicker:
+            new_id = get_service_id(new_row);
+            new_row.find('#id_' + new_id + '-launched').datepicker({
+                dateFormat: "yy-mm-dd", maxDate: "+1D", showButtonPanel: true
+            }); 
+            
             
             // clear add-row
             row.html(row.next().html());
         }).error(function() {
             alert('error');
         })
+    });
+    
+    // datepicker:
+    $('.your-servers tr[id^="server"]').each(function(index, row){
+        row = $(row);
+        id = get_service_id($(row));
+        row.find('#id_' + id + '-launched').datepicker({
+            dateFormat: "yy-mm-dd", maxDate: "+1D", showButtonPanel: true
+        }); 
     });
 });

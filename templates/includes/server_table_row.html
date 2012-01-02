@@ -14,9 +14,15 @@
             {{ form.ca }} {{ form.ca.errors }}
         </div>
     </td>
-    {% with field=form.launched %}
-        {% include "includes/server_table_cell.html" %}
-    {% endwith %}
+    <td>
+        <div class="value-display {{ form.launched.html_name }}"
+                {% if form.errors %}style="display: none;" {% endif %}>
+            {{ form.launched.value|date:"Y-m-d" }}
+        </div>
+        <div class="value-edit" {% if form.errors %}style="display: block;" {% endif %}>
+            {{ form.launched }}{{ form.launched.errors }}
+        </div>
+    </td>
     <td class="multivalue">
         <div class="value-display" {% if form.errors %}style="display: none;" {% endif %}>
             <span class="{{ form.longitude.html_name }}">{{ server.longitude }}</span>/<span class="{{ form.latitude.html_name }}">{{ server.latitude }}</span>
