@@ -6,6 +6,15 @@ from models import Server
 from forms import ServerForm
 
 @login_required
+def index(request):
+    servers = []
+    for server in request.user.servers.all():
+        form = ServerForm(instance=server)
+        servers.append((server, form))
+        
+    return render(request, 'server/index.html', {'servers': servers, 'new_form': ServerForm()})
+
+@login_required
 def ajax(request):
     if request.method == 'POST':
         form = ServerForm(request.POST)
@@ -27,7 +36,8 @@ def ajax_id(request, server_id):
             return HttpResponseForbidden("Thou shal only delete your own server!")
         
         server.delete()
-    elif request.method == 'POST':               
+    elif request.method == 'POST':
+        form = ServerForm(request.POST, instance=server)
         if form.is_valid():
             if server.user != request.user:
                 return HttpResponseForbidden("Thou shal only edit your own server!")
