@@ -157,13 +157,14 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.i18n",
     "django.core.context_processors.media",
     "django.core.context_processors.static",
-#    "django.contrib.messages.context_processors.messages",
+    "django.contrib.messages.context_processors.messages",
     
     "django.core.context_processors.request",
 )
 
-LOGIN_REDIRECT_URL = '/users/'
-AUTH_PROFILE_MODULE = 'users.UserProfile'
+LOGIN_URL = '/user/login/'
+LOGIN_REDIRECT_URL = '/user/'
+AUTH_PROFILE_MODULE = 'account.UserProfile'
 DEFAULT_FROM_EMAIL = 'test@example.com'
 
 INTERNAL_IPS=('127.0.0.1')
