@@ -16,7 +16,7 @@ def index(request):
 
 @permission_required('server.moderate')
 def moderate(request):
-    servers = Server.objects.filter(moderated=False)
+    servers = Server.objects.filter(moderated=None)
     return render(request, 'server/moderate.html', {'servers': servers})
 
 @login_required
@@ -51,3 +51,17 @@ def ajax_id(request, server_id):
         return render(request, 'ajax/server_table_row.html', {'server': server, 'form': form})
         
     return HttpResponse('ok.')
+    
+@permission_required('server.moderate')
+def ajax_moderate(request):
+    if request.method == 'POST':
+        server_id = request.POST['id']
+        server = Server.objects.get(id=server_id)
+        if request.POST['moderate'] == 'true':
+            server.moderated = True
+        else:
+            server.moderated = False
+        server.save()
+        return HttpResponse('ok')
+    else:
+        return HttpResponseForbidden('Sorry, only POST')

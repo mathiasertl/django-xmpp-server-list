@@ -52,8 +52,8 @@ class Server(models.Model):
     ca = models.ForeignKey(CertificateAuthority, related_name='servers')
     
     # verification
-    moderated = models.BooleanField(default=False)
-    verified = models.BooleanField(default=False)
+    moderated = models.NullBooleanField(default=None)
+    verified = models.NullBooleanField(default=None)
     report = models.OneToOneField(ServerReport, related_name='server')
     
     # queried information

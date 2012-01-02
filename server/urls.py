@@ -5,5 +5,6 @@ urlpatterns = patterns(
     url(r'^$', 'index', name='server'),
     url(r'^moderate/$', 'moderate', name='server_moderate'),
     url(r'^ajax/$', 'ajax', name='servers_ajax'),
+    url(r'^ajax/moderate/$', 'ajax_moderate', name='server_ajax_moderate'),
     url(r'^ajax/(?P<server_id>\w+)/$', 'ajax_id', name='servers_ajax_id'),
 )

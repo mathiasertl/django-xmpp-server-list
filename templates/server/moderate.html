@@ -1,4 +1,27 @@
 {% extends "base.html" %}
+{% load url from future %}
+
+{% block javascript %}
+<script type="text/javascript">
+$(document).ready(function() {
+    $("table").on("click", ".button-ok", function() {
+        row = $(this).parent().parent();
+        id = row.attr('id').split("_")[1];
+        $.post("{% url "server_ajax_moderate" %}", {id: id, moderate: true, csrfmiddlewaretoken: "{{ csrf_token }}"}, function(data) {
+            row.hide(500);
+        });
+    });
+    $("table").on("click", ".button-notok", function() {
+        row = $(this).parent().parent();
+        id = row.attr('id').split("_")[1];
+        $.post("{% url "server_ajax_moderate" %}", {id: id, moderate: false, csrfmiddlewaretoken: "{{ csrf_token }}"}, function(data) {
+            row.hide(500);
+        });
+    });
+});
+</script>
+{% endblock %}
+    
 
 {% block content %}
 <h1>Moderate servers</h1>
@@ -15,9 +38,13 @@ moment, you only have to check if the homepage of the server and the given conta
         <th class="no-borders">{% csrf_token %}</th>
     </tr>
 {% for server in servers %}
-    <tr>
+    <tr id="server_{{server.id}}">
         <td><a href="{{ server.website }}">{{ server.domain }}</a></td>
         <td>{% include "includes/server_contact.html" %}</td>
+        <td class="no-borders">
+            <img class="button-ok" src="{{ STATIC_URL }}img/save.png" alt="Ok." title="Ok." />
+            <img class="button-notok" src="{{ STATIC_URL }}img/cancel.png" alt="NOT ok." title="NOT ok." />
+        </td>
     </tr>
 {% endfor %}
     </tbody>
