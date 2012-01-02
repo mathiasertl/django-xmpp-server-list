@@ -30,19 +30,7 @@ always communicate with users on other servers. This list is kindly brought to y
         <td><a href="{{ server.ca.website }}">{{ server.ca.name }}</a></td>
         <td>{{ server.launched.year }}</td>
         <td><a href="{{ server.software.website }}">{{ server.software.name }} {{ server.software_version }}</a></td>
-        <td>{% if server.contact_type == 'W' %}website
-        {% else %}
-            {% if server.contact_type == 'M' %}
-                <a href="http://speeqe.com/room/{{ sercer.contact }}/">{{ server.contact_name }}</a>
-            {% else %}
-                {% if server.contact_type == 'J' %}JID
-                {% else %}
-                    {% if server.contact_type == 'E' %}EMAIL
-                    {% else %} ELSE!
-                    {% endif %}
-                {% endif %}
-            {% endif %}
-        {% endif %}
+        <td>{% include "includes/server_contact.html" %}
         </td>
     </tr>
 {% endfor %}
