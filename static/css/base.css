@@ -1,3 +1,16 @@
+.warning {
+    font-size: x-large;
+    margin-bottom: 1em;
+    padding-left: 10px;
+    background-color: #FFF3F3;
+    
+    border: 1px solid #FFA4A4;
+    border-left: 5px solid #FF6666;
+}
+.warning:before {
+    content: "Warning: ";
+}
+
 table {
     border-collapse: collapse;
     border-spacing: 1px;
