@@ -31,6 +31,18 @@ class ServerReport(models.Model):
     created = models.DateField(auto_now_add=True)
     srv_client = models.BooleanField(default=False)
     srv_server = models.BooleanField(default=False)
+    
+    client_online = models.BooleanField(default=True)
+    server_online = models.BooleanField(default=True)
+    
+    def has_problems(self):
+        return self.srv_client or self.srv_server or self.client_online or self.server_online
+    
+    def __unicode__(self):
+        condition = 'ok'
+        if self.has_problems():
+            condition = 'has problems'
+        return 'Report on %s: %s' % (self.server.name, condition)
 
 class Server(models.Model):
     class Meta:
@@ -54,7 +66,7 @@ class Server(models.Model):
     # verification
     moderated = models.NullBooleanField(default=None)
     verified = models.NullBooleanField(default=None)
-    report = models.OneToOneField(ServerReport, related_name='server')
+    report = models.OneToOneField(ServerReport, related_name='server', null=True, blank=True)
     
     # queried information
     software = models.ForeignKey(ServerSoftware, related_name='servers', blank=True, null=True)
@@ -119,27 +131,27 @@ class Server(models.Model):
         except Exception as e:
                 print( "Open, but SSL negotiation failed." )
 
-    def report(self):
-        client_hosts = self.srv_lookup('xmpp-client')
-        server_hosts = self.srv_lookup('xmpp-server')
-        report = Report(server=self,
-                        client_online_max=len(client_hosts),
-                        server_online_max=len(server_hosts)
-        )
+    def verify(self):
+        report = ServerReport(server=self)
         
-        client_hosts_available = 0
+        # do SRV lookups
+        client_hosts = self.srv_lookup('xmpp-client')
+        if not client_hosts:
+            report.srv_client = True
+        server_hosts = self.srv_lookup('xmpp-server')
+        if not server_hosts:
+            report.srv_server = True
+        
         for host in client_hosts:
             if self.check_host(host[0], host[1]):
-                client_hosts_available += 1
-        report.client_online = client_hosts_available
-                
-        server_hosts_available = 0
+                report.client_online = False
+                break
+            
         for host in server_hosts:
             if self.check_host(host[0], host[1]):
-                server_hosts_available += 1
-        report.server_online = server_hosts_available
-        
-        report.save()
+                report.server_online = False
+                break
+            
         return report
     
     def get_country(self):
@@ -150,16 +162,3 @@ class Server(models.Model):
         else:
             country = WorldBorders.objects.get(geom__intersects=p)
         return country
-        
-    
-class Report(models.Model):
-    timestamp = models.DateTimeField(auto_now_add=True)
-    
-    client_online = models.IntegerField(default=0)
-    client_online_max = models.IntegerField()
-    server_online = models.IntegerField(default=0)
-    server_online_max = models.IntegerField()
-    
-    ssl_online = models.BooleanField(default=False)
-    
-    server = models.ForeignKey(Server)
