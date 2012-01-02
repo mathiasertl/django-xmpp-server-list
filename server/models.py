@@ -42,7 +42,7 @@ class ServerReport(models.Model):
         condition = 'ok'
         if self.has_problems():
             condition = 'has problems'
-        return 'Report on %s: %s' % (self.server.name, condition)
+        return 'Report on %s: %s' % (self.server.domain, condition)
 
 class Server(models.Model):
     class Meta:
@@ -97,7 +97,10 @@ class Server(models.Model):
         the given srv-record.
         """
         record = '_%s._%s.%s' % (service, proto, self.domain)
-        answers = dns.resolver.query(record, 'SRV')
+        try:
+            answers = dns.resolver.query(record, 'SRV')
+        except:
+            return []
         hosts = []
         for answer in answers:
             hosts.append((answer.target.to_text(True), answer.port, answer.priority))
@@ -132,7 +135,8 @@ class Server(models.Model):
                 print( "Open, but SSL negotiation failed." )
 
     def verify(self):
-        report = ServerReport(server=self)
+        report = ServerReport()
+        report.server = self
         
         # do SRV lookups
         client_hosts = self.srv_lookup('xmpp-client')
