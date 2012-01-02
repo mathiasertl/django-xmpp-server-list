@@ -1,1 +1,700 @@
-[{"pk": 1, "model": "Servers.certificateauthority", "fields": {"website": "https://www.startssl.com/", "name": "StartSSL", "certificate": ""}}, {"pk": 2, "model": "Servers.certificateauthority", "fields": {"website": "https://www.cacert.org/", "name": "CAcert", "certificate": ""}}, {"pk": 1, "model": "Servers.serversoftware", "fields": {"website": "http://www.ejabberd.im/", "newest_version": "2.1.10", "name": "ejabberd"}}, {"pk": 2, "model": "Servers.serversoftware", "fields": {"website": "http://www.prosody.im/", "newest_version": "0.8.2", "name": "Prosody"}}, {"pk": 3, "model": "Servers.serversoftware", "fields": {"website": "http://www.igniterealtime.org/projects/openfire/", "newest_version": "3.7.1", "name": "Openfire"}}, {"pk": 4, "model": "Servers.serversoftware", "fields": {"website": "http://www.tigase.org/", "newest_version": "5.1.0-be", "name": "Tigase"}}, {"pk": 1, "model": "Servers.server", "fields": {"website": "https://jabber.at/", "support_ssl": 1, "domain": "jabber.at", "added": "2011-12-31", "checked": "2011-12-31 13:58:22", "software_version": "2.1.10", "contact_type": "M", "support_plain": 1, "modified": "2011-12-31 06:58:26", "ca_authority": 1, "contact": "chat@conference.jabber.at", "support_tls": 1, "srv_ok": 1, "ssl_port": 5222, "longitude": 16.37, "latitude": 48.2, "contact_name": "chat@conference.jabber.at", "launched": "2010-12-31", "software": 1}}, {"pk": 2, "model": "Servers.server", "fields": {"website": "https://jabber.fsinf.at/", "support_ssl": 1, "domain": "jabber.fsinf.at", "added": "2011-12-31", "checked": "2011-12-31 13:58:29", "software_version": "2.1.10", "contact_type": "M", "support_plain": 1, "modified": "2011-12-31 06:58:31", "ca_authority": 1, "contact": "fsinf@conference.fsinf.at", "support_tls": 1, "srv_ok": 1, "ssl_port": 5222, "longitude": 16.37, "latitude": 48.2, "contact_name": "fsinf@conference.fsinf.at", "launched": "2006-12-31", "software": 1}}]
+[
+    {
+        "pk": 9,
+        "model": "contenttypes.contenttype",
+        "fields": {
+            "model": "certificateauthority",
+            "name": "certificate authority",
+            "app_label": "server"
+        }
+    },
+    {
+        "pk": 15,
+        "model": "contenttypes.contenttype",
+        "fields": {
+            "model": "confirmationkey",
+            "name": "confirmation key",
+            "app_label": "account"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "contenttypes.contenttype",
+        "fields": {
+            "model": "contenttype",
+            "name": "content type",
+            "app_label": "contenttypes"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "contenttypes.contenttype",
+        "fields": {
+            "model": "group",
+            "name": "group",
+            "app_label": "auth"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "contenttypes.contenttype",
+        "fields": {
+            "model": "logentry",
+            "name": "log entry",
+            "app_label": "admin"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "contenttypes.contenttype",
+        "fields": {
+            "model": "message",
+            "name": "message",
+            "app_label": "auth"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "contenttypes.contenttype",
+        "fields": {
+            "model": "permission",
+            "name": "permission",
+            "app_label": "auth"
+        }
+    },
+    {
+        "pk": 13,
+        "model": "contenttypes.contenttype",
+        "fields": {
+            "model": "report",
+            "name": "report",
+            "app_label": "server"
+        }
+    },
+    {
+        "pk": 12,
+        "model": "contenttypes.contenttype",
+        "fields": {
+            "model": "server",
+            "name": "server",
+            "app_label": "server"
+        }
+    },
+    {
+        "pk": 11,
+        "model": "contenttypes.contenttype",
+        "fields": {
+            "model": "serverreport",
+            "name": "server report",
+            "app_label": "server"
+        }
+    },
+    {
+        "pk": 10,
+        "model": "contenttypes.contenttype",
+        "fields": {
+            "model": "serversoftware",
+            "name": "server software",
+            "app_label": "server"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "contenttypes.contenttype",
+        "fields": {
+            "model": "session",
+            "name": "session",
+            "app_label": "sessions"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "contenttypes.contenttype",
+        "fields": {
+            "model": "site",
+            "name": "site",
+            "app_label": "sites"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "contenttypes.contenttype",
+        "fields": {
+            "model": "user",
+            "name": "user",
+            "app_label": "auth"
+        }
+    },
+    {
+        "pk": 14,
+        "model": "contenttypes.contenttype",
+        "fields": {
+            "model": "userprofile",
+            "name": "user profile",
+            "app_label": "account"
+        }
+    },
+    {
+        "pk": 16,
+        "model": "contenttypes.contenttype",
+        "fields": {
+            "model": "worldborders",
+            "name": "world borders",
+            "app_label": "world"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "sites.site",
+        "fields": {
+            "domain": "example.com",
+            "name": "example.com"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "server.certificateauthority",
+        "fields": {
+            "website": "https://www.startssl.com",
+            "name": "StartSSL",
+            "certificate": null
+        }
+    },
+    {
+        "pk": 2,
+        "model": "server.certificateauthority",
+        "fields": {
+            "website": "https://www.cacert.org",
+            "name": "CAcert",
+            "certificate": null
+        }
+    },
+    {
+        "pk": 1,
+        "model": "server.serversoftware",
+        "fields": {
+            "website": "http://www.ejabberd.im",
+            "newest_version": "2.1.10",
+            "name": "ejabberd"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "server.serversoftware",
+        "fields": {
+            "website": "http://www.prosody.im",
+            "newest_version": "0.8.2",
+            "name": "prosody"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "server.server",
+        "fields": {
+            "website": "https://jabber.at",
+            "support_ssl": null,
+            "domain": "jabber.at",
+            "added": "2012-01-02",
+            "verified": 0,
+            "software_version": null,
+            "contact_type": "M",
+            "support_plain": null,
+            "ca": 1,
+            "modified": "2012-01-02 02:07:14",
+            "longitude": 16.367419,
+            "support_tls": null,
+            "contact": "chat@conference.jabber.at",
+            "moderated": 0,
+            "user": 1,
+            "latitude": 48.199936,
+            "ssl_port": 5223,
+            "contact_name": "chat@conference.jabber.at",
+            "launched": "2012-01-02",
+            "software": 1
+        }
+    },
+    {
+        "pk": 2,
+        "model": "server.server",
+        "fields": {
+            "website": "https://jabber.fsinf.at",
+            "support_ssl": null,
+            "domain": "jabber.fsinf.at",
+            "added": "2012-01-02",
+            "verified": 0,
+            "software_version": null,
+            "contact_type": "M",
+            "support_plain": null,
+            "ca": 1,
+            "modified": "2012-01-02 02:07:44",
+            "longitude": 16.367419,
+            "support_tls": null,
+            "contact": "fsinf@conference.fsinf.at",
+            "moderated": 0,
+            "user": 1,
+            "latitude": 48.199936,
+            "ssl_port": 5223,
+            "contact_name": "fsinf@conference.fsinf.at",
+            "launched": "2012-01-02",
+            "software": 1
+        }
+    },
+    {
+        "pk": 1,
+        "model": "account.userprofile",
+        "fields": {
+            "user": 1,
+            "email_confirmed": 1
+        }
+    },
+    {
+        "pk": 43,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "add_confirmationkey",
+            "name": "Can add confirmation key",
+            "content_type": 15
+        }
+    },
+    {
+        "pk": 44,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "change_confirmationkey",
+            "name": "Can change confirmation key",
+            "content_type": 15
+        }
+    },
+    {
+        "pk": 45,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "delete_confirmationkey",
+            "name": "Can delete confirmation key",
+            "content_type": 15
+        }
+    },
+    {
+        "pk": 40,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "add_userprofile",
+            "name": "Can add user profile",
+            "content_type": 14
+        }
+    },
+    {
+        "pk": 41,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "change_userprofile",
+            "name": "Can change user profile",
+            "content_type": 14
+        }
+    },
+    {
+        "pk": 42,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "delete_userprofile",
+            "name": "Can delete user profile",
+            "content_type": 14
+        }
+    },
+    {
+        "pk": 22,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "add_logentry",
+            "name": "Can add log entry",
+            "content_type": 8
+        }
+    },
+    {
+        "pk": 23,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "change_logentry",
+            "name": "Can change log entry",
+            "content_type": 8
+        }
+    },
+    {
+        "pk": 24,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "delete_logentry",
+            "name": "Can delete log entry",
+            "content_type": 8
+        }
+    },
+    {
+        "pk": 4,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "add_group",
+            "name": "Can add group",
+            "content_type": 2
+        }
+    },
+    {
+        "pk": 5,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "change_group",
+            "name": "Can change group",
+            "content_type": 2
+        }
+    },
+    {
+        "pk": 6,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "delete_group",
+            "name": "Can delete group",
+            "content_type": 2
+        }
+    },
+    {
+        "pk": 10,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "add_message",
+            "name": "Can add message",
+            "content_type": 4
+        }
+    },
+    {
+        "pk": 11,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "change_message",
+            "name": "Can change message",
+            "content_type": 4
+        }
+    },
+    {
+        "pk": 12,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "delete_message",
+            "name": "Can delete message",
+            "content_type": 4
+        }
+    },
+    {
+        "pk": 1,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "add_permission",
+            "name": "Can add permission",
+            "content_type": 1
+        }
+    },
+    {
+        "pk": 2,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "change_permission",
+            "name": "Can change permission",
+            "content_type": 1
+        }
+    },
+    {
+        "pk": 3,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "delete_permission",
+            "name": "Can delete permission",
+            "content_type": 1
+        }
+    },
+    {
+        "pk": 7,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "add_user",
+            "name": "Can add user",
+            "content_type": 3
+        }
+    },
+    {
+        "pk": 8,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "change_user",
+            "name": "Can change user",
+            "content_type": 3
+        }
+    },
+    {
+        "pk": 9,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "delete_user",
+            "name": "Can delete user",
+            "content_type": 3
+        }
+    },
+    {
+        "pk": 13,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "add_contenttype",
+            "name": "Can add content type",
+            "content_type": 5
+        }
+    },
+    {
+        "pk": 14,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "change_contenttype",
+            "name": "Can change content type",
+            "content_type": 5
+        }
+    },
+    {
+        "pk": 15,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "delete_contenttype",
+            "name": "Can delete content type",
+            "content_type": 5
+        }
+    },
+    {
+        "pk": 25,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "add_certificateauthority",
+            "name": "Can add certificate authority",
+            "content_type": 9
+        }
+    },
+    {
+        "pk": 26,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "change_certificateauthority",
+            "name": "Can change certificate authority",
+            "content_type": 9
+        }
+    },
+    {
+        "pk": 27,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "delete_certificateauthority",
+            "name": "Can delete certificate authority",
+            "content_type": 9
+        }
+    },
+    {
+        "pk": 37,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "add_report",
+            "name": "Can add report",
+            "content_type": 13
+        }
+    },
+    {
+        "pk": 38,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "change_report",
+            "name": "Can change report",
+            "content_type": 13
+        }
+    },
+    {
+        "pk": 39,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "delete_report",
+            "name": "Can delete report",
+            "content_type": 13
+        }
+    },
+    {
+        "pk": 34,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "add_server",
+            "name": "Can add server",
+            "content_type": 12
+        }
+    },
+    {
+        "pk": 35,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "change_server",
+            "name": "Can change server",
+            "content_type": 12
+        }
+    },
+    {
+        "pk": 36,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "delete_server",
+            "name": "Can delete server",
+            "content_type": 12
+        }
+    },
+    {
+        "pk": 31,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "add_serverreport",
+            "name": "Can add server report",
+            "content_type": 11
+        }
+    },
+    {
+        "pk": 32,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "change_serverreport",
+            "name": "Can change server report",
+            "content_type": 11
+        }
+    },
+    {
+        "pk": 33,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "delete_serverreport",
+            "name": "Can delete server report",
+            "content_type": 11
+        }
+    },
+    {
+        "pk": 28,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "add_serversoftware",
+            "name": "Can add server software",
+            "content_type": 10
+        }
+    },
+    {
+        "pk": 29,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "change_serversoftware",
+            "name": "Can change server software",
+            "content_type": 10
+        }
+    },
+    {
+        "pk": 30,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "delete_serversoftware",
+            "name": "Can delete server software",
+            "content_type": 10
+        }
+    },
+    {
+        "pk": 16,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "add_session",
+            "name": "Can add session",
+            "content_type": 6
+        }
+    },
+    {
+        "pk": 17,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "change_session",
+            "name": "Can change session",
+            "content_type": 6
+        }
+    },
+    {
+        "pk": 18,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "delete_session",
+            "name": "Can delete session",
+            "content_type": 6
+        }
+    },
+    {
+        "pk": 19,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "add_site",
+            "name": "Can add site",
+            "content_type": 7
+        }
+    },
+    {
+        "pk": 20,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "change_site",
+            "name": "Can change site",
+            "content_type": 7
+        }
+    },
+    {
+        "pk": 21,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "delete_site",
+            "name": "Can delete site",
+            "content_type": 7
+        }
+    },
+    {
+        "pk": 46,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "add_worldborders",
+            "name": "Can add world borders",
+            "content_type": 16
+        }
+    },
+    {
+        "pk": 47,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "change_worldborders",
+            "name": "Can change world borders",
+            "content_type": 16
+        }
+    },
+    {
+        "pk": 48,
+        "model": "auth.permission",
+        "fields": {
+            "codename": "delete_worldborders",
+            "name": "Can delete world borders",
+            "content_type": 16
+        }
+    },
+    {
+        "pk": 1,
+        "model": "auth.user",
+        "fields": {
+            "username": "mati",
+            "first_name": "",
+            "last_name": "",
+            "is_active": 1,
+            "is_superuser": 1,
+            "is_staff": 1,
+            "last_login": "2012-01-02 01:59:40",
+            "groups": [],
+            "user_permissions": [],
+            "password": "sha1$fa4d5$c6c93f26bcdb482933e346a491e7f30c68f36008",
+            "email": "",
+            "date_joined": "2012-01-02 01:59:40"
+        }
+    }
+]

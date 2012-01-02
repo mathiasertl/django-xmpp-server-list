@@ -27,15 +27,7 @@ def ajax_id(request, server_id):
             return HttpResponseForbidden("Thou shal only delete your own server!")
         
         server.delete()
-    elif request.method == 'POST':
-        form = ServerForm(request.POST, instance=server)
-        for field in form:
-            if field.name == 'ca_authority':
-                print field.as_text()
-                print field.name
-                print(field.data )
-                print(field.value())
-                
+    elif request.method == 'POST':               
         if form.is_valid():
             if server.user != request.user:
                 return HttpResponseForbidden("Thou shal only edit your own server!")

@@ -6,12 +6,12 @@
         {% include "includes/server_table_cell.html" %}
     {% endwith %}
     <td>
-        <div class="value-display {{ form.ca_authority.html_name}}"
+        <div class="value-display {{ form.ca.html_name}}"
                 {% if form.errors %}style="display: none;" {% endif %}>
-            {{ server.ca_authority.name }}
+            {{ server.ca.name }}
         </div>
         <div class="value-edit" {% if form.errors %}style="display: block;" {% endif %}>
-            {{ form.ca_authority }} {{ form.ca_authority.errors }}
+            {{ form.ca }} {{ form.ca.errors }}
         </div>
     </td>
     {% with field=form.launched %}

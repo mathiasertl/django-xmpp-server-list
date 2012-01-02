@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from models import ConfirmationKey, get_random_key
 from forms import MyUserCreationForm
 
-from xmpplist.Servers.forms import ServerForm
+from xmpplist.server.forms import ServerForm
 
 @login_required
 def index(request):

@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from Servers.models import Server
+from server.models import Server
 from django.shortcuts import render
 
 def home(request):

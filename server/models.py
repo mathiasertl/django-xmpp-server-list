@@ -27,27 +27,31 @@ class ServerSoftware(models.Model):
     def __unicode__(self):
         return self.name
 
+class ServerReport(models.Model):
+    created = models.DateField(auto_now_add=True)
+    srv_client = models.BooleanField(default=False)
+    srv_server = models.BooleanField(default=False)
+
 class Server(models.Model):
-    # who created this service:
+    # basic information:
     user = models.ForeignKey(User, related_name='servers')
+    added = models.DateField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True, auto_now_add=True)
+    launched = models.DateField()
+    longitude = models.FloatField()
+    latitude = models.FloatField()
     
     # information about the service:
     domain = models.CharField(unique=True, max_length=30)
     website = models.URLField()
-    ca_authority = models.ForeignKey(CertificateAuthority, related_name='servers')
+    ca = models.ForeignKey(CertificateAuthority, related_name='servers')
     
-    # meta-information
-    added = models.DateField(auto_now_add=True)
-    checked = models.DateTimeField(null=True, blank=True)
-    modified = models.DateTimeField(auto_now=True, auto_now_add=True)
-    launched = models.DateField()
-    
-    longitude = models.FloatField()
-    latitude = models.FloatField()
+    # verification
+    moderated = models.BooleanField(default=False)
+    verified = models.BooleanField(default=False)
+    report = models.OneToOneField(ServerReport, related_name='server')
     
     # queried information
-    srv_ok = models.NullBooleanField(default=None)
-    
     software = models.ForeignKey(ServerSoftware, related_name='servers', blank=True, null=True)
     software_version = models.CharField(max_length=16, blank=True, null=True)
     
