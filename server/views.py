@@ -1,4 +1,4 @@
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import render
 
@@ -13,6 +13,11 @@ def index(request):
         servers.append((server, form))
         
     return render(request, 'server/index.html', {'servers': servers, 'new_form': ServerForm()})
+
+@permission_required('server.moderate')
+def moderate(request):
+    servers = Server.objects.filter(moderated=False)
+    return render(request, 'server/moderate.html', {'servers': servers})
 
 @login_required
 def ajax(request):
