@@ -33,6 +33,11 @@ class ServerReport(models.Model):
     srv_server = models.BooleanField(default=False)
 
 class Server(models.Model):
+    class Meta:
+        permissions = (
+            ('moderate', 'can moderate servers'),
+        )
+        
     # basic information:
     user = models.ForeignKey(User, related_name='servers')
     added = models.DateField(auto_now_add=True)
