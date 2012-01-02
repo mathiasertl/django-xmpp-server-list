@@ -1,60 +1,18 @@
 {% extends "base.html" %}
-
-{% block javascript %}
-    <script type="text/javascript">
-        var service_url = "{% url servers_ajax %}";
-    </script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/edit-table.js"></script>
-{% endblock %}
+{% load url from future %}
 
 {% block content %}
-<h1>Your ({{ user.username }}) servers</h1>
-<table class="your-servers">
-    <tbody>
-    <tr>
-        <th>Server</th>
-        <th>Domain</th>
-        <th>Certificate Provider</th>
-        <th>Launched</th>
-        <th>Coordinates</th>
-        <th>SSL port</th>
-        <th>Contact</th>
-        <th>name</th>
-        <th>type</th>
-        <th class="no-borders">{% csrf_token %}</th>
-    </tr>
-{% for server, form in servers %}
-    {% include "includes/server_table_row.html" %}
-{% endfor %}
-    <tr class="Add new server">
-        <td>{{ new_form.domain }}</td>
-        <td>{{ new_form.website }}</td>
-        <td>{{ new_form.ca }}<div class="value-error"></div></td>
-        <td>{{ new_form.launched }}</td>
-        <td>{{ new_form.longitude }}/{{ new_form.latitude }}</td>
-        <td>{{ new_form.ssl_port }}</td>
-        <td>{{ new_form.contact }}</td>
-        <td>{{ new_form.contact_name }}</td>
-        <td>{{ new_form.contact_type }}</td>
-        <td class="no-borders">
-            <img class="button-add" src="{{ STATIC_URL }}img/add.png" alt="add new server" title="add new server" />
-        </td>
-    </tr>
-    <tr class="default-row">
-        <td>{{ new_form.domain }}</td>
-        <td>{{ new_form.website }}</td>
-        <td>{{ new_form.ca }}</td>
-        <td>{{ new_form.launched }}</td>
-        <td>{{ new_form.longitude }}/{{ new_form.latitude }}</td>
-        <td>{{ new_form.ssl_port }}</td>
-        <td>{{ new_form.contact }}</td>
-        <td>{{ new_form.contact_name }}</td>
-        <td>{{ new_form.contact_type }}</td>
-        <td class="no-borders">
-            <img class="button-add" src="{{ STATIC_URL }}img/add.png" alt="add new server" title="add new server" />
-        </td>
-    </tr>
-    </tbody>
-</table>
-
+<h1>Welcome {{ user.username }}!</h1>
+{% if not user.profile.email_confirmed %}
+    <div class="warning">
+        Your email address is not yet confirmed. Servers will never be publicly visible unless it
+        is. Please check your Inbox for a confirmation code or resend it. If your email address does
+        not work, you can <a href="{% url "users_edit" %}">change it here</a>.
+    </div>
+{% endif %}
+Here you can:
+<ul>
+    <li><a href="{% url "server" %}">Manage your servers</a></li>
+    <li><a href="{% url "users_edit" %}">Edit your profile</a></li>
+</ul>
 {% endblock %}
