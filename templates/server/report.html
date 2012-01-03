@@ -1,7 +1,7 @@
 <h3>Verification of {{ server.domain }}</h3>
 
 {% if server.verified and server.moderated %}
-    This server is not yet displayed on the front-page.
+    This server is verified working and is displayed on the front-page.
 {% else %}
     {% if not server.verified %}
         <h4>Verification</h4>
