@@ -1,3 +1,4 @@
+{% spaceless %}
 {% if server.contact_type == 'W' %}
 <a href="{{ server.contact }}">{{ server.contact_name }}</a>
 {% else %}
@@ -8,8 +9,9 @@
         {% else %}
             {% if server.contact_type == 'E' %}EMAIL
                 <a href="mailto:{{ server.contact }}">{{ server.contact }}</a>
-            {% else %} ELSE!
+            {% else %}ELSE!
             {% endif %}
         {% endif %}
     {% endif %}
 {% endif %}
+{% endspaceless %}

@@ -12,12 +12,13 @@
 <table class="your-servers">
     <tbody>
     <tr>
+        <th>Status</th>
         <th>Server</th>
         <th>Domain</th>
-        <th>Certificate Provider</th>
+        <th>CA</th>
         <th>SSL port</th>
         <th>Launched</th>
-        <th>Coordinates <span style="font-size: smaller">long/lat</span></th>
+        <th>Coordinates <span style="font-size: smaller">lat/long</span></th>
         <th>Contact</th>
         <th>name</th>
         <th>type</th>
@@ -27,12 +28,13 @@
     {% include "includes/server_table_row.html" %}
 {% endfor %}
     <tr class="new-server">
+        <td></td>
         <td>{{ new_form.domain }}</td>
         <td>{{ new_form.website }}</td>
         <td>{{ new_form.ca }}<div class="value-error"></div></td>
         <td>{{ new_form.ssl_port }}</td>
         <td>{{ new_form.launched }}</td>
-        <td>{{ new_form.longitude }}/{{ new_form.latitude }}</td>
+        <td>{{ new_form.latitude }}/{{ new_form.longitude }}</td>
         <td>{{ new_form.contact }}</td>
         <td>{{ new_form.contact_name }}</td>
         <td>{{ new_form.contact_type }}</td>

@@ -31,6 +31,19 @@ function set_datepicker(row) {
 }
 
 $(document).ready(function() {
+    $("a[rel]").overlay({
+        top: 'relative',
+        left: 'relative',
+        closeOnClick: true,
+        onBeforeLoad: function() {
+            // grab wrapper element inside content
+            var wrap = this.getOverlay().find(".contentWrap");
+
+            // load the page specified in the trigger
+            wrap.load(this.getTrigger().attr("href"));
+        }
+    });
+    
     $("table").on("change", "input,select", function() {
         row = $(this).parent().parent().parent();
         if (!row.hasClass('changed')) {

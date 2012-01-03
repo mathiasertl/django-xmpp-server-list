@@ -21,10 +21,6 @@ table.your-servers {
     width: 100%;
 }
 
-table tr.default-row {
-    display: none;
-}
-
 td, th {
     padding: 4px;
     border-style: solid;
@@ -41,6 +37,7 @@ td.no-borders, th.no-borders {
     border-top-width: 0px;
     border-bottom-style: hidden;
     border-bottom-width: 0px;
+    min-width: 36px;
     text-align: left;
 }
 
@@ -50,6 +47,10 @@ td.no-borders img {
 
 .header .login {
     float: right;
+}
+
+.button-edit, .button-delete {
+    display: inline;
 }
 
 .button-save {
@@ -65,4 +66,46 @@ td.no-borders img {
 
 .value-edit input {
     font-size: smaller;
+    text-align: center;
+}
+
+td.status img {
+    display: inline;
+    vertical-align: middle;
+}
+
+.overlay {
+    /* must be initially hidden */
+    display: none;
+    
+    /* place overlay on top of other elements */
+    z-index: 10000;
+    padding: 5px;
+    padding-right: 50px;
+    text-align: left;
+    
+    /* styling */
+    background-color: white;
+//    background-color: #333;
+
+    max-width: 600px;
+    
+//    width: 675px;
+//    min-height: 200px;
+    border: 1px solid #666;
+    
+    /* CSS3 styling for latest browsers */
+//    -moz-box-shadow:0 0 90px 5px #000;
+//    -webkit-box-shadow: 0 0 90px #000;	
+}
+
+/* close button positioned on upper right corner */
+.overlay .close {
+	background-image: url(../img/close.png);
+	position:absolute;
+	right:-15px;
+	top:-15px;
+	cursor:pointer;
+	height:35px;
+	width:35px;
 }
