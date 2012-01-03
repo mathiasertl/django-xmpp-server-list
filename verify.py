@@ -13,5 +13,5 @@ from server.models import Server, ServerReport, ServerSoftware, CertificateAutho
 #ServerReport.objects.all().delete()
 #sys.exit()
 
-for server in Server.objects.filter(verified=None):
+for server in Server.objects.all():
     server.verify()
