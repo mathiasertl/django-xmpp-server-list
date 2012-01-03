@@ -13,13 +13,13 @@
         this blogpost</a> on how to get them right.
     </li>
     {% endif %}
-    {% if report.client_online %}
+    {% if report.client_offline %}
     <li>
         Non of the hosts referred to by your xmpp-client SRV records worked. Either your SRV records
         are not correct or your server was temporarily unavailable.
     </li>
     {% endif %}
-    {% if report.server_online %}
+    {% if report.server_offline %}
     <li>
         Non of the hosts referred to by your xmpp-server SRV records worked. Either your SRV records
         are not correct or your server was temporarily unavailable.
