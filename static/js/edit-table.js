@@ -39,8 +39,7 @@ $(document).ready(function() {
     });
     
     $("table").on("click", ".button-edit", function() {
-        switch_buttons($(this).parent());
-        switch_values($(this).parent().parent());
+        edit_service($(this).parent());
     });
     
     $("table").on("click", ".button-delete", function() {
@@ -69,14 +68,12 @@ $(document).ready(function() {
                 set_datepicker(new_row);
             })
         } else {
-            switch_buttons(cell);
-            switch_values(row);
+            edit_service(cell);
         }
     });
     
     $("table").on("click", ".button-cancel", function() {
-        switch_buttons($(this).parent());
-        switch_values($(this).parent().parent());
+        edit_service($(this).parent());
     });
     
     $(".button-add").click(function() {
