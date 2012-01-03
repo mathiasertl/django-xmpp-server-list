@@ -17,11 +17,6 @@
             </div>
             
         {% endif %}
-        {% if form.instance.moderated %}
-            <img src="{{ STATIC_URL }}img/save.png" alt="verified" title="verified" />
-        {% else %}
-            <img src="{{ STATIC_URL }}img/alert.png" alt="verified" title="verified" />
-        {% endif %}
     </td>
     {% with field=form.domain %}
         {% include "includes/server_table_cell.html" %}
