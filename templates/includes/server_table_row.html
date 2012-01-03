@@ -10,20 +10,20 @@
     {% with field=form.ca %}
         {% include "includes/server_table_cell.html" %}
     {% endwith %}
+    {% with field=form.ssl_port %}
+        {% include "includes/server_table_cell.html" %}
+    {% endwith %}
     {% with field=form.launched %}
         {% include "includes/server_table_cell.html" %}
     {% endwith %}
     <td class="multivalue">
         <div class="value-display" {% if form.errors %}style="display: none;" {% endif %}>
-            <span class="{{ form.longitude.html_name }}">{{ form.longitude.value }}</span>/<span class="{{ form.latitude.html_name }}">{{ form.latitude.value }}</span>
+            <span class="{{ form.latitude.html_name }}">{{ form.latitude.value }}</span>/<span class="{{ form.longitude.html_name }}">{{ form.longitude.value }}</span>
         </div>
         <div class="value-edit" {% if form.errors %}style="display: block;" {% endif %}>
-            {{ form.longitude }}/{{ form.latitude}}
+            {{ form.latitude }}/{{ form.longitude}}
         </div>
     </td>
-    {% with field=form.ssl_port %}
-        {% include "includes/server_table_cell.html" %}
-    {% endwith %}
     {% with field=form.contact %}
         {% include "includes/server_table_cell.html" %}
     {% endwith %}
