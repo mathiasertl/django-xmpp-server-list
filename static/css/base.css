@@ -109,3 +109,7 @@ td.status img {
 	height:35px;
 	width:35px;
 }
+
+.ui-widget {
+    font-size: smaller;
+}
