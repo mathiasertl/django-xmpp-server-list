@@ -138,41 +138,71 @@ class Server(models.Model):
         except Exception as e:
                 print( "Open, but SSL negotiation failed." )
 
+    def verify_srv_client(self):
+        """
+        Verify xmpp-client SRV records.
+        """
+        hosts = self.srv_lookup('xmpp-client')
+        if not hosts:
+            self.report.srv_client = True
+        return hosts
+            
+    def verify_srv_server(self):
+        """
+        Verify xmpp-server SRV records.
+        """
+        hosts = self.srv_lookup('xmpp-server')
+        if not hosts:
+            self.report.srv_server = True
+        return hosts
+            
+    def verify_client_online(self, hosts):
+        """
+        Verify that at least one of the hosts referred to by the xmpp-client SRV records is
+        currently online.
+        """
+        if self.report.srv_client:
+            return
+        
+        self.report.client_offline = True
+        for host in hosts:
+            if self.check_host(host[0], host[1]):
+                self.report.client_offline = False
+                break
+            
+    def verify_server_online(self, hosts):
+        """
+        Verify that at least one of the hosts referred to by the xmpp-server SRV records is
+        currently online.
+        """
+        if self.report.srv_server:
+            return
+        
+        self.report.server_offline = True
+        for host in hosts:
+            if self.check_host(host[0], host[1]):
+                self.report.server_offline = False
+                break
+
     def verify(self):
-        report = ServerReport()
+        # remove old report, add new one:
+        old_report = self.report
+        self.report = ServerReport.objects.create()
+        old_report.delete()
         
-        # do SRV lookups
-        client_hosts = self.srv_lookup('xmpp-client')
-        if not client_hosts:
-            report.srv_client = True
-        server_hosts = self.srv_lookup('xmpp-server')
-        if not server_hosts:
-            report.srv_server = True
+        # perform various checks:
+        client_hosts = self.verify_srv_client()
+        server_hosts = self.verify_srv_server()
+        self.verify_client_online(client_hosts)
+        self.verify_server_online(server_hosts)
         
-        report.client_offline = True
-        for host in client_hosts:
-            if self.check_host(host[0], host[1]):
-                report.client_offline = False
-                break
-        
-        report.server_offline = True
-        for host in server_hosts:
-            if self.check_host(host[0], host[1]):
-                report.server_offline = False
-                break
-        
-        # udpate this instance:
-        if report.has_problems():
+        # save server and its report:
+        if self.report.has_problems():
             self.verified = False
         else:
             self.verified = True
-        report.save()
-        old_report = self.report
-        self.report = report
+        self.report.save()
         self.save()
-        old_report.delete()
-            
-        return report
     
     def get_country(self):
         p = Point(self.longitude, self.latitude)
