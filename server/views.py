@@ -47,7 +47,7 @@ def ajax_id(request, server_id):
             if server.user != request.user:
                 return HttpResponseForbidden("Thou shal only edit your own server!")
             form.save()
-            form = ServerForm(instance=server)
+            form = ServerForm(instance=server, prefix=server.id)
         
         return render(request, 'ajax/server_table_row.html', {'server': server, 'form': form})
         

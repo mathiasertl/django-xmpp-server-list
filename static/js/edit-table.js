@@ -43,6 +43,13 @@ function edit_service(cell) {
     switch_values(cell.parent());
 }
 
+function set_datepicker(row) {
+    id = get_service_id($(row));
+    row.find('#id_' + id + '-launched').datepicker({
+        dateFormat: "yy-mm-dd", maxDate: "+0D", showButtonPanel: true
+    }); 
+}
+
 $(document).ready(function() {
     $("table").on("change", "input,select", function() {
         row = $(this).parent().parent().parent();
@@ -76,21 +83,11 @@ $(document).ready(function() {
         
         if (row.hasClass('changed')) {
             $.post(get_service_url(row), form_fields.serialize(), function(data) {
-                row.replaceWith(data);
+                new_row = $(data);
+                
+                row.replaceWith(new_row);
+                set_datepicker(new_row);
             })
-/*
-                .error(function(dataTypeExpression) {
-                    row.find('.value-error').hide();
-                    alert(data);
-                    //TODO: display new errors
-                })
-                .success(function() {
-                    row.find('.value-error').hide();
-                    switch_buttons(cell);
-                    switch_values(row);
-                    update_values(row);
-                });
-*/
         } else {
             switch_buttons(cell);
             switch_values(row);
@@ -107,7 +104,8 @@ $(document).ready(function() {
         row = cell.parent()
         header_fields = row.parent().find('th.no-borders').find('input');
         form_fields = row.find('input,select').add(header_fields);
-        $.post(service_url, form_fields.serialize(), function(data, textStatus, jqXHR) {
+    
+        $.post(service_url, form_fields.serialize(), function(data, textStatus, jqXHR) {        
             new_row = $(data);
             
             // append new row:
@@ -118,10 +116,9 @@ $(document).ready(function() {
             new_row.find('#id_' + new_id + '-launched').datepicker({
                 dateFormat: "yy-mm-dd", maxDate: "+1D", showButtonPanel: true
             }); 
-            
-            
+                
             // clear add-row
-            row.html(row.next().html());
+            row.find("input").val('');
         }).error(function() {
             alert('error');
         })
@@ -129,10 +126,9 @@ $(document).ready(function() {
     
     // datepicker:
     $('.your-servers tr[id^="server"]').each(function(index, row){
-        row = $(row);
-        id = get_service_id($(row));
-        row.find('#id_' + id + '-launched').datepicker({
-            dateFormat: "yy-mm-dd", maxDate: "+1D", showButtonPanel: true
-        }); 
+        set_datepicker($(row));
+    });
+    $('#id_launched').datepicker({
+        dateFormat: "yy-mm-dd", maxDate: "+1D", showButtonPanel: true
     });
 });
