@@ -1,3 +1,5 @@
+{% load fieldvalue %}
+
 <tr id="server_{{ form.instance.id }}">
     {% with field=form.domain %}
         {% include "includes/server_table_cell.html" %}
@@ -5,24 +7,12 @@
     {% with field=form.website %}
         {% include "includes/server_table_cell.html" %}
     {% endwith %}
-    <td>
-        <div class="value-display"
-                {% if form.errors %}style="display: none;" {% endif %}>
-            {{ form.instance.ca.name }}
-        </div>
-        <div class="value-edit" {% if form.errors %}style="display: block;" {% endif %}>
-            {{ form.ca }} {{ form.ca.errors }}
-        </div>
-    </td>
-    <td>
-        <div class="value-display"
-                {% if form.errors %}style="display: none;" {% endif %}>
-            {{ form.launched.value|date:"Y-m-d" }}
-        </div>
-        <div class="value-edit" {% if form.errors %}style="display: block;" {% endif %}>
-            {{ form.launched }}{{ form.launched.errors }}
-        </div>
-    </td>
+    {% with field=form.ca %}
+        {% include "includes/server_table_cell.html" %}
+    {% endwith %}
+    {% with field=form.launched %}
+        {% include "includes/server_table_cell.html" %}
+    {% endwith %}
     <td class="multivalue">
         <div class="value-display" {% if form.errors %}style="display: none;" {% endif %}>
             <span class="{{ form.longitude.html_name }}">{{ form.longitude.value }}</span>/<span class="{{ form.latitude.html_name }}">{{ form.latitude.value }}</span>
@@ -40,15 +30,9 @@
     {% with field=form.contact_name %}
         {% include "includes/server_table_cell.html" %}
     {% endwith %}
-    <td>
-        <div class="value-display"
-                {% if form.errors %}style="display: none;" {% endif %}>
-            {{ form.instance.get_contact_type_display }}
-        </div>
-        <div class="value-edit" {% if form.errors %}style="display: block;" {% endif %}>
-            {{ form.contact_type }}
-        </div>
-    </td>
+    {% with field=form.contact_type %}
+        {% include "includes/server_table_cell.html" %}
+    {% endwith %}
     <td class="no-borders">
         <img class="button-edit"   src="{{ STATIC_URL }}img/edit.png" alt="edit" title="edit"
             {% if form.errors %}style="display: none;" {% endif %} />

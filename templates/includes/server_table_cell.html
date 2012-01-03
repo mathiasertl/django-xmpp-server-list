@@ -1,7 +1,8 @@
+{% load fieldvalue %}
 <td>
     <div class="value-display"
             {% if form.errors %}style="display: none;" {% endif %}>
-        {{ field.value }}
+        {{ field|fieldvalue }}
     </div>
     <div class="value-edit" {% if form.errors %}style="display: block;" {% endif %}>
         {{ field }}{{ field.errors }}
