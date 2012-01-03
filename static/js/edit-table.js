@@ -10,26 +10,6 @@ function switch_values(row) {
     row.find('.value-edit').toggle()
 }
 
-function update_values(row) {
-    row.find('td').each(function(index) {
-        td = $(this);
-        $(this).find('input').each(function(index) {
-            value = $(this).val();
-            name = $(this).attr('name');
-            if (td.hasClass('multivalue')) {
-                td.find('.value-display .' + name).html(value);
-            } else {
-                td.find('.value-display.' + name).html(value);
-            }
-        });
-        $(this).find('select').each(function(index) {
-            value = $(this).find('option:selected').text();
-            name = $(this).attr('name');
-            td.find('.value-display.' + name).html(value);
-        });
-    });
-}
-
 function get_service_id(row) {
     return row.attr('id').split('_')[1];
 }
@@ -107,18 +87,9 @@ $(document).ready(function() {
     
         $.post(service_url, form_fields.serialize(), function(data, textStatus, jqXHR) {        
             new_row = $(data);
-            
-            // append new row:
-            row.before(new_row);
-            
-            // set datepicker:
-            new_id = get_service_id(new_row);
-            new_row.find('#id_' + new_id + '-launched').datepicker({
-                dateFormat: "yy-mm-dd", maxDate: "+1D", showButtonPanel: true
-            }); 
-                
-            // clear add-row
-            row.find("input").val('');
+            row.before(new_row); // append new row above
+            set_datepicker(new_row); // set datepicker
+            row.find("input").val(''); // clear input values of this row
         }).error(function() {
             alert('error');
         })
