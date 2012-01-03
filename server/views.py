@@ -17,6 +17,14 @@ def moderate(request):
     return render(request, 'server/moderate.html', {'servers': servers})
 
 @login_required
+def report(request, server_id):
+    server = Server.objects.get(id=server_id)
+    if server.user != request.user:
+        return HttpResponseForbidden("Thou shal only view reports of your own servers!")
+        
+    return render(request, 'server/report.html', {'server': server})
+
+@login_required
 def ajax(request):
     if request.method == 'POST':
         form = ServerForm(request.POST)

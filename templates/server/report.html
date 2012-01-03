@@ -1,0 +1,38 @@
+<h3>Verification of {{ server.domain }}</h3>
+
+{% if server.verified and server.moderated %}
+    This server has been verified and is displayed on the front page.
+{% else %}
+    {% if not server.verified %}
+        <h4>Verification</h4>
+        {% if server.verified == None %}
+            The formal aspects (SRV records, CA, ...) have not yet been verified. Formal aspects
+            are verified once per day. This means that either
+            <ul>
+                <li>you just added this server.</li>
+                <li>you just changed formal aspects of this server.</li>
+            </ul>
+            In either case, just wait a few hours until the server has been verified.
+        {% else %}
+            Some formal aspects of this server do not seem right.
+        {% endif %}
+    {% endif %}
+    
+    {% if not server.moderated %}
+        <h4>Moderation</h4>
+        {% if server.moderated == None %}
+            This server has not yet been moderated, you will have to wait until somebody has the
+            time to do so. This happens when you either just added this server or modified the
+            homepage or contact details.
+        {% else %}
+            This server was moderated, but rejected by a moderator. This means that either the
+            homepage is not correct or the contact details could not be verified. Please check:
+            <ul>
+                <li>Your homepage, {% include "includes/server_homepage.html" %}</li>
+                <li>Your contact details, {% include "includes/server_contact.html" %}</li>
+            </ul>
+            Once you corrected any mistakes, this server will be automatically but back in the
+            moderation queue.
+        {% endif %}
+    {% endif %}
+{% endif %}
