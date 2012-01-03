@@ -30,19 +30,21 @@ function set_datepicker(row) {
     }); 
 }
 
-$(document).ready(function() {
-    $("a[rel]").overlay({
-        top: 'relative',
-        left: 'relative',
-        closeOnClick: true,
-        onBeforeLoad: function() {
-            // grab wrapper element inside content
-            var wrap = this.getOverlay().find(".contentWrap");
+var overlay_params = {
+    top: 'relative',
+    left: 'relative',
+    closeOnClick: true,
+    onBeforeLoad: function() {
+        // grab wrapper element inside content
+        var wrap = this.getOverlay().find(".contentWrap");
 
-            // load the page specified in the trigger
-            wrap.load(this.getTrigger().attr("href"));
-        }
-    });
+        // load the page specified in the trigger
+        wrap.load(this.getTrigger().attr("href"));
+    }
+}
+
+$(document).ready(function() {
+    $("a[rel]").overlay(overlay_params);
     
     $("table").on("change", "input,select", function() {
         row = $(this).parent().parent().parent();
@@ -79,6 +81,7 @@ $(document).ready(function() {
                 
                 row.replaceWith(new_row);
                 set_datepicker(new_row);
+                new_row.find("a[rel]").overlay(overlay_params);
             })
         } else {
             edit_service(cell);
@@ -95,10 +98,12 @@ $(document).ready(function() {
         header_fields = row.parent().find('th.no-borders').find('input');
         form_fields = row.find('input,select').add(header_fields);
     
-        $.post(service_url, form_fields.serialize(), function(data, textStatus, jqXHR) {        
+        $.post(service_url, form_fields.serialize(), function(data) {        
             new_row = $(data);
             row.before(new_row); // append new row above
             set_datepicker(new_row); // set datepicker
+            new_row.find("a[rel]").overlay(overlay_params);
+            
             row.find("input").val(''); // clear input values of this row
         }).error(function() {
             alert('error');
