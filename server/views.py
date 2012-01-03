@@ -7,12 +7,9 @@ from forms import ServerForm
 
 @login_required
 def index(request):
-    servers = []
-    for server in request.user.servers.all():
-        form = ServerForm(instance=server, prefix=server.id)
-        servers.append((server, form))
+    forms = [ServerForm(instance=s, prefix=s.id) for s in request.user.servers.all()]
         
-    return render(request, 'server/index.html', {'servers': servers, 'new_form': ServerForm()})
+    return render(request, 'server/index.html', {'forms': forms, 'new_form': ServerForm()})
 
 @permission_required('server.moderate')
 def moderate(request):
@@ -29,7 +26,7 @@ def ajax(request):
             server.save()
             
             form = ServerForm(instance=server, prefix=server.id)
-            return render(request, 'ajax/server_table_row.html', {'server': server, 'form': form})
+            return render(request, 'ajax/server_table_row.html', {'form': form})
             
         return HttpResponse(status=400)
 
@@ -49,7 +46,7 @@ def ajax_id(request, server_id):
             form.save()
             form = ServerForm(instance=server, prefix=server.id)
         
-        return render(request, 'ajax/server_table_row.html', {'server': server, 'form': form})
+        return render(request, 'ajax/server_table_row.html', {'form': form})
         
     return HttpResponse('ok.')
     

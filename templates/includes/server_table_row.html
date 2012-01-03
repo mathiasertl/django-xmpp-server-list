@@ -1,4 +1,4 @@
-<tr id="server_{{ server.id }}">
+<tr id="server_{{ form.instance.id }}">
     {% with field=form.domain %}
         {% include "includes/server_table_cell.html" %}
     {% endwith %}
@@ -6,16 +6,16 @@
         {% include "includes/server_table_cell.html" %}
     {% endwith %}
     <td>
-        <div class="value-display {{ form.ca.html_name}}"
+        <div class="value-display"
                 {% if form.errors %}style="display: none;" {% endif %}>
-            {{ server.ca.name }}
+            {{ form.instance.ca.name }}
         </div>
         <div class="value-edit" {% if form.errors %}style="display: block;" {% endif %}>
             {{ form.ca }} {{ form.ca.errors }}
         </div>
     </td>
     <td>
-        <div class="value-display {{ form.launched.html_name }}"
+        <div class="value-display"
                 {% if form.errors %}style="display: none;" {% endif %}>
             {{ form.launched.value|date:"Y-m-d" }}
         </div>
@@ -25,7 +25,7 @@
     </td>
     <td class="multivalue">
         <div class="value-display" {% if form.errors %}style="display: none;" {% endif %}>
-            <span class="{{ form.longitude.html_name }}">{{ server.longitude }}</span>/<span class="{{ form.latitude.html_name }}">{{ server.latitude }}</span>
+            <span class="{{ form.longitude.html_name }}">{{ form.longitude.value }}</span>/<span class="{{ form.latitude.html_name }}">{{ form.latitude.value }}</span>
         </div>
         <div class="value-edit" {% if form.errors %}style="display: block;" {% endif %}>
             {{ form.longitude }}/{{ form.latitude}}
@@ -41,9 +41,9 @@
         {% include "includes/server_table_cell.html" %}
     {% endwith %}
     <td>
-        <div class="value-display {{ form.contact_type.html_name }}"
+        <div class="value-display"
                 {% if form.errors %}style="display: none;" {% endif %}>
-            {{ server.get_contact_type_display }}
+            {{ form.instance.get_contact_type_display }}
         </div>
         <div class="value-edit" {% if form.errors %}style="display: block;" {% endif %}>
             {{ form.contact_type }}
