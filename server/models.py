@@ -28,21 +28,25 @@ class ServerSoftware(models.Model):
         return self.name
 
 class ServerReport(models.Model):
+    """
+    Server problem report. If a field is true, it means that the given problem exists.
+    """
     created = models.DateField(auto_now_add=True)
     srv_client = models.BooleanField(default=False)
     srv_server = models.BooleanField(default=False)
     
-    client_online = models.BooleanField(default=True)
-    server_online = models.BooleanField(default=True)
+    client_offline = models.BooleanField(default=False)
+    server_offline = models.BooleanField(default=False)
     
     def has_problems(self):
-        return self.srv_client or self.srv_server or self.client_online or self.server_online
+        return self.srv_client or self.srv_server \
+            or self.client_offline or self.server_offline
     
     def __unicode__(self):
         condition = 'ok'
         if self.has_problems():
             condition = 'has problems'
-        return 'Report on %s: %s' % (self.server.domain, condition)
+        return 'Report on %s: %s' % ('domain', condition)
 
 class Server(models.Model):
     class Meta:
@@ -66,7 +70,7 @@ class Server(models.Model):
     # verification
     moderated = models.NullBooleanField(default=None)
     verified = models.NullBooleanField(default=None)
-    report = models.OneToOneField(ServerReport, related_name='server', null=True, blank=True)
+    report = models.OneToOneField(ServerReport, related_name='server')
     
     # queried information
     software = models.ForeignKey(ServerSoftware, related_name='servers', blank=True, null=True)
@@ -136,7 +140,6 @@ class Server(models.Model):
 
     def verify(self):
         report = ServerReport()
-        report.server = self
         
         # do SRV lookups
         client_hosts = self.srv_lookup('xmpp-client')
@@ -146,15 +149,28 @@ class Server(models.Model):
         if not server_hosts:
             report.srv_server = True
         
+        report.client_offline = True
         for host in client_hosts:
             if self.check_host(host[0], host[1]):
-                report.client_online = False
+                report.client_offline = False
                 break
-            
+        
+        report.server_offline = True
         for host in server_hosts:
             if self.check_host(host[0], host[1]):
-                report.server_online = False
+                report.server_offline = False
                 break
+        
+        # udpate this instance:
+        if report.has_problems():
+            self.verified = False
+        else:
+            self.verified = True
+        report.save()
+        old_report = self.report
+        self.report = report
+        self.save()
+        old_report.delete()
             
         return report
     

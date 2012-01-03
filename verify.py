@@ -8,7 +8,10 @@ sys.path.append( os.path.dirname(os.getcwd()) )
 
 from django.contrib.auth.models import User
 from account.models import UserProfile
-from server.models import Server, ServerSoftware, CertificateAuthority
+from server.models import Server, ServerReport, ServerSoftware, CertificateAuthority
+
+#ServerReport.objects.all().delete()
+#sys.exit()
 
 for server in Server.objects.filter(verified=None):
-    print(server.verify())
+    server.verify()

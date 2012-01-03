@@ -14,7 +14,10 @@
             </ul>
             In either case, just wait a few hours until the server has been verified.
         {% else %}
-            Some formal aspects of this server do not seem right.
+            Some aspects of this server do not seem right. Please correct them:
+            {% with report=server.report %}
+                {% include "includes/verification_report.html" %}
+            {% endwith %}
         {% endif %}
     {% endif %}
     
