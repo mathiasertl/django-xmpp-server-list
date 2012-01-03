@@ -3,20 +3,18 @@
 
 <tr id="server_{{ form.instance.id }}">
     <td class="status">
-        {% if form.instance.verified  and form.instance.moderated %}
+        <a href="{% url "server_report" server_id=form.instance.id %}" rel="#verification_{{ form.instance.id }}" style="text-decoration:none">
+            {% if form.instance.verified  and form.instance.moderated %}
             <img src="{{ STATIC_URL }}img/save.png" alt="verified" title="verified" />
-        {% else %}
-            <a href="{% url "server_report" server_id=form.instance.id %}" rel="#verification_{{ form.instance.id }}" style="text-decoration:none">
-                <img src="{{ STATIC_URL }}img/alert.png"
-                 alt="Not verified, click to see details."
-                 title="Not verified, click to see details." />
-            </a>
-            
-            <div class="overlay" id="verification_{{ form.instance.id }}">
-                <div class="contentWrap"></div>
-            </div>
-            
-        {% endif %}
+            {% else %}
+            <img src="{{ STATIC_URL }}img/alert.png"
+                alt="Not verified, click to see details."
+                title="Not verified, click to see details." />    
+            {% endif %}
+        </a>
+        <div class="overlay" id="verification_{{ form.instance.id }}">
+            <div class="contentWrap"></div>
+        </div>
     </td>
     {% with field=form.domain %}
         {% include "includes/server_table_cell.html" %}
