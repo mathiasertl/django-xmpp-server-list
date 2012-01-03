@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import render
 
-from models import Server
+from models import Server, ServerReport
 from forms import ServerForm
 
 @login_required
@@ -31,6 +31,7 @@ def ajax(request):
         if form.is_valid():
             server = form.save(commit=False)
             server.user = request.user
+            server.report = ServerReport.objects.create()
             server.save()
             
             form = ServerForm(instance=server, prefix=server.id)
