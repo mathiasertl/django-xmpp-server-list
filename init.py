@@ -8,7 +8,7 @@ sys.path.append( os.path.dirname(os.getcwd()) )
 
 from django.contrib.auth.models import User
 from account.models import UserProfile
-from server.models import Server, ServerSoftware, CertificateAuthority, ServerReport
+from server.models import Server, ServerSoftware, CertificateAuthority, ServerReport, Features
 
 u = User.objects.create(username='mati', email='mati@er.tl', is_superuser=True, is_staff=True)
 u.set_password('nopass')
@@ -23,15 +23,17 @@ ejabberd = ServerSoftware.objects.create(name='ejabberd', website='http://www.ej
 prosody = ServerSoftware.objects.create(name='prosody', website='http://www.prosody.im',
                                          newest_version='0.8.2')
 
-report = ServerReport.objects.create()
-Server.objects.create(user=u, ca=startssl, software=ejabberd, report=report,
+Server.objects.create(user=u, ca=startssl, software=ejabberd, 
+    report=ServerReport.objects.create(),
+    features=Features.objects.create(),
     domain='jabber.at', website='https://jabber.at',
     longitude=16.367419, latitude=48.199936,
     launched=datetime.date.today(), software_version='2.1.10',
     contact='chat@conference.jabber.at', contact_name='chat@conference.jabber.at', contact_type='M'
 )
-report = ServerReport.objects.create()
-Server.objects.create(user=u, ca=startssl, software=ejabberd, report=report,
+Server.objects.create(user=u, ca=startssl, software=ejabberd,
+    report=ServerReport.objects.create(),
+    features=Features.objects.create(),
     domain='jabber.fsinf.at', website='https://jabber.fsinf.at',
     longitude=16.367419, latitude=48.199936,
     launched=datetime.date.today(), software_version='2.1.10',

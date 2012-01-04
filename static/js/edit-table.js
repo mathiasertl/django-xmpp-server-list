@@ -51,11 +51,11 @@ add_wkt = function(event) {
     alert(point.x + ', ' + point.y);
     
     var lonlat = point.transform(map.getProjectionObject(), new OpenLayers.Projection("EPSG:4326"));
-    alert(lonlat.lon + ", " + lonlat.lat);
+    alert(lonlat.x + ", " + lonlat.y);
 }
 
 $(document).ready(function() {
-    map_1_location.layers.vector.events.on({'featureadded': add_wkt, scope: map_1_location});
+//    map_1_location.layers.vector.events.on({'featureadded': add_wkt, scope: map_1_location});
 /*    $(".olMap").click(function() {
         loc = map_1_location;
         map = loc.map;

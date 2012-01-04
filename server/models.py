@@ -2,7 +2,8 @@ import socket
 
 import dns.resolver
 
-from django.db import models
+#from django.db import models
+from django.contrib.gis.db import models
 from django.conf import settings
 
 from django.contrib.auth.models import User
@@ -32,21 +33,39 @@ class ServerReport(models.Model):
     Server problem report. If a field is true, it means that the given problem exists.
     """
     created = models.DateField(auto_now_add=True)
-    srv_client = models.BooleanField(default=False)
-    srv_server = models.BooleanField(default=False)
     
-    client_offline = models.BooleanField(default=False)
-    server_offline = models.BooleanField(default=False)
+    srv_client = models.BooleanField(default=True)
+    srv_server = models.BooleanField(default=True)
+    
+    client_online = models.BooleanField(default=True)
+    server_online = models.BooleanField(default=True)
+    
+    ssl_cert = models.BooleanField(default=True)
+    tls_cert = models.BooleanField(default=True)
+    
+    def is_ok(self):
+        return self.srv_client and self.srv_server and self.client_online and self.server_online \
+            and self.ssl_cert and self.tls_cert
     
     def has_problems(self):
-        return self.srv_client or self.srv_server \
-            or self.client_offline or self.server_offline
+        return not self.is_ok()
     
     def __unicode__(self):
         condition = 'ok'
         if self.has_problems():
             condition = 'has problems'
         return 'Report on %s: %s' % ('domain', condition)
+
+class Features(models.Model):
+    has_ipv6 = models.BooleanField(default=False)
+    has_muc = models.BooleanField(default=False)
+    has_irc = models.BooleanField(default=False)
+    has_vcard = models.BooleanField(default=False)
+    has_pep = models.BooleanField(default=False)
+    has_proxy = models.BooleanField(default=False)
+    has_webpresence = models.BooleanField(default=False)
+
+from django.contrib.gis.geos import Point
 
 class Server(models.Model):
     class Meta:
@@ -80,6 +99,11 @@ class Server(models.Model):
     support_ssl = models.NullBooleanField(default=None)
     ssl_port = models.PositiveIntegerField(default=5223, blank=True, null=True)
     support_tls = models.NullBooleanField(default=None)
+    
+    features = models.OneToOneField(Features, related_name='server')
+    
+    location = models.PointField(default=Point(0,0))
+    objects = models.GeoManager()
     
     # contact information
     CONTACT_TYPE_CHOICES=(
@@ -144,7 +168,7 @@ class Server(models.Model):
         """
         hosts = self.srv_lookup('xmpp-client')
         if not hosts:
-            self.report.srv_client = True
+            self.report.srv_client = False
         return hosts
             
     def verify_srv_server(self):
@@ -153,7 +177,7 @@ class Server(models.Model):
         """
         hosts = self.srv_lookup('xmpp-server')
         if not hosts:
-            self.report.srv_server = True
+            self.report.srv_server = False
         return hosts
             
     def verify_client_online(self, hosts):
@@ -164,10 +188,10 @@ class Server(models.Model):
         if self.report.srv_client:
             return
         
-        self.report.client_offline = True
+        self.report.client_online = False
         for host in hosts:
             if self.check_host(host[0], host[1]):
-                self.report.client_offline = False
+                self.report.client_online = True
                 break
             
     def verify_server_online(self, hosts):
@@ -178,10 +202,10 @@ class Server(models.Model):
         if self.report.srv_server:
             return
         
-        self.report.server_offline = True
+        self.report.server_online = False
         for host in hosts:
             if self.check_host(host[0], host[1]):
-                self.report.server_offline = False
+                self.report.server_online = True
                 break
 
     def verify(self):

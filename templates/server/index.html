@@ -4,7 +4,11 @@
     <script type="text/javascript">
         var service_url = "{% url servers_ajax %}";
     </script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/lib/OpenLayers-2.11/OpenLayers.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}floppyforms/js/MapWidget.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/edit-table.js"></script>
+    
+    {{ forms.0.media }}
 {% endblock %}
 
 {% block content %}
@@ -18,7 +22,7 @@
         <th>CA</th>
         <th>SSL port</th>
         <th>Launched</th>
-        <th>Coordinates <span style="font-size: smaller">lat/long</span></th>
+        <th>Location</th>
         <th>Contact</th>
         <th>name</th>
         <th>type</th>

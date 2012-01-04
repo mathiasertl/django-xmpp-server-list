@@ -2,13 +2,15 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import render
 
-from models import Server, ServerReport
+from models import Server, ServerReport, Features
 from forms import ServerForm
 
 @login_required
 def index(request):
-    forms = [ServerForm(instance=s, prefix=s.id) for s in request.user.servers.all()]
-        
+    forms = [ServerForm(instance=s, prefix=s.id,
+                        initial={'location': '%s,%s' % (s.location.x, s.location.y)})
+        for s in request.user.servers.all() ]
+    print dir(forms[0]['location'].value)
     return render(request, 'server/index.html', {'forms': forms, 'new_form': ServerForm()})
 
 @permission_required('server.moderate')
@@ -32,9 +34,11 @@ def ajax(request):
             server = form.save(commit=False)
             server.user = request.user
             server.report = ServerReport.objects.create()
+            server.features = Features.objects.create()
             server.save()
             
-            form = ServerForm(instance=server, prefix=server.id)
+            form = ServerForm(instance=server, prefix=server.id,
+                              initial={'location': '%s,%s' % (server.location.x, server.location.y)})
             return render(request, 'ajax/server_table_row.html', {'form': form})
             
         return HttpResponse(status=400)
@@ -53,11 +57,20 @@ def ajax_id(request, server_id):
             if server.user != request.user:
                 return HttpResponseForbidden("Thou shal only edit your own server!")
             form.save()
-            form = ServerForm(instance=server, prefix=server.id)
+            form = ServerForm(instance=server, prefix=server.id,
+                              initial={'location': '%s,%s' % (server.location.x, server.location.y)})
         
         return render(request, 'ajax/server_table_row.html', {'form': form})
         
     return HttpResponse('ok.')
+    
+def test(request):
+    print(request.POST)
+    server = Server.objects.get(id=1)
+    form = ServerForm(request.POST, instance=server, prefix=1)
+    print(form)
+    form.save()
+    return HttpResponse('ok')
     
 @permission_required('server.moderate')
 def ajax_moderate(request):

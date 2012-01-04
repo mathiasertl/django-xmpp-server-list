@@ -126,6 +126,7 @@ INSTALLED_APPS = (
     # gis
     'django.contrib.gis',
     'world',
+    'floppyforms',
 )
 
 # A sample logging configuration. The only tangible logging

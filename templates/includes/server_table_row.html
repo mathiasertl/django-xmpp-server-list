@@ -31,14 +31,9 @@
     {% with field=form.launched %}
         {% include "includes/server_table_cell.html" %}
     {% endwith %}
-    <td class="multivalue">
-        <div class="value-display" {% if form.errors %}style="display: none;" {% endif %}>
-            <span class="{{ form.latitude.html_name }}">{{ form.latitude.value|floatformat:2 }}</span>/<span class="{{ form.longitude.html_name }}">{{ form.longitude.value|floatformat:2 }}</span>
-        </div>
-        <div class="value-edit" {% if form.errors %}style="display: block;" {% endif %}>
-            {{ form.latitude }}/{{ form.longitude}}
-        </div>
-    </td>
+    {% with field=form.location %}
+        {% include "includes/server_table_cell.html" %}
+    {% endwith %}
     {% with field=form.contact %}
         {% include "includes/server_table_cell.html" %}
     {% endwith %}
