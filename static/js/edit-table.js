@@ -43,7 +43,33 @@ var overlay_params = {
     }
 }
 
+add_wkt = function(event) {
+    map = this.map;
+    feature = event.feature;
+    feat = OpenLayers.Util.properFeatures(feature, this.options.geom_type);
+    point = feat.geometry;
+    alert(point.x + ', ' + point.y);
+    
+    var lonlat = point.transform(map.getProjectionObject(), new OpenLayers.Projection("EPSG:4326"));
+    alert(lonlat.lon + ", " + lonlat.lat);
+}
+
 $(document).ready(function() {
+    map_1_location.layers.vector.events.on({'featureadded': add_wkt, scope: map_1_location});
+/*    $(".olMap").click(function() {
+        loc = map_1_location;
+        map = loc.map;
+        opt = loc.options
+        
+//        alert('fuck:' + loc.get_ewkt);
+        wkt = document.getElementById(opt.id).value;
+        alert(wkt);
+        
+//        sanitized = loc.read_wkt(wkt);
+//        alert(sanitized);
+    });
+*/
+    
     $("a[rel]").overlay(overlay_params);
     
     $("table").on("change", "input,select", function() {
