@@ -43,15 +43,6 @@
         <td>{{ new_form.launched }}</td>
         <td>
             {{ new_form.location|fieldwidget }}
-            {% comment %}
-            <a href="{% url "server_ajax_mapbrowse" %}"
-                    rel="#mapbrowse" style="text-decoration:none">
-                <img src="{{ STATIC_URL }}img/osm.png" />
-            </a>
-            <div class="overlay" id="mapbrowse">
-                <div class="contentWrap"></div>
-            </div>
-            {% endcomment %}
         </td>
         <td>{{ new_form.contact }}</td>
         <td>{{ new_form.contact_name }}</td>
