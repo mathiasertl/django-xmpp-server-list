@@ -27,7 +27,7 @@ function set_datepicker(row) {
     id = get_service_id($(row));
     row.find('#id_' + id + '-launched').datepicker({
         dateFormat: "yy-mm-dd", maxDate: "+0D", showButtonPanel: true
-    }); 
+    });
 }
 
 var overlay_params = {
@@ -126,12 +126,15 @@ $(document).ready(function() {
             new_row.find("a[rel]").overlay(overlay_params);
             
             row.find("input").val(''); // clear input values of this row
-            row.find("fielderrors").html('');
+            row.find(".fielderrors").html('');
         }).fail(function(data) {
             new_row = $(data.responseText);
             
             row.replaceWith(new_row);
-            set_datepicker(new_row);
+            // set datepicker manually because we do not have an id here
+            new_row.find('#id_launched').datepicker({
+                dateFormat: "yy-mm-dd", maxDate: "+0D", showButtonPanel: true
+            });
             new_row.find("a[rel]").overlay(overlay_params);
         })
     });
