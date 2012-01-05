@@ -11,6 +11,9 @@ def fieldvalue(field):
                 return v
         return 'key not found'
     elif type(field.field) == DateField:
+        val = field.value()
+        if val.__class__ == unicode:
+            return val
         return field.value().strftime('%Y-%m-%d')
     else:
         return field.value()

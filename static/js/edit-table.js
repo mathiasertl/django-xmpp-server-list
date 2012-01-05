@@ -113,7 +113,7 @@ $(document).ready(function() {
         edit_service($(this).parent());
     });
     
-    $(".button-add").click(function() {
+    $("table").on("click", ".button-add", function() {
         cell = $(this).parent();
         row = cell.parent()
         header_fields = row.parent().find('th.no-borders').find('input');
@@ -126,8 +126,13 @@ $(document).ready(function() {
             new_row.find("a[rel]").overlay(overlay_params);
             
             row.find("input").val(''); // clear input values of this row
-        }).error(function() {
-            alert('error');
+            row.find("fielderrors").html('');
+        }).fail(function(data) {
+            new_row = $(data.responseText);
+            
+            row.replaceWith(new_row);
+            set_datepicker(new_row);
+            new_row.find("a[rel]").overlay(overlay_params);
         })
     });
     

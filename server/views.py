@@ -40,8 +40,8 @@ def ajax(request):
             form = ServerForm(instance=server, prefix=server.id,
                               initial={'location': '%s,%s' % (server.location.x, server.location.y)})
             return render(request, 'ajax/server_table_row.html', {'form': form})
-            
-        return HttpResponse(status=400)
+        return render(request, 'ajax/server_table_row.html', {'form': form}, status=400)
+        #return HttpResponse(status=400)
 
 @login_required
 def ajax_mapbrowse(request):

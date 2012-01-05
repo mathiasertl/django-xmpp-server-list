@@ -22,13 +22,18 @@
         {% include "includes/server_table_cell.html" %}
     {% endfor %}
     <td class="no-borders">
-        <img class="button-edit"   src="{{ STATIC_URL }}img/edit.png" alt="edit" title="edit"
-            {% if form.errors %}style="display: none;" {% endif %} />
-        <img class="button-delete" src="{{ STATIC_URL }}img/delete.png" alt="delete" title="delete"
-             {% if form.errors %}style="display: none;" {% endif %} />
-        <img class="button-save"   src="{{ STATIC_URL }}img/save.png" alt="save" title="save"
-             {% if form.errors %}style="display: inline;" {% endif %} />
-        <img class="button-cancel" src="{{ STATIC_URL }}img/cancel.png" alt="cancel" title="cancel"
-             {% if form.errors %}style="display: inline;" {% endif %} />
+        {% if form.instance.id %}
+            <img class="button-edit"   src="{{ STATIC_URL }}img/edit.png" alt="edit" title="edit"
+                {% if form.errors %}style="display: none;" {% endif %} />
+            <img class="button-delete" src="{{ STATIC_URL }}img/delete.png" alt="delete" title="delete"
+                 {% if form.errors %}style="display: none;" {% endif %} />
+            <img class="button-save"   src="{{ STATIC_URL }}img/save.png" alt="save" title="save"
+                 {% if form.errors %}style="display: inline;" {% endif %} />
+            <img class="button-cancel" src="{{ STATIC_URL }}img/cancel.png" alt="cancel" title="cancel"
+                 {% if form.errors %}style="display: inline;" {% endif %} />
+        {% else %}
+            <img class="button-add"    src="{{ STATIC_URL }}img/add.png"
+                 alt="add new server" title="add new server" />
+        {% endif %}
     </td>
 </tr>

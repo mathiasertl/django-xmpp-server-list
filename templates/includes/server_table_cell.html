@@ -8,6 +8,8 @@
     </div>
     <div class="value-edit" {% if form.errors %}style="display: block;" {% endif %}>
         {{ field|fieldwidget }}
-        {{ field.errors }}
+        <div class='fielderrors'>
+            {{ field.errors }}
+        </div>
     </div>
 </td>
