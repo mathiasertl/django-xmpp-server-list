@@ -101,3 +101,11 @@ td img {
 .ui-widget {
     font-size: smaller;
 }
+
+.errorlist {
+    font-size: small;
+    color: red;
+    list-style-image: none;
+    list-style-type: none;
+    padding-left: 0px;
+}
