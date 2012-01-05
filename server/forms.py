@@ -32,12 +32,14 @@ class ServerForm(ModelForm):
         return ssl_port
     
     def clean_location(self):
-        x, y = self.cleaned_data['location'].split(',')
+        x, y = self.cleaned_data['location'].strip().split(',')
+        x = float(x)
+        y = float(y)
         if x > 180 or x < -180:
             raise ValidationError('Longitude must be between -180 and +180!')
-        if y > 90 or y < 90:
+        if y > 90 or y < -90:
             raise ValidationError('Latitude must be between -90 and +90!')
-        return Point(x=float(x), y=float(y))
+        return Point(x=x, y=y)
         
     def clean_domain(self):
         domain = self.cleaned_data['domain']
@@ -47,7 +49,6 @@ class ServerForm(ModelForm):
     
     def clean_contact(self):
         contact = self.cleaned_data['contact']
-        print(self.cleaned_data.keys())
         typ = self.cleaned_data['contact_type']
         
         if typ == 'E': # email
