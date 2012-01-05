@@ -41,10 +41,6 @@ td.no-borders, th.no-borders {
     text-align: left;
 }
 
-td.no-borders img {
-    vertical-align: middle;
-}
-
 .header .login {
     float: right;
 }
@@ -69,7 +65,7 @@ td.no-borders img {
     text-align: center;
 }
 
-td.status img {
+td img {
     display: inline;
     vertical-align: middle;
 }
@@ -86,17 +82,9 @@ td.status img {
     
     /* styling */
     background-color: white;
-//    background-color: #333;
 
     max-width: 600px;
-    
-//    width: 675px;
-//    min-height: 200px;
     border: 1px solid #666;
-    
-    /* CSS3 styling for latest browsers */
-//    -moz-box-shadow:0 0 90px 5px #000;
-//    -webkit-box-shadow: 0 0 90px #000;	
 }
 
 /* close button positioned on upper right corner */
