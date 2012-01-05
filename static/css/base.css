@@ -60,7 +60,7 @@ td.no-borders, th.no-borders {
     display: none;
 }
 
-.value-edit input {
+.your-servers input {
     font-size: smaller;
     text-align: center;
 }
