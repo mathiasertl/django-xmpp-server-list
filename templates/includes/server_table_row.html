@@ -4,6 +4,7 @@
 
 <tr id="server_{{ form.instance.id }}">
     <td class="status">
+        {% if form.instance.id %}
         <a href="{% url "server_report" server_id=form.instance.id %}"
                 rel="#verification_{{ form.prefix }}" style="text-decoration: none">
             {% if form.instance.verified  and form.instance.moderated %}
@@ -17,6 +18,7 @@
         <div class="overlay" id="verification_{{ form.prefix }}">
             <div class="contentWrap"></div>
         </div>
+        {% endif %}
     </td>
     {% for field in form %}
         {% include "includes/server_table_cell.html" %}
