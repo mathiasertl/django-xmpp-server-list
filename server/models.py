@@ -78,8 +78,7 @@ class Server(models.Model):
     added = models.DateField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True, auto_now_add=True)
     launched = models.DateField()
-    longitude = models.FloatField()
-    latitude = models.FloatField()
+    location = models.PointField(default=Point(0,0))
     
     # information about the service:
     domain = models.CharField(unique=True, max_length=30)
@@ -95,14 +94,13 @@ class Server(models.Model):
     software = models.ForeignKey(ServerSoftware, related_name='servers', blank=True, null=True)
     software_version = models.CharField(max_length=16, blank=True, null=True)
     
-    support_plain = models.NullBooleanField(default=None)
-    support_ssl = models.NullBooleanField(default=None)
+    support_plain = models.BooleanField(default=False)
+    support_ssl = models.BooleanField(default=False)
     ssl_port = models.PositiveIntegerField(default=5223, blank=True, null=True)
-    support_tls = models.NullBooleanField(default=None)
+    support_tls = models.BooleanField(default=False)
     
     features = models.OneToOneField(Features, related_name='server')
     
-    location = models.PointField(default=Point(0,0))
     objects = models.GeoManager()
     
     # contact information
@@ -229,10 +227,9 @@ class Server(models.Model):
         self.save()
     
     def get_country(self):
-        p = Point(self.longitude, self.latitude)
         if settings.DATABASES['default']['ENGINE'] == 'django.contrib.gis.db.backends.mysql':
-            countries = WorldBorders.objects.filter(geom__intersects=p)
-            country = [c for c in countries if c.geom.contains(p)][0]
+            countries = WorldBorders.objects.filter(geom__intersects=self.location)
+            country = [c for c in countries if c.geom.contains(self.location)][0]
         else:
-            country = WorldBorders.objects.get(geom__intersects=p)
+            country = WorldBorders.objects.get(geom__intersects=self.location)
         return country
