@@ -1,0 +1,6 @@
+{{ form.osmlocation }}
+
+<script type="text/javascript">
+    {{ maplocation|default:"map_osmlocation" }}.layers.vector.events.on(
+        {'featureadded': add_wkt, scope: {{ maplocation|default:"map_osmlocation" }}});
+</script>

@@ -48,28 +48,23 @@ add_wkt = function(event) {
     feature = event.feature;
     feat = OpenLayers.Util.properFeatures(feature, this.options.geom_type);
     point = feat.geometry;
-    alert(point.x + ', ' + point.y);
+    //alert(point.x + ', ' + point.y);
     
     var lonlat = point.transform(map.getProjectionObject(), new OpenLayers.Projection("EPSG:4326"));
-    alert(lonlat.x + ", " + lonlat.y);
+    //alert(lonlat.x + ", " + lonlat.y);
+    
+    // find: id_1-location (we have: id_1-osmlocation_map)
+    input_id =         this.options.map_id.replace(/osmlocation_map/, 'location');
+    document.getElementById(input_id).value = lonlat.x.toFixed(2) + ',' + lonlat.y.toFixed(2);
+    input = $(document).find('#' + input_id);
+    cell = input.parent().parent();
+    row = cell.parent();
+    if (!row.hasClass('changed')) {
+        row.addClass('changed');
+    }
 }
 
 $(document).ready(function() {
-//    map_1_location.layers.vector.events.on({'featureadded': add_wkt, scope: map_1_location});
-/*    $(".olMap").click(function() {
-        loc = map_1_location;
-        map = loc.map;
-        opt = loc.options
-        
-//        alert('fuck:' + loc.get_ewkt);
-        wkt = document.getElementById(opt.id).value;
-        alert(wkt);
-        
-//        sanitized = loc.read_wkt(wkt);
-//        alert(sanitized);
-    });
-*/
-    
     $("a[rel]").overlay(overlay_params);
     
     $("table").on("change", "input,select", function() {

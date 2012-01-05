@@ -1,14 +1,16 @@
 {% extends "base.html" %}
+{% load url from future %}
 
 {% block javascript %}
     <script type="text/javascript">
-        var service_url = "{% url servers_ajax %}";
+        var service_url = "{% url "servers_ajax" %}";
     </script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/lib/OpenLayers-2.11/OpenLayers.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}floppyforms/js/MapWidget.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/edit-table.js"></script>
     
-    {{ forms.0.media }}
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+    {{ testform.0.media }}
 {% endblock %}
 
 {% block content %}
@@ -18,7 +20,7 @@
     <tr>
         <th>Status</th>
         <th>Server</th>
-        <th>Domain</th>
+        <th>Website</th>
         <th>CA</th>
         <th>SSL port</th>
         <th>Launched</th>
@@ -38,7 +40,16 @@
         <td>{{ new_form.ca }}<div class="value-error"></div></td>
         <td>{{ new_form.ssl_port }}</td>
         <td>{{ new_form.launched }}</td>
-        <td>{{ new_form.latitude }}/{{ new_form.longitude }}</td>
+        <td>
+            {{ new_form.location }}
+            <a href="{% url "server_ajax_mapbrowse" %}"
+                    rel="#mapbrowse" style="text-decoration:none">
+                <img src="{{ STATIC_URL }}img/osm.png" />
+            </a>
+            <div class="overlay" id="mapbrowse">
+                <div class="contentWrap"></div>
+            </div>
+        </td>
         <td>{{ new_form.contact }}</td>
         <td>{{ new_form.contact_name }}</td>
         <td>{{ new_form.contact_type }}</td>

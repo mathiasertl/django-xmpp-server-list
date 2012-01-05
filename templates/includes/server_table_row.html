@@ -31,9 +31,23 @@
     {% with field=form.launched %}
         {% include "includes/server_table_cell.html" %}
     {% endwith %}
-    {% with field=form.location %}
-        {% include "includes/server_table_cell.html" %}
-    {% endwith %}
+    <td>
+        <div class="value-display"
+                {% if form.errors %}style="display: none;" {% endif %}>
+            {{ form.location|fieldvalue }}
+        </div>
+        <div class="value-edit" {% if form.errors %}style="display: block;" {% endif %}>
+            {{ form.location }}
+            <a href="{% url "server_ajax_id_mapbrowse" server_id=form.instance.id %}"
+                    rel="#mapbrowse_{{ form.instance.id }}" style="text-decoration:none">
+                <img src="{{ STATIC_URL }}img/osm.png" />
+            </a>
+            <div class="overlay" id="mapbrowse_{{ form.instance.id }}">
+                <div class="contentWrap"></div>
+            </div>
+            {{ form.location.errors }}
+        </div>
+    </td>
     {% with field=form.contact %}
         {% include "includes/server_table_cell.html" %}
     {% endwith %}

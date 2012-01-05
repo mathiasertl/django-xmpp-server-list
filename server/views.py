@@ -3,15 +3,15 @@ from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import render
 
 from models import Server, ServerReport, Features
-from forms import ServerForm
+from forms import ServerForm, ServerLocationForm
 
 @login_required
 def index(request):
     forms = [ServerForm(instance=s, prefix=s.id,
                         initial={'location': '%s,%s' % (s.location.x, s.location.y)})
         for s in request.user.servers.all() ]
-    print dir(forms[0]['location'].value)
-    return render(request, 'server/index.html', {'forms': forms, 'new_form': ServerForm()})
+    testform = ServerLocationForm()
+    return render(request, 'server/index.html', {'forms': forms, 'new_form': ServerForm(), 'testform': testform})
 
 @permission_required('server.moderate')
 def moderate(request):
@@ -44,6 +44,11 @@ def ajax(request):
         return HttpResponse(status=400)
 
 @login_required
+def ajax_mapbrowse(request):
+    form = ServerLocationForm()
+    return render(request, 'ajax/mapbrowse.html', {'form': form})
+
+@login_required
 def ajax_id(request, server_id):
     server = Server.objects.get(id=server_id)
     if request.method == 'DELETE':
@@ -64,14 +69,6 @@ def ajax_id(request, server_id):
         
     return HttpResponse('ok.')
     
-def test(request):
-    print(request.POST)
-    server = Server.objects.get(id=1)
-    form = ServerForm(request.POST, instance=server, prefix=1)
-    print(form)
-    form.save()
-    return HttpResponse('ok')
-    
 @permission_required('server.moderate')
 def ajax_moderate(request):
     if request.method == 'POST':
@@ -85,3 +82,13 @@ def ajax_moderate(request):
         return HttpResponse('ok')
     else:
         return HttpResponseForbidden('Sorry, only POST')
+        
+@login_required
+def ajax_id_mapbrowse(request, server_id):
+    server = Server.objects.get(id=server_id)
+    if server.user != request.user:
+        return HttpResponseForbidden("Thou shal only osmbrowse your own server!")
+        
+    form = ServerLocationForm(initial={'osmlocation': server.location}, prefix=server.id)
+    maplocation = 'map_%s_osmlocation' % server.id
+    return render(request, 'ajax/mapbrowse.html', {'form': form, 'maplocation': maplocation})
