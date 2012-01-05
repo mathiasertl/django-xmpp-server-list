@@ -1,62 +1,26 @@
 {% load fieldvalue %}
+{% load fieldwidget %}
 {% load url from future %}
 
 <tr id="server_{{ form.instance.id }}">
     <td class="status">
-        <a href="{% url "server_report" server_id=form.instance.id %}" rel="#verification_{{ form.instance.id }}" style="text-decoration:none">
+        <a href="{% url "server_report" server_id=form.instance.id %}"
+                rel="#verification_{{ form.prefix }}" style="text-decoration: none">
             {% if form.instance.verified  and form.instance.moderated %}
-            <img src="{{ STATIC_URL }}img/save.png" alt="verified" title="verified" />
+                <img src="{{ STATIC_URL }}img/save.png" alt="verified" title="verified" />
             {% else %}
-            <img src="{{ STATIC_URL }}img/alert.png"
-                alt="Not verified, click to see details."
-                title="Not verified, click to see details." />    
+                <img src="{{ STATIC_URL }}img/alert.png"
+                    alt="Not verified, click to see details."
+                    title="Not verified, click to see details." />    
             {% endif %}
         </a>
-        <div class="overlay" id="verification_{{ form.instance.id }}">
+        <div class="overlay" id="verification_{{ form.prefix }}">
             <div class="contentWrap"></div>
         </div>
     </td>
-    {% with field=form.domain %}
+    {% for field in form %}
         {% include "includes/server_table_cell.html" %}
-    {% endwith %}
-    {% with field=form.website %}
-        {% include "includes/server_table_cell.html" %}
-    {% endwith %}
-    {% with field=form.ca %}
-        {% include "includes/server_table_cell.html" %}
-    {% endwith %}
-    {% with field=form.ssl_port %}
-        {% include "includes/server_table_cell.html" %}
-    {% endwith %}
-    {% with field=form.launched %}
-        {% include "includes/server_table_cell.html" %}
-    {% endwith %}
-    <td>
-        <div class="value-display"
-                {% if form.errors %}style="display: none;" {% endif %}>
-            {{ form.location|fieldvalue }}
-        </div>
-        <div class="value-edit" {% if form.errors %}style="display: block;" {% endif %}>
-            {{ form.location }}
-            <a href="{% url "server_ajax_id_mapbrowse" server_id=form.instance.id %}"
-                    rel="#mapbrowse_{{ form.instance.id }}" style="text-decoration:none">
-                <img src="{{ STATIC_URL }}img/osm.png" />
-            </a>
-            <div class="overlay" id="mapbrowse_{{ form.instance.id }}">
-                <div class="contentWrap"></div>
-            </div>
-            {{ form.location.errors }}
-        </div>
-    </td>
-    {% with field=form.contact %}
-        {% include "includes/server_table_cell.html" %}
-    {% endwith %}
-    {% with field=form.contact_name %}
-        {% include "includes/server_table_cell.html" %}
-    {% endwith %}
-    {% with field=form.contact_type %}
-        {% include "includes/server_table_cell.html" %}
-    {% endwith %}
+    {% endfor %}
     <td class="no-borders">
         <img class="button-edit"   src="{{ STATIC_URL }}img/edit.png" alt="edit" title="edit"
             {% if form.errors %}style="display: none;" {% endif %} />

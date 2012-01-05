@@ -1,10 +1,13 @@
 {% load fieldvalue %}
+{% load fieldwidget %}
+
 <td>
     <div class="value-display"
             {% if form.errors %}style="display: none;" {% endif %}>
         {{ field|fieldvalue }}
     </div>
     <div class="value-edit" {% if form.errors %}style="display: block;" {% endif %}>
-        {{ field }}{{ field.errors }}
+        {{ field|fieldwidget }}
+        {{ field.errors }}
     </div>
 </td>

@@ -9,7 +9,7 @@ from models import Server
 import floppyforms
 
 class ServerForm(ModelForm):
-    location = CharField(min_length=3, widget=TextInput(attrs={'size': 8, 'class': 'osm-widget'}))
+    location = CharField(min_length=3, widget=TextInput(attrs={'size': 8, 'class': 'mapwidget'}))
     
     def clean_location(self):
         x, y = self.cleaned_data['location'].split(',')
@@ -18,8 +18,8 @@ class ServerForm(ModelForm):
     class Meta:
         model = Server
         fields = (
-            'domain', 'website', 'ca', 'launched', 'ssl_port',
-            'contact', 'contact_name', 'contact_type', 'location',
+            'domain', 'website', 'ca', 'ssl_port', 'launched', 'location',
+            'contact', 'contact_name', 'contact_type',
         )
         widgets = {
             'ssl_port': TextInput(attrs={'size': 4, 'maxlength': 5}),

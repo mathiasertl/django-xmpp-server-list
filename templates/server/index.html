@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load url from future %}
+{% load fieldwidget %}
 
 {% block javascript %}
     <script type="text/javascript">
@@ -41,7 +42,8 @@
         <td>{{ new_form.ssl_port }}</td>
         <td>{{ new_form.launched }}</td>
         <td>
-            {{ new_form.location }}
+            {{ new_form.location|fieldwidget }}
+            {% comment %}
             <a href="{% url "server_ajax_mapbrowse" %}"
                     rel="#mapbrowse" style="text-decoration:none">
                 <img src="{{ STATIC_URL }}img/osm.png" />
@@ -49,6 +51,7 @@
             <div class="overlay" id="mapbrowse">
                 <div class="contentWrap"></div>
             </div>
+            {% endcomment %}
         </td>
         <td>{{ new_form.contact }}</td>
         <td>{{ new_form.contact_name }}</td>
