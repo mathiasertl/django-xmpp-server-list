@@ -26,9 +26,9 @@
         <th>SSL port</th>
         <th>Launched</th>
         <th>Location</th>
+        <th>Contact type</th>
         <th>Contact</th>
-        <th>name</th>
-        <th>type</th>
+        <th>Name</th>
         <th class="no-borders">{% csrf_token %}</th>
     </tr>
 {% for form in forms %}
@@ -36,17 +36,9 @@
 {% endfor %}
     <tr class="new-server">
         <td></td>
-        <td>{{ new_form.domain }}</td>
-        <td>{{ new_form.website }}</td>
-        <td>{{ new_form.ca }}<div class="value-error"></div></td>
-        <td>{{ new_form.ssl_port }}</td>
-        <td>{{ new_form.launched }}</td>
-        <td>
-            {{ new_form.location|fieldwidget }}
-        </td>
-        <td>{{ new_form.contact }}</td>
-        <td>{{ new_form.contact_name }}</td>
-        <td>{{ new_form.contact_type }}</td>
+        {% for field in new_form %}
+            <td>{{ field|fieldwidget }}</td>
+        {% endfor %}
         <td class="no-borders">
             <img class="button-add" src="{{ STATIC_URL }}img/add.png" alt="add new server" title="add new server" />
         </td>
