@@ -12,6 +12,31 @@ from django.contrib.gis.geos import Point
 
 from xmpplist.world.models import WorldBorders
 
+def dns_lookup(self, record, record_type):
+    try:
+        print('DIG %s %s' % (record_type, record))
+        return dns.resolver.query(record, record_type)
+    except:
+        return []
+
+def check_host(host, port, ipv6=False):
+    if ipv6:
+        hosts = socket.getaddrinfo(host, port, socket.AF_INET6, socket.SOCK_STREAM)
+    else:
+        hosts = socket.getaddrinfo(host, port, socket.AF_INET, socket.SOCK_STREAM)
+
+    for af, socktype, proto, canonname, connect_args in hosts:
+        try:
+            s = socket.socket(af, socktype, proto)
+            s.settimeout(1.0)
+            print('connect: %s %s' % (connect_args[0], connect_args[1]))
+            s.connect(connect_args)
+            s.close()
+        except: 
+            return False
+        
+    return True
+
 class CertificateAuthority(models.Model):
     name = models.CharField(max_length=30, unique=True)
     website = models.URLField(unique=True)
@@ -43,86 +68,12 @@ class ServerReport(models.Model):
     ssl_cert = models.BooleanField(default=True)
     tls_cert = models.BooleanField(default=True)
     
-    def is_ok(self):
-        return self.srv_client and self.srv_server and self.client_online and self.server_online \
-            and self.ssl_cert and self.tls_cert
-    
-    def has_problems(self):
-        return not self.is_ok()
-    
-    def __unicode__(self):
-        condition = 'ok'
-        if self.has_problems():
-            condition = 'has problems'
-        return 'Report on %s: %s' % ('domain', condition)
-
-class Features(models.Model):
-    has_ipv6 = models.BooleanField(default=False)
-    has_muc = models.BooleanField(default=False)
-    has_irc = models.BooleanField(default=False)
-    has_vcard = models.BooleanField(default=False)
-    has_pep = models.BooleanField(default=False)
-    has_proxy = models.BooleanField(default=False)
-    has_webpresence = models.BooleanField(default=False)
-
-from django.contrib.gis.geos import Point
-
-class Server(models.Model):
-    class Meta:
-        permissions = (
-            ('moderate', 'can moderate servers'),
-        )
-        
-    # basic information:
-    user = models.ForeignKey(User, related_name='servers')
-    added = models.DateField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True, auto_now_add=True)
-    launched = models.DateField()
-    location = models.PointField(default=Point(0,0))
-    
-    # information about the service:
-    domain = models.CharField(unique=True, max_length=30)
-    website = models.URLField()
-    ca = models.ForeignKey(CertificateAuthority, related_name='servers')
-    
-    # verification
-    moderated = models.NullBooleanField(default=None)
-    verified = models.NullBooleanField(default=None)
-    report = models.OneToOneField(ServerReport, related_name='server')
-    
-    # queried information
-    software = models.ForeignKey(ServerSoftware, related_name='servers', blank=True, null=True)
-    software_version = models.CharField(max_length=16, blank=True, null=True)
-    
-    support_plain = models.BooleanField(default=False)
-    support_ssl = models.BooleanField(default=False)
-    ssl_port = models.PositiveIntegerField(default=5223, blank=True, null=True)
-    support_tls = models.BooleanField(default=False)
-    
-    features = models.OneToOneField(Features, related_name='server')
-    
-    objects = models.GeoManager()
-    
-    # contact information
-    CONTACT_TYPE_CHOICES=(
-        ('M', 'MUC'),
-        ('J', 'JID'),
-        ('E', 'e-mail'),
-        ('W', 'website'),
-    )
-    contact = models.CharField(max_length=30)
-    contact_name = models.CharField(max_length=30)
-    contact_type = models.CharField(max_length=1, choices=CONTACT_TYPE_CHOICES)
-    
-    def __unicode__(self):
-        return self.domain
-    
     def srv_lookup(self, service, proto='tcp'):
         """
         Function for doing SRV-lookups. Returns a list of host/port tuples for
         the given srv-record.
         """
-        record = '_%s._%s.%s' % (service, proto, self.domain)
+        record = '_%s._%s.%s' % (service, proto, self.server.domain)
         try:
             answers = dns.resolver.query(record, 'SRV')
         except:
@@ -131,16 +82,6 @@ class Server(models.Model):
         for answer in answers:
             hosts.append((answer.target.to_text(True), answer.port, answer.priority))
         return sorted(hosts, key=lambda host: host[2])
-        
-    def check_host(self, host, port):
-        s = socket.socket()
-        s.settimeout(3.0)
-        try:
-            s.connect( (host, port) )
-            s.close()
-            return True
-        except: 
-            return False
         
     def check_host_ssl(self, host, port):
         try:
@@ -166,7 +107,7 @@ class Server(models.Model):
         """
         hosts = self.srv_lookup('xmpp-client')
         if not hosts:
-            self.report.srv_client = False
+            self.srv_client = False
         return hosts
             
     def verify_srv_server(self):
@@ -175,7 +116,7 @@ class Server(models.Model):
         """
         hosts = self.srv_lookup('xmpp-server')
         if not hosts:
-            self.report.srv_server = False
+            self.srv_server = False
         return hosts
             
     def verify_client_online(self, hosts):
@@ -183,13 +124,13 @@ class Server(models.Model):
         Verify that at least one of the hosts referred to by the xmpp-client SRV records is
         currently online.
         """
-        if self.report.srv_client:
+        if not self.srv_client:
             return
         
-        self.report.client_online = False
+        self.client_online = False
         for host in hosts:
-            if self.check_host(host[0], host[1]):
-                self.report.client_online = True
+            if check_host(host[0], host[1]):
+                self.client_online = True
                 break
             
     def verify_server_online(self, hosts):
@@ -197,32 +138,119 @@ class Server(models.Model):
         Verify that at least one of the hosts referred to by the xmpp-server SRV records is
         currently online.
         """
-        if self.report.srv_server:
+        if not self.srv_server:
             return
         
-        self.report.server_online = False
+        self.server_online = False
         for host in hosts:
-            if self.check_host(host[0], host[1]):
-                self.report.server_online = True
+            if check_host(host[0], host[1]):
+                self.server_online = True
+                break
+    
+    def is_ok(self):
+        return self.srv_client and self.srv_server and self.client_online and self.server_online \
+            and self.ssl_cert and self.tls_cert
+    
+    def has_problems(self):
+        return not self.is_ok()
+    
+    def __unicode__(self):
+        condition = 'ok'
+        if self.has_problems():
+            condition = 'has problems'
+        return 'Report on %s: %s' % ('domain', condition)
+
+class Features(models.Model):
+    # connection-related:
+    has_plain = models.BooleanField(default=False)
+    has_ssl = models.BooleanField(default=False)
+    has_tls = models.BooleanField(default=False)
+    has_ipv6 = models.BooleanField(default=False)
+    
+    # features:
+    has_muc = models.BooleanField(default=False)
+    has_irc = models.BooleanField(default=False)
+    has_vcard = models.BooleanField(default=False)
+    has_pep = models.BooleanField(default=False)
+    has_proxy = models.BooleanField(default=False)
+    has_webpresence = models.BooleanField(default=False)
+    
+    def __unicode__(self):
+        return self.server.domain
+    
+    def check_ipv6(self, hosts):
+        if not self.server.report.srv_client:
+            return
+        
+        for host in hosts:
+            if check_host(host[0], host[1], ipv6=True):
+                self.has_ipv6 = True
                 break
 
-    def verify(self):
-        # remove old report, add new one:
-        old_report = self.report
-        self.report = ServerReport.objects.create()
-        old_report.delete()
+from django.contrib.gis.geos import Point
+
+class Server(models.Model):
+    class Meta:
+        permissions = (
+            ('moderate', 'can moderate servers'),
+        )
         
+    # basic information:
+    user = models.ForeignKey(User, related_name='servers')
+    added = models.DateField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True, auto_now_add=True)
+    launched = models.DateField()
+    location = models.PointField(default=Point(0,0))
+    
+    # information about the service:
+    domain = models.CharField(unique=True, max_length=30)
+    website = models.URLField()
+    ca = models.ForeignKey(CertificateAuthority, related_name='servers')
+    ssl_port = models.PositiveIntegerField(default=5223, blank=True, null=True)
+    
+    # verification
+    moderated = models.NullBooleanField(default=None)
+    report = models.OneToOneField(ServerReport, related_name='server')
+    
+    # moderation:
+    verified = models.NullBooleanField(default=None)
+    features = models.OneToOneField(Features, related_name='server')
+    
+    # queried information
+    software = models.ForeignKey(ServerSoftware, related_name='servers', blank=True, null=True)
+    software_version = models.CharField(max_length=16, blank=True, null=True)
+    
+    objects = models.GeoManager()
+    
+    # contact information
+    CONTACT_TYPE_CHOICES=(
+        ('M', 'MUC'),
+        ('J', 'JID'),
+        ('E', 'e-mail'),
+        ('W', 'website'),
+    )
+    contact = models.CharField(max_length=30)
+    contact_name = models.CharField(max_length=30)
+    contact_type = models.CharField(max_length=1, choices=CONTACT_TYPE_CHOICES)
+    
+    def __unicode__(self):
+        return self.domain
+
+    def verify(self):        
         # perform various checks:
-        client_hosts = self.verify_srv_client()
-        server_hosts = self.verify_srv_server()
-        self.verify_client_online(client_hosts)
-        self.verify_server_online(server_hosts)
+        client_hosts = self.report.verify_srv_client()
+        server_hosts = self.report.verify_srv_server()
+        self.report.verify_client_online(client_hosts)
+        self.report.verify_server_online(server_hosts)
+        
+        self.features.check_ipv6(client_hosts)
         
         # save server and its report:
         if self.report.has_problems():
             self.verified = False
         else:
             self.verified = True
+        self.features.save()
         self.report.save()
         self.save()
     
