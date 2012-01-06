@@ -32,7 +32,6 @@ def index(request):
     fields = ['domain']
     if 'fields' in request.GET:
         custom_fields = request.GET['fields'].split(',')
-        print(custom_fields)
         valid_fields = ['launched', 'location', 'website', 'ca', 'software',
                         'software_version', 'contact']
         if set(custom_fields) - set(valid_fields):
