@@ -1,4 +1,6 @@
 CERTIFICATES_PATH='/home/mati/git/mati/xmpplist/static/certs'
+
+STATIC_ROOT='/home/mati/git/mati/xmpplist/mystatic'
 STATICFILES_DIRS = ('/home/mati/git/mati/xmpplist/static',)
 TEMPLATE_DIRS = (
     '/home/mati/git/mati/xmpplist/templates',
