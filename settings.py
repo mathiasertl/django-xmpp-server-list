@@ -122,6 +122,7 @@ INSTALLED_APPS = (
     
     'server',
     'account',
+    'api',
     
     # gis
     'django.contrib.gis',

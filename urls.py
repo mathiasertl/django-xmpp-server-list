@@ -9,6 +9,7 @@ urlpatterns = patterns('',
     url(r'^$', 'xmpplist.views.home', name='home'),
     url(r'^user/', include('account.urls')),
     url(r'^server/', include('server.urls')),
+    url(r'^api/', include('api.urls')),
     # url(r'^xmpplist/', include('xmpplist.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
