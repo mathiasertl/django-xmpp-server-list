@@ -26,7 +26,7 @@ def index(request):
     
     # filter by country
     if 'country' in request.GET:
-        country = WorldBorders.objects.get(iso2=request.GET['country'])
+        country = WorldBorders.objects.get(iso2__iexact=request.GET['country'])
         servers = servers.filter(location__within=country.geom)
     
     fields = ['domain']
