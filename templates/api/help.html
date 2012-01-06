@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load url from future %}
+
+{% block content %}
+<h1>Help for the API</h1>
+
+This document describes how to use <a href="{% url "api" %}">the API</a>.
+
+<h2>Output formats</h2>
+Currently only JSON is supported, but other formats (XML, possibly others) will
+be supported once I have the time.
+
+<h2>Filter by country</h2>
+You can filter servers by countries, by giving the 'country' request parameter:
+<p class="api-example">
+    {% url "api" %}?country=at
+</p>
+
+There is no really reliable way of determining the server a country is in. The
+country is determined by the coordinates the server-admin gives when registering
+the server (and they in turn are not in any way verified).
+
+<h2>Require features</h2>
+You can limit the output to servers that have a certain feature. To do that,
+simply give the 'features' request parameter:
+
+<p class="api-example">
+    {% url "api" %}?features=tls,ipv6
+</p>
+
+The following features are currently recognized:
+<table>
+    <tr><th>feature</th><th>explanation</th></tr>
+    <tr><td>plain</td><td>Servers that allow plain, unencrypted connections.</td></td>
+    <tr><td>ssl</td><td>Servers that allow connections via SSL.</td></td>
+    <tr><td>tls</td><td>Servers that allow connections via TLS.</td></td>
+    <tr><td>ipv6</td><td>Servers that have IPv6 connectivity.</td></td>
+</table>
+<b>Note:</b> Currently only IPv6 is actually verified, all other features
+will always return an empty list.
+
+<h2>Output additional fields</h2>
+By default, The API outputs only a list of JIDs. You can request more fields
+via the 'fields' request parameter:
+
+<p class="api-example">
+    {% url "api" %}?fields=website,ca
+</p>
+
+Currently the following fields are supported:
+<table>
+    <tr><th>field</th><th>explanation</th></tr>
+    <tr><td>launched</td><td>When the server was launched.</td></tr>
+    <tr><td>location</td><td>Where the server is located.</td></tr>
+    <tr><td>website</td><td>The website of the server.</td></tr>
+    <tr><td>ca</td><td>The Certificate Autority of the server.</td></tr>
+    <tr><td>software</td><td>The software this server uses.</td></tr>
+    <tr><td>software_version</td><td>The version of the software the server uses.</td></tr>
+    <tr><td>contact</td><td>The contact address of this server.</td></tr>
+</table>
+
+<b>Note:</b> The output of this feature is still subject to change.
+
+{% endblock %}
