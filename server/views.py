@@ -61,7 +61,18 @@ def ajax_id(request, server_id):
         if form.is_valid():
             if server.user != request.user:
                 return HttpResponseForbidden("Thou shal only edit your own server!")
-            form.save()
+            server = form.save()
+            
+            changed = set(form.changed_data)
+            if 'domain' in changed:
+                server.moderated = None
+                server.verified = None
+            if set(['website', 'contact', 'contact_type', 'contact_name']) & changed:
+                server.moderated = None
+            if set(['ca', 'ssl_port']) & changed:
+                server.verified = None
+            server.save()
+            
             form = ServerForm(instance=server, prefix=server.id,
                               initial={'location': '%s,%s' % (server.location.x, server.location.y)})
         
