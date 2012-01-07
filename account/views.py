@@ -5,7 +5,7 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 
 from models import ConfirmationKey, get_random_key
-from forms import MyUserCreationForm
+from forms import MyUserCreationForm, UserPreferencesForm, UserPasswordForm
 
 from xmpplist.server.forms import ServerForm
 
@@ -56,11 +56,34 @@ def confirm_email(request, key):
 
 @login_required
 def edit(request):
-    return HttpResponse('edit')
+    if request.method == 'POST':
+        form = UserPreferencesForm(request.POST, instance=request.user)
+        
+        if form.is_valid():
+            user = form.save()
+            
+            if 'email' in form.changed_data:
+                print('changed email!')
+                user.profile.email_confirmed = False
+                user.profile.save()
+                
+                # TODO: resend confirmation
+    else:
+        form = UserPreferencesForm(instance=request.user)
+        
+    return render(request, 'users/edit.html', {'form': form})
     
 @login_required
 def set_password(request):
-    return HttpResponse('set password')
+    if request.method == 'POST':
+        form = UserPasswordForm(request.POST)
+        if form.is_valid():
+            request.user.set_password(form.cleaned_data['password'])
+            request.user.save()
+    else:        
+        form = UserPasswordForm()
+        
+    return render(request, 'users/set_password.html', {'form': form})
     
 def reset_password(request):
     return HttpResponse('<b>re</b>set password')
