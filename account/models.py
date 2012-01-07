@@ -17,6 +17,9 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, related_name='profile')
     email_confirmed = models.BooleanField(default=False)
     
+    jid = models.CharField(max_length=128, unique=True, null=True, blank=True)
+    jid_confirmed =  models.BooleanField(default=False)
+    
     def __unicode__(self):
         return self.user.username
 
