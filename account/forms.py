@@ -22,3 +22,18 @@ class MyUserCreationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ('username', 'email', )
+        
+class UserPreferencesForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email')
+
+class UserPasswordForm(forms.Form):
+    password = forms.CharField(min_length=8, widget=forms.PasswordInput)
+    password_confirm = forms.CharField(min_length=8, widget=forms.PasswordInput)
+    
+    def clean(self):
+        if self.cleaned_data['password'] != self.cleaned_data['password_confirm']:
+            raise forms.ValidationError("The two passwords didn't match!")
+            
+        return self.cleaned_data
