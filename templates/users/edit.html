@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load url from future %}
+
+{% block content %}
+<h1>Edit your profile</h1>
+
+<p>
+You can edit your personal data below. Note that if you change your
+email address, you will again receive a confirmation mail and your
+servers will not show up on the public list until you confirm your
+email address.
+</p>
+
+<form action="{% url "users_edit" %}" method="post">{% csrf_token %}
+<table>
+{{ form.as_table }}
+</table>
+<input type="submit" value="Submit" />
+</form>
+{% endblock %}
