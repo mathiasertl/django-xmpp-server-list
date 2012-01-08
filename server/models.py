@@ -205,7 +205,7 @@ class Server(models.Model):
     # information about the service:
     domain = models.CharField(unique=True, max_length=30,
         help_text="The primary domain of your server.")
-    website = models.URLField(null=True, blank=True,
+    website = models.URLField(blank=True,
         help_text="A homepage where one can find information on your server. If left empty, "
             "the default is http://<domain>.")
     ca = models.ForeignKey(CertificateAuthority, related_name='servers', verbose_name='CA',
@@ -224,8 +224,8 @@ class Server(models.Model):
     features = models.OneToOneField(Features, related_name='server')
     
     # queried information
-    software = models.ForeignKey(ServerSoftware, related_name='servers', blank=True, null=True)
-    software_version = models.CharField(max_length=16, blank=True, null=True)
+    software = models.ForeignKey(ServerSoftware, related_name='servers', blank=True)
+    software_version = models.CharField(max_length=16, blank=True)
     
     objects = models.GeoManager()
     
@@ -236,14 +236,15 @@ class Server(models.Model):
         ('E', 'e-mail'),
         ('W', 'website'),
     )
-    contact = models.CharField(max_length=30, null=True, blank=True,
+    contact = models.CharField(max_length=30, blank=True,
         help_text="The address where the server-admins can be reached. If left empty, your "
             "personal JID will be used.")
     contact_type = models.CharField(max_length=1, choices=CONTACT_TYPE_CHOICES, default='J',
+        blank=True,
         help_text="What type your contact details are. This setting will affect how the contact "
             "details are rendered on the front page. This setting is not used if you leave the "
             "next field empty.")
-    contact_name = models.CharField(max_length=30, null=True, blank=True,
+    contact_name = models.CharField(max_length=30, blank=True,
         help_text="If you want to display a custom link-text for your contact details, give it "
             "here.")
     
