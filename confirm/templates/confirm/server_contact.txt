@@ -1,3 +1,5 @@
+{% load url from future %}
+Old-code:
 Dear {{ key.user.username }},
 
 You have attempted to create an account or change your email address at

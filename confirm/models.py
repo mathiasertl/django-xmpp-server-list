@@ -34,23 +34,13 @@ class ConfirmationKey(models.Model):
         abstract = True
         
 class UserConfirmationKey(ConfirmationKey):
-    user = models.ForeignKey(User, related_name='confirmations')
+    user = models.ForeignKey(User, related_name='confirmations')        
     
-    def get_typ(self, typ):
-        if typ == None:
-            if self.user.profile.jid_confirmed:
-                return 'J'
-            else:
-                return 'E'
-        return typ
-    
-    def send(self, request, typ=None):
-        typ = self.get_typ(typ)
-            
-        message = render_to_string("confirm/user_contact.txt", {'request': request, 'key': self.key})
+    def send(self, request):
+        message = render_to_string("confirm/user_contact.txt", {'request': request, 'key': self})
         subject = 'Confirm your email address'
         
-        if typ == 'E':    
+        if self.type == 'E':    
             self.send_mail(self.user.email, subject, message)
         else:
             self.send_jid(self.user.profile.jid, subject, message)
@@ -60,15 +50,21 @@ class UserConfirmationKey(ConfirmationKey):
         return sha_constructor('%s-%s-%s' % (salt, self.user.username, self.user.email)).hexdigest()
         
 class UserPasswordResetKey(UserConfirmationKey):
-    def send(self, request, typ=None):
-        typ = self.get_typ(typ)
-        
+    def __init__(self, *args, **kwargs):
+        super(UserPasswordResetKey, self).__init__(*args, **kwargs)
+        if 'type' not in kwargs:
+            if self.user.profile.email_confirmed:
+                self.type = 'M'
+            else:
+                self.type = 'J'
+            
+    def send(self, request):
         message = render_to_string("confirm/user_password_reset.txt",
             {'request': request, 'key': self}
         )
         subject = 'Confirm your email address'
         
-        if typ == 'E':
+        if self.type == 'E':
             # send confirmation
             self.send_mail(self.user.email, subject, message)
         else:

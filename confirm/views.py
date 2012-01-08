@@ -1,4 +1,5 @@
-# Create your views here.
+import logging
+
 from django.contrib.auth import login
 from django.shortcuts import redirect, get_object_or_404
 
@@ -13,13 +14,15 @@ def confirm_user_contact(request, key):
         login(request, key.user)
     
     if key.type == 'E':
-        key.user.profile.confirm_email = True
+        key.user.profile.email_confirmed = True
     elif key.type == 'J':
-        key.user.profile.confirm_jid = True
+        key.user.profile.jid_confirmed = True
+    else:
+        raise RuntimeError('Invalid confirmation key-type: %s' % key.type)
     key.user.profile.save()
     
     # remove existing confirmation keys:
-    UserConfirmationKey.objects.filter(user=key.user, type=key.type).delete()
+#    UserConfirmationKey.objects.filter(user=key.user, type=key.type).delete()
     return redirect('account')
 
 def reset_user_password(request, key):

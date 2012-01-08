@@ -19,8 +19,8 @@ def create(request):
             user = form.save()
             
             # create email confirmation:
-            key = UserConfirmationKey.objects.create(user=user)
-            key.send(request, typ='E') # send to email address (for now)
+            key = UserConfirmationKey.objects.create(user=user, type='E')
+            key.send(request)
             
             user.backend = 'django.contrib.auth.backends.ModelBackend'
             login(request, user)
@@ -42,17 +42,17 @@ def edit(request):
             if 'email' in form.changed_data:
                 user.profile.email_confirmed = False
                 user.profile.save()
-                
-                # remove old confirmations and send new one:
                 UserConfirmationKey.objects.filter(user=user, type='E').delete()
-                key = UserConfirmationKey.objects.create(user=user)
-                key.send(request, typ='E') # send to email address (for now)
+                key = UserConfirmationKey.objects.create(user=user, type='E')
+                key.send(request)
             if 'jid' in form.changed_data:
                 user.profile.jid_confirmed = False
                 user.profile.save()
                 UserConfirmationKey.objects.filter(user=user, type='J').delete()
-                key = UserConfirmationKey.objects.create(user=user)
-                key.send(request, typ='J') # send to email address (for now)
+                key = UserConfirmationKey.objects.create(user=user, type='J')
+                key.send(request)
+                
+            return redirect('account')
     else:
         form = PreferencesForm(instance=request.user)
         
