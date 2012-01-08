@@ -73,6 +73,19 @@ class UserPasswordResetKey(UserConfirmationKey):
 class ServerConfirmationKey(ConfirmationKey):
     server = models.ForeignKey(Server, related_name='confirmations')
     
+    def __init__(self, *args, **kwargs):
+        super(ServerConfirmationKey, self).__init__(*args, **kwargs)
+        self.type = self.server.contact_type
+    
+    def send(self, request):
+        message = render_to_string("confirm/server_contact.txt", {'request': request, 'key': self})
+        subject = 'Confirm your email address'
+        
+        if self.type == 'E':    
+            self.send_mail(self.server.contact, subject, message)
+        else:
+            self.send_jid(self.server.contact, subject, message)
+    
     def set_random_key(self):
         salt = sha_constructor('%s-%s' % (settings.SECRET_KEY, time.time())).hexdigest()
         return sha_constructor('%s-%s' % (salt, self.server.domain)).hexdigest()
