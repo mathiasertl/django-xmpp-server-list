@@ -25,7 +25,7 @@ def create(request):
             user.backend = 'django.contrib.auth.backends.ModelBackend'
             login(request, user)
             
-            return redirect('users')
+            return redirect('account')
     else:
         form = CreationForm()
         
@@ -64,7 +64,7 @@ def set_password(request):
     
 def reset_password(request):
     if request.user.is_authenticated():
-        return redirect('users_set_password')
+        return redirect('account_set_password')
     
     if request.method == 'POST':
         form = PasswordResetForm(request.POST)

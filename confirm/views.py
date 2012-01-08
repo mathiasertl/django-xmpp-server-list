@@ -20,7 +20,7 @@ def confirm_user_contact(request, key):
     
     # remove existing confirmation keys:
     UserConfirmationKey.objects.filter(user=key.user, type=key.type).delete()
-    return redirect('users')
+    return redirect('account')
 
 def reset_user_password(request, key):
     if request.user.is_authenticated():
@@ -32,7 +32,7 @@ def reset_user_password(request, key):
     
     # remove existing keys for this user:
     UserPasswordResetKey.objects.filter(user=key.user).delete()
-    return redirect('users_set_password')
+    return redirect('account_set_password')
 
 def confirm_server(request, key):
     pass

@@ -6,12 +6,12 @@
 {% block content %}
 
 {% if user.is_authenticated %}
-    You already are logged in. Please go to your <a href="{% url "users" %}">user page</a>.
+    You already are logged in. Please go to your <a href="{% url "account" %}">user page</a>.
 {% else %}
 You must login to add and manage your public servers.
 <ul>
-    <li>If you do not yet have an account, you can <a href="{% url "users_create" %}">create one</a>.</li>
-    <li>If you forgot your password, you can <a href="{% url "users_reset_password" %}">reset it</a>.</li>
+    <li>If you do not yet have an account, you can <a href="{% url "account_create" %}">create one</a>.</li>
+    <li>If you forgot your password, you can <a href="{% url "account_reset_password" %}">reset it</a>.</li>
 </ul>
 
 {% if form.errors %}

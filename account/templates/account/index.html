@@ -7,12 +7,12 @@
     <div class="warning">
         Your email address is not yet confirmed. Servers will never be publicly visible unless it
         is. Please check your Inbox for a confirmation code or resend it. If your email address does
-        not work, you can <a href="{% url "users_edit" %}">change it here</a>.
+        not work, you can <a href="{% url "account_edit" %}">change it here</a>.
     </div>
 {% endif %}
 Here you can:
 <ul>
     <li><a href="{% url "server" %}">Manage your servers</a></li>
-    <li><a href="{% url "users_edit" %}">Edit your profile</a></li>
+    <li><a href="{% url "account_edit" %}">Edit your profile</a></li>
 </ul>
 {% endblock %}

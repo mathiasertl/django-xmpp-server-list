@@ -37,7 +37,7 @@ always communicate with users on other servers. This list is kindly brought to y
 </table>
 
 {% if not user.is_authenticated %}
-<p>You can simply <a href="{% url "users_create" %}">create an account</a> and
+<p>You can simply <a href="{% url "account_create" %}">create an account</a> and
 <a href="{% url "django.contrib.auth.views.login" %}?next={{ request.path }}">login</a> to add your
 own servers to this list.
 {% endif %}
