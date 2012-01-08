@@ -10,9 +10,42 @@
         not work, you can <a href="{% url "account_edit" %}">change it here</a>.
     </div>
 {% endif %}
+
 Here you can:
 <ul>
     <li><a href="{% url "server" %}">Manage your servers</a></li>
-    <li><a href="{% url "account_edit" %}">Edit your profile</a></li>
 </ul>
+
+<h2>Your profile</h2>
+<table>
+    <tr><td>Username:</td><td>{{ user.username }}</td></tr>
+    <tr><td>First name:</td><td>{{ user.first_name }}</td></tr>
+    <tr><td>Last name:</td><td>{{ user.last_name }}</td></tr>
+    <tr>
+        <td>email:</td>
+        <td>{{ user.email }}
+            {% if user.profile.email_confirmed %}
+                <img src="{{ STATIC_URL }}img/save.png" title="confirmed">
+            {% else %}
+                <img src="{{ STATIC_URL }}img/alert.png" title="not confirmed">
+            {% endif %}
+        </td>
+    </tr>
+    <tr><td>JID:</td>
+        <td>{{ user.profile.jid }}
+            {% if user.profile.jid_confirmed %}
+                <img src="{{ STATIC_URL }}img/save.png" title="confirmed">
+            {% else %}
+                <img src="{{ STATIC_URL }}img/alert.png" title="not confirmed">
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <a href="{% url "account_edit" %}">edit</a>,
+            <a href="{% url "account_set_password" %}">set password</a>
+        </td>
+    </tr>
+</table>
+
 {% endblock %}
