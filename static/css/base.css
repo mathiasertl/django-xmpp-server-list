@@ -1,11 +1,15 @@
 .warning {
     font-size: x-large;
     margin-bottom: 1em;
+    padding: 5px;
     padding-left: 10px;
     background-color: #FFF3F3;
     
     border: 1px solid #FFA4A4;
     border-left: 5px solid #FF6666;
+}
+.warning:before {
+    content: "Warning: ";
 }
 
 table.form {
@@ -20,10 +24,6 @@ table.form {
     
     border: 1px solid #A4FFA4;
     border-left: 5px solid #66FF66;
-}
-
-.warning:before {
-    content: "Warning: ";
 }
 
 table.your-servers {
