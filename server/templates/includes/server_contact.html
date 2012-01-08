@@ -1,22 +1,18 @@
 {% spaceless %}
-{% if server.contact %}
-    {% if server.contact_type == 'W' %}
-    <a href="{{ server.contact }}">{{ server.get_contact_text }}</a>
+{% if server.contact_type == 'W' %}
+<a href="{{ server.contact }}">{{ server.get_contact_text }}</a>
+{% else %}
+    {% if server.contact_type == 'M' %}
+        <a href="http://speeqe.com/room/{{ server.contact }}/">{{ server.get_contact_text }}</a>
     {% else %}
-        {% if server.contact_type == 'M' %}
-            <a href="http://speeqe.com/room/{{ server.contact }}/">{{ server.get_contact_text }}</a>
+        {% if server.contact_type == 'J' %}
+            <a href="xmpp:{{ server.contact }}">{{ server.get_contact_text }}</a>
         {% else %}
-            {% if server.contact_type == 'J' %}JID
-                <a href="xmpp:{{ server.contact }}">{{ server.get_contact_text }}</a>
-            {% else %}
-                {% if server.contact_type == 'E' %}EMAIL
-                    <a href="mailto:{{ server.contact }}">{{ server.get_contact_text }}</a>
-                {% else %}ELSE!
-                {% endif %}
+            {% if server.contact_type == 'E' %}
+                <a href="mailto:{{ server.contact }}">{{ server.get_contact_text }}</a>
+            {% else %}ELSE!
             {% endif %}
         {% endif %}
     {% endif %}
-{% else %}
-    <a href="xmpp:{{ server.user.profile.jid }}">{{ server.get_contact_text }}</a>
 {% endif %}
 {% endspaceless %}
