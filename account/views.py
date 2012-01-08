@@ -3,7 +3,7 @@ from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
-from forms import CreationForm, PreferencesForm, PasswordForm, PasswordResetForm
+from forms import CreationForm, PreferencesForm, PasswordResetForm
 
 from xmpplist.confirm.models import UserConfirmationKey, UserPasswordResetKey
 
@@ -57,18 +57,6 @@ def edit(request):
         form = PreferencesForm(instance=request.user)
         
     return render(request, 'account/edit.html', {'form': form})
-    
-@login_required
-def set_password(request):
-    if request.method == 'POST':
-        form = PasswordForm(request.POST)
-        if form.is_valid():
-            request.user.set_password(form.cleaned_data['password'])
-            request.user.save()
-    else:        
-        form = PasswordForm()
-        
-    return render(request, 'account/set_password.html', {'form': form})
     
 def reset_password(request):
     if request.user.is_authenticated():

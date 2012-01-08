@@ -27,17 +27,6 @@ class PreferencesForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'email')
-
-class PasswordForm(forms.Form):
-    password = forms.CharField(min_length=8, widget=forms.PasswordInput)
-    password_confirm = forms.CharField(min_length=8, widget=forms.PasswordInput)
-    
-    def clean(self):
-        data = self.cleaned_data
-        if 'password' in data and 'password_confirm' in data and data['password'] != data['password_confirm']:
-            raise forms.ValidationError("The two passwords didn't match!")
-            
-        return self.cleaned_data
     
 class PasswordResetForm(forms.Form):
     username = forms.CharField()
