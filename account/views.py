@@ -9,7 +9,7 @@ from xmpplist.confirm.models import UserConfirmationKey, UserPasswordResetKey
 
 @login_required
 def index(request):
-    return render(request, 'users/index.html')
+    return render(request, 'account/index.html')
     
 def create(request):
     if request.method == 'POST':
@@ -29,7 +29,7 @@ def create(request):
     else:
         form = CreationForm()
         
-    return render(request, 'users/create.html', {'form': form})
+    return render(request, 'account/create.html', {'form': form})
 
 @login_required
 def edit(request):
@@ -48,7 +48,7 @@ def edit(request):
     else:
         form = PreferencesForm(instance=request.user)
         
-    return render(request, 'users/edit.html', {'form': form})
+    return render(request, 'account/edit.html', {'form': form})
     
 @login_required
 def set_password(request):
@@ -60,7 +60,7 @@ def set_password(request):
     else:        
         form = PasswordForm()
         
-    return render(request, 'users/set_password.html', {'form': form})
+    return render(request, 'account/set_password.html', {'form': form})
     
 def reset_password(request):
     if request.user.is_authenticated():
@@ -78,4 +78,4 @@ def reset_password(request):
     else:
         form = PasswordResetForm()
         
-    return render(request, 'users/reset_password.html', {'form': form})
+    return render(request, 'account/reset_password.html', {'form': form})
