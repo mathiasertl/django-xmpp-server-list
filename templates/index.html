@@ -2,7 +2,6 @@
 {% load url from future %}
 
 {% block content %}
-    
 <h1>Public XMPP servers</h1>
 <p>
 This is a list of public
@@ -37,7 +36,9 @@ always communicate with users on other servers. This list is kindly brought to y
 {% endfor %}
 </table>
 
+{% if not user.is_authenticated %}
 <p>You can simply <a href="{% url "users_create" %}">create an account</a> and
 <a href="{% url "django.contrib.auth.views.login" %}?next={{ request.path }}">login</a> to add your
 own servers to this list.
+{% endif %}
 {% endblock content %}
