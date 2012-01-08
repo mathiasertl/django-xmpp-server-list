@@ -26,6 +26,11 @@ class ServerForm(ModelForm):
             return False
         return True
     
+    def contact_changed(self):
+        if 'contact' in self.cleaned_data or 'contact_type' in self.cleaned_data:
+            return True
+        return False
+    
     def clean_ssl_port(self):
         ssl_port = self.cleaned_data['ssl_port']
         if ssl_port > 65535:
@@ -78,7 +83,16 @@ class ServerForm(ModelForm):
             raise ValidationError('no more cheese exception.')
             
         return contact
-    
+
+    def save(self, commit=True):
+        server = super(ServerForm, self).save(commit=False)
+        if self.contact_changed():
+            server.contact_verified = False
+        if commit:
+            server.save()
+            
+        return server
+        
     class Meta:
         model = Server
         fields = (
