@@ -3,7 +3,7 @@ from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
-from forms import MyUserCreationForm, UserPreferencesForm, UserPasswordForm, UserPasswordResetForm
+from forms import CreationForm, PreferencesForm, PasswordForm, PasswordResetForm
 
 from xmpplist.confirm.models import UserConfirmationKey, UserPasswordResetKey
 
@@ -13,7 +13,7 @@ def index(request):
     
 def create(request):
     if request.method == 'POST':
-        form = MyUserCreationForm(request.POST)
+        form = CreationForm(request.POST)
         if form.is_valid():
             # create user
             user = form.save()
@@ -27,14 +27,14 @@ def create(request):
             
             return redirect('users')
     else:
-        form = MyUserCreationForm()
+        form = CreationForm()
         
     return render(request, 'users/create.html', {'form': form})
 
 @login_required
 def edit(request):
     if request.method == 'POST':
-        form = UserPreferencesForm(request.POST, instance=request.user)
+        form = PreferencesForm(request.POST, instance=request.user)
         
         if form.is_valid():
             user = form.save()
@@ -46,19 +46,19 @@ def edit(request):
                 
                 # TODO: resend confirmation
     else:
-        form = UserPreferencesForm(instance=request.user)
+        form = PreferencesForm(instance=request.user)
         
     return render(request, 'users/edit.html', {'form': form})
     
 @login_required
 def set_password(request):
     if request.method == 'POST':
-        form = UserPasswordForm(request.POST)
+        form = PasswordForm(request.POST)
         if form.is_valid():
             request.user.set_password(form.cleaned_data['password'])
             request.user.save()
     else:        
-        form = UserPasswordForm()
+        form = PasswordForm()
         
     return render(request, 'users/set_password.html', {'form': form})
     
@@ -67,7 +67,7 @@ def reset_password(request):
         return redirect('users_set_password')
     
     if request.method == 'POST':
-        form = UserPasswordResetForm(request.POST)
+        form = PasswordResetForm(request.POST)
         if form.is_valid():
             user = User.objects.get(username=form.cleaned_data['username'])
             
@@ -76,6 +76,6 @@ def reset_password(request):
             key.save()
             key.send(request)
     else:
-        form = UserPasswordResetForm()
+        form = PasswordResetForm()
         
     return render(request, 'users/reset_password.html', {'form': form})

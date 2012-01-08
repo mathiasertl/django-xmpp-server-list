@@ -4,12 +4,12 @@ from django.contrib.auth.models import User
 
 from models import UserProfile
 
-class MyUserCreationForm(UserCreationForm):
+class CreationForm(UserCreationForm):
     email = forms.EmailField(max_length=30,
         help_text='Required, a confirmation email will be sent to this address.')
     
     def save(self, commit=True):
-        user = super(MyUserCreationForm, self).save(commit=False)
+        user = super(CreationForm, self).save(commit=False)
         user.email = self.cleaned_data['email']
         if commit:
             user.save()
@@ -23,12 +23,12 @@ class MyUserCreationForm(UserCreationForm):
         model = User
         fields = ('username', 'email', )
         
-class UserPreferencesForm(forms.ModelForm):
+class PreferencesForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'email')
 
-class UserPasswordForm(forms.Form):
+class PasswordForm(forms.Form):
     password = forms.CharField(min_length=8, widget=forms.PasswordInput)
     password_confirm = forms.CharField(min_length=8, widget=forms.PasswordInput)
     
@@ -39,5 +39,5 @@ class UserPasswordForm(forms.Form):
             
         return self.cleaned_data
     
-class UserPasswordResetForm(forms.Form):
+class PasswordResetForm(forms.Form):
     username = forms.CharField()
