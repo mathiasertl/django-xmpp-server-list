@@ -1,5 +1,3 @@
-#from django.contrib.auth.forms import UserCreationForm
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib.auth.models import User
@@ -7,17 +5,11 @@ from django.contrib.auth.decorators import login_required
 
 from forms import MyUserCreationForm, UserPreferencesForm, UserPasswordForm, UserPasswordResetForm
 
-from xmpplist.server.forms import ServerForm
 from xmpplist.confirm.models import UserConfirmationKey, UserPasswordResetKey
 
 @login_required
 def index(request):
-    servers = []
-    for server in request.user.servers.all():
-        form = ServerForm(instance=server)
-        servers.append((server, form))
-        
-    return render(request, 'users/index.html', {'servers': servers, 'new_form': ServerForm()})
+    return render(request, 'users/index.html')
     
 def create(request):
     if request.method == 'POST':
@@ -87,5 +79,3 @@ def reset_password(request):
         form = UserPasswordResetForm()
         
     return render(request, 'users/reset_password.html', {'form': form})
-    
-    return HttpResponse('<b>re</b>set password')
