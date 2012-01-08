@@ -3,3 +3,5 @@ localsettings.py
 xmpplist.sqlite
 *.swp
 *.swo
+media
+mystatic
