@@ -5,6 +5,8 @@ from django.shortcuts import render
 from models import Server, ServerReport, Features
 from forms import ServerForm, ServerLocationForm
 
+from xmpplist.confirm.models import ServerConfirmationKey
+
 @login_required
 def index(request):
     forms = [ServerForm(instance=s, prefix=s.id,
@@ -37,11 +39,16 @@ def ajax(request):
             server.features = Features.objects.create()
             server.save()
             
+            # send confirmation if contact is email or jid
+            if server.contact_type in ['J', 'M']:
+                key = ServerConfirmationKey.objects.create(server=server)
+                key.send(request)
+            
             form = ServerForm(instance=server, prefix=server.id,
                               initial={'location': '%s,%s' % (server.location.x, server.location.y)})
             return render(request, 'ajax/server_table_row.html', {'form': form})
         return render(request, 'ajax/server_table_row.html', {'form': form}, status=400)
-        #return HttpResponse(status=400)
+    return HttpResponseForbidden("No humans allowed.")
 
 @login_required
 def ajax_mapbrowse(request):
@@ -72,6 +79,12 @@ def ajax_id(request, server_id):
             if set(['ca', 'ssl_port']) & changed:
                 server.verified = None
             server.save()
+                
+            # send confirmation if contact was changed and is email or jid
+            if form.contact_changed() and server.contact_type in ['J', 'E']:
+                ServerConfirmationKey.objects.filter(server=server).delete()
+                key = ServerConfirmationKey.objects.create(server=server)
+                key.send(request)
             
             form = ServerForm(instance=server, prefix=server.id,
                               initial={'location': '%s,%s' % (server.location.x, server.location.y)})
@@ -87,6 +100,7 @@ def ajax_moderate(request):
         server = Server.objects.get(id=server_id)
         if request.POST['moderate'] == 'true':
             server.moderated = True
+            server.contact_verified = True
         else:
             server.moderated = False
         server.save()
