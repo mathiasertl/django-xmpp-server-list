@@ -27,6 +27,10 @@
             This server has not yet been moderated, you will have to wait until somebody has the
             time to do so. This happens when you either just added this server or modified the
             homepage or contact details.
+            
+            {% if server.contact_verified %}
+                <p>The administration contact has been automaticaly verified.</p>
+            {% endif %}
         {% else %}
             This server was moderated, but rejected by a moderator. This means that either the
             homepage is not correct or the contact details could not be verified. Please check:
