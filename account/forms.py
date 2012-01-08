@@ -21,7 +21,7 @@ class CreationForm(UserCreationForm):
     
     class Meta:
         model = User
-        fields = ('username', 'email', )
+        fields = ('username', 'email',)
         
 class PreferencesForm(forms.ModelForm):
     class Meta:
