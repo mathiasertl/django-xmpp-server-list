@@ -216,15 +216,15 @@ class Server(models.Model):
             "does not allow SSL connections.")
     
     # verification
-    moderated = models.NullBooleanField(default=None)
+    verified = models.NullBooleanField(default=None)
     report = models.OneToOneField(ServerReport, related_name='server')
     
     # moderation:
-    verified = models.NullBooleanField(default=None)
+    moderated = models.NullBooleanField(default=None)
     features = models.OneToOneField(Features, related_name='server')
     
     # queried information
-    software = models.ForeignKey(ServerSoftware, related_name='servers', blank=True)
+    software = models.ForeignKey(ServerSoftware, related_name='servers', null=True, blank=True)
     software_version = models.CharField(max_length=16, blank=True)
     
     objects = models.GeoManager()
@@ -236,17 +236,15 @@ class Server(models.Model):
         ('E', 'e-mail'),
         ('W', 'website'),
     )
-    contact = models.CharField(max_length=30, blank=True,
-        help_text="The address where the server-admins can be reached. If left empty, your "
-            "personal JID will be used.")
+    contact = models.CharField(max_length=30,
+        help_text="The address where the server-admins can be reached.")
     contact_type = models.CharField(max_length=1, choices=CONTACT_TYPE_CHOICES, default='J',
-        blank=True,
         help_text="What type your contact details are. This setting will affect how the contact "
-            "details are rendered on the front page. This setting is not used if you leave the "
-            "next field empty.")
+            "details are rendered on the front page.")
     contact_name = models.CharField(max_length=30, blank=True,
         help_text="If you want to display a custom link-text for your contact details, give it "
             "here.")
+    contact_verified = models.BooleanField(default=False)
     
     def __unicode__(self):
         return self.domain
@@ -287,7 +285,4 @@ class Server(models.Model):
     def get_contact_text(self):
         if self.contact_name:
             return self.contact_name
-        elif self.user.get_full_name():
-            return self.user.get_full_name()
-        else:
-            return self.user.username
+        return self.contact
