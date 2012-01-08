@@ -5,11 +5,20 @@
 <h1>Welcome {{ user.username }}!</h1>
 {% if not user.profile.email_confirmed %}
     <div class="warning">
-        Your email address is not yet confirmed. Servers will never be publicly visible unless it
-        is. Please check your Inbox for a confirmation code or resend it. If your email address does
-        not work, you can <a href="{% url "account_edit" %}">change it here</a>.
+        Your E-Mail address has not yet been confirmed. You should have received a confirmation message
+        containing the link needed to confirm it. If you haven't received such a message,
+        you can <a href="{% url "account_resend_confirmation" %}">resend it</a>. If
+        you misspelled your address, you can <a href="{% url "account_edit" %}">change it here</a>.
     </div>
 {% endif %}
+{% if not user.profile.jid_confirmed %}
+    <div class="warning">
+        Your JID has not yet been confirmed. You should have received a confirmation message
+        containing the link needed to confirm it. If you haven't received such a message,
+        you can <a href="{% url "account_resend_confirmation" %}">resend it</a>. If
+        you misspelled your JID, you can <a href="{% url "account_edit" %}">change it here</a>.
+    </div>
+{% endif %}    
 
 Here you can:
 <ul>
@@ -17,6 +26,10 @@ Here you can:
 </ul>
 
 <h2>Your profile</h2>
+<p>
+    You may want to <a href="{% url "account_edit" %}">edit your profile</a> or
+    <a href="{% url "account_set_password" %}">set your password</a>.
+</p>
 <table>
     <tr><td>Username:</td><td>{{ user.username }}</td></tr>
     <tr><td>First name:</td><td>{{ user.first_name }}</td></tr>
@@ -42,8 +55,7 @@ Here you can:
     </tr>
     <tr>
         <td colspan="2">
-            <a href="{% url "account_edit" %}">edit</a>,
-            <a href="{% url "account_set_password" %}">set password</a>
+            
         </td>
     </tr>
 </table>

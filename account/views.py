@@ -89,3 +89,13 @@ def reset_password(request):
         form = PasswordResetForm()
         
     return render(request, 'account/reset_password.html', {'form': form})
+    
+@login_required
+def resend_confirmation(request):
+    if not request.user.profile.email_confirmed:
+        key = UserConfirmationKey.objects.create(user=request.user, type='E')
+        key.send(request)
+    if not request.user.profile.jid_confirmed:
+        key = UserConfirmationKey.objects.create(user=request.user, type='J')
+        key.send(request)
+    return HttpResponse('ok')

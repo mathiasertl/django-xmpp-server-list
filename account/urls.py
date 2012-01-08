@@ -10,6 +10,7 @@ urlpatterns = patterns(
     url(r'^create/$', 'create', name='account_create'),
     url(r'^edit/$', 'edit', name='account_edit'),
     url(r'^reset_password/$', 'reset_password', name='account_reset_password'),
+    url(r'^resend_confirmation/$', 'resend_confirmation', name='account_resend_confirmation'),
 )
 urlpatterns += patterns('',
     url(r'^login/', 'django.contrib.auth.views.login',
