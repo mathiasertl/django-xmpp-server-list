@@ -38,4 +38,9 @@ def reset_user_password(request, key):
     return redirect('account_set_password')
 
 def confirm_server(request, key):
-    pass
+    key = get_object_or_404(ServerConfirmationKey, **{'key': key})
+    key.server.contact_verified = True
+    key.server.save()
+    key.delete()
+    
+    return redirect('server')
