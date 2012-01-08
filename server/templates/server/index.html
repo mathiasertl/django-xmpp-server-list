@@ -20,15 +20,9 @@
     <tbody>
     <tr>
         <th>Status</th>
-        <th>Server</th>
-        <th>Website</th>
-        <th>CA</th>
-        <th>SSL port</th>
-        <th>Launched</th>
-        <th>Location</th>
-        <th>Contact type</th>
-        <th>Contact</th>
-        <th>Name</th>
+        {% for field in new_form %}
+            <th title="{{ field.help_text }}">{{ field.label }}</th>
+        {% endfor %}
         <th class="no-borders">{% csrf_token %}</th>
     </tr>
 {% for form in forms %}
@@ -37,7 +31,7 @@
     <tr class="new-server">
         <td></td>
         {% for field in new_form %}
-            <td>{{ field|fieldwidget }}</td>
+            <td title="{{ field.help_text }}">{{ field|fieldwidget }}</td>
         {% endfor %}
         <td class="no-borders">
             <img class="button-add" src="{{ STATIC_URL }}img/add.png" alt="add new server" title="add new server" />
@@ -45,5 +39,4 @@
     </tr>
     </tbody>
 </table>
-
 {% endblock %}

@@ -39,7 +39,7 @@ moment, you only have to check if the homepage of the server and the given conta
     </tr>
 {% for server in servers %}
     <tr id="server_{{server.id}}">
-        <td><a href="{{ server.website }}">{{ server.domain }}</a></td>
+        <td>{% include "includes/server_homepage.html" %}</td>
         <td>{% include "includes/server_contact.html" %}</td>
         <td class="no-borders">
             <img class="button-ok" src="{{ STATIC_URL }}img/save.png" alt="Ok." title="Ok." />

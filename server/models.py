@@ -199,14 +199,21 @@ class Server(models.Model):
     user = models.ForeignKey(User, related_name='servers')
     added = models.DateField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True, auto_now_add=True)
-    launched = models.DateField()
-    location = models.PointField(default=Point(0,0))
+    launched = models.DateField(help_text="When the server was launched.")
+    location = models.PointField(default=Point(0,0), help_text="Where the server is located.")
     
     # information about the service:
-    domain = models.CharField(unique=True, max_length=30)
-    website = models.URLField()
-    ca = models.ForeignKey(CertificateAuthority, related_name='servers')
-    ssl_port = models.PositiveIntegerField(default=5223, blank=True, null=True)
+    domain = models.CharField(unique=True, max_length=30,
+        help_text="The primary domain of your server.")
+    website = models.URLField(null=True, blank=True,
+        help_text="A homepage where one can find information on your server. If left empty, "
+            "the default is http://<domain>.")
+    ca = models.ForeignKey(CertificateAuthority, related_name='servers', verbose_name='CA',
+        help_text="The Certificate Authority of the certificate used in SSL/TLS connections.")
+    ssl_port = models.PositiveIntegerField(default=5223, blank=True, null=True,
+        verbose_name='SSL port',
+        help_text="The Port where your server allows SSL connections. Leave empty if your server "
+            "does not allow SSL connections.")
     
     # verification
     moderated = models.NullBooleanField(default=None)
@@ -229,9 +236,16 @@ class Server(models.Model):
         ('E', 'e-mail'),
         ('W', 'website'),
     )
-    contact = models.CharField(max_length=30)
-    contact_name = models.CharField(max_length=30)
-    contact_type = models.CharField(max_length=1, choices=CONTACT_TYPE_CHOICES)
+    contact = models.CharField(max_length=30, null=True, blank=True,
+        help_text="The address where the server-admins can be reached. If left empty, your "
+            "personal JID will be used.")
+    contact_type = models.CharField(max_length=1, choices=CONTACT_TYPE_CHOICES, default='J',
+        help_text="What type your contact details are. This setting will affect how the contact "
+            "details are rendered on the front page. This setting is not used if you leave the "
+            "next field empty.")
+    contact_name = models.CharField(max_length=30, null=True, blank=True,
+        help_text="If you want to display a custom link-text for your contact details, give it "
+            "here.")
     
     def __unicode__(self):
         return self.domain
@@ -261,3 +275,10 @@ class Server(models.Model):
         else:
             country = WorldBorders.objects.get(geom__intersects=self.location)
         return country
+    
+    def get_website(self):
+        print(self.website)
+        if self.website:
+            return self.website
+        else:
+            return 'http://%s' % self.domain

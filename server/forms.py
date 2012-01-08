@@ -12,7 +12,8 @@ from models import Server
 import floppyforms
 
 class ServerForm(ModelForm):
-    location = CharField(min_length=3, widget=TextInput(attrs={'size': 8, 'class': 'mapwidget'}))
+    location = CharField(min_length=3, widget=TextInput(attrs={'size': 8, 'class': 'mapwidget'}),
+                         help_text="Where the server is located.")
     
     def verify_domain(self, value):
         """
@@ -49,6 +50,9 @@ class ServerForm(ModelForm):
     
     def clean_contact(self):
         contact = self.cleaned_data['contact']
+        if not contact:
+            return contact
+        
         typ = self.cleaned_data['contact_type']
         
         if typ == 'E': # email

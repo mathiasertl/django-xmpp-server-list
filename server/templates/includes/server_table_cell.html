@@ -1,7 +1,7 @@
 {% load fieldvalue %}
 {% load fieldwidget %}
 
-<td>
+<td title="{{ field.help_text }}">
     <div class="value-display"
             {% if form.errors %}style="display: none;" {% endif %}>
         {{ field|fieldvalue }}
