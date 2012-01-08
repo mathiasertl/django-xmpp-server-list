@@ -282,3 +282,11 @@ class Server(models.Model):
             return self.website
         else:
             return 'http://%s' % self.domain
+        
+    def get_contact_text(self):
+        if self.contact_name:
+            return self.contact_name
+        elif self.user.get_full_name():
+            return self.user.get_full_name()
+        else:
+            return self.user.username
