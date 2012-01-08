@@ -28,15 +28,14 @@ Server.objects.create(user=u, ca=startssl, software=ejabberd,
     location=Point(x=16.37, y=48.20),
     report=ServerReport.objects.create(),
     features=Features.objects.create(),
-    domain='jabber.at', website='https://jabber.at',
-    launched=datetime.date.today(), software_version='2.1.10',
-    contact='chat@conference.jabber.at', contact_name='chat@conference.jabber.at', contact_type='M'
+    contact='mati@jabber.at', contact_type='J',
+    domain='jabber.at', launched=datetime.date.today(), software_version='2.1.10',
 )
 Server.objects.create(user=u, ca=startssl, software=ejabberd,
     location=Point(x=16.37, y=48.20),
     report=ServerReport.objects.create(),
     features=Features.objects.create(),
-    domain='jabber.fsinf.at', website='https://jabber.fsinf.at',
-    launched=datetime.date.today(), software_version='2.1.10',
-    contact='fsinf@conference.fsinf.at', contact_name='fsinf@conference.fsinf.at', contact_type='M'
+    domain='jabber.fsinf.at',
+    contact='mati@fsinf.at', contact_type='J',
+    launched=datetime.date.today(), software_version='2.1.10'
 )
