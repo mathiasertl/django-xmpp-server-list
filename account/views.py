@@ -2,12 +2,13 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
-from models import ConfirmationKey, get_random_key
-from forms import MyUserCreationForm, UserPreferencesForm, UserPasswordForm
+from forms import MyUserCreationForm, UserPreferencesForm, UserPasswordForm, UserPasswordResetForm
 
 from xmpplist.server.forms import ServerForm
+from xmpplist.confirm.models import UserConfirmationKey, UserPasswordResetKey
 
 @login_required
 def index(request):
@@ -26,8 +27,8 @@ def create(request):
             user = form.save()
             
             # create email confirmation:
-            confirmation_key = ConfirmationKey.objects.create(user=user, key=get_random_key(user))
-            confirmation_key.send(request)
+            key = UserConfirmationKey.objects.create(user=user)
+            key.send(request, typ='E') # send to email address (for now)
             
             user.backend = 'django.contrib.auth.backends.ModelBackend'
             login(request, user)
@@ -37,22 +38,6 @@ def create(request):
         form = MyUserCreationForm()
         
     return render(request, 'users/create.html', {'form': form})
-    
-@login_required
-def confirm_email(request, key):
-    try:
-        key = ConfirmationKey.objects.get(key=key.lower())
-    except ConfirmationKey.DoesNotExist:
-        return render(request, 'users/confirm_email_error.html')
-    
-    if key.user != request.user:
-        return render(request, 'users/confirm_email_error.html')
-    
-    request.user.profile.email_confirmed = True
-    request.user.profile.save()
-    key.delete()
-    
-    return redirect('users')
 
 @login_required
 def edit(request):
@@ -86,4 +71,21 @@ def set_password(request):
     return render(request, 'users/set_password.html', {'form': form})
     
 def reset_password(request):
+    if request.user.is_authenticated():
+        return redirect('users_set_password')
+    
+    if request.method == 'POST':
+        form = UserPasswordResetForm(request.POST)
+        if form.is_valid():
+            user = User.objects.get(username=form.cleaned_data['username'])
+            
+            # send reset-key:
+            key = UserPasswordResetKey(user=user)
+            key.save()
+            key.send(request)
+    else:
+        form = UserPasswordResetForm()
+        
+    return render(request, 'users/reset_password.html', {'form': form})
+    
     return HttpResponse('<b>re</b>set password')
