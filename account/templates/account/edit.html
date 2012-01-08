@@ -12,7 +12,7 @@ email address.
 </p>
 
 <form action="{% url "account_edit" %}" method="post">{% csrf_token %}
-<table>
+<table class="form">
 {{ user_form.as_table }}
 {{ profile_form.as_table }}
 </table>

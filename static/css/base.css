@@ -8,6 +8,10 @@
     border-left: 5px solid #FF6666;
 }
 
+table.form {
+    margin-bottom: 10px;
+}
+
 .acknowledgement {
     font-size: x-large;
     margin-bottom: 1em;
@@ -22,23 +26,23 @@
     content: "Warning: ";
 }
 
-table {
+table.your-servers {
+    width: 100%;
     border-collapse: collapse;
     border-spacing: 1px;
     border-color: gray;
 }
 
-table.your-servers {
-    width: 100%;
-}
-
-td, th {
-    padding: 4px;
+table.your-servers td, table.your-servers th {
+    text-align: center;
     border-style: solid;
     border-color: gray;
     border-collapse: collapse;
     border-width: 1px;
-    text-align: center;
+}
+
+td, th {
+    padding: 4px;
 }
 
 td.no-borders, th.no-borders {
