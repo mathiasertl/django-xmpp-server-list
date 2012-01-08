@@ -33,7 +33,11 @@ class UserPasswordForm(forms.Form):
     password_confirm = forms.CharField(min_length=8, widget=forms.PasswordInput)
     
     def clean(self):
-        if self.cleaned_data['password'] != self.cleaned_data['password_confirm']:
+        data = self.cleaned_data
+        if 'password' in data and 'password_confirm' in data and data['password'] != data['password_confirm']:
             raise forms.ValidationError("The two passwords didn't match!")
             
         return self.cleaned_data
+    
+class UserPasswordResetForm(forms.Form):
+    username = forms.CharField()
