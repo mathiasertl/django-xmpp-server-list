@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Confirming your contact details</h1>
+<p>
+    Both your email-address and your JID have to be verified if you want to publish servers
+    on this site. To this end, you will receive automated messages containing a validation URL
+    on the respective account. You just have to open the validation URL to confirm your address.
+</p>
+
+<ul>
+{% if not user.profile.email_confirmed %}
+    <li>An email containing a verification URL has been sent to {{ user.email }}.</li>
+{% endif %}
+{% if not user.profile.jid_confirmed %}
+    <li>
+        <p>
+            An XMPP message containing a verification URL has been sent to {{ user.profile.jid }}.
+        </p>
+        <p>
+            <strong>Note:</strong> The verification message will come from {{ jid }}. Some clients
+            block messages from accounts not in your buddy-list, so you might have to explicitely
+            allow messages from that account.
+        </p>
+    </li>
+{% endif %}
+</ul>
+
+<p>
+    If you haven't received a confirmation message, you can just reload this page.
+</p>
+{% endblock %}

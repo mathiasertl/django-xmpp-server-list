@@ -1,7 +1,8 @@
-from django.shortcuts import render, redirect
+from django.conf import settings
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
 
 from forms import CreationForm, PreferencesForm, ProfileForm, PasswordResetForm
 
@@ -98,4 +99,6 @@ def resend_confirmation(request):
     if not request.user.profile.jid_confirmed:
         key = UserConfirmationKey.objects.create(user=request.user, type='J')
         key.send(request)
-    return HttpResponse('ok')
+    return render(request, 'account/resend_confirmation.html',
+        {'jid': settings.XMPP['default']['jid']}
+    )
