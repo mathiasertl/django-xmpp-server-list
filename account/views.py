@@ -3,7 +3,7 @@ from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
-from forms import CreationForm, PreferencesForm, PasswordResetForm
+from forms import CreationForm, PreferencesForm, ProfileForm, PasswordResetForm
 
 from xmpplist.confirm.models import UserConfirmationKey, UserPasswordResetKey
 
@@ -13,50 +13,64 @@ def index(request):
     
 def create(request):
     if request.method == 'POST':
-        form = CreationForm(request.POST)
-        if form.is_valid():
+        user_form = CreationForm(request.POST, prefix='user')
+        profile_form = ProfileForm(request.POST, prefix='profile')
+        if user_form.is_valid() and profile_form.is_valid():
             # create user
-            user = form.save()
+            user = user_form.save()
+            profile = profile_form.save(commit=False)
+            profile.user = user
+            profile.save()
             
-            # create email confirmation:
-            key = UserConfirmationKey.objects.create(user=user, type='E')
-            key.send(request)
+            # create confirmations:
+            ekey = UserConfirmationKey.objects.create(user=user, type='E')
+            ekey.send(request)
+            jkey = UserConfirmationKey.objects.create(user=user, type='J')
+            jkey.send(request)
             
             user.backend = 'django.contrib.auth.backends.ModelBackend'
             login(request, user)
             
             return redirect('account')
     else:
-        form = CreationForm()
+        user_form = CreationForm(prefix='user')
+        profile_form = ProfileForm(prefix='profile')
         
-    return render(request, 'account/create.html', {'form': form})
+    return render(request, 'account/create.html',
+                  {'user_form': user_form, 'profile_form': profile_form}
+    )
 
 @login_required
 def edit(request):
     if request.method == 'POST':
-        form = PreferencesForm(request.POST, instance=request.user)
+        user_form = PreferencesForm(request.POST, instance=request.user, prefix='user')
+        profile_form = ProfileForm(request.POST, instance=request.user.profile, prefix='profile')
         
-        if form.is_valid():
-            user = form.save()
+        if user_form.is_valid() and profile_form.is_valid():
+            user = user_form.save()
+            profile = profile_form.save()
             
-            if 'email' in form.changed_data:
-                user.profile.email_confirmed = False
-                user.profile.save()
+            if 'email' in user_form.changed_data:
+                profile.email_confirmed = False
+                profile.save()
                 UserConfirmationKey.objects.filter(user=user, type='E').delete()
                 key = UserConfirmationKey.objects.create(user=user, type='E')
                 key.send(request)
-            if 'jid' in form.changed_data:
-                user.profile.jid_confirmed = False
-                user.profile.save()
+            if 'jid' in profile_form.changed_data:
+                profile.jid_confirmed = False
+                profile.save()
                 UserConfirmationKey.objects.filter(user=user, type='J').delete()
                 key = UserConfirmationKey.objects.create(user=user, type='J')
                 key.send(request)
                 
             return redirect('account')
     else:
-        form = PreferencesForm(instance=request.user)
+        user_form = PreferencesForm(instance=request.user, prefix='user')
+        profile_form = ProfileForm(instance=request.user.profile, prefix='profile')
         
-    return render(request, 'account/edit.html', {'form': form})
+    return render(request, 'account/edit.html',
+                  {'user_form': user_form, 'profile_form': profile_form}
+    )
     
 def reset_password(request):
     if request.user.is_authenticated():

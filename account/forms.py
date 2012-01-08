@@ -14,9 +14,6 @@ class CreationForm(UserCreationForm):
         if commit:
             user.save()
             
-            # create default profile:
-            UserProfile.objects.create(user=user)
-            
         return user
     
     class Meta:
@@ -27,6 +24,11 @@ class PreferencesForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'email')
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ('jid',)
     
 class PasswordResetForm(forms.Form):
     username = forms.CharField()

@@ -46,7 +46,7 @@ class UserConfirmationKey(ConfirmationKey):
             self.send_jid(self.user.profile.jid, subject, message)
     
     def set_random_key(self):
-        salt = sha_constructor('%s-%s' % (settings.SECRET_KEY, time.time())).hexdigest()
+        salt = sha_constructor('%s-%s-%s' % (settings.SECRET_KEY, time.time(), self.type)).hexdigest()
         return sha_constructor('%s-%s-%s' % (salt, self.user.username, self.user.email)).hexdigest()
         
 class UserPasswordResetKey(UserConfirmationKey):
