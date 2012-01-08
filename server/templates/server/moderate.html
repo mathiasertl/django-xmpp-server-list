@@ -40,7 +40,10 @@ moment, you only have to check if the homepage of the server and the given conta
 {% for server in servers %}
     <tr id="server_{{server.id}}">
         <td>{% include "includes/server_homepage.html" %}</td>
-        <td>{% include "includes/server_contact.html" %}</td>
+        <td>
+            {% include "includes/server_contact.html" %}
+            {% if server.contact_verified %}(verified){% endif %}
+        </td>
         <td class="no-borders">
             <img class="button-ok" src="{{ STATIC_URL }}img/save.png" alt="Ok." title="Ok." />
             <img class="button-notok" src="{{ STATIC_URL }}img/cancel.png" alt="NOT ok." title="NOT ok." />
