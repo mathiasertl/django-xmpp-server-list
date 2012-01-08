@@ -1,0 +1,12 @@
+Dear {{ key.user.username }},
+
+You have attempted to create an account or change your email address at
+http{% if request.is_secure %}s{% endif %}://{{request.get_host}}.
+
+To confirm your email address, please go to:
+
+    http{% if request.is_secure %}s{% endif %}://{{request.get_host}}{% url users_confirm_email key %}
+
+Cheers,
+
+    The xmpplist website

@@ -10,6 +10,7 @@ urlpatterns = patterns('',
     url(r'^user/', include('account.urls')),
     url(r'^server/', include('server.urls')),
     url(r'^api/', include('api.urls')),
+    url(r'^confirm/', include('confirm.urls')),
     # url(r'^xmpplist/', include('xmpplist.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
