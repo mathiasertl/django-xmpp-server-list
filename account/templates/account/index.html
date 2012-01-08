@@ -30,12 +30,12 @@ Here you can:
     You may want to <a href="{% url "account_edit" %}">edit your profile</a> or
     <a href="{% url "account_set_password" %}">set your password</a>.
 </p>
-<table>
-    <tr><td>Username:</td><td>{{ user.username }}</td></tr>
-    <tr><td>First name:</td><td>{{ user.first_name }}</td></tr>
-    <tr><td>Last name:</td><td>{{ user.last_name }}</td></tr>
+<table id="profile-overview">
+    <tr><th>Username:</th><td>{{ user.username }}</td></tr>
+    <tr><th>First name:</th><td>{{ user.first_name }}</td></tr>
+    <tr><th>Last name:</th><td>{{ user.last_name }}</td></tr>
     <tr>
-        <td>email:</td>
+        <th>email:</th>
         <td>{{ user.email }}
             {% if user.profile.email_confirmed %}
                 <img src="{{ STATIC_URL }}img/save.png" title="confirmed">
@@ -44,18 +44,13 @@ Here you can:
             {% endif %}
         </td>
     </tr>
-    <tr><td>JID:</td>
+    <tr><th>JID:</th>
         <td>{{ user.profile.jid }}
             {% if user.profile.jid_confirmed %}
                 <img src="{{ STATIC_URL }}img/save.png" title="confirmed">
             {% else %}
                 <img src="{{ STATIC_URL }}img/alert.png" title="not confirmed">
             {% endif %}
-        </td>
-    </tr>
-    <tr>
-        <td colspan="2">
-            
         </td>
     </tr>
 </table>

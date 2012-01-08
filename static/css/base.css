@@ -46,6 +46,15 @@ td.no-borders, th.no-borders {
     text-align: left;
 }
 
+#profile-overview th {
+    border-width: 0px;
+    text-align: right;
+}
+#profile-overview td {
+    border-width: 0px;
+    text-align: left;
+}
+
 .warning {
     font-size: x-large;
     margin-bottom: 1em;
