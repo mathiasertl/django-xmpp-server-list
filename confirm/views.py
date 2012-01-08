@@ -22,7 +22,7 @@ def confirm_user_contact(request, key):
     key.user.profile.save()
     
     # remove existing confirmation keys:
-#    UserConfirmationKey.objects.filter(user=key.user, type=key.type).delete()
+    UserConfirmationKey.objects.filter(user=key.user, type=key.type).delete()
     return redirect('account')
 
 def reset_user_password(request, key):
