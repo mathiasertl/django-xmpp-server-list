@@ -1,3 +1,51 @@
+table {
+    border-spacing: 0px;
+    border-collapse: collapse;
+}
+
+td, th {
+    border-width: 1px;
+    border-color: gray;
+    border-style: solid;
+    padding: 4px;
+    text-align: center;
+}
+
+td img {
+    display: inline;
+    vertical-align: middle;
+}
+
+form table {
+    margin-bottom: 10px;
+}
+
+form table td {
+    border-width: 0px;
+    text-align: left;
+}
+form table th {
+    border-width: 0px;
+    text-align: right;
+}
+
+table.your-servers {
+    width: 100%;
+}
+
+table.your-servers input {
+    font-size: smaller;
+    text-align: center;
+}
+
+td.no-borders, th.no-borders {
+    border-right-width: 0px;
+    border-top-width: 0px;
+    border-bottom-width: 0px;
+    min-width: 36px;
+    text-align: left;
+}
+
 .warning {
     font-size: x-large;
     margin-bottom: 1em;
@@ -12,10 +60,6 @@
     content: "Warning: ";
 }
 
-table.form {
-    margin-bottom: 10px;
-}
-
 .acknowledgement {
     font-size: x-large;
     margin-bottom: 1em;
@@ -24,36 +68,6 @@ table.form {
     
     border: 1px solid #A4FFA4;
     border-left: 5px solid #66FF66;
-}
-
-table.your-servers {
-    width: 100%;
-    border-collapse: collapse;
-    border-spacing: 1px;
-    border-color: gray;
-}
-
-table.your-servers td, table.your-servers th {
-    text-align: center;
-    border-style: solid;
-    border-color: gray;
-    border-collapse: collapse;
-    border-width: 1px;
-}
-
-td, th {
-    padding: 4px;
-}
-
-td.no-borders, th.no-borders {
-    border-right-style: hidden;
-    border-right-width: 0px;
-    border-top-style: hidden;
-    border-top-width: 0px;
-    border-bottom-style: hidden;
-    border-bottom-width: 0px;
-    min-width: 36px;
-    text-align: left;
 }
 
 .header {
@@ -77,16 +91,6 @@ td.no-borders, th.no-borders {
 
 .value-edit {
     display: none;
-}
-
-.your-servers input {
-    font-size: smaller;
-    text-align: center;
-}
-
-td img {
-    display: inline;
-    vertical-align: middle;
 }
 
 .overlay {
