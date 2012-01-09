@@ -1,4 +1,4 @@
-import time
+import time, threading, logging
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -8,6 +8,7 @@ from django.template.loader import render_to_string
 from django.utils.hashcompat import sha_constructor
 
 from xmpplist.server.models import Server
+from SendMsgBot import SendMsgBot
 
 CONFIRMATION_TYPE_CHOICES=(
     ('J', 'JID'),
@@ -28,8 +29,20 @@ class ConfirmationKey(models.Model):
         send_mail(subject, message, frm, [to], fail_silently=True)
         
     def send_jid(self, to, subject, message):
-        print('XMPP message: To: %s\nSubject: %s\nMessage: %s' % (to, subject, message))
-    
+        print( 'sending xmpp message...')
+        creds = settings.XMPP['default']
+        logging.basicConfig()
+        
+        def send_msg(frm, pwd, to, msg):
+            print('attempting to start message...')
+            xmpp = SendMsgBot(frm, pwd, to, msg)
+            if xmpp.connect():
+                xmpp.process(wait=True)
+        
+        t = threading.Thread(target=send_msg, args=(creds['jid'], creds['password'], to, message))
+        t.daemon = True
+        t.start()
+
     class Meta:
         abstract = True
         
