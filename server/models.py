@@ -240,7 +240,8 @@ class Server(models.Model):
         help_text="The address where the server-admins can be reached.")
     contact_type = models.CharField(max_length=1, choices=CONTACT_TYPE_CHOICES, default='J',
         help_text="What type your contact details are. This setting will affect how the contact "
-            "details are rendered on the front page.")
+            "details are rendered on the front page. If you choose a JID or an e-mail address, you "
+            "will receive an automated confirmation message.")
     contact_name = models.CharField(max_length=30, blank=True,
         help_text="If you want to display a custom link-text for your contact details, give it "
             "here.")
