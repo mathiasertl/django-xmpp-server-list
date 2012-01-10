@@ -20,10 +20,13 @@ def dns_lookup(self, record, record_type):
         return []
 
 def check_host(host, port, ipv6=False):
-    if ipv6:
-        hosts = socket.getaddrinfo(host, port, socket.AF_INET6, socket.SOCK_STREAM)
-    else:
-        hosts = socket.getaddrinfo(host, port, socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        if ipv6:
+            hosts = socket.getaddrinfo(host, port, socket.AF_INET6, socket.SOCK_STREAM)
+        else:
+            hosts = socket.getaddrinfo(host, port, socket.AF_INET, socket.SOCK_STREAM)
+    except:
+        return False # DNS resolution failed or something
 
     for af, socktype, proto, canonname, connect_args in hosts:
         try:
