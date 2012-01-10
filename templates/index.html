@@ -37,8 +37,15 @@ always communicate with users on other servers. This list is kindly brought to y
 </table>
 
 {% if not user.is_authenticated %}
-<p>You can simply <a href="{% url "account_create" %}">create an account</a> and
-<a href="{% url "django.contrib.auth.views.login" %}?next={{ request.path }}">login</a> to add your
-own servers to this list.
+<p>
+    You can simply <a href="{% url "account_create" %}">create an account</a> and
+    <a href="{% url "django.contrib.auth.views.login" %}?next={{ request.path }}">login</a> to add
+    your own servers to this list.
+</p>
 {% endif %}
+<p>
+    There also is an <a href="{% url "api" %}">API</a> for reading servers from this list.
+    <a href="{% url "api_help" %}">Some documentation</a> is available for it.
+</p>
+
 {% endblock content %}
