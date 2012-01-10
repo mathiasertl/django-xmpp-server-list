@@ -38,7 +38,10 @@ class ServerForm(ModelForm):
         return ssl_port
     
     def clean_location(self):
-        x, y = self.cleaned_data['location'].strip().split(',')
+        try:
+            x, y = self.cleaned_data['location'].strip().split(',')
+        except ValueError:
+            raise ValidationError("Format for coordinates is 'long,lat', example: 16.37,48.2")
         x = float(x)
         y = float(y)
         if x > 180 or x < -180:
