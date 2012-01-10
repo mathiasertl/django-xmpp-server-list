@@ -277,7 +277,6 @@ class Server(models.Model):
         return country
     
     def get_website(self):
-        print(self.website)
         if self.website:
             return self.website
         else:
