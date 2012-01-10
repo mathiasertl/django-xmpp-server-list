@@ -29,12 +29,12 @@ class ConfirmationKey(models.Model):
         send_mail(subject, message, frm, [to], fail_silently=True)
         
     def send_jid(self, to, subject, message):
-        print( 'sending xmpp message...')
+        logging.debug( 'sending xmpp message...')
         creds = settings.XMPP['default']
         logging.basicConfig()
         
         def send_msg(frm, pwd, to, msg):
-            print('attempting to start message...')
+            logging.debug('attempting to start message...')
             xmpp = SendMsgBot(frm, pwd, to, msg)
             if xmpp.connect():
                 xmpp.process(wait=True)

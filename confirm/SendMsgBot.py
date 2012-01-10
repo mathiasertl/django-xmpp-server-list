@@ -7,7 +7,7 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-import sleekxmpp
+import sleekxmpp, logging
 
 class SendMsgBot(sleekxmpp.ClientXMPP):
     """
@@ -45,12 +45,12 @@ class SendMsgBot(sleekxmpp.ClientXMPP):
         """
         self.send_presence()
 
-        print(self.recipient)
-        print(self.msg)
+        logging.debug(self.recipient)
+        logging.debug(self.msg)
         self.send_message(mto=self.recipient,
                           mbody=self.msg,
                           mtype='chat')
-        print('sent message')
+        logging.debug('sent message')
 
         # Using wait=True ensures that the send queue will be
         # emptied before ending the session.
