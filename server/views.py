@@ -40,7 +40,7 @@ def ajax(request):
             server.save()
             
             # send confirmation if contact is email or jid
-            if server.contact_type in ['J', 'M']:
+            if server.contact_type in ['J', 'E']:
                 key = ServerConfirmationKey.objects.create(server=server)
                 key.send(request)
             
