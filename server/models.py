@@ -27,6 +27,9 @@ def check_host(host, port, ipv6=False):
             hosts = socket.getaddrinfo(host, port, socket.AF_INET, socket.SOCK_STREAM)
     except:
         return False # DNS resolution failed or something
+    
+    if not hosts: # no hosts returned (not sure if this actually happens)
+        return False
 
     for af, socktype, proto, canonname, connect_args in hosts:
         try:
