@@ -161,10 +161,15 @@ class ServerReport(models.Model):
         return not self.is_ok()
     
     def __unicode__(self):
+        try:
+            domain = self.server.domain
+        except:
+            domain = 'INVALID SERVER!'
+            
         condition = 'ok'
         if self.has_problems():
             condition = 'has problems'
-        return 'Report on %s: %s' % ('domain', condition)
+        return 'Report on %s: %s' % (domain, condition)
 
 class Features(models.Model):
     # connection-related:
@@ -182,7 +187,12 @@ class Features(models.Model):
     has_webpresence = models.BooleanField(default=False)
     
     def __unicode__(self):
-        return self.server.domain
+        try:
+            domain = self.server.domain
+        except:
+            domain = 'INVALID SERVER!'
+            
+        return 'Features for %s' % (domain)
     
     def check_ipv6(self, hosts):
         if not self.server.report.srv_client:
