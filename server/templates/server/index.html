@@ -39,4 +39,52 @@
     </tr>
     </tbody>
 </table>
+<h2>Help on adding/editing servers</h2>
+A few notes on adding/editing servers:
+<ul>
+    <li>
+        When adding a server, use the last row to fill out data of your server. When you are done,
+        click the '+' sign on the right. If you are unsure what a field means, a description is
+        shown when you hover over an input field.
+    </li>
+    <li>
+        Please especially note the <strong>Location</strong> field. It should be in the
+        input format "long,lat", for example, "16.37,48.2". The easiest way to retrieve coordinates
+        is to click on the little OSM-button right of the input field and use the fancy applet :-).
+    </li>
+    <li>
+        Also take special care of the <strong>Contact type</strong> and <strong>Contact</strong>
+        field. If you choose a JID or an e-mail address as a contact, you will receive a seperate
+        verification message to confirm your contact details. If you choose a MUC or a website
+        (presumably containing a contact-form), it will be manually checked by a moderator.
+    </li>
+    <li>
+        If your Certificate Authority is not listed for the <strong>CA</strong> field, please
+        don't hesitate to report it in our MUC at chat@conference.jabber.at.
+    </li>
+    <li>
+        For a server to show up on the frontpage, it has to be both verified and moderated.
+        Verification is done automatically every few hours and checks SRV records and the like.
+        Moderation is done by humans and checks things that cannot be automatically verified, like
+        if your homepage actually works and shows some useful information. 
+    </li>
+    <li>
+        The status (the left-most column) is actually a pop-up describing if your server is
+        currently shown on the frontpage and if not, what the problems are. Just click on the symbol
+        to get additional details.
+    </li>
+    <li>
+        Please note that servers are never shown on the frontpage if your personal JID and e-mail
+        are not verified. See <a href="{% url "account"%}">your profile</a> for details.
+    </li>
+    <li>
+        If you have multiple virtual hosts running on the same server, simply add them as if they
+        where individual servers. There currently is no support for virtual hosts.
+    </li>
+    <li>
+        If you <strong>edit</strong> an existing server (click on the pencil to the right of the
+        table) your server will have to be re-moderated and/or re-verified depending on what details
+        you change. The server will not show up on the frontpage until this happens.
+    </li>
+</ul>
 {% endblock %}
