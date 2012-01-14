@@ -15,14 +15,16 @@
     {% endif %}
     {% if not report.client_online %}
     <li>
-        None of the hosts referred to by your xmpp-client SRV records worked. Either your SRV records
-        are not correct or your server was temporarily unavailable.
+        None of the hosts referred to by your xmpp-client SRV records are reachable. Note that
+        a host is only considered reachable if all A (and, if IPv6 support is detected, AAAA)
+        records are reachable at the given port. 
     </li>
     {% endif %}
     {% if not report.server_online %}
     <li>
-        None of the hosts referred to by your xmpp-server SRV records worked. Either your SRV records
-        are not correct or your server was temporarily unavailable.
+        None of the hosts referred to by your xmpp-server SRV records are reachable. Note that
+        a host is only considered reachable if all A (and, if IPv6 support is detected, AAAA)
+        records are reachable at the given port. 
     </li>
     {% endif %}
 

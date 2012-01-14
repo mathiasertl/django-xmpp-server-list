@@ -139,17 +139,34 @@ INSTALLED_APPS = (
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s: %(message)s'
+        },
+    },
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+        'console': {
+            'level':'DEBUG',
+            'class':'logging.StreamHandler',
+            'formatter': 'simple'
+        },
     },
     'loggers': {
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
             'propagate': True,
+        },
+        'xmpplist.server': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
         },
     }
 }
@@ -171,6 +188,7 @@ AUTH_PROFILE_MODULE = 'account.UserProfile'
 DEFAULT_FROM_EMAIL = 'test@example.com'
 
 INTERNAL_IPS=('127.0.0.1')
+CHECK_IPV6 = True
 
 try:
     from localsettings import *

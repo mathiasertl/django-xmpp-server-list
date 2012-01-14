@@ -12,19 +12,61 @@ from django.contrib.gis.geos import Point
 
 from xmpplist.world.models import WorldBorders
 
-def get_hosts(host, port, ipv6=False):
+logger = logging.getLogger('xmpplist.server')
+
+def get_hosts(host, port, ipv4=True, ipv6=True):
+    hosts = []
+    if not settings.CHECK_IPV6:
+        ipv6 = False
+    
     try:
+        if ipv4:
+            hosts += socket.getaddrinfo(host, port, socket.AF_INET, socket.SOCK_STREAM)
         if ipv6:
-            hosts = socket.getaddrinfo(host, port, socket.AF_INET6, socket.SOCK_STREAM)
-        else:
-            hosts = socket.getaddrinfo(host, port, socket.AF_INET, socket.SOCK_STREAM)
+            hosts += socket.getaddrinfo(host, port, socket.AF_INET6, socket.SOCK_STREAM)
             
         return hosts
     except Exception as e:
         return []
 
-def check_host(host, port, ipv6=False):
+def check_hostname(hostname, port, ipv4=True, ipv6=True):
+    """
+    Returns True if all addresses for the given host are reachable on the given port.
+    
+    :param hostname: A hostname specified by an SRV record.
+    :param port: A port specified by an SRV record.
+    :param ipv4: If False, IPv4 addresses are not checked.
+    :param ipv6: If False, IPv6 addresses are not checked.
+    """
+    logger.debug('Verify connectivity for %s:%s' % (hostname, port))
+    hosts = get_hosts(hostname, port, ipv4, ipv6)
+    if not hosts:
+        logger.error('%s: No hosts returned (IPv4: %s, IPv6: %s)' % (host, ipv4, ipv6))
+        return False
+
+    for af, socktype, proto, canonname, connect_args in hosts:
+        if af == socket.AF_INET:
+            addr_str = '%s:%s (%s)' % (connect_args[0], connect_args[1], hostname)
+        elif af == socket.AF_INET6:
+            addr_str = '[%s]:%s (%s)' % (connect_args[0], connect_args[1], hostname)
+        
+        try:
+            s = socket.socket(af, socktype, proto)
+            s.settimeout(1.0)
+            s.connect(connect_args)
+            s.close()
+        except socket.error as e:
+            logger.error('%s: %s' % (addr_str, e))
+            return False
+        except:
+            logger.error('Failed to connect to %s' % addr_str)
+            return False
+        
+    return True
+
+def get_features(host, port, ipv6=False):
     hosts = get_hosts(host, port, ipv6)
+    
     if not hosts: # no hosts returned (not sure if this actually happens)
         return False
 
@@ -33,18 +75,43 @@ def check_host(host, port, ipv6=False):
             s = socket.socket(af, socktype, proto)
             s.settimeout(1.0)
             s.connect(connect_args)
+            
+            msg = """<stream:stream xmlns='%s'
+                xmlns:stream='http://etherx.jabber.org/streams'
+                to='%s' version='1.0'>""" %(xmlns, args[0])
+            s.send( msg.encode( 'ascii' ) )
+            init_resp = s.recv(4096).decode( 'utf-8' )
+            if not init_resp.endswith( '</stream:features>' ):
+                    init_resp += s.recv(4096).decode( 'utf-8' )
+            print(init_resp)
             s.close()
         except: 
             return False
         
     return True
 
-def check_host_ssl(host, port, cert, ipv6=False):
-    hosts = get_hosts(host, int(port), ipv6)
-    if not hosts: # no hosts returned (not sure if this actually happens)
+def check_hostname_ssl(host, port, cert, ipv4=True, ipv6=True):
+    """
+    Returns True if all addresses the given hostname resolves to are reachable on the given
+    port and if SSL negotiation with the given certificate succeeds.
+    
+    :param host: A hostname.
+    :param port: A port.
+    :param ipv4: If False, IPv4 addresses are not checked.
+    :param ipv6: If False, IPv6 addresses are not checked.
+    """
+    logger.debug('Verify SSL for %s:%s' % (host, port))
+    hosts = get_hosts(host, int(port), ipv4, ipv6)
+    if not hosts:
+        logger.error('%s (SSL): No hosts returned (IPv4: %s, IPv6: %s)' % (host, ipv4, ipv6))
         return False
     
     for af, socktype, proto, canonname, connect_args in hosts:
+        if af == socket.AF_INET:
+            addr_str = '%s:%s (%s)' % (connect_args[0], connect_args[1], host)
+        elif af == socket.AF_INET6:
+            addr_str = '[%s]:%s (%s)' % (connect_args[0], connect_args[1], host)
+            
         try:
             s = socket.socket(af, socktype, proto)
             s.settimeout(1.0)
@@ -53,7 +120,11 @@ def check_host_ssl(host, port, cert, ipv6=False):
                 ssl_version=ssl.PROTOCOL_TLSv1, cert_reqs=ssl.CERT_REQUIRED, ca_certs=cert )
             ssl_sock.close()
             s.close()
-        except:
+        except socket.error as e:
+            logger.error('%s: %s' % (addr_str, e))
+            return False
+        except Exception as e:
+            logger.error('Failed to connect to %s' % addr_str)
             return False
     
     return True
@@ -107,22 +178,32 @@ class ServerReport(models.Model):
     def verify_srv_client(self):
         """
         Verify xmpp-client SRV records.
+        
+        This test succeeds if the 'xmpp-client' SRV record has one or more entries.
         """
         hosts = self.srv_lookup('xmpp-client')
-        if not hosts:
+        if hosts:
+            self.srv_client = True
+        else:
             self.srv_client = False
+            
         return hosts
             
     def verify_srv_server(self):
         """
         Verify xmpp-server SRV records.
+        
+        This test succeeds if the 'xmpp-server' SRV record has one or more entries.
         """
         hosts = self.srv_lookup('xmpp-server')
-        if not hosts:
+        if hosts:
+            self.srv_server = True
+        else:
             self.srv_server = False
+            
         return hosts
             
-    def verify_client_online(self, hosts):
+    def verify_client_online(self, hosts, ipv4=True, ipv6=True):
         """
         Verify that at least one of the hosts referred to by the xmpp-client SRV records is
         currently online.
@@ -132,7 +213,7 @@ class ServerReport(models.Model):
         
         hosts_online = []
         for host in hosts:
-            if check_host(host[0], host[1]):
+            if check_hostname(host[0], host[1], ipv4, ipv6):
                 hosts_online.append(host)
                 
         if hosts_online:
@@ -152,7 +233,7 @@ class ServerReport(models.Model):
         
         hosts_online = []
         for host in hosts:
-            if check_host(host[0], host[1]):
+            if check_hostname(host[0], host[1]):
                 hosts_online.append(host)
                 
         if hosts_online:
@@ -161,16 +242,24 @@ class ServerReport(models.Model):
             self.server_online = False
         return hosts_online
             
-    def verify_ssl(self, host, ca, port, check_ipv6):
+    def verify_ssl(self, host, ca, port, ipv4=True, ipv6=True):
+        """
+        Verify SSL connectivity.
+        
+        This test succeeds if all IP addresses that 'host' resolves to are reachable on the given
+        port and SSL negotiation succeeds with the given certificate.
+        """
         self.ssl_cert = True
-        if not check_host_ssl(host, port, ca.certificate):
+        if not check_hostname_ssl(host, port, ca.certificate, ipv4, ipv6):
             self.ssl_cert = False
             return
             
-        if check_ipv6:
-            if not check_host_ssl(host[0], port, ca.certificate, ipv6=True):
-                self.ssl_cert = False
-                return
+    def verify_tls(self, client_hosts):
+        if not srv_client:
+            return
+        
+        for host in hosts:
+            pass
     
     def is_ok(self):
         return self.srv_client and self.srv_server and self.client_online and self.server_online \
@@ -213,14 +302,19 @@ class Features(models.Model):
             
         return 'Features for %s' % (domain)
     
-    def check_ipv6(self, hosts):
+    def check_ipv6(self, servers):
+        """
+        Check for correct IPv6 DNS entries.
+        
+        This test succeeds if all servers returned by the xmpp-client lookup have a AAAA record.
+        """
         if not self.server.report.srv_client:
             return
         
-        self.has_ipv6 = False
-        for host in hosts:
-            if check_host(host[0], host[1], ipv6=True):
-                self.has_ipv6 = True
+        self.has_ipv6 = True
+        for hostname, port, priority in servers:
+            if not get_hosts(hostname, port, False, True):
+                self.has_ipv6 = False
                 break
 
 from django.contrib.gis.geos import Point
@@ -290,7 +384,7 @@ class Server(models.Model):
         # perform various checks:
         client_hosts = self.report.verify_srv_client()
         self.features.check_ipv6(client_hosts)
-        client_hosts = self.report.verify_client_online(client_hosts)
+        client_hosts = self.report.verify_client_online(client_hosts, ipv6=self.features.has_ipv6)
         
         server_hosts = self.report.verify_srv_server()
         server_hosts = self.report.verify_server_online(server_hosts)
@@ -298,7 +392,7 @@ class Server(models.Model):
         if self.ssl_port:
             self.features.has_ssl = True
             # NOTE: we take the domain here, since there is no SRV record for SSL
-            self.report.verify_ssl(self.domain, self.ca, self.ssl_port, self.features.has_ipv6)
+            self.report.verify_ssl(self.domain, self.ca, self.ssl_port, ipv6=self.features.has_ipv6)
         else: # no ssl port specified
             self.features.has_ssl = False
             self.report.ssl_cert = True # ssl_cert is not a problem if we do not have ssl
