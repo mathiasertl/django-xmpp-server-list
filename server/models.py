@@ -130,11 +130,17 @@ class ServerReport(models.Model):
         if not self.srv_client:
             return
         
-        self.client_online = False
+        hosts_online = []
         for host in hosts:
             if check_host(host[0], host[1]):
-                self.client_online = True
-                break
+                hosts_online.append(host)
+                
+        if hosts_online:
+            self.client_online = True
+        else:
+            self.client_online = False
+        
+        return hosts_online
             
     def verify_server_online(self, hosts):
         """
@@ -144,23 +150,24 @@ class ServerReport(models.Model):
         if not self.srv_server:
             return
         
-        self.server_online = False
+        hosts_online = []
         for host in hosts:
             if check_host(host[0], host[1]):
-                self.server_online = True
-                break
+                hosts_online.append(host)
+                
+        if hosts_online:
+            self.server_online = True
+        else:
+            self.server_online = False
+        return hosts_online
             
-    def verify_ssl(self, hosts, ca, port, check_ipv6):
-        if not self.srv_client:
-            return
-        
+    def verify_ssl(self, host, ca, port, check_ipv6):
         self.ssl_cert = True
-        for host in hosts:
-            if not check_host_ssl(host[0], port, ca.certificate):
-                self.ssl_cert = False
-                return
+        if not check_host_ssl(host, port, ca.certificate):
+            self.ssl_cert = False
+            return
             
-        for host in hosts:
+        if check_ipv6:
             if not check_host_ssl(host[0], port, ca.certificate, ipv6=True):
                 self.ssl_cert = False
                 return
@@ -210,6 +217,7 @@ class Features(models.Model):
         if not self.server.report.srv_client:
             return
         
+        self.has_ipv6 = False
         for host in hosts:
             if check_host(host[0], host[1], ipv6=True):
                 self.has_ipv6 = True
@@ -281,18 +289,19 @@ class Server(models.Model):
     def verify(self):        
         # perform various checks:
         client_hosts = self.report.verify_srv_client()
-        server_hosts = self.report.verify_srv_server()
-        self.report.verify_client_online(client_hosts)
-        self.report.verify_server_online(server_hosts)
-        
         self.features.check_ipv6(client_hosts)
+        client_hosts = self.report.verify_client_online(client_hosts)
+        
+        server_hosts = self.report.verify_srv_server()
+        server_hosts = self.report.verify_server_online(server_hosts)
         
         if self.ssl_port:
             self.features.has_ssl = True
-            self.report.verify_ssl(client_hosts, self.ca, self.ssl_port, self.features.has_ipv6)
+            # NOTE: we take the domain here, since there is no SRV record for SSL
+            self.report.verify_ssl(self.domain, self.ca, self.ssl_port, self.features.has_ipv6)
         else: # no ssl port specified
             self.features.has_ssl = False
-            self.report.ssl_cert = True # ssl_cert is not a problem if we do not have ssld
+            self.report.ssl_cert = True # ssl_cert is not a problem if we do not have ssl
         
         # save server and its report:
         if self.report.has_problems():
