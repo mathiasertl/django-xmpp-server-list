@@ -101,11 +101,11 @@ def check_hostname(hostname, port, ipv4=True, ipv6=True,
     :param    xmlns: The XML stream namespace used if XML stream features are checked
     """
     logger.debug('Verify connectivity for %s:%s' % (hostname, port))
+    features = set()
     hosts = get_hosts(hostname, port, ipv4, ipv6)
     if not hosts:
         logger.error('%s: No hosts returned (IPv4: %s, IPv6: %s)' % (hostname, ipv4, ipv6))
-        return False
-    features = set()
+        return False, features
     first_iter = True
 
     for af, socktype, proto, canonname, connect_args in hosts:
