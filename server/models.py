@@ -34,6 +34,7 @@ def get_hosts(host, port, ipv4=True, ipv6=True):
             
         return hosts
     except Exception as e:
+        logger.critical('Error doing lookup: %s' % e)
         return []
         
 def get_stream_features(sock, server, certificate, xmlns='jabber:client'):
