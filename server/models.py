@@ -382,9 +382,12 @@ class Features(models.Model):
         
         self.has_ipv6 = True
         for hostname, port, priority in servers:
-            if not get_hosts(hostname, port, False, True):
-                self.has_ipv6 = False
-                break
+            try:
+                if not get_hosts(hostname, port, False, True):
+                    self.has_ipv6 = False
+                    break
+            except:
+                pass
 
 from django.contrib.gis.geos import Point
 
