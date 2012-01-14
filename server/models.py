@@ -387,7 +387,8 @@ class Features(models.Model):
                     self.has_ipv6 = False
                     break
             except:
-                pass
+                self.has_ipv6 = False
+                break
 
 from django.contrib.gis.geos import Point
 
