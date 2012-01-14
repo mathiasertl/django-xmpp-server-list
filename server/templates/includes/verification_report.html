@@ -15,14 +15,22 @@
     {% endif %}
     {% if not report.client_online %}
     <li>
-        Non of the hosts referred to by your xmpp-client SRV records worked. Either your SRV records
+        None of the hosts referred to by your xmpp-client SRV records worked. Either your SRV records
         are not correct or your server was temporarily unavailable.
     </li>
     {% endif %}
     {% if not report.server_online %}
     <li>
-        Non of the hosts referred to by your xmpp-server SRV records worked. Either your SRV records
+        None of the hosts referred to by your xmpp-server SRV records worked. Either your SRV records
         are not correct or your server was temporarily unavailable.
+    </li>
+    {% endif %}
+
+    {% if not report.ssl_cert %}
+    <li>
+        The verification of your SSL capabilities failed. This either means you specified the wrong
+        certificate authority or the wrong SSL port. Note that this check is performed against
+        the IP addresses your A/AAAA records resolve to.
     </li>
     {% endif %}
 </ul>
