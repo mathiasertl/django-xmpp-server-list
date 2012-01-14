@@ -88,7 +88,8 @@ def get_stream_features(sock, server, certificate, xmlns='jabber:client'):
         
     return features
 
-def check_hostname(hostname, port, ipv4=True, ipv6=True, domain='', xmlns='jabber:client', cert=''):
+def check_hostname(hostname, port, ipv4=True, ipv6=True,
+                   domain='', cert='', xmlns='jabber:client'):
     """
     Returns True if all addresses for the given host are reachable on the given port.
     
@@ -104,7 +105,7 @@ def check_hostname(hostname, port, ipv4=True, ipv6=True, domain='', xmlns='jabbe
     if not hosts:
         logger.error('%s: No hosts returned (IPv4: %s, IPv6: %s)' % (host, ipv4, ipv6))
         return False
-    features = []
+    features = set()
     first_iter = True
 
     for af, socktype, proto, canonname, connect_args in hosts:
@@ -117,6 +118,14 @@ def check_hostname(hostname, port, ipv4=True, ipv6=True, domain='', xmlns='jabbe
             s = socket.socket(af, socktype, proto)
             s.settimeout(1.0)
             s.connect(connect_args)
+            
+            if domain:
+                if first_iter:
+                    features = get_stream_features(s, domain, certificate, xmlns)
+                    first_iter = False
+                else:
+                    features &= get_stream_features(s, domain, certificate, xmlns)
+                    
             s.close()
         except socket.error as e:
             logger.error('%s: %s' % (addr_str, e))
@@ -254,32 +263,16 @@ class ServerReport(models.Model):
         
         for hostname, port, priority in records:
             logger.debug('Verify connectivity for %s %s', hostname, port)
-            hostname_online = True
-            hosts = get_hosts(hostname, port, ipv4, ipv6)
-            if not hosts:
-                logger.error('%s: No hosts returned (IPv4: %s, IPv6: %s)' % (host, ipv4, ipv6))
-                continue
-            
-            for af, socktype, proto, canonname, connect_args in hosts:
-                addr_str = get_addr_str(af, connect_args, hostname)
+            domain = self.server.domain
+            cert = self.server.ca.certificate
+            online, myfeatures = check_hostname(
+                hostname, port, ipv4=ipv4, ipv6=ipv6, domain=domain, cert=certificate
+            )
+            if online:
+                hosts_online.append(host)
+                features &= myfeatures
                 
-                try:
-                    s = socket.socket(af, socktype, proto)
-                    s.settimeout(1.0)
-                    s.connect(connect_args)
-                    features &= get_stream_features(s, self.server.domain, self.server.ca.certificate)
-                    s.close()
-                except socket.error as e:
-                    logger.error('%s: %s' % (addr_str, e))
-                    hostname_online = False
-                    break
-                except:
-                    logger.error('Failed to connect to %s' % addr_str)
-                    hostname_online = False
-                    break
-                
-            if hostname_online:
-                hostnames_online.append((hostname, port, priority))
+        print(features)
                 
         if 'starttls' in features:
             self.tls_cert = True
