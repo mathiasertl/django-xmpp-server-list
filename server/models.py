@@ -34,7 +34,6 @@ def get_hosts(host, port, ipv4=True, ipv6=True):
             
         return hosts
     except Exception as e:
-        logger.critical('Error doing lookup for %s %s: %s (IPv4: %s, IPv6: %s)' % (host, port, e, ipv4, ipv6))
         return []
         
 def get_stream_features(sock, server, certificate, xmlns='jabber:client'):
@@ -290,7 +289,7 @@ class ServerReport(models.Model):
         
         return hostnames_online, features
             
-    def verify_server_online(self, hosts):
+    def verify_server_online(self, hosts, ipv4=True, ipv6=True):
         """
         Verify that at least one of the hosts referred to by the xmpp-server SRV records is
         currently online.
@@ -300,7 +299,7 @@ class ServerReport(models.Model):
         
         hosts_online = []
         for host in hosts:
-            online, features = check_hostname(host[0], host[1])
+            online, features = check_hostname(host[0], host[1], ipv4, ipv6)
             if online:
                 hosts_online.append(host)
                 
@@ -461,7 +460,7 @@ class Server(models.Model):
             client_hosts, ipv6=self.features.has_ipv6)
         
         server_hosts = self.report.verify_srv_server()
-        server_hosts = self.report.verify_server_online(server_hosts)
+        server_hosts = self.report.verify_server_online(server_hosts, ipv6=self.features.has_ipv6)
         
         if self.ssl_port:
             self.features.has_ssl = True
