@@ -101,7 +101,7 @@ def check_hostname(hostname, port, ipv4=True, ipv6=True,
     :param   domain: If given, XML stream features will be checked.
     :param    xmlns: The XML stream namespace used if XML stream features are checked
     """
-    logger.debug('Verify connectivity for %s:%s' % (hostname, port))
+    logger.debug('Verify connectivity for %s %s (IPv4: %s, IPv6: %s)', hostname, port, ipv4, ipv6)
     features = set()
     hosts = get_hosts(hostname, port, ipv4, ipv6)
     if not hosts:
@@ -264,7 +264,7 @@ class ServerReport(models.Model):
         features = set()
         
         for hostname, port, priority in records:
-            logger.debug('Verify connectivity for %s %s', hostname, port)
+            logger.debug('Verify connectivity for %s %s (IPv4: %s, IPv6: %s)', hostname, port, ipv4, ipv6)
             domain = self.server.domain
             cert = self.server.ca.certificate
             online, myfeatures = check_hostname(
