@@ -1,4 +1,4 @@
-import socket
+import ssl, socket, logging
 
 import dns.resolver
 
@@ -12,22 +12,19 @@ from django.contrib.gis.geos import Point
 
 from xmpplist.world.models import WorldBorders
 
-def dns_lookup(self, record, record_type):
-    try:
-        print('DIG %s %s' % (record_type, record))
-        return dns.resolver.query(record, record_type)
-    except:
-        return []
-
-def check_host(host, port, ipv6=False):
+def get_hosts(host, port, ipv6=False):
     try:
         if ipv6:
             hosts = socket.getaddrinfo(host, port, socket.AF_INET6, socket.SOCK_STREAM)
         else:
             hosts = socket.getaddrinfo(host, port, socket.AF_INET, socket.SOCK_STREAM)
-    except:
-        return False # DNS resolution failed or something
-    
+            
+        return hosts
+    except Exception as e:
+        return []
+
+def check_host(host, port, ipv6=False):
+    hosts = get_hosts(host, port, ipv6)
     if not hosts: # no hosts returned (not sure if this actually happens)
         return False
 
@@ -35,12 +32,30 @@ def check_host(host, port, ipv6=False):
         try:
             s = socket.socket(af, socktype, proto)
             s.settimeout(1.0)
-            print('connect: %s %s' % (connect_args[0], connect_args[1]))
             s.connect(connect_args)
             s.close()
         except: 
             return False
         
+    return True
+
+def check_host_ssl(host, port, cert, ipv6=False):
+    hosts = get_hosts(host, int(port), ipv6)
+    if not hosts: # no hosts returned (not sure if this actually happens)
+        return False
+    
+    for af, socktype, proto, canonname, connect_args in hosts:
+        try:
+            s = socket.socket(af, socktype, proto)
+            s.settimeout(1.0)
+            s.connect(connect_args)
+            ssl_sock = ssl.wrap_socket( s,
+                ssl_version=ssl.PROTOCOL_TLSv1, cert_reqs=ssl.CERT_REQUIRED, ca_certs=cert )
+            ssl_sock.close()
+            s.close()
+        except:
+            return False
+    
     return True
 
 class CertificateAuthority(models.Model):
@@ -88,24 +103,6 @@ class ServerReport(models.Model):
         for answer in answers:
             hosts.append((answer.target.to_text(True), answer.port, answer.priority))
         return sorted(hosts, key=lambda host: host[2])
-        
-    def check_host_ssl(self, host, port):
-        try:
-            s = socket.socket()
-            s.settimeout(3.0)
-            s.connect(self.domain, self.ssl_port)
-            ssl_sock = ssl.wrap_socket( s,
-                ssl_version=ssl.PROTOCOL_TLSv1,
-                    cert_reqs=ssl.CERT_REQUIRED,
-                    ca_certs=opts.ca_cert )
-            ssl_sock.close()
-            return True
-        except socket.timeout:
-                print( 'closed.' )
-        except ssl.SSLError as e:
-                print( 'Open, but SSL negotiation failed: %s'%(e.args[1]) )
-        except Exception as e:
-                print( "Open, but SSL negotiation failed." )
 
     def verify_srv_client(self):
         """
@@ -152,6 +149,21 @@ class ServerReport(models.Model):
             if check_host(host[0], host[1]):
                 self.server_online = True
                 break
+            
+    def verify_ssl(self, hosts, ca, port, check_ipv6):
+        if not self.srv_client:
+            return
+        
+        self.ssl_cert = True
+        for host in hosts:
+            if not check_host_ssl(host[0], port, ca.certificate):
+                self.ssl_cert = False
+                return
+            
+        for host in hosts:
+            if not check_host_ssl(host[0], port, ca.certificate, ipv6=True):
+                self.ssl_cert = False
+                return
     
     def is_ok(self):
         return self.srv_client and self.srv_server and self.client_online and self.server_online \
@@ -274,6 +286,13 @@ class Server(models.Model):
         self.report.verify_server_online(server_hosts)
         
         self.features.check_ipv6(client_hosts)
+        
+        if self.ssl_port:
+            self.features.has_ssl = True
+            self.report.verify_ssl(client_hosts, self.ca, self.ssl_port, self.features.has_ipv6)
+        else: # no ssl port specified
+            self.features.has_ssl = False
+            self.report.ssl_cert = True # ssl_cert is not a problem if we do not have ssld
         
         # save server and its report:
         if self.report.has_problems():
