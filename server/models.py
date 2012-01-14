@@ -136,28 +136,27 @@ def check_hostname(hostname, port, ipv4=True, ipv6=True,
         
     return True, features
 
-
-def check_hostname_ssl(host, port, cert, ipv4=True, ipv6=True):
+def check_hostname_ssl(hostname, port, cert, ipv4=True, ipv6=True):
     """
     Returns True if all addresses the given hostname resolves to are reachable on the given
     port and if SSL negotiation with the given certificate succeeds.
     
-    :param host: A hostname.
+    :param hostname: A hostname.
     :param port: A port.
     :param ipv4: If False, IPv4 addresses are not checked.
     :param ipv6: If False, IPv6 addresses are not checked.
     """
-    logger.debug('Verify SSL for %s:%s' % (host, port))
-    hosts = get_hosts(host, int(port), ipv4, ipv6)
+    logger.debug('Verify connectivity for %s %s (IPv4: %s, IPv6: %s)', hostname, port, ipv4, ipv6)
+    hosts = get_hosts(hostname, int(port), ipv4, ipv6)
     if not hosts:
-        logger.error('%s (SSL): No hosts returned (IPv4: %s, IPv6: %s)' % (host, ipv4, ipv6))
+        logger.error('%s (SSL): No hosts returned (IPv4: %s, IPv6: %s)' % (hostname, ipv4, ipv6))
         return False
     
     for af, socktype, proto, canonname, connect_args in hosts:
         if af == socket.AF_INET:
-            addr_str = '%s:%s (%s)' % (connect_args[0], connect_args[1], host)
+            addr_str = '%s:%s (%s)' % (connect_args[0], connect_args[1], hostname)
         elif af == socket.AF_INET6:
-            addr_str = '[%s]:%s (%s)' % (connect_args[0], connect_args[1], host)
+            addr_str = '[%s]:%s (%s)' % (connect_args[0], connect_args[1], hostname)
             
         try:
             s = socket.socket(af, socktype, proto)
