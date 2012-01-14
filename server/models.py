@@ -1,4 +1,5 @@
 import ssl, socket, logging
+from xml.etree import ElementTree
 
 import dns.resolver
 
@@ -14,6 +15,12 @@ from xmpplist.world.models import WorldBorders
 
 logger = logging.getLogger('xmpplist.server')
 
+def get_addr_str(af, args, hostname):
+    if af == socket.AF_INET:
+        return '%s:%s (%s)' % (args[0], args[1], hostname)
+    elif af == socket.AF_INET6:
+        return '[%s]:%s (%s)' % (args[0], args[1], hostname)
+
 def get_hosts(host, port, ipv4=True, ipv6=True):
     hosts = []
     if not settings.CHECK_IPV6:
@@ -28,21 +35,77 @@ def get_hosts(host, port, ipv4=True, ipv6=True):
         return hosts
     except Exception as e:
         return []
+        
+def get_stream_features(sock, server, certificate, xmlns='jabber:client'):
+    """
+    <stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' id='00a5101e-4e49-43b8-8449-670a862d33f7' from='gajim.org' version='1.0' xml:lang='en'>
+        <stream:features>
+            <mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>
+                <mechanism>SCRAM-SHA-1</mechanism>
+                <mechanism>DIGEST-MD5</mechanism>
+            </mechanisms>
+            <starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>
+        </stream:features>
+    """
+    features = set()
+    
+    try:
+        msg = """<stream:stream xmlns='%s'
+            xmlns:stream='http://etherx.jabber.org/streams'
+            to='%s' version='1.0'>""" %(xmlns, server)
+        sock.send( msg.encode( 'ascii' ) )
+        resp = sock.recv(4096).decode( 'utf-8' )
+        while not resp.endswith( '</stream:features>' ):
+            resp += sock.recv(4096).decode( 'utf-8' )
+               
+        #elem = ElementTree.parse(resp)
+        elem = ElementTree.fromstring(resp + '</stream:stream>')
+        elem = elem.find('{http://etherx.jabber.org/streams}features')
+        
+        starttls = elem.find('{urn:ietf:params:xml:ns:xmpp-tls}starttls')
+        if starttls is not None:
+            features.add('starttls')
+        if starttls is None or starttls.find('{urn:ietf:params:xml:ns:xmpp-tls}required') is None:
+            features.add('plain')
+        if elem.find('{http://jabber.org/features/iq-register}register') is not None:
+            features.add('register')
+            
+        if 'starttls' in features:
+            sock.send( '''<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>'''.encode( 'ascii' ) )
+            resp += sock.recv(4096).decode('utf-8')
+            try:
+                ssl_sock = ssl.wrap_socket(sock, ssl_version=ssl.PROTOCOL_TLSv1,
+                                           cert_reqs=ssl.CERT_REQUIRED, ca_certs=certificate)
+                ssl_sock.close()
+            except ssl.SSLError as e:
+                logger.error(e)
+            
+        # close stream again:
+        sock.send('</stream:stream>'.encode('ascii'))
+        sock.recv(4096)
+    except Exception as e:
+        logger.error('Exception while getting stream features: %s' % e)
+        
+    return features
 
-def check_hostname(hostname, port, ipv4=True, ipv6=True):
+def check_hostname(hostname, port, ipv4=True, ipv6=True, domain='', xmlns='jabber:client', cert=''):
     """
     Returns True if all addresses for the given host are reachable on the given port.
     
     :param hostname: A hostname specified by an SRV record.
-    :param port: A port specified by an SRV record.
-    :param ipv4: If False, IPv4 addresses are not checked.
-    :param ipv6: If False, IPv6 addresses are not checked.
+    :param     port: A port specified by an SRV record.
+    :param     ipv4: If False, IPv4 addresses are not checked.
+    :param     ipv6: If False, IPv6 addresses are not checked.
+    :param   domain: If given, XML stream features will be checked.
+    :param    xmlns: The XML stream namespace used if XML stream features are checked
     """
     logger.debug('Verify connectivity for %s:%s' % (hostname, port))
     hosts = get_hosts(hostname, port, ipv4, ipv6)
     if not hosts:
         logger.error('%s: No hosts returned (IPv4: %s, IPv6: %s)' % (host, ipv4, ipv6))
         return False
+    features = []
+    first_iter = True
 
     for af, socktype, proto, canonname, connect_args in hosts:
         if af == socket.AF_INET:
@@ -57,38 +120,13 @@ def check_hostname(hostname, port, ipv4=True, ipv6=True):
             s.close()
         except socket.error as e:
             logger.error('%s: %s' % (addr_str, e))
-            return False
+            return False, features
         except:
             logger.error('Failed to connect to %s' % addr_str)
-            return False
+            return False, features
         
-    return True
+    return True, features
 
-def get_features(host, port, ipv6=False):
-    hosts = get_hosts(host, port, ipv6)
-    
-    if not hosts: # no hosts returned (not sure if this actually happens)
-        return False
-
-    for af, socktype, proto, canonname, connect_args in hosts:
-        try:
-            s = socket.socket(af, socktype, proto)
-            s.settimeout(1.0)
-            s.connect(connect_args)
-            
-            msg = """<stream:stream xmlns='%s'
-                xmlns:stream='http://etherx.jabber.org/streams'
-                to='%s' version='1.0'>""" %(xmlns, args[0])
-            s.send( msg.encode( 'ascii' ) )
-            init_resp = s.recv(4096).decode( 'utf-8' )
-            if not init_resp.endswith( '</stream:features>' ):
-                    init_resp += s.recv(4096).decode( 'utf-8' )
-            print(init_resp)
-            s.close()
-        except: 
-            return False
-        
-    return True
 
 def check_hostname_ssl(host, port, cert, ipv4=True, ipv6=True):
     """
@@ -203,7 +241,7 @@ class ServerReport(models.Model):
             
         return hosts
             
-    def verify_client_online(self, hosts, ipv4=True, ipv6=True):
+    def verify_client_online(self, records, ipv4=True, ipv6=True):
         """
         Verify that at least one of the hosts referred to by the xmpp-client SRV records is
         currently online.
@@ -211,17 +249,49 @@ class ServerReport(models.Model):
         if not self.srv_client:
             return
         
-        hosts_online = []
-        for host in hosts:
-            if check_hostname(host[0], host[1], ipv4, ipv6):
-                hosts_online.append(host)
+        hostnames_online = []
+        features = set(['starttls', 'register', 'plain'])
+        
+        for hostname, port, priority in records:
+            logger.debug('Verify connectivity for %s %s', hostname, port)
+            hostname_online = True
+            hosts = get_hosts(hostname, port, ipv4, ipv6)
+            if not hosts:
+                logger.error('%s: No hosts returned (IPv4: %s, IPv6: %s)' % (host, ipv4, ipv6))
+                continue
+            
+            for af, socktype, proto, canonname, connect_args in hosts:
+                addr_str = get_addr_str(af, connect_args, hostname)
                 
-        if hosts_online:
+                try:
+                    s = socket.socket(af, socktype, proto)
+                    s.settimeout(1.0)
+                    s.connect(connect_args)
+                    features &= get_stream_features(s, self.server.domain, self.server.ca.certificate)
+                    s.close()
+                except socket.error as e:
+                    logger.error('%s: %s' % (addr_str, e))
+                    hostname_online = False
+                    break
+                except:
+                    logger.error('Failed to connect to %s' % addr_str)
+                    hostname_online = False
+                    break
+                
+            if hostname_online:
+                hostnames_online.append((hostname, port, priority))
+                
+        if 'starttls' in features:
+            self.tls_cert = True
+        else:
+            self.tls_cert = False
+            
+        if hostnames_online:
             self.client_online = True
         else:
             self.client_online = False
         
-        return hosts_online
+        return hostnames_online, features
             
     def verify_server_online(self, hosts):
         """
@@ -233,7 +303,8 @@ class ServerReport(models.Model):
         
         hosts_online = []
         for host in hosts:
-            if check_hostname(host[0], host[1]):
+            online, features = check_hostname(host[0], host[1])
+            if online:
                 hosts_online.append(host)
                 
         if hosts_online:
@@ -285,6 +356,7 @@ class Features(models.Model):
     has_ssl = models.BooleanField(default=False)
     has_tls = models.BooleanField(default=False)
     has_ipv6 = models.BooleanField(default=False)
+    has_ibr = models.BooleanField(default=False)
     
     # features:
     has_muc = models.BooleanField(default=False)
@@ -384,7 +456,8 @@ class Server(models.Model):
         # perform various checks:
         client_hosts = self.report.verify_srv_client()
         self.features.check_ipv6(client_hosts)
-        client_hosts = self.report.verify_client_online(client_hosts, ipv6=self.features.has_ipv6)
+        client_hosts, stream_features = self.report.verify_client_online(
+            client_hosts, ipv6=self.features.has_ipv6)
         
         server_hosts = self.report.verify_srv_server()
         server_hosts = self.report.verify_server_online(server_hosts)
@@ -396,6 +469,21 @@ class Server(models.Model):
         else: # no ssl port specified
             self.features.has_ssl = False
             self.report.ssl_cert = True # ssl_cert is not a problem if we do not have ssl
+            
+        if 'starttls' in stream_features:
+            self.features.has_tls = True
+        else:
+            self.features.has_tls = False
+            
+        if 'register' in stream_features:
+            self.features.has_ibr = True
+        else:
+            self.features.has_ibr = False
+            
+        if 'plain' in stream_features:
+            self.features.has_plain = True
+        else:
+            self.features.has_plain = False
         
         # save server and its report:
         if self.report.has_problems():
