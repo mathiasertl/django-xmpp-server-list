@@ -277,8 +277,6 @@ class ServerReport(models.Model):
                 else:
                     features &= myfeatures
                 
-        print(features)
-                
         if 'starttls' in features:
             self.tls_cert = True
         else:
