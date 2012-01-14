@@ -163,6 +163,7 @@ def check_hostname_ssl(host, port, cert, ipv4=True, ipv6=True):
             s = socket.socket(af, socktype, proto)
             s.settimeout(1.0)
             s.connect(connect_args)
+            print(cert)
             ssl_sock = ssl.wrap_socket( s,
                 ssl_version=ssl.PROTOCOL_TLSv1, cert_reqs=ssl.CERT_REQUIRED, ca_certs=cert )
             ssl_sock.close()
@@ -309,7 +310,7 @@ class ServerReport(models.Model):
             self.server_online = False
         return hosts_online
             
-    def verify_ssl(self, host, ca, port, ipv4=True, ipv6=True):
+    def verify_ssl(self, hosts, ca, port, ipv4=True, ipv6=True):
         """
         Verify SSL connectivity.
         
@@ -317,9 +318,11 @@ class ServerReport(models.Model):
         port and SSL negotiation succeeds with the given certificate.
         """
         self.ssl_cert = True
-        if not check_hostname_ssl(host, port, ca.certificate, ipv4, ipv6):
-            self.ssl_cert = False
-            return
+        for host, port, priority in hosts:
+            if not check_hostname_ssl(host, port, ca.certificate, ipv4, ipv6):
+                self.ssl_cert = False
+                logger.error('%s: SSL-connectivity failed on %s %s', self.server.domain, host, port)
+                return
             
     def verify_tls(self, client_hosts):
         if not srv_client:
@@ -465,7 +468,7 @@ class Server(models.Model):
         if self.ssl_port:
             self.features.has_ssl = True
             # NOTE: we take the domain here, since there is no SRV record for SSL
-            self.report.verify_ssl(self.domain, self.ca, self.ssl_port, ipv6=self.features.has_ipv6)
+            self.report.verify_ssl(client_hosts, self.ca, self.ssl_port, ipv6=self.features.has_ipv6)
         else: # no ssl port specified
             self.features.has_ssl = False
             self.report.ssl_cert = True # ssl_cert is not a problem if we do not have ssl
