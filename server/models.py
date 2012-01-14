@@ -103,7 +103,7 @@ def check_hostname(hostname, port, ipv4=True, ipv6=True,
     logger.debug('Verify connectivity for %s:%s' % (hostname, port))
     hosts = get_hosts(hostname, port, ipv4, ipv6)
     if not hosts:
-        logger.error('%s: No hosts returned (IPv4: %s, IPv6: %s)' % (host, ipv4, ipv6))
+        logger.error('%s: No hosts returned (IPv4: %s, IPv6: %s)' % (hostname, ipv4, ipv6))
         return False
     features = set()
     first_iter = True
