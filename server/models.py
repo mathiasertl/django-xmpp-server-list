@@ -121,10 +121,10 @@ def check_hostname(hostname, port, ipv4=True, ipv6=True,
             
             if domain:
                 if first_iter:
-                    features = get_stream_features(s, domain, certificate, xmlns)
+                    features = get_stream_features(s, domain, cert, xmlns)
                     first_iter = False
                 else:
-                    features &= get_stream_features(s, domain, certificate, xmlns)
+                    features &= get_stream_features(s, domain, cert, xmlns)
                     
             s.close()
         except socket.error as e:
@@ -259,18 +259,23 @@ class ServerReport(models.Model):
             return
         
         hostnames_online = []
-        features = set(['starttls', 'register', 'plain'])
+        first_iter = True
+        features = set()
         
         for hostname, port, priority in records:
             logger.debug('Verify connectivity for %s %s', hostname, port)
             domain = self.server.domain
             cert = self.server.ca.certificate
             online, myfeatures = check_hostname(
-                hostname, port, ipv4=ipv4, ipv6=ipv6, domain=domain, cert=certificate
+                hostname, port, ipv4=ipv4, ipv6=ipv6, domain=domain, cert=cert
             )
             if online:
-                hosts_online.append(host)
-                features &= myfeatures
+                hostnames_online.append((hostname, port, priority))
+                if first_iter:
+                    features = myfeatures
+                    first_iter = False
+                else:
+                    features &= myfeatures
                 
         print(features)
                 
