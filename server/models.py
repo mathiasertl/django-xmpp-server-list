@@ -165,7 +165,7 @@ def check_hostname_ssl(host, port, cert, ipv4=True, ipv6=True):
             s.connect(connect_args)
             print(cert)
             ssl_sock = ssl.wrap_socket( s,
-                ssl_version=ssl.PROTOCOL_TLSv1, cert_reqs=ssl.CERT_REQUIRED, ca_certs=cert )
+                ssl_version=ssl.PROTOCOL_SSLv23, cert_reqs=ssl.CERT_REQUIRED, ca_certs=cert )
             ssl_sock.close()
             s.close()
         except socket.error as e:
