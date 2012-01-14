@@ -163,9 +163,8 @@ def check_hostname_ssl(host, port, cert, ipv4=True, ipv6=True):
             s = socket.socket(af, socktype, proto)
             s.settimeout(1.0)
             s.connect(connect_args)
-            print(cert)
             ssl_sock = ssl.wrap_socket( s,
-                ssl_version=ssl.PROTOCOL_SSLv23, cert_reqs=ssl.CERT_REQUIRED, ca_certs=cert )
+                ssl_version=ssl.PROTOCOL_TLSv1, cert_reqs=ssl.CERT_REQUIRED, ca_certs=cert )
             ssl_sock.close()
             s.close()
         except socket.error as e:
@@ -310,7 +309,7 @@ class ServerReport(models.Model):
             self.server_online = False
         return hosts_online
             
-    def verify_ssl(self, hosts, ca, port, ipv4=True, ipv6=True):
+    def verify_ssl(self, hosts, ca, ssl_port, ipv4=True, ipv6=True):
         """
         Verify SSL connectivity.
         
@@ -319,7 +318,7 @@ class ServerReport(models.Model):
         """
         self.ssl_cert = True
         for host, port, priority in hosts:
-            if not check_hostname_ssl(host, port, ca.certificate, ipv4, ipv6):
+            if not check_hostname_ssl(host, ssl_port, ca.certificate, ipv4, ipv6):
                 self.ssl_cert = False
                 logger.error('%s: SSL-connectivity failed on %s %s', self.server.domain, host, port)
                 return
