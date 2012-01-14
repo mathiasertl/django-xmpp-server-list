@@ -263,7 +263,6 @@ class ServerReport(models.Model):
         features = set()
         
         for hostname, port, priority in records:
-            logger.debug('Verify connectivity for %s %s (IPv4: %s, IPv6: %s)', hostname, port, ipv4, ipv6)
             domain = self.server.domain
             cert = self.server.ca.certificate
             online, myfeatures = check_hostname(
