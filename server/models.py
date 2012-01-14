@@ -254,12 +254,12 @@ class ServerReport(models.Model):
         Verify that at least one of the hosts referred to by the xmpp-client SRV records is
         currently online.
         """
-        if not self.srv_client:
-            return
-        
         hostnames_online = []
-        first_iter = True
         features = set()
+        if not self.srv_client:
+            return hostnames_online, features
+        
+        first_iter = True
         
         for hostname, port, priority in records:
             domain = self.server.domain
@@ -293,7 +293,7 @@ class ServerReport(models.Model):
         currently online.
         """
         if not self.srv_server:
-            return
+            return []
         
         hosts_online = []
         for host in hosts:
