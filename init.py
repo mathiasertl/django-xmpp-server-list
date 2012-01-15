@@ -17,6 +17,7 @@ u.set_password('nopass')
 u.save()
 p = UserProfile.objects.create(user=u, email_confirmed=True)
 
+other = CertificateAuthority.objects.create(name='other', website='https://www.jabber.at')
 startssl = CertificateAuthority.objects.create(name='StartSSL', website='https://www.startssl.com',
     certificate=os.path.join(settings.CERTIFICATES_PATH, 'startssl.pem'))
 cacert = CertificateAuthority.objects.create(name='CAcert', website='https://www.cacert.org',
