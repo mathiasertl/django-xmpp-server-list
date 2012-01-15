@@ -57,7 +57,7 @@ def get_stream_features(sock, server, certificate, xmlns='jabber:client'):
         resp = sock.recv(4096).decode( 'utf-8' )
         while not resp.endswith( '</stream:features>' ):
             resp += sock.recv(4096).decode( 'utf-8' )
-               
+        
         #elem = ElementTree.parse(resp)
         elem = ElementTree.fromstring(resp + '</stream:stream>')
         elem = elem.find('{http://etherx.jabber.org/streams}features')
@@ -74,8 +74,11 @@ def get_stream_features(sock, server, certificate, xmlns='jabber:client'):
             sock.send( '''<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>'''.encode( 'ascii' ) )
             resp += sock.recv(4096).decode('utf-8')
             try:
-                ssl_sock = ssl.wrap_socket(sock, ssl_version=ssl.PROTOCOL_TLSv1,
-                                           cert_reqs=ssl.CERT_REQUIRED, ca_certs=certificate)
+                if certificate:
+                    kwargs = {'cert_reqs': ssl.CERT_REQUIRED, 'ca_certs': certificate}
+                else:
+                    kwargs = {'cert_reqs': ssl.CERT_NONE}
+                ssl_sock = ssl.wrap_socket(sock, ssl_version=ssl.PROTOCOL_TLSv1, **kwargs)
                 ssl_sock.close()
             except ssl.SSLError as e:
                 logger.error(e)
@@ -162,8 +165,11 @@ def check_hostname_ssl(hostname, port, cert, ipv4=True, ipv6=True):
             s = socket.socket(af, socktype, proto)
             s.settimeout(1.0)
             s.connect(connect_args)
-            ssl_sock = ssl.wrap_socket( s,
-                ssl_version=ssl.PROTOCOL_TLSv1, cert_reqs=ssl.CERT_REQUIRED, ca_certs=cert )
+            if cert:
+                kwargs = {'cert_reqs': ssl.CERT_REQUIRED, 'ca_certs': cert}
+            else:
+                kwargs = {'cert_reqs': ssl.CERT_NONE}
+            ssl_sock = ssl.wrap_socket(s, ssl_version=ssl.PROTOCOL_TLSv1, **kwargs)
             ssl_sock.close()
             s.close()
         except socket.error as e:
@@ -318,7 +324,7 @@ class ServerReport(models.Model):
         for host, port, priority in hosts:
             if not check_hostname_ssl(host, ssl_port, ca.certificate, ipv4, ipv6):
                 self.ssl_cert = False
-                logger.error('%s: SSL-connectivity failed on %s %s', self.server.domain, host, port)
+                logger.error('%s: SSL-connectivity failed on %s %s', self.server.domain, host, ssl_port)
                 return
             
     def verify_tls(self, client_hosts):
