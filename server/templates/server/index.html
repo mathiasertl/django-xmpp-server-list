@@ -16,15 +16,17 @@
 
 {% block content %}
 <h1>Your ({{ user.username }}) servers</h1>
-<table class="your-servers">
-    <tbody>
+<table class="condensed-table" id="your-servers">
+    <thead>
     <tr>
         <th>Status</th>
         {% for field in new_form %}
             <th title="{{ field.help_text }}">{{ field.label }}</th>
         {% endfor %}
-        <th class="no-borders">{% csrf_token %}</th>
+        <th>{% csrf_token %}</th>
     </tr>
+    </thead>
+    <tbody>
 {% for form in forms %}
     {% include "includes/server_table_row.html" %}
 {% endfor %}
@@ -33,7 +35,7 @@
         {% for field in new_form %}
             <td title="{{ field.help_text }}">{{ field|fieldwidget }}</td>
         {% endfor %}
-        <td class="no-borders">
+        <td class="right">
             <img class="button-add" src="{{ STATIC_URL }}img/add.png" alt="add new server" title="add new server" />
         </td>
     </tr>

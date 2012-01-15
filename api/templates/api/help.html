@@ -6,27 +6,27 @@
 
 This document describes how to use <a href="{% url "api" %}">the API</a>.
 
-<h2>Output formats</h2>
+<h3>Output formats</h3>
 Currently only JSON is supported, but other formats (XML, possibly others) will
 be supported once I have the time.
 
-<h2>Filter by country</h2>
+<h3>Filter by country</h3>
 You can filter servers by countries, by giving the 'country' request parameter:
-<p class="api-example">
+<pre>
     {% url "api" %}?country=at
-</p>
+</pre>
 
 There is no really reliable way of determining the server a country is in. The
 country is determined by the coordinates the server-admin gives when registering
 the server (and they in turn are not in any way verified).
 
-<h2>Require features</h2>
+<h3>Require features</h3>
 You can limit the output to servers that have a certain feature. To do that,
 simply give the 'features' request parameter:
 
-<p class="api-example">
+<pre>
     {% url "api" %}?features=tls,ipv6
-</p>
+</pre>
 
 The following features are currently recognized:
 <table>
@@ -39,13 +39,13 @@ The following features are currently recognized:
 <b>Note:</b> Currently only IPv6 is actually verified, all other features
 will always return an empty list.
 
-<h2>Output additional fields</h2>
+<h3>Output additional fields</h3>
 By default, The API outputs only a list of JIDs. You can request more fields
 via the 'fields' request parameter:
 
-<p class="api-example">
+<pre>
     {% url "api" %}?fields=website,ca
-</p>
+</pre>
 
 Currently the following fields are supported:
 <table>

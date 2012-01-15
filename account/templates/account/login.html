@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load url from future %}
+{% load bootstrap %}
 
 {% block login %}{% endblock %}
 
@@ -20,18 +21,13 @@ You must login to add and manage your public servers.
 
 <form method="post" action="{% url 'django.contrib.auth.views.login' %}">
 {% csrf_token %}
-<table class="form">
-<tr>
-    <td>{{ form.username.label_tag }}</td>
-    <td>{{ form.username }}</td>
-</tr>
-<tr>
-    <td>{{ form.password.label_tag }}</td>
-    <td>{{ form.password }}</td>
-</tr>
-</table>
+{{form|bootstrap}}
 
-<input type="submit" value="login" />
+<div class="actions">
+<input class="btn primary" type="submit" value="Login">
+<button class="btn" type="reset">Cancel</button>
+</div>
+
 <input type="hidden" name="next" value="{{ next }}" />
 </form>
 {% endif %}

@@ -10,14 +10,15 @@
     <script type="text/javascript" src="{{ STATIC_URL }}js/base.js"></script>
     {% block javascript %}{% endblock %}
     
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/lib/bootstrap/bootstrap.min.css"/>
     <link rel="stylesheet" href="{{ STATIC_URL }}css/lib/jquery-ui/jquery-ui-1.8.16.custom.css" />
     <link rel="stylesheet" href="{{ STATIC_URL }}css/base.css"/>
     {% block css %}{% endblock %}
 </head>
-<body>
-<div class="header">
+<body class="container">
+<div class="breadcrumb">
 {% block header %}
-    <spam class="navigation">
+    <span class="navigation">
         {% block navigation %}
             <a href="{% url "home" %}">home</a>
             {% if user.is_authenticated %}
@@ -43,7 +44,7 @@
 {% endblock %}
 </div>
 
-<div class="content">
+<div class="span16">
 {% block content %}{% endblock %}
 </div>
 </body>

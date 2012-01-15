@@ -15,6 +15,7 @@ always communicate with users on other servers. This list is kindly brought to y
 <a href="https://fsinf.at">Fachschaft Informatik</a>.</p>
 
 <table>
+    <thead>
     <tr>
         <th>Server</th>
         <th>Country</th>
@@ -23,6 +24,8 @@ always communicate with users on other servers. This list is kindly brought to y
         <th>Software</th>
         <th>Contact</th>
     </tr>
+    </thead>
+    <tbody>
 {% for server in servers %}
     <tr>
         <td>{% include "includes/server_homepage.html" %}</td>
@@ -34,6 +37,7 @@ always communicate with users on other servers. This list is kindly brought to y
         </td>
     </tr>
 {% endfor %}
+    </tbody>
 </table>
 
 {% if not user.is_authenticated %}
