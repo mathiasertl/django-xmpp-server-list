@@ -4,7 +4,7 @@
 {% block content %}
 <h1>Welcome {{ user.username }}!</h1>
 {% if not user.profile.email_confirmed %}
-    <div class="warning">
+    <div class="alert-message warning">
         Your E-Mail address has not yet been confirmed. You should have received a confirmation message
         containing the link needed to confirm it. If you haven't received such a message,
         you can <a href="{% url "account_resend_confirmation" %}">resend it</a>. If
@@ -12,7 +12,7 @@
     </div>
 {% endif %}
 {% if not user.profile.jid_confirmed %}
-    <div class="warning">
+    <div class="alert-message warning">
         Your JID has not yet been confirmed. You should have received a confirmation message
         containing the link needed to confirm it. If you haven't received such a message,
         you can <a href="{% url "account_resend_confirmation" %}">resend it</a>. If
@@ -32,10 +32,10 @@ Here you can:
 </p>
 <table id="profile-overview">
     <tr><th>Username:</th><td>{{ user.username }}</td></tr>
-    <tr><th>First name:</th><td>{{ user.first_name }}</td></tr>
-    <tr><th>Last name:</th><td>{{ user.last_name }}</td></tr>
+    <tr><th>First name:</th><td>{{ user.first_name }} </td></tr>
+    <tr><th>Last name:</th><td>{{ user.last_name }} </td></tr>
     <tr>
-        <th>email:</th>
+        <th>E-mail address:</th>
         <td>{{ user.email }}
             {% if user.profile.email_confirmed %}
                 <img src="{{ STATIC_URL }}img/save.png" title="confirmed">

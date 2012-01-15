@@ -31,12 +31,14 @@ moment, you only have to check if the homepage of the server and the given conta
 </p>
 
 <table class="moderate-servers">
-    <tbody>
+    <thead>
     <tr>
         <th>Server</th>
         <th>Contact</th>
-        <th class="no-borders">{% csrf_token %}</th>
+        <th>{% csrf_token %}</th>
     </tr>
+    </thead>
+    <tbody>
 {% for server in servers %}
     <tr id="server_{{server.id}}">
         <td>{% include "includes/server_homepage.html" %}</td>
@@ -44,7 +46,7 @@ moment, you only have to check if the homepage of the server and the given conta
             {% include "includes/server_contact.html" %}
             {% if server.contact_verified %}(verified){% endif %}
         </td>
-        <td class="no-borders">
+        <td class="right">
             <img class="button-ok" src="{{ STATIC_URL }}img/save.png" alt="Ok." title="Ok." />
             <img class="button-notok" src="{{ STATIC_URL }}img/cancel.png" alt="NOT ok." title="NOT ok." />
         </td>

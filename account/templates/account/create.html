@@ -1,13 +1,17 @@
 {% extends "base.html" %}
+{% load bootstrap %}
 
 {% block login %}{% endblock %}
 
 {% block content %}
 <form action="{% url account_create %}" method="post">{% csrf_token %}
-<table class="form">
-    {{ user_form.as_table }}
-    {{ profile_form.as_table }}
-</table>
-<input type="submit" value="Submit" />
+    {{ user_form|bootstrap }}
+    {{ profile_form|bootstrap }}
+
+<div class="actions">
+<input class="btn primary" type="submit" value="Submit">
+<button class="btn" type="reset">Cancel</button>
+</div>
+
 </form>
 {% endblock %}
