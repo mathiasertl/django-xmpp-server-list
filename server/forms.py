@@ -27,7 +27,7 @@ class ServerForm(ModelForm):
         return True
     
     def contact_changed(self):
-        if 'contact' in self.cleaned_data or 'contact_type' in self.cleaned_data:
+        if 'contact' in self.changed_data or 'contact_type' in self.changed_data:
             return True
         return False
     
