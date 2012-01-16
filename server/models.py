@@ -149,7 +149,7 @@ def check_hostname_ssl(hostname, port, cert, ipv4=True, ipv6=True):
     :param ipv4: If False, IPv4 addresses are not checked.
     :param ipv6: If False, IPv6 addresses are not checked.
     """
-    logger.debug('Verify connectivity for %s %s (IPv4: %s, IPv6: %s)', hostname, port, ipv4, ipv6)
+    logger.debug('Verify SSL connectivity for %s %s (IPv4: %s, IPv6: %s)', hostname, port, ipv4, ipv6)
     hosts = get_hosts(hostname, int(port), ipv4, ipv6)
     if not hosts:
         logger.error('%s (SSL): No hosts returned (IPv4: %s, IPv6: %s)' % (hostname, ipv4, ipv6))
@@ -219,7 +219,9 @@ class ServerReport(models.Model):
         """
         record = '_%s._%s.%s' % (service, proto, self.server.domain)
         try:
-            answers = dns.resolver.query(record, 'SRV')
+            resolver = dns.resolver.Resolver()
+            resolver.lifetime = 3.0
+            answers = resolver.query(record, 'SRV')
         except:
             return []
         hosts = []
@@ -238,7 +240,7 @@ class ServerReport(models.Model):
             self.srv_client = True
         else:
             self.srv_client = False
-            
+        
         return hosts
             
     def verify_srv_server(self):
