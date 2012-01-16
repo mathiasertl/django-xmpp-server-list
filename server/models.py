@@ -55,6 +55,9 @@ def get_stream_features(sock, server, certificate, xmlns='jabber:client'):
             to='%s' version='1.0'>""" %(xmlns, server)
         sock.send( msg.encode( 'ascii' ) )
         resp = sock.recv(4096).decode( 'utf-8' )
+        if not resp: # happens at sternenschweif.de
+            raise RuntimeError('no answer received!')
+            
         while not resp.endswith( '</stream:features>' ):
             resp += sock.recv(4096).decode( 'utf-8' )
         
