@@ -32,6 +32,8 @@ rapidssl = CertificateAuthority.objects.create(name='RapidSSL', website='http://
     certificate=os.path.join(settings.CERTIFICATES_PATH, 'rapidssl.pem'))
 comodo = CertificateAuthority.objects.create(name='Comodo', website='http://www.comodo.com/',
     certificate=os.path.join(settings.CERTIFICATES_PATH, 'comodo.pem'))
+globalsign = CertificateAuthority.objects.create(name='GlobalSign', website='http://www.globalsign.com/',
+    certificate=os.path.join(settings.CERTIFICATES_PATH, 'globalsign.pem'))
 
 ejabberd = ServerSoftware.objects.create(name='ejabberd', website='http://www.ejabberd.im',
                                          newest_version='2.1.10')
