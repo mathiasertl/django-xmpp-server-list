@@ -416,7 +416,7 @@ class Server(models.Model):
     location = models.PointField(default=Point(0,0), help_text="Where the server is located.")
     
     # information about the service:
-    domain = models.CharField(unique=True, max_length=30,
+    domain = models.CharField(unique=True, max_length=60,
         help_text="The primary domain of your server.")
     website = models.URLField(blank=True,
         help_text="A homepage where one can find information on your server. If left empty, "
@@ -449,13 +449,13 @@ class Server(models.Model):
         ('E', 'e-mail'),
         ('W', 'website'),
     )
-    contact = models.CharField(max_length=30,
+    contact = models.CharField(max_length=60,
         help_text="The address where the server-admins can be reached.")
     contact_type = models.CharField(max_length=1, choices=CONTACT_TYPE_CHOICES, default='J',
         help_text="What type your contact details are. This setting will affect how the contact "
             "details are rendered on the front page. If you choose a JID or an e-mail address, you "
             "will receive an automated confirmation message.")
-    contact_name = models.CharField(max_length=30, blank=True,
+    contact_name = models.CharField(max_length=60, blank=True,
         help_text="If you want to display a custom link-text for your contact details, give it "
             "here.")
     contact_verified = models.BooleanField(default=False)
