@@ -57,9 +57,13 @@ def get_stream_features(sock, server, certificate, xmlns='jabber:client'):
         resp = sock.recv(4096).decode( 'utf-8' )
         if not resp: # happens at sternenschweif.de
             raise RuntimeError('no answer received!')
-            
-        while not resp.endswith( '</stream:features>' ):
+        if '<stream:error>' in resp:
+            raise RuntimeError('Received stream error')
+        
+        i = 0
+        while not resp.endswith( '</stream:features>' ) and i < 10:
             resp += sock.recv(4096).decode( 'utf-8' )
+            i += 1
         
         #elem = ElementTree.parse(resp)
         elem = ElementTree.fromstring(resp + '</stream:stream>')
@@ -119,7 +123,6 @@ def check_hostname(hostname, port, ipv4=True, ipv6=True,
             addr_str = '%s:%s (%s)' % (connect_args[0], connect_args[1], hostname)
         elif af == socket.AF_INET6:
             addr_str = '[%s]:%s (%s)' % (connect_args[0], connect_args[1], hostname)
-        
         try:
             s = socket.socket(af, socktype, proto)
             s.settimeout(1.0)
@@ -131,7 +134,6 @@ def check_hostname(hostname, port, ipv4=True, ipv6=True,
                     first_iter = False
                 else:
                     features &= get_stream_features(s, domain, cert, xmlns)
-                    
             s.close()
         except socket.error as e:
             logger.error('%s: %s' % (addr_str, e))
@@ -140,6 +142,7 @@ def check_hostname(hostname, port, ipv4=True, ipv6=True,
             logger.error('Failed to connect to %s' % addr_str)
             return False, features
         
+    print('done')
     return True, features
 
 def check_hostname_ssl(hostname, port, cert, ipv4=True, ipv6=True):
