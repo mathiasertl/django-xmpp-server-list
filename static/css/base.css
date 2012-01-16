@@ -15,16 +15,20 @@ body {
 	width: 60%;
 }
 
-#profile-overview td, #profile-overview tr, #profile-overview th {
-	border: 0;
+#profile-overview tr:first-child td, #profile-overview tr:first-child th {
+    border-color: white;
 }
 
 #profile-overview th {
-	width: 20%;
+	width: 10em;
 }
 
-input, select {
+input {
 	height: auto;
+}
+
+.breadcrumb {
+    margin-top: 8px;
 }
 
 .breadcrumb .login {
