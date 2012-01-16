@@ -57,9 +57,13 @@ def get_stream_features(sock, server, certificate, xmlns='jabber:client'):
         resp = sock.recv(4096).decode( 'utf-8' )
         if not resp: # happens at sternenschweif.de
             raise RuntimeError('no answer received!')
-            
-        while not resp.endswith( '</stream:features>' ):
+        if '<stream:error>' in resp:
+            raise RuntimeError('Received stream error')
+        
+        i = 0
+        while not resp.endswith( '</stream:features>' ) and i < 10:
             resp += sock.recv(4096).decode( 'utf-8' )
+            i += 1
         
         #elem = ElementTree.parse(resp)
         elem = ElementTree.fromstring(resp + '</stream:stream>')
@@ -119,7 +123,6 @@ def check_hostname(hostname, port, ipv4=True, ipv6=True,
             addr_str = '%s:%s (%s)' % (connect_args[0], connect_args[1], hostname)
         elif af == socket.AF_INET6:
             addr_str = '[%s]:%s (%s)' % (connect_args[0], connect_args[1], hostname)
-        
         try:
             s = socket.socket(af, socktype, proto)
             s.settimeout(1.0)
@@ -131,7 +134,6 @@ def check_hostname(hostname, port, ipv4=True, ipv6=True,
                     first_iter = False
                 else:
                     features &= get_stream_features(s, domain, cert, xmlns)
-                    
             s.close()
         except socket.error as e:
             logger.error('%s: %s' % (addr_str, e))
@@ -140,6 +142,7 @@ def check_hostname(hostname, port, ipv4=True, ipv6=True,
             logger.error('Failed to connect to %s' % addr_str)
             return False, features
         
+    print('done')
     return True, features
 
 def check_hostname_ssl(hostname, port, cert, ipv4=True, ipv6=True):
@@ -416,7 +419,7 @@ class Server(models.Model):
     location = models.PointField(default=Point(0,0), help_text="Where the server is located.")
     
     # information about the service:
-    domain = models.CharField(unique=True, max_length=30,
+    domain = models.CharField(unique=True, max_length=60,
         help_text="The primary domain of your server.")
     website = models.URLField(blank=True,
         help_text="A homepage where one can find information on your server. If left empty, "
@@ -438,7 +441,7 @@ class Server(models.Model):
     
     # queried information
     software = models.ForeignKey(ServerSoftware, related_name='servers', null=True, blank=True)
-    software_version = models.CharField(max_length=16, blank=True)
+    software_version = models.CharField(max_length=30, blank=True)
     
     objects = models.GeoManager()
     
@@ -449,13 +452,13 @@ class Server(models.Model):
         ('E', 'e-mail'),
         ('W', 'website'),
     )
-    contact = models.CharField(max_length=30,
+    contact = models.CharField(max_length=60,
         help_text="The address where the server-admins can be reached.")
     contact_type = models.CharField(max_length=1, choices=CONTACT_TYPE_CHOICES, default='J',
         help_text="What type your contact details are. This setting will affect how the contact "
             "details are rendered on the front page. If you choose a JID or an e-mail address, you "
             "will receive an automated confirmation message.")
-    contact_name = models.CharField(max_length=30, blank=True,
+    contact_name = models.CharField(max_length=60, blank=True,
         help_text="If you want to display a custom link-text for your contact details, give it "
             "here.")
     contact_verified = models.BooleanField(default=False)

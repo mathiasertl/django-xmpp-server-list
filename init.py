@@ -26,6 +26,14 @@ gandi = CertificateAuthority.objects.create(name='Gandi', website='http://en.gan
     certificate=os.path.join(settings.CERTIFICATES_PATH, 'gandi.pem'))
 equifax = CertificateAuthority.objects.create(name='Equifax', website='http://www.geotrust.com/resources/root-certificates/',
     certificate=os.path.join(settings.CERTIFICATES_PATH, 'equifax.pem'))
+thawte = CertificateAuthority.objects.create(name='Tawte', website='http://www.thawte.com/',
+    certificate=os.path.join(settings.CERTIFICATES_PATH, 'thawte.pem'))
+rapidssl = CertificateAuthority.objects.create(name='RapidSSL', website='http://www.rapidssl.com/',
+    certificate=os.path.join(settings.CERTIFICATES_PATH, 'rapidssl.pem'))
+comodo = CertificateAuthority.objects.create(name='Comodo', website='http://www.comodo.com/',
+    certificate=os.path.join(settings.CERTIFICATES_PATH, 'comodo.pem'))
+globalsign = CertificateAuthority.objects.create(name='GlobalSign', website='http://www.globalsign.com/',
+    certificate=os.path.join(settings.CERTIFICATES_PATH, 'globalsign.pem'))
 
 ejabberd = ServerSoftware.objects.create(name='ejabberd', website='http://www.ejabberd.im',
                                          newest_version='2.1.10')
