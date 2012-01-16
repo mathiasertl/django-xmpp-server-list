@@ -21,7 +21,7 @@ always communicate with users on other servers. This list is kindly brought to y
         <th>Country</th>
         <th>CA</th>
         <th>Deployed</th>
-        <th>Software</th>
+        <!--<th>Software</th>-->
         <th>Contact</th>
     </tr>
     </thead>
@@ -32,7 +32,7 @@ always communicate with users on other servers. This list is kindly brought to y
         <td>{{ server.get_country.name }}</td>
         <td><a href="{{ server.ca.website }}">{{ server.ca.name }}</a></td>
         <td>{{ server.launched.year }}</td>
-        <td><a href="{{ server.software.website }}">{{ server.software.name }} {{ server.software_version }}</a></td>
+        <!--<td><a href="{{ server.software.website }}">{{ server.software.name }} {{ server.software_version }}</a></td>-->
         <td>{% include "includes/server_contact.html" %}
         </td>
     </tr>
