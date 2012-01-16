@@ -438,7 +438,7 @@ class Server(models.Model):
     
     # queried information
     software = models.ForeignKey(ServerSoftware, related_name='servers', null=True, blank=True)
-    software_version = models.CharField(max_length=16, blank=True)
+    software_version = models.CharField(max_length=30, blank=True)
     
     objects = models.GeoManager()
     
