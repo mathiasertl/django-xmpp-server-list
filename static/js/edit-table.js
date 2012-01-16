@@ -30,6 +30,10 @@ function set_datepicker(row) {
     });
 }
 
+function get_csrftoken() {
+    return $(csrftoken).find('input');
+}
+
 var overlay_params = {
     top: 'relative',
     left: 'relative',
@@ -93,8 +97,7 @@ $(document).ready(function() {
     $("table").on("click", ".button-save", function() {
         cell = $(this).parent();
         row = cell.parent()
-        header_fields = row.parent().find('th.no-borders').find('input');
-        form_fields = row.find('input,select').add(header_fields);
+        form_fields = row.find('input,select').add(get_csrftoken());
         
         if (row.hasClass('changed')) {
             $.post(get_service_url(row), form_fields.serialize(), function(data) {
@@ -116,8 +119,7 @@ $(document).ready(function() {
     $("table").on("click", ".button-add", function() {
         cell = $(this).parent();
         row = cell.parent()
-        header_fields = row.parent().find('th.no-borders').find('input');
-        form_fields = row.find('input,select').add(header_fields);
+        form_fields = row.find('input,select').add(get_csrftoken());
     
         $.post(service_url, form_fields.serialize(), function(data) {        
             new_row = $(data);

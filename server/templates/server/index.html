@@ -5,6 +5,7 @@
 {% block javascript %}
     <script type="text/javascript">
         var service_url = "{% url "servers_ajax" %}";
+        var csrftoken = "{% csrf_token %}";
     </script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/lib/OpenLayers-2.11/OpenLayers.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}floppyforms/js/MapWidget.js"></script>
@@ -23,7 +24,7 @@
         {% for field in new_form %}
             <th title="{{ field.help_text }}">{{ field.label }}</th>
         {% endfor %}
-        <th>{% csrf_token %}</th>
+        <th></th>
     </tr>
     </thead>
     <tbody>
