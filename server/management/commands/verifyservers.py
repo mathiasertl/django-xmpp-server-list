@@ -6,5 +6,5 @@ class Command(BaseCommand):
     help = 'Verify servers'
 
     def handle(self, *args, **options):
-        for server in Server.objects.all():
+        for server in Server.objects.all().order_by('domain'):
             server.verify()
