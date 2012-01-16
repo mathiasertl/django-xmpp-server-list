@@ -7,11 +7,25 @@
 This document describes how to use <a href="{% url "api" %}">the API</a>.
 
 <h3>Output formats</h3>
-Currently only JSON is supported, but other formats (XML, possibly others) will
-be supported once I have the time.
+
+You can specify an output format by using the <code>format</code> request parameter. If you do not specify a format, <code>json</code> will be used:
+<pre>
+    {% url "api" %}?format=json
+</pre>
+
+The following formats are currently supported:
+
+<table>
+    <tr><th>Format</th><th>Explanation</th></tr>
+    <tr><td><code>json</code></td><td>JSON</td></tr>
+    <tr><td><code>services.xml</code></td><td>XML, based on the <a href="http://xmpp.org/extensions/xep-0030.html">Service Discovery Protocol</a> format.</td></tr>
+    <tr><td><code>services-full.xml</code></td><td>A more descriptive XML format, compatible with the one from xmpp.org.</td></tr>
+</table>
+
+Other formats (generic XML, possibly others) will be supported once I have the time.
 
 <h3>Filter by country</h3>
-You can filter servers by countries, by giving the 'country' request parameter:
+You can filter servers by countries by giving the <code>country</code> request parameter:
 <pre>
     {% url "api" %}?country=at
 </pre>
@@ -22,7 +36,7 @@ the server (and they in turn are not in any way verified).
 
 <h3>Require features</h3>
 You can limit the output to servers that have a certain feature. To do that,
-simply give the 'features' request parameter:
+simply give the <code>features</code> request parameter:
 
 <pre>
     {% url "api" %}?features=tls,ipv6
@@ -30,18 +44,18 @@ simply give the 'features' request parameter:
 
 The following features are currently recognized:
 <table>
-    <tr><th>feature</th><th>explanation</th></tr>
-    <tr><td>plain</td><td>Servers that allow plain, unencrypted connections.</td></td>
-    <tr><td>ssl</td><td>Servers that allow connections via SSL.</td></td>
-    <tr><td>tls</td><td>Servers that allow connections via TLS.</td></td>
-    <tr><td>ipv6</td><td>Servers that have IPv6 connectivity.</td></td>
+    <tr><th>Feature</th><th>Explanation</th></tr>
+    <tr><td><code>plain</code></td><td>Servers that allow plain, unencrypted connections.</td></td>
+    <tr><td><code>ssl</code></td><td>Servers that allow connections via SSL.</td></td>
+    <tr><td><code>tls</code></td><td>Servers that allow connections via TLS.</td></td>
+    <tr><td><code>ipv6</code></td><td>Servers that have IPv6 connectivity.</td></td>
 </table>
 <b>Note:</b> Currently only IPv6 is actually verified, all other features
 will always return an empty list.
 
 <h3>Output additional fields</h3>
 By default, The API outputs only a list of JIDs. You can request more fields
-via the 'fields' request parameter:
+via the <code>fields</code> request parameter:
 
 <pre>
     {% url "api" %}?fields=website,ca
@@ -49,16 +63,17 @@ via the 'fields' request parameter:
 
 Currently the following fields are supported:
 <table>
-    <tr><th>field</th><th>explanation</th></tr>
-    <tr><td>launched</td><td>When the server was launched.</td></tr>
-    <tr><td>location</td><td>Where the server is located.</td></tr>
-    <tr><td>website</td><td>The website of the server.</td></tr>
-    <tr><td>ca</td><td>The Certificate Autority of the server.</td></tr>
-    <tr><td>software</td><td>The software this server uses.</td></tr>
-    <tr><td>software_version</td><td>The version of the software the server uses.</td></tr>
-    <tr><td>contact</td><td>The contact address of this server.</td></tr>
+    <tr><th>Field</th><th>Explanation</th></tr>
+    <tr><td><code>launched</code></td><td>When the server was launched.</td></tr>
+    <tr><td><code>location</code></td><td>Where the server is located.</td></tr>
+    <tr><td><code>website</code></td><td>The website of the server.</td></tr>
+    <tr><td><code>ca</code></td><td>The Certificate Autority of the server.</td></tr>
+    <tr><td><code>software</code></td><td>The software this server uses.</td></tr>
+    <tr><td><code>software_version</code></td><td>The version of the software the server uses.</td></tr>
+    <tr><td><code>contact</code></td><td>The contact address of this server.</td></tr>
 </table>
 
-<b>Note:</b> The output of this feature is still subject to change.
+<b>Note:</b> The output of this feature is still subject to change.<br/>
+<b>Note:</b> The <code>fields</code> parameter is ignored when using <code>format=services.xml</code> or <code>format=services-full.xml</code>.
 
 {% endblock %}

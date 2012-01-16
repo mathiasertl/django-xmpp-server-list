@@ -1,13 +1,20 @@
 import json
 
+from lxml import etree
+
 from django.core import serializers
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import render
 
 from xmpplist.server.models import Server
 from xmpplist.world.models import WorldBorders
 
 def index(request):
+    # get request format
+    request_format = 'json'
+    if 'format' in request.GET:
+        request_format = request.GET['format']
+    
     # initial query-set:
     servers = Server.objects.filter(
         verified=True, moderated=True, user__profile__email_confirmed=True)
@@ -30,6 +37,41 @@ def index(request):
         servers = servers.filter(location__within=country.geom)
     
     fields = ['domain']
+    
+    # http://xmpp.org/services/services.xml / http://xmpp.org/services/services-full.xml formats
+    # already deprecated, i hope :)
+    # does fetching + serialization in one step
+    if request_format == 'services.xml' or request_format == 'services-full.xml':
+        root_element = etree.Element('query') # , nsmap={None: 'http://jabber.org/protocol/disco#items'})
+        
+        if request_format == 'services-full.xml':
+            fields += ['software__name', 'contact', 'contact_type', 'website', 'location']
+        
+        contact_prefixes = {'M': 'xmpp:', 'J': 'xmpp:', 'E': 'mailto:'}
+        
+        values = list(servers.values(*fields))
+        
+        for item in values:
+            item_element = etree.SubElement(root_element, 'item')
+            item_element.set('jid', item['domain'])
+                
+            if request_format == 'services-full.xml':
+                etree.SubElement(item_element, 'server-software').text = item['software__name']
+                etree.SubElement(item_element, 'domain').text = item['domain']
+                etree.SubElement(item_element, 'homepage').text = item['website']
+                
+                contact_prefix = ''
+                if item['contact_type'] in contact_prefixes:
+                    contact_prefix = contact_prefixes[item['contact_type']]
+                
+                etree.SubElement(item_element, 'primary-admin').text = contact_prefix + item['contact']
+                etree.SubElement(item_element, 'longitude').text = str(item['location'].x)
+                etree.SubElement(item_element, 'latitude').text = str(item['location'].y)
+                etree.SubElement(item_element, 'description').text = None
+            
+        return HttpResponse(etree.tostring(root_element, pretty_print=True), mimetype='text/xml')
+    
+    # we now continue by parsing the fields parameter
     if 'fields' in request.GET:
         custom_fields = request.GET['fields'].split(',')
         valid_fields = ['launched', 'location', 'website', 'ca', 'software',
@@ -75,8 +117,12 @@ def index(request):
                 value['launched'] = launched.strftime('%Y-%m-%d')
                 
             values[domain] = value
+
+    if request_format == 'json':
+        return HttpResponse(json.dumps(values))
+    else:
+        return HttpResponseBadRequest('unknown request format: try "services.xml", "services-full.xml" or "json"')
     
-    return HttpResponse(json.dumps(values))
     
 def help(request):
     return render(request, 'api/help.html')
