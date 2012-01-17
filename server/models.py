@@ -142,7 +142,6 @@ def check_hostname(hostname, port, ipv4=True, ipv6=True,
             logger.error('Failed to connect to %s' % addr_str)
             return False, features
         
-    print('done')
     return True, features
 
 def check_hostname_ssl(hostname, port, cert, ipv4=True, ipv6=True):
