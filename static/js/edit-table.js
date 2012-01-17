@@ -26,7 +26,7 @@ function edit_service(cell) {
 function set_datepicker(row) {
     id = get_service_id($(row));
     row.find('#id_' + id + '-launched').datepicker({
-        dateFormat: "yy-mm-dd", maxDate: "+0D", showButtonPanel: true
+        dateFormat: "yy-mm-dd", maxDate: "+0D", showButtonPanel: true, changeYear: true
     });
 }
 
@@ -142,10 +142,10 @@ $(document).ready(function() {
     });
     
     // datepicker:
-    $('.your-servers tr[id^="server"]').each(function(index, row){
+    $('tr[id^="server"]').each(function(index, row){
         set_datepicker($(row));
     });
     $('#id_launched').datepicker({
-        dateFormat: "yy-mm-dd", maxDate: "+1D", showButtonPanel: true
+        dateFormat: "yy-mm-dd", maxDate: "+1D", showButtonPanel: true, changeYear: true
     });
 });
