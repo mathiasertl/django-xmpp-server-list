@@ -31,8 +31,14 @@ always communicate with users on other servers. This list is kindly brought to y
 {% for server in servers %}
     <tr>
         <td>{% include "includes/server_homepage.html" %}</td>
-        <td>{{ server.get_country.name }}</td>
-        <td><a href="{{ server.ca.website }}">{{ server.ca.name }}</a></td>
+        <td>{{ server.get_country.name|default:"unknown" }}</td>
+        <td>
+            {% if server.ca.name == 'other' %}
+                other
+            {% else %}
+                <a href="{{ server.ca.website }}">{{ server.ca.name }}</a>
+            {% endif %}
+        </td>
         <td>{{ server.launched.year }}</td>
         <!--<td><a href="{{ server.software.website }}">{{ server.software.name }} {{ server.software_version }}</a></td>-->
         <td>{% include "includes/server_contact.html" %}
