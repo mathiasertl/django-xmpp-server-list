@@ -2,6 +2,9 @@
 {% load url from future %}
 {% load fieldwidget %}
 
+{% block title %}Your servers{% endblock %}
+{% block pagetitle %}Your ({{ user.username }}) servers{% endblock %}
+
 {% block javascript %}
     <script type="text/javascript">
         var service_url = "{% url "servers_ajax" %}";
@@ -16,7 +19,6 @@
 {% endblock %}
 
 {% block content %}
-<h1>Your ({{ user.username }}) servers</h1>
 <table class="condensed-table" id="your-servers">
     <thead>
     <tr>

@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 {% load url from future %}
 
+{% block title %}Overview{% endblock %}
+{% block pagetitle %}Overview{% endblock %}
+
 {% block content %}
-<h1>Welcome {{ user.username }}!</h1>
 {% if not user.profile.email_confirmed %}
     <div class="alert-message warning">
         Your E-Mail address has not yet been confirmed. You should have received a confirmation message

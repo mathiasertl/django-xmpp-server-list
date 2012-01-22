@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 {% load url from future %}
 
-{% block content %}
-<h1>Help for the API</h1>
+{% block title %}API documentation{% endblock %}
+{% block pagetitle %}API documentation{% endblock %}
 
+{% block content %}
 This document describes how to use <a href="{% url "api" %}">the API</a>.
 
 <h3>Output formats</h3>
