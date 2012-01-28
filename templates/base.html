@@ -16,7 +16,8 @@
     <link rel="stylesheet" href="{{ STATIC_URL }}css/base.css"/>
     {% block css %}{% endblock %}
 </head>
-<body class="container">
+<body>
+<div class="container">
 <div class="breadcrumb">
 {% block header %}
     <span class="navigation">
@@ -49,5 +50,7 @@
 <h1 id="pagetitle">{% block pagetitle %}{% endblock %}</h1>
 {% block content %}{% endblock %}
 </div>
+</div>
+{% block footer %}{% endblock %}
 </body>
 </html>
