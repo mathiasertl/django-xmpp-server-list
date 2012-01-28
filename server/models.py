@@ -442,6 +442,7 @@ class Server(models.Model):
             self.fail('ssl-offline', msg=html_list(errors))
             
     def verify(self):
+        self.verified = False
         self.logentries.all().delete()
         
         # perform various checks:
