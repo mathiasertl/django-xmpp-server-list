@@ -497,7 +497,7 @@ class Server(models.Model):
         return self.contact
         
     def fail(self, key, msg='', typ=LOG_TYPE_VERIFICATION):
-        logger.error('%s: %s' % (key, msg))
+        logger.debug('%s: %s' % (key, msg))
         self.logentries.create(key=key, msg=msg, typ=typ)
         
     def failed(self, key):
