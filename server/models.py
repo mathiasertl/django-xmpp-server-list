@@ -378,7 +378,7 @@ class Server(models.Model):
                     hostname, port, ipv4=ipv4, ipv6=ipv6, tls=True, features=True
                 )
             except RuntimeError as e:
-                errors.append(e)
+                errors.append(str(e))
                 continue
             
             if online:
@@ -411,7 +411,7 @@ class Server(models.Model):
             try:
                 features = self.check_hostname(host[0], host[1], ipv4=ipv4, ipv6=ipv6)
             except RuntimeError as e:
-                errors.append(e)
+                errors.append(str(e))
                 continue
             
             online.append(host)
@@ -438,7 +438,7 @@ class Server(models.Model):
                 self.check_hostname(host, int(self.ssl_port), ipv4=ipv4, ipv6=ipv6, ssl=True)
                 online.append(host)
             except RuntimeError as e:
-                errors.append(e)
+                errors.append(str(e))
         
         if errors:
             self.fail('ssl-offline', msg=html_list(errors))
