@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import render
 
-from models import Server, ServerReport, Features
+from models import Server, Features
 from forms import ServerForm, ServerLocationForm
 
 from xmpplist.confirm.models import ServerConfirmationKey
@@ -71,6 +71,7 @@ def ajax_id(request, server_id):
             server = form.save()
             
             changed = set(form.changed_data)
+            print(changed)
             if 'domain' in changed:
                 server.moderated = None
                 server.verified = None

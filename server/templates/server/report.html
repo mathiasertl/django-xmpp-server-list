@@ -15,9 +15,14 @@
             In either case, just wait a few hours until the server has been verified.
         {% else %}
             Some aspects of this server do not seem right. Please correct them:
-            {% with report=server.report %}
-                {% include "includes/verification_report.html" %}
-            {% endwith %}
+            <ul>
+            {% for verification in server.get_verifications %}
+                <li>
+                    {{ verification.get_info|safe }}
+                    {{ verification.msg|safe }}
+                </li>
+            {% endfor %}
+            </ul>
         {% endif %}
     {% endif %}
     
@@ -42,4 +47,30 @@
             moderation queue.
         {% endif %}
     {% endif %}
+{% endif %}
+
+{% if server.get_warnings %}
+    <h4>Warning</h4>
+    Some warnings were issued while verifying this server:
+    <ul>
+    {% for warning in server.get_warnings %}
+        <li>
+            {{ warning.get_info|safe }}
+            {{ warning.msg|safe }}
+        </li>
+    {% endfor %}
+    </ul>
+{% endif %}
+
+{% if server.get_infos %}
+    <h4>Information</h4>
+    Some informational messages were issued while verifying this server:
+    <ul>
+    {% for info in server.get_infos %}
+        <li>
+            {{ info.get_info|safe }}
+            {{ info.msg|safe }}
+        </li>
+    {% endfor %}
+    </ul>
 {% endif %}
