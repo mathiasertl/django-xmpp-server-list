@@ -279,7 +279,7 @@ class Server(models.Model):
             msg = """<stream:stream xmlns='%s'
                 xmlns:stream='http://etherx.jabber.org/streams'
                 to='%s' version='1.0'>""" %(xmlns, self.domain)
-            sock.send(msg.encode( 'ascii' ))
+            sock.send(msg.encode('utf-8'))
             resp = sock.recv(4096).decode('utf-8')
             if not resp: # happens at sternenschweif.de
                 raise RuntimeError('No answer received during stream negotiation.')
@@ -304,7 +304,7 @@ class Server(models.Model):
                 
             if 'starttls' in features and not self.failed('tls-cert'):
                 try:
-                    sock.send('''<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>'''.encode('ascii'))
+                    sock.send('''<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>'''.encode('utf-8'))
                     sock.recv(4096).decode('utf-8')
                     sock = wrap_socket(sock, self.ca)
                 except Exception as e:
@@ -313,7 +313,7 @@ class Server(models.Model):
                     self.fail('tls-cert', '<ul><li>%s, port %s: %s</li></ul>' % (addr, port, e))
                 
             # close stream again:
-            sock.send('</stream:stream>'.encode('ascii'))
+            sock.send('</stream:stream>'.encode('utf-8'))
             sock.recv(4096)
         except Exception as e:
             logger.error('Exception while getting stream features: %s' % e)
