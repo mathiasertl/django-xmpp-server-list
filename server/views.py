@@ -35,7 +35,6 @@ def ajax(request):
         if form.is_valid():
             server = form.save(commit=False)
             server.user = request.user
-            server.report = ServerReport.objects.create()
             server.features = Features.objects.create()
             server.save()
             
