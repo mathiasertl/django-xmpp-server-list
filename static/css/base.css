@@ -30,11 +30,15 @@ body {
 }
 .footer .container {
    background-repeat: no-repeat;
-   background-position: 100% 0;
+   background-position: 0 0;
    background-image: url('../img/logo.png');
-   min-height: 240px;
+   min-height: 64px;
    
    color: #888888;
+}
+
+.footer .container p {
+   margin-left: 56px;
 }
 
 input {
