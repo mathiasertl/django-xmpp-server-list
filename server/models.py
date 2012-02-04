@@ -519,7 +519,7 @@ class Server(models.Model):
     def get_infos(self):
         return self.logentries.filter(typ=LOG_TYPE_INFO)
         
-    def do_contact_verification(self, request):
+    def do_contact_verification(self):
         typ = self.contact_type
         profile = self.user.profile
         
@@ -531,7 +531,7 @@ class Server(models.Model):
             #ServerConfirmationKey.objects.filter(server=server).delete()
             #key = ServerConfirmationKey.objects.create(server=server)
             key = self.confirmations.create(server=self)
-            key.send(request)
+            key.send()
         
     def save(self, *args, **kwargs):
         if self.verified != None:

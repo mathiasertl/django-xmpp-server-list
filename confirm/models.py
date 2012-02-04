@@ -42,7 +42,7 @@ class ConfirmationKey(models.Model):
         t.daemon = True
         t.start()
 
-    def send(self, request):
+    def send(self):
         if settings.USE_HTTPS:
             proto = 'https'
         else:

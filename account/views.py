@@ -25,9 +25,9 @@ def create(request):
             
             # create confirmations:
             ekey = UserConfirmationKey.objects.create(user=user, type='E')
-            ekey.send(request)
+            ekey.send()
             jkey = UserConfirmationKey.objects.create(user=user, type='J')
-            jkey.send(request)
+            jkey.send()
             
             user.backend = 'django.contrib.auth.backends.ModelBackend'
             login(request, user)
@@ -56,13 +56,13 @@ def edit(request):
                 profile.save()
                 UserConfirmationKey.objects.filter(user=user, type='E').delete()
                 key = UserConfirmationKey.objects.create(user=user, type='E')
-                key.send(request)
+                key.send()
             if 'jid' in profile_form.changed_data:
                 profile.jid_confirmed = False
                 profile.save()
                 UserConfirmationKey.objects.filter(user=user, type='J').delete()
                 key = UserConfirmationKey.objects.create(user=user, type='J')
-                key.send(request)
+                key.send()
                 
             return redirect('account')
     else:
@@ -85,7 +85,7 @@ def reset_password(request):
             # send reset-key:
             key = UserPasswordResetKey(user=user)
             key.save()
-            key.send(request)
+            key.send()
     else:
         form = PasswordResetForm()
         
@@ -95,10 +95,10 @@ def reset_password(request):
 def resend_confirmation(request):
     if not request.user.profile.email_confirmed:
         key = UserConfirmationKey.objects.create(user=request.user, type='E')
-        key.send(request)
+        key.send()
     if not request.user.profile.jid_confirmed:
         key = UserConfirmationKey.objects.create(user=request.user, type='J')
-        key.send(request)
+        key.send()
     return render(request, 'account/resend_confirmation.html',
         {'jid': settings.XMPP['default']['jid']}
     )
