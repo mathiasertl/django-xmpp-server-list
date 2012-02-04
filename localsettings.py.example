@@ -29,3 +29,7 @@ XMPP = {
 }
 
 DEFAULT_FROM_EMAIL = 'list@jabber.at'
+
+# Set to true if you want to use HTTPS in conformation links
+#USE_HTTPS = False
+

@@ -1,13 +1,13 @@
 {% load url from future %}Dear {{ key.server.user.username }},
 
-Your server {{ key.server.domain }} was added or modified and your
+Your server {{ key.server.domain }} was added or modified and this
 address was given as admin contact. These contact-details have to be
 verified for the changes to become valid.
 
 To confirm your address, please go to:
 
-    http{% if request.is_secure %}s{% endif %}://{{request.get_host}}{% url "confirm_server" key=key.key %}
+    {{ protocol }}://{{ site.domain }}{{ key.get_absolute_url }}
 
 Cheers,
 
-    The xmpplist website
+    {{ site.name }}

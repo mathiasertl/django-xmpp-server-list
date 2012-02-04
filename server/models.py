@@ -519,6 +519,20 @@ class Server(models.Model):
     def get_infos(self):
         return self.logentries.filter(typ=LOG_TYPE_INFO)
         
+    def do_contact_verification(self, request):
+        typ = self.contact_type
+        profile = self.user.profile
+        
+        if typ == 'E' and self.user.email == self.contact and profile.email_confirmed:
+            self.contact_verified = True
+        elif typ == 'J' and profile.jid == server.contact and profile.jid_confirmed:
+            self.contact_verified = True
+        elif typ in ['J', 'E']:
+            #ServerConfirmationKey.objects.filter(server=server).delete()
+            #key = ServerConfirmationKey.objects.create(server=server)
+            key = self.confirmations.create(server=self)
+            key.send(request)
+        
     def save(self, *args, **kwargs):
         if self.verified != None:
             self.verified = not self.logentries.filter(typ=LOG_TYPE_VERIFICATION).exists()

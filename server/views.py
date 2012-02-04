@@ -5,8 +5,6 @@ from django.shortcuts import render
 from models import Server, Features
 from forms import ServerForm, ServerLocationForm
 
-from xmpplist.confirm.models import ServerConfirmationKey
-
 @login_required
 def index(request):
     forms = [ServerForm(instance=s, prefix=s.id,
@@ -38,10 +36,8 @@ def ajax(request):
             server.features = Features.objects.create()
             server.save()
             
-            # send confirmation if contact is email or jid
-            if server.contact_type in ['J', 'E']:
-                key = ServerConfirmationKey.objects.create(server=server)
-                key.send(request)
+            server.do_contact_verification(request)
+            server.save()
             
             form = ServerForm(instance=server, prefix=server.id,
                               initial={'location': '%s,%s' % (server.location.x, server.location.y)})
@@ -70,7 +66,6 @@ def ajax_id(request, server_id):
             server = form.save()
             
             changed = set(form.changed_data)
-            print(changed)
             if 'domain' in changed:
                 server.moderated = None
                 server.verified = None
@@ -78,13 +73,13 @@ def ajax_id(request, server_id):
                 server.moderated = None
             if set(['ca', 'ssl_port']) & changed:
                 server.verified = None
-            server.save()
                 
-            # send confirmation if contact was changed and is email or jid
-            if form.contact_changed() and server.contact_type in ['J', 'E']:
-                ServerConfirmationKey.objects.filter(server=server).delete()
-                key = ServerConfirmationKey.objects.create(server=server)
-                key.send(request)
+            # We have special treatment if contact was JID or email:
+            if form.contact_changed():
+                server.confirmations.all().delete()
+                server.do_contact_verification(request)
+                
+            server.save()
             
             form = ServerForm(instance=server, prefix=server.id,
                               initial={'location': '%s,%s' % (server.location.x, server.location.y)})
