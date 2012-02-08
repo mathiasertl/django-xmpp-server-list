@@ -94,7 +94,7 @@ class UserConfirmationKey(ConfirmationKey):
         if self.type == 'E':
             return self.user.email
         elif self.type == 'J':
-            self.user.profile.jid
+            return self.user.profile.jid
     
     def set_random_key(self):
         salt = sha_constructor('%s-%s-%s' % (settings.SECRET_KEY, time.time(), self.type)).hexdigest()
