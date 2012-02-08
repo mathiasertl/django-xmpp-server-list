@@ -50,7 +50,7 @@ class ConfirmationKey(models.Model):
         
         # build context    
         site = Site.objects.get_current()
-        context = {'request': request, 'site': site, 'key': self, 'protocol': proto}
+        context = {'site': site, 'key': self, 'protocol': proto}
         subject_format = {'domain': site.domain, 'sitename': site.name, 'protocol': proto,
                           'addr_type': self.address_type}
         context.update(self.add_context())
