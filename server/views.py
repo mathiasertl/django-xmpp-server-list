@@ -36,7 +36,7 @@ def ajax(request):
             server.features = Features.objects.create()
             server.save()
             
-            server.do_contact_verification(request)
+            server.do_contact_verification()
             server.save()
             
             form = ServerForm(instance=server, prefix=server.id,
@@ -77,7 +77,7 @@ def ajax_id(request, server_id):
             # We have special treatment if contact was JID or email:
             if form.contact_changed():
                 server.confirmations.all().delete()
-                server.do_contact_verification(request)
+                server.do_contact_verification()
                 
             server.save()
             
