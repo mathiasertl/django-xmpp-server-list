@@ -1,8 +1,10 @@
 from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.views.generic import FormView
 
 from forms import CreationForm, PreferencesForm, ProfileForm, PasswordResetForm
 
@@ -73,24 +75,28 @@ def edit(request):
                   {'user_form': user_form, 'profile_form': profile_form}
     )
     
-def reset_password(request):
-    if request.user.is_authenticated():
-        return redirect('account_set_password')
     
-    if request.method == 'POST':
-        form = PasswordResetForm(request.POST)
-        if form.is_valid():
-            user = User.objects.get(username=form.cleaned_data['username'])
-            
-            # send reset-key:
-            key = UserPasswordResetKey(user=user)
-            key.save()
-            key.send()
-    else:
-        form = PasswordResetForm()
+class ResetPassword(FormView):
+    template_name = 'account/reset_password.html'
+    form_class = PasswordResetForm
+    
+    def get_success_url(self):
+        return reverse('account_reset_password_ok')
         
-    return render(request, 'account/reset_password.html', {'form': form})
+    def post(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            return redirect('account_set_password')
     
+    def form_valid(self, form):
+        key = UserPasswordResetKey(user=form.user)
+        key.save()
+        key.send()
+        
+        return super(ResetPassword, self).form_valid(form)
+        
+def reset_password_ok(request):
+    return render(request, 'account/reset_password_ok.html')
+        
 @login_required
 def resend_confirmation(request):
     if not request.user.profile.email_confirmed:

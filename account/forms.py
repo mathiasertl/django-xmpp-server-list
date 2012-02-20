@@ -31,4 +31,18 @@ class ProfileForm(forms.ModelForm):
         fields = ('jid',)
     
 class PasswordResetForm(forms.Form):
-    username = forms.CharField()
+    username = forms.CharField(max_length=30, required=False)
+    
+    def clean(self):
+        data = self.cleaned_data
+        
+        if data['username']:
+            try:
+                self.user = User.objects.get(username=data['username'])
+            except User.DoesNotExist:
+                raise forms.ValidationError("No user with that username exists.")
+        else:
+            raise forms.ValidationError("Please give at least one of the fields.")
+                
+        return data
+    

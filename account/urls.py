@@ -4,12 +4,15 @@ from django.conf.urls.defaults import *
 from django.contrib.auth import views
 from django.contrib.auth.forms import SetPasswordForm
 
+from views import ResetPassword
+
 urlpatterns = patterns(
     'account.views',
     url(r'^$', 'index', name='account'),
     url(r'^create/$', 'create', name='account_create'),
     url(r'^edit/$', 'edit', name='account_edit'),
-    url(r'^reset_password/$', 'reset_password', name='account_reset_password'),
+    url(r'^reset_password/$', ResetPassword.as_view(), name='account_reset_password'),
+    url(r'^reset_password/done/$', 'reset_password_ok', name='account_reset_password_ok'),
     url(r'^resend_confirmation/$', 'resend_confirmation', name='account_resend_confirmation'),
 )
 urlpatterns += patterns('',

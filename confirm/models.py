@@ -109,7 +109,7 @@ class UserPasswordResetKey(UserConfirmationKey):
         super(UserPasswordResetKey, self).__init__(*args, **kwargs)
         if 'type' not in kwargs:
             if self.user.profile.email_confirmed:
-                self.type = 'M'
+                self.type = 'E'
             else:
                 self.type = 'J'
             
