@@ -86,6 +86,8 @@ class ResetPassword(FormView):
     def post(self, request, *args, **kwargs):
         if request.user.is_authenticated():
             return redirect('account_set_password')
+            
+        return super(ResetPassword, self).post(request, *args, **kwargs)
     
     def form_valid(self, form):
         key = UserPasswordResetKey(user=form.user)
