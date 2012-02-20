@@ -525,7 +525,7 @@ class Server(models.Model):
         
         if typ == 'E' and self.user.email == self.contact and profile.email_confirmed:
             self.contact_verified = True
-        elif typ == 'J' and profile.jid == server.contact and profile.jid_confirmed:
+        elif typ == 'J' and profile.jid == self.contact and profile.jid_confirmed:
             self.contact_verified = True
         elif typ in ['J', 'E']:
             #ServerConfirmationKey.objects.filter(server=server).delete()
