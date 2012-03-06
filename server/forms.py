@@ -40,10 +40,11 @@ class ServerForm(ModelForm):
     def clean_location(self):
         try:
             x, y = self.cleaned_data['location'].strip().split(',')
+            x = float(x)
+            y = float(y)
         except ValueError:
             raise ValidationError("Format for coordinates is 'long,lat', example: 16.37,48.2")
-        x = float(x)
-        y = float(y)
+            
         if x > 180 or x < -180:
             raise ValidationError('Longitude must be between -180 and +180!')
         if y > 90 or y < -90:
