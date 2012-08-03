@@ -1,0 +1,12 @@
+Dear {{ user.username }},
+
+The following servers are currently in the moderation queue:
+
+{% for server in servers %}
+* {{ server.domain }}
+{% endfor %}
+
+Please review them at your earliest convinience.
+
+greetings,
+    {{ protocol }}://{{ domain }}
