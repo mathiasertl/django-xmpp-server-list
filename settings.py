@@ -119,15 +119,15 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
- 
+
     # style
     'bootstrapform',
-   
+
     'server',
     'account',
     'api',
     'confirm',
-    
+
     # gis
     'django.contrib.gis',
     'world',
@@ -146,8 +146,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.media",
     "django.core.context_processors.static",
     "django.contrib.messages.context_processors.messages",
-    
+
     "django.core.context_processors.request",
+
+    "xmpplist.server.context_processors.siteinfo",
 )
 
 LOGIN_URL = '/user/login/'
@@ -157,7 +159,6 @@ DEFAULT_FROM_EMAIL = 'test@example.com'
 
 INTERNAL_IPS=('127.0.0.1')
 CHECK_IPV6 = True
-SITENAME='list.jabber.at'
 USE_HTTPS = False
 
 try:
