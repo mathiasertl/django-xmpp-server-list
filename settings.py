@@ -157,6 +157,7 @@ DEFAULT_FROM_EMAIL = 'test@example.com'
 
 INTERNAL_IPS=('127.0.0.1')
 CHECK_IPV6 = True
+SITENAME='list.jabber.at'
 USE_HTTPS = False
 
 try:
