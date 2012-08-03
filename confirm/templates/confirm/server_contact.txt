@@ -6,8 +6,8 @@ verified for the changes to become valid.
 
 To confirm your address, please go to:
 
-    {{ protocol }}://{{ site.domain }}{{ key.get_absolute_url }}
+    {{ protocol }}://{{ domain }}{{ key.get_absolute_url }}
 
 Cheers,
 
-    {{ site.name }}
+    {{ protocol }}://{{ domain }}

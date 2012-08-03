@@ -7,7 +7,7 @@ from django.db import models
 from django.template.loader import render_to_string
 from django.utils.hashcompat import sha_constructor
 
-from xmpplist.server.utils import get_siteinfo
+from xmpplist.server.util import get_siteinfo
 from xmpplist.server.models import Server
 from SendMsgBot import SendMsgBot
 
@@ -45,8 +45,8 @@ class ConfirmationKey(models.Model):
     def send(self):
         # build context
         protocol, domain = get_siteinfo()
-        context = {'site': domain, 'key': self, 'protocol': protocol}
-        subject_format = {'domain': site.domain, 'sitename': site.name, 'protocol': proto,
+        context = {'domain': domain, 'key': self, 'protocol': protocol}
+        subject_format = {'domain': domain, 'protocol': protocol,
                           'addr_type': self.address_type}
         context.update(self.add_context())
         subject_format.update(self.add_context())
@@ -82,7 +82,7 @@ class UserConfirmationKey(ConfirmationKey):
     user = models.ForeignKey(User, related_name='confirmations')
 
     template = 'confirm/user_contact.txt'
-    subject = 'Confirm your %(addr_type)s on %(domain)s'
+    subject = 'Confirm your %(addr_type)s on %(protocol)s://%(domain)s'
 
     @property
     def recipient(self):
@@ -109,7 +109,7 @@ class UserPasswordResetKey(UserConfirmationKey):
                 self.type = 'J'
 
     template = 'confirm/user_password_reset.txt'
-    subject = 'Reset your password on %(domain)s'
+    subject = 'Reset your password on %(protocol)s://%(domain)s'
 
     @models.permalink
     def get_absolute_url(self):
@@ -119,7 +119,7 @@ class ServerConfirmationKey(ConfirmationKey):
     server = models.ForeignKey(Server, related_name='confirmations')
 
     template = 'confirm/server_contact.txt'
-    subject = 'Confirm contact details for %(serverdomain)s on %(domain)s'
+    subject = 'Confirm contact details for %(serverdomain)s on %(protocol)s://%(domain)s'
 
     def add_context(self):
         return {'serverdomain': self.server.domain}
