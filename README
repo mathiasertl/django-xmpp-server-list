@@ -1,21 +1,42 @@
 = Dependencies =
 
+This Software uses GeoDjango[1] and thus requires a spacial database beyond
+what is usually required for Django. Use PostgreSQL for best results.
+
 Install dependencies, on Debian/Ubuntu:
 
-    root@host:~# apt-get install python-virtualenv
+    root@host:~# apt-get install python-virtualenv postgresql \
+        binutils libproj-dev gdal-bin postgresql-9.1-postgis \
+        postgresql-server-dev-9.1 libpq-dev
+
+[1] https://docs.djangoproject.com/en/dev/ref/contrib/gis/tutorial/
 
 = Deployment/Installation =
 
+You should always run this software as its own system user:
+
+    root@host:~# adduser --group --disabled-login \
+        --home=/usr/local/home/xmpplist --system xmpplist
+    root@host:~# sudo su xmpplist
+
 Clone the repository:
 
-    git clone https://git.fsinf.at/mati/xmpplist.git
+    xmpplist@host:~$ git clone https://git.fsinf.at/mati/xmpplist.git
 
 In the cloned repository, deploy a virtualenv:
 
-    root@host:~/xmpplist# virtualenv .
-    root@host:~/xmpplist# source/bin/activate
+    xmpplist@host:~/xmpplist# virtualenv .
+    xmpplist@host:~/xmpplist# source/bin/activate
     (xmpplist)root@host:~/xmpplist# pip install -r requirements.txt
 
+
+
+= Database configuration =
+
+Database configuration depends on PostgreSQL and PostGIS versions installed.
+Please refer to the documentation:
+    
+    https://docs.djangoproject.com/en/dev/ref/contrib/gis/tutorial/
 
 = Further reading =
 GeoDjango Tutorial: https://docs.djangoproject.com/en/dev/ref/contrib/gis/tutorial/
