@@ -284,7 +284,7 @@ class Server(models.Model):
             sock.send(msg.encode('utf-8'))
             resp = sock.recv(4096).decode('utf-8')
             if not resp: # happens at sternenschweif.de
-                raise RuntimeError('No answer received during stream negotiation.')
+                raise RuntimeError('%s: No answer received during stream negotiation.' % self.domain)
             if '<stream:error>' in resp:
                 raise RuntimeError('%s: Received error during stream negotiation.' % self.domain)
 
