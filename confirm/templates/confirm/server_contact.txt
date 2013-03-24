@@ -1,4 +1,4 @@
-{% load url from future %}Dear {{ key.server.user.username }},
+Dear {{ key.server.user.username }},
 
 Your server {{ key.server.domain }} was added or modified and this
 address was given as admin contact. These contact-details have to be
