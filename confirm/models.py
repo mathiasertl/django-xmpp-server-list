@@ -13,10 +13,11 @@ from django.utils.hashcompat import sha_constructor
 from xmpplist.server.models import Server
 from SendMsgBot import SendMsgBot
 
-CONFIRMATION_TYPE_CHOICES=(
+CONFIRMATION_TYPE_CHOICES = (
     ('J', 'JID'),
     ('E', 'e-mail'),
 )
+
 
 class ConfirmationKey(models.Model):
     key = models.CharField(max_length=128, unique=True)
@@ -40,7 +41,8 @@ class ConfirmationKey(models.Model):
             if xmpp.connect():
                 xmpp.process(wait=True)
 
-        t = threading.Thread(target=send_msg, args=(creds['jid'], creds['password'], to, message))
+        targs = (creds['jid'], creds['password'], to, message, )
+        t = threading.Thread(target=send_msg, args=targs)
         t.daemon = True
         t.start()
 
@@ -53,8 +55,12 @@ class ConfirmationKey(models.Model):
         # build context
         site = Site.objects.get_current()
         context = {'site': site, 'key': self, 'protocol': proto}
-        subject_format = {'domain': site.domain, 'sitename': site.name, 'protocol': proto,
-                          'addr_type': self.address_type}
+        subject_format = {
+            'addr_type': self.address_type,
+            'domain': site.domain,
+            'protocol': proto,
+            'sitename': site.name,
+        }
         context.update(self.add_context())
         subject_format.update(self.add_context())
 
@@ -68,7 +74,8 @@ class ConfirmationKey(models.Model):
         elif self.type == 'J':
             self.send_jid(self.recipient, subject, message)
         else:
-            raise RuntimeError("Confirmation messages can only be sent to JIDs or email addresses")
+            raise RuntimeError("Confirmation messages can only be sent to JIDs"
+                               "or email addresses")
 
     def add_context(self):
         return {}
@@ -85,6 +92,7 @@ class ConfirmationKey(models.Model):
     class Meta:
         abstract = True
 
+
 class UserConfirmationKey(ConfirmationKey):
     user = models.ForeignKey(User, related_name='confirmations')
 
@@ -99,12 +107,15 @@ class UserConfirmationKey(ConfirmationKey):
             return self.user.profile.jid
 
     def set_random_key(self):
-        salt = sha_constructor('%s-%s-%s' % (settings.SECRET_KEY, time.time(), self.type)).hexdigest()
-        return sha_constructor('%s-%s-%s' % (salt, self.user.username, self.user.email)).hexdigest()
+        salt = sha_constructor('%s-%s-%s' % (settings.SECRET_KEY, time.time(),
+                                             self.type)).hexdigest()
+        return sha_constructor('%s-%s-%s' % (salt, self.user.username,
+                                             self.user.email)).hexdigest()
 
     @models.permalink
     def get_absolute_url(self):
         return ('confirm_user_contact', (), {'key': self.key})
+
 
 class UserPasswordResetKey(UserConfirmationKey):
     def __init__(self, *args, **kwargs):
@@ -121,6 +132,7 @@ class UserPasswordResetKey(UserConfirmationKey):
     @models.permalink
     def get_absolute_url(self):
         return ('reset_user_password', (), {'key': self.key})
+
 
 class ServerConfirmationKey(ConfirmationKey):
     server = models.ForeignKey(Server, related_name='confirmations')
@@ -140,8 +152,10 @@ class ServerConfirmationKey(ConfirmationKey):
         self.type = self.server.contact_type
 
     def set_random_key(self):
-        salt = sha_constructor('%s-%s' % (settings.SECRET_KEY, time.time())).hexdigest()
-        return sha_constructor('%s-%s' % (salt, self.server.domain)).hexdigest()
+        salt = sha_constructor('%s-%s' % (settings.SECRET_KEY,
+                                          time.time())).hexdigest()
+        return sha_constructor('%s-%s' % (salt,
+                                          self.server.domain)).hexdigest()
 
     @models.permalink
     def get_absolute_url(self):
