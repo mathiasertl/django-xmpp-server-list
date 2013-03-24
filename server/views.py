@@ -20,8 +20,8 @@ def index(request):
         for s in servers]
     context = {
         'forms': forms,
-        'new_form': ServerForm(),
-        'testform': ServerLocationForm(),
+        'new_server_form': ServerForm(),
+        'location_form': ServerLocationForm(),  # preload location-form media
     }
     return render(request, 'server/index.html', context)
 

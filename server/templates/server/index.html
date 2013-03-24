@@ -14,7 +14,7 @@
         http://openlayers.org/blog/2010/07/10/google-maps-v3-for-openlayers/#comment-35040
     -->
     <script type="text/javascript" src="https://maps.google.com/maps/api/js?v=3.2&sensor=false"></script>
-    {{ testform.0.media }}
+    {{ location_form.media }}
 {% endblock %}
 
 {% block content %}
@@ -39,7 +39,7 @@
     <thead>
     <tr>
         <th>Status</th>
-        {% for field in new_form %}
+        {% for field in new_server_form %}
             <th title="{{ field.help_text }}">{{ field.label }}</th>
         {% endfor %}
         <th></th>
@@ -51,7 +51,7 @@
 {% endfor %}
     <tr class="new-server">
         <td></td>
-        {% for field in new_form %}
+        {% for field in new_server_form %}
             <td title="{{ field.help_text }}">{{ field|fieldwidget }}</td>
         {% endfor %}
         <td class="right">
