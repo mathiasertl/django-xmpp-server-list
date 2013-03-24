@@ -119,15 +119,15 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
- 
+
     # style
     'bootstrapform',
-   
+
     'server',
     'account',
     'api',
     'confirm',
-    
+
     # gis
     'django.contrib.gis',
     'world',
@@ -146,7 +146,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.media",
     "django.core.context_processors.static",
     "django.contrib.messages.context_processors.messages",
-    
+
     "django.core.context_processors.request",
 )
 
@@ -183,7 +183,8 @@ LOGGING = {
     'handlers': {
         'mail_admins': {
             'level': LOG_LEVEL,
-            'class': 'django.utils.log.AdminEmailHandler'
+            'class': 'django.utils.log.AdminEmailHandler',
+            'formatter': 'simple',
         },
         'console': {
             'level': LOG_LEVEL,
