@@ -48,16 +48,13 @@ class ConfirmationKey(models.Model):
         t.start()
 
     def send(self):
-        protocol, domain = get_siteinfo()
-
         # build context
-        site = Site.objects.get_current()
+        protocol, domain = get_siteinfo()
         context = {'domain': domain, 'key': self, 'protocol': protocol}
         subject_format = {
             'addr_type': self.address_type,
-            'domain': site.domain,
-            'protocol': proto,
-            'sitename': site.name,
+            'domain': domain,
+            'protocol': protocol,
         }
         context.update(self.add_context())
         subject_format.update(self.add_context())
