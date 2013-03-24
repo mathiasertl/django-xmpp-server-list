@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import permission_required
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden
 from django.shortcuts import render
+from django.views.generic import TemplateView
 
 from xmpplist.server.forms import ServerForm
 from xmpplist.server.forms import ServerLocationForm
@@ -10,20 +11,26 @@ from xmpplist.server.models import Features
 from xmpplist.server.models import Server
 
 
-@login_required
-def index(request):
-    servers = request.user.servers.all()
-    forms = [ServerForm(instance=s, prefix=s.id,
-                        initial={
-                            'location': '%s,%s' % (s.location.x, s.location.y)
-                        })
-        for s in servers]
-    context = {
-        'forms': forms,
-        'new_server_form': ServerForm(),
-        'location_form': ServerLocationForm(),  # preload location-form media
-    }
-    return render(request, 'server/index.html', context)
+class IndexView(TemplateView):
+    template_name = 'server/index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(IndexView, self).get_context_data(**kwargs)
+
+        servers = self.request.user.servers.all()
+        forms = [ServerForm(instance=s, prefix=s.id,
+                            initial={
+                                'location': '%s,%s' % (s.location.x, s.location.y)
+                            })
+            for s in servers]
+
+        context['new_server_form'] = ServerForm()
+        context['forms'] = forms
+
+        # add location form to preload location-form media:
+        context['location_form'] = ServerLocationForm()
+
+        return context
 
 
 @permission_required('server.moderate')

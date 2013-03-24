@@ -1,11 +1,16 @@
-from django.conf.urls.defaults import *
+from django.contrib.auth.decorators import login_required
+from django.conf.urls.defaults import patterns
+from django.conf.urls.defaults import url
+
+from xmpplist.server.views import IndexView
+
 
 urlpatterns = patterns(
     'server.views',
-    url(r'^$', 'index', name='server'),
+    url(r'^$', login_required(IndexView.as_view()), name='server'),
     url(r'^moderate/$', 'moderate', name='server_moderate'),
     url(r'^(?P<server_id>\w+)/report/$', 'report', name='server_report'),
-    
+
     url(r'^ajax/$', 'ajax', name='servers_ajax'),
     url(r'^ajax/mapbrowse/$', 'ajax_mapbrowse', name='server_ajax_mapbrowse'),
     url(r'^ajax/moderate/$', 'ajax_moderate', name='server_ajax_moderate'),
