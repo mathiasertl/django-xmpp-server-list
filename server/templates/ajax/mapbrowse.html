@@ -1,8 +1,11 @@
-{{ form.media }}
-{{ form.as_p }}
-<!--
+{# 
+Note: 
+* Don't add form.media, already loaded by index.html!
+* We only display form.osmlocation, not the entire form
+#}
+{{ form.osmlocation }}
+
 <script type="text/javascript">
     {{ maplocation|default:"map_osmlocation" }}.layers.vector.events.on(
         {'featureadded': add_wkt, scope: {{ maplocation|default:"map_osmlocation" }}});
-    </script>
-    -->
+</script>
