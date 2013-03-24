@@ -286,7 +286,7 @@ class Server(models.Model):
             if not resp: # happens at sternenschweif.de
                 raise RuntimeError('No answer received during stream negotiation.')
             if '<stream:error>' in resp:
-                raise RuntimeError('Received error during stream negotiation.')
+                raise RuntimeError('%s: Received error during stream negotiation.' % self.domain)
 
             i = 0
             while not resp.endswith('</stream:features>') and i < 10:
@@ -318,7 +318,8 @@ class Server(models.Model):
             sock.send('</stream:stream>'.encode('utf-8'))
             sock.recv(4096)
         except Exception as e:
-            logger.error('Exception while getting stream features: %s: %s', domain, e)
+            logger.error('%s: Exception while getting stream features: %s',
+                         self.domain, e)
 
         return features
 
