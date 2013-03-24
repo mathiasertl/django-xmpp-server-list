@@ -85,9 +85,13 @@ $(document).ready(function() {
     $("table").on("click", ".button-delete", function() {
         row = $(this).parent().parent();
         url = get_service_url(row);
-        $.ajax({
+        
+	$.ajax({
             url: get_service_url(row),
             type: 'DELETE',
+	    beforeSend: function(xhr) {
+		xhr.setRequestHeader("X-CSRFToken", $(csrftoken).attr('value'));
+	    },
             success: function() {
                 row.hide(500);
             }
