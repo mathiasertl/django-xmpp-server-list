@@ -6,14 +6,10 @@
 {% block pagetitle %}Your servers{% endblock %}
 
 {% block javascript %}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/lib/OpenLayers-2.11/OpenLayers.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/lib/OpenLayers-2.12/OpenLayers.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}floppyforms/js/MapWidget.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/edit-table.js"></script>
     
-    <!-- map opup issue. please see here:
-        http://openlayers.org/blog/2010/07/10/google-maps-v3-for-openlayers/#comment-35040
-    -->
-    <script type="text/javascript" src="https://maps.google.com/maps/api/js?v=3.2&sensor=false"></script>
     {{ location_form.media }}
 {% endblock %}
 
