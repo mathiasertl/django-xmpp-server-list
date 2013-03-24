@@ -33,11 +33,14 @@ class IndexView(TemplateView):
         return context
 
 
-@permission_required('server.moderate')
-def moderate(request):
-    servers = Server.objects.filter(moderated=None)
-    return render(request, 'server/moderate.html', {'servers': servers})
+class ModerateView(TemplateView):
+    template_name = 'server/moderate.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(ModerateView, self).get_context_data(**kwargs)
+        context['servers'] = Server.objects.filter(moderated=None)
+
+        return context
 
 @login_required
 def report(request, server_id):
