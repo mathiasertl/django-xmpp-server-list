@@ -7,7 +7,7 @@ Install dependencies, on Debian/Ubuntu:
 
     root@host:~# apt-get install python-virtualenv postgresql \
         binutils libproj-dev gdal-bin postgresql-9.1-postgis \
-        postgresql-server-dev-9.1 libpq-dev
+        postgresql-server-dev-9.1 libpq-dev libxml2-dev libxslt-dev
 
 [1] https://docs.djangoproject.com/en/dev/ref/contrib/gis/tutorial/
 
