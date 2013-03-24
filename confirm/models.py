@@ -10,6 +10,7 @@ from django.core.mail import send_mail
 from django.db import models
 from django.template.loader import render_to_string
 
+from xmpplist.server.util import get_siteinfo
 from xmpplist.server.models import Server
 from SendMsgBot import SendMsgBot
 
@@ -47,14 +48,11 @@ class ConfirmationKey(models.Model):
         t.start()
 
     def send(self):
-        if settings.USE_HTTPS:
-            proto = 'https'
-        else:
-            proto = 'http'
+        protocol, domain = get_siteinfo()
 
         # build context
         site = Site.objects.get_current()
-        context = {'site': site, 'key': self, 'protocol': proto}
+        context = {'domain': domain, 'key': self, 'protocol': protocol}
         subject_format = {
             'addr_type': self.address_type,
             'domain': site.domain,
@@ -97,7 +95,7 @@ class UserConfirmationKey(ConfirmationKey):
     user = models.ForeignKey(User, related_name='confirmations')
 
     template = 'confirm/user_contact.txt'
-    subject = 'Confirm your %(addr_type)s on %(domain)s'
+    subject = 'Confirm your %(addr_type)s on %(protocol)s://%(domain)s'
 
     @property
     def recipient(self):
@@ -127,7 +125,7 @@ class UserPasswordResetKey(UserConfirmationKey):
                 self.type = 'J'
 
     template = 'confirm/user_password_reset.txt'
-    subject = 'Reset your password on %(domain)s'
+    subject = 'Reset your password on %(protocol)s://%(domain)s'
 
     @models.permalink
     def get_absolute_url(self):
