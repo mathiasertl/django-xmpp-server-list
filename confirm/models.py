@@ -133,7 +133,7 @@ class ServerConfirmationKey(ConfirmationKey):
     server = models.ForeignKey(Server, related_name='confirmations')
 
     template = 'confirm/server_contact.txt'
-    subject = 'Confirm contact details for %(serverdomain)s on %(domain)s'
+    subject = 'Confirm contact details for %(serverdomain)s on  %(protocol)s://%(domain)s'
 
     def add_context(self):
         return {'serverdomain': self.server.domain}
