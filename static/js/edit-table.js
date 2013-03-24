@@ -31,7 +31,7 @@ function set_datepicker(row) {
 }
 
 function get_csrftoken() {
-    return $(csrftoken).find('input');
+    return $(csrfinput);
 }
 
 var overlay_params = {
@@ -90,7 +90,7 @@ $(document).ready(function() {
             url: get_service_url(row),
             type: 'DELETE',
             beforeSend: function(xhr) {
-                xhr.setRequestHeader("X-CSRFToken", $(csrftoken).attr('value'));
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
             },
             success: function() {
                 row.hide(500);
@@ -123,7 +123,9 @@ $(document).ready(function() {
     $("table").on("click", ".button-add", function() {
         cell = $(this).parent();
         row = cell.parent()
+        console.log(get_csrftoken());
         form_fields = row.find('input,select').add(get_csrftoken());
+        console.log(form_fields.serialize());
     
         $.post(service_url, form_fields.serialize(), function(data) {        
             new_row = $(data);
