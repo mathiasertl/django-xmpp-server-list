@@ -1,3 +1,4 @@
+import hashlib
 import logging
 import threading
 import time
@@ -8,7 +9,6 @@ from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.db import models
 from django.template.loader import render_to_string
-from django.utils.hashcompat import sha_constructor
 
 from xmpplist.server.models import Server
 from SendMsgBot import SendMsgBot
@@ -107,9 +107,9 @@ class UserConfirmationKey(ConfirmationKey):
             return self.user.profile.jid
 
     def set_random_key(self):
-        salt = sha_constructor('%s-%s-%s' % (settings.SECRET_KEY, time.time(),
+        salt = hashlib.sha1('%s-%s-%s' % (settings.SECRET_KEY, time.time(),
                                              self.type)).hexdigest()
-        return sha_constructor('%s-%s-%s' % (salt, self.user.username,
+        return hashlib.sha1('%s-%s-%s' % (salt, self.user.username,
                                              self.user.email)).hexdigest()
 
     @models.permalink
@@ -152,7 +152,7 @@ class ServerConfirmationKey(ConfirmationKey):
         self.type = self.server.contact_type
 
     def set_random_key(self):
-        salt = sha_constructor('%s-%s' % (settings.SECRET_KEY,
+        salt = hashlib.sha1('%s-%s' % (settings.SECRET_KEY,
                                           time.time())).hexdigest()
         return sha_constructor('%s-%s' % (salt,
                                           self.server.domain)).hexdigest()
