@@ -1,4 +1,6 @@
-import time, threading, logging
+import logging
+import threading
+import time
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -20,24 +22,24 @@ class ConfirmationKey(models.Model):
     key = models.CharField(max_length=128, unique=True)
     created = models.DateTimeField(auto_now_add=True)
     type = models.CharField(max_length=1, choices=CONFIRMATION_TYPE_CHOICES)
-    
+
     def __init__(self, *args, **kwargs):
         super(ConfirmationKey, self).__init__(*args, **kwargs)
         self.key = self.set_random_key()
-        
+
     def send_mail(self, to, subject, message):
         frm = settings.DEFAULT_FROM_EMAIL
         send_mail(subject, message, frm, [to], fail_silently=True)
-        
+
     def send_jid(self, to, subject, message):
         creds = settings.XMPP['default']
         logging.basicConfig()
-        
+
         def send_msg(frm, pwd, to, msg):
             xmpp = SendMsgBot(frm, pwd, to, msg)
             if xmpp.connect():
                 xmpp.process(wait=True)
-        
+
         t = threading.Thread(target=send_msg, args=(creds['jid'], creds['password'], to, message))
         t.daemon = True
         t.start()
@@ -47,30 +49,30 @@ class ConfirmationKey(models.Model):
             proto = 'https'
         else:
             proto = 'http'
-        
-        # build context    
+
+        # build context
         site = Site.objects.get_current()
         context = {'site': site, 'key': self, 'protocol': proto}
         subject_format = {'domain': site.domain, 'sitename': site.name, 'protocol': proto,
                           'addr_type': self.address_type}
         context.update(self.add_context())
         subject_format.update(self.add_context())
-        
+
         # build subject and message-text
         subject = self.subject % subject_format
         message = render_to_string(self.template, context)
-        
+
         # send message
-        if self.type == 'E':    
+        if self.type == 'E':
             self.send_mail(self.recipient, subject, message)
         elif self.type == 'J':
             self.send_jid(self.recipient, subject, message)
         else:
             raise RuntimeError("Confirmation messages can only be sent to JIDs or email addresses")
-            
+
     def add_context(self):
         return {}
-        
+
     @property
     def address_type(self):
         if self.type == 'E':
@@ -82,28 +84,28 @@ class ConfirmationKey(models.Model):
 
     class Meta:
         abstract = True
-        
+
 class UserConfirmationKey(ConfirmationKey):
     user = models.ForeignKey(User, related_name='confirmations')
-    
+
     template = 'confirm/user_contact.txt'
     subject = 'Confirm your %(addr_type)s on %(domain)s'
-        
+
     @property
     def recipient(self):
         if self.type == 'E':
             return self.user.email
         elif self.type == 'J':
             return self.user.profile.jid
-    
+
     def set_random_key(self):
         salt = sha_constructor('%s-%s-%s' % (settings.SECRET_KEY, time.time(), self.type)).hexdigest()
         return sha_constructor('%s-%s-%s' % (salt, self.user.username, self.user.email)).hexdigest()
-        
+
     @models.permalink
     def get_absolute_url(self):
         return ('confirm_user_contact', (), {'key': self.key})
-        
+
 class UserPasswordResetKey(UserConfirmationKey):
     def __init__(self, *args, **kwargs):
         super(UserPasswordResetKey, self).__init__(*args, **kwargs)
@@ -112,31 +114,31 @@ class UserPasswordResetKey(UserConfirmationKey):
                 self.type = 'E'
             else:
                 self.type = 'J'
-            
+
     template = 'confirm/user_password_reset.txt'
     subject = 'Reset your password on %(domain)s'
-    
+
     @models.permalink
     def get_absolute_url(self):
         return ('reset_user_password', (), {'key': self.key})
-    
+
 class ServerConfirmationKey(ConfirmationKey):
     server = models.ForeignKey(Server, related_name='confirmations')
-    
+
     template = 'confirm/server_contact.txt'
     subject = 'Confirm contact details for %(serverdomain)s on %(domain)s'
-    
+
     def add_context(self):
         return {'serverdomain': self.server.domain}
-        
+
     @property
     def recipient(self):
         return self.server.contact
-    
+
     def __init__(self, *args, **kwargs):
         super(ServerConfirmationKey, self).__init__(*args, **kwargs)
         self.type = self.server.contact_type
-    
+
     def set_random_key(self):
         salt = sha_constructor('%s-%s' % (settings.SECRET_KEY, time.time())).hexdigest()
         return sha_constructor('%s-%s' % (salt, self.server.domain)).hexdigest()
