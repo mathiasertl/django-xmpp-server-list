@@ -86,6 +86,7 @@ $(document).ready(function() {
     $("table").on("click", ".button-delete", function() {
         row = $(this).parent().parent();
         url = get_service_url(row);
+
         $.ajax({
             url: get_service_url(row),
             type: 'DELETE',
