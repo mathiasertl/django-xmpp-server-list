@@ -47,6 +47,10 @@ var overlay_params = {
     }
 }
 
+/**
+ * Responsible for adding the coordinates of a point clicked on the MapWidget
+ * to the input field.
+ */
 add_wkt = function(event) {
     map = this.map;
     feature = event.feature;
