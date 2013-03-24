@@ -38,5 +38,10 @@ Please refer to the documentation:
     
     https://docs.djangoproject.com/en/dev/ref/contrib/gis/tutorial/
 
+When the database is configured, run:
+
+    (xmpplist)xmpplist@host:~/xmpplist# python manage.py syncdb
+    (xmpplist)xmpplist@host:~/xmpplist# python manage.py loaddata fixtures/world_data.json
+
 = Further reading =
 GeoDjango Tutorial: https://docs.djangoproject.com/en/dev/ref/contrib/gis/tutorial/
