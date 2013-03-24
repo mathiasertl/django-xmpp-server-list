@@ -11,15 +11,21 @@ body {
 	width: 10em;
 }
 
-#id_contact_type {
+select.contact_type {
     width: 7em !important;
 }
 
-#id_ssl_port {
+input.ssl_port {
     width: 5em !important;
 }
-#id_launched {
+input.datepicker {
     width: 7em !important;
+}
+input.mapwidget {
+    width: 7em !important;
+}
+select.ca {
+    width: 8em !important;
 }
 
 #profile-overview {
