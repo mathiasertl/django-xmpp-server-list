@@ -11,7 +11,7 @@ from django.forms.widgets import TextInput
 
 import floppyforms
 
-from server.models import Server
+from xmpplist.server.models import Server
 
 
 class ServerForm(ModelForm):
