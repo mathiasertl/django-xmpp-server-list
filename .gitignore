@@ -5,3 +5,7 @@ xmpplist.sqlite
 *.swo
 media
 mystatic
+bin/
+build/
+lib/
+include/
