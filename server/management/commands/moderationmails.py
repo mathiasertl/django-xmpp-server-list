@@ -1,9 +1,11 @@
 from django.conf import settings
-from django.contrib.auth.models import User, Permission
+from django.contrib.auth.models import Permission
+from django.contrib.auth.models import User
 from django.core.mail import send_mail
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.db.models import Q
-from django.template import loader, Context
+from django.template import Context
+from django.template import loader
 
 from xmpplist.server.models import Server
 from xmpplist.server.util import get_siteinfo
