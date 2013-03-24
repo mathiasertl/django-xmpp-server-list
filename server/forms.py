@@ -128,7 +128,22 @@ class ServerForm(ModelForm):
         }
 
 
-class PointWidget(floppyforms.gis.PointWidget, floppyforms.gis.BaseGMapWidget):
+class BaseGMapWidget(floppyforms.gis.BaseGeometryWidget):
+    """A Google Maps base widget
+
+    Copied from floppyforms.gis to include https resources.
+    """
+    map_srid = 900913
+    template_name = 'floppyforms/gis/google.html'
+
+    class Media:
+        js = (
+            'floppyforms/js/MapWidget.js',
+            'https://maps.google.com/maps/api/js?sensor=false',
+        )
+
+
+class PointWidget(floppyforms.gis.PointWidget, BaseGMapWidget):
     pass
 
 
