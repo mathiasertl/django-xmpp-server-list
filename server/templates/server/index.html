@@ -3,13 +3,9 @@
 {% load fieldwidget %}
 
 {% block title %}Your servers{% endblock %}
-{% block pagetitle %}Your ({{ user.username }}) servers{% endblock %}
+{% block pagetitle %}Your servers{% endblock %}
 
 {% block javascript %}
-    <script type="text/javascript">
-        var service_url = "{% url "servers_ajax" %}";
-        var csrftoken = "{% csrf_token %}";
-    </script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/lib/OpenLayers-2.11/OpenLayers.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}floppyforms/js/MapWidget.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/edit-table.js"></script>
