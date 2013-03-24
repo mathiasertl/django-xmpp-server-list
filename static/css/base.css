@@ -11,6 +11,13 @@ body {
 	width: 10em;
 }
 
+#id_contact_type, #id_ssl_port {
+    width: 5em !important;
+}
+#id_launched {
+    width: 7em !important;
+}
+
 #profile-overview {
 	width: 60%;
 }
