@@ -124,19 +124,8 @@ class ServerForm(ModelForm):
         }
 
 
-#class PointWidget(floppyforms.gis.PointWidget,
-#                  floppyforms.gis.BaseMetacartaWidget):
-#    pass
-
-#class PointWidget(floppyforms.gis.PointWidget, floppyforms.gis.BaseOsmWidget):
-#    pass
-#    map_srid = 4326
-#    map_options = {'projection': 'new OpenLayers.Projection("EPSG:900913")'}
-#    mouse_position = False
-
-
-class PointWidget(floppyforms.gis.BaseOsmWidget, floppyforms.gis.PointWidget):
-    template_name = 'forms/pointwidget.html'
+class PointWidget(floppyforms.gis.PointWidget, floppyforms.gis.BaseGMapWidget):
+    pass
 
 
 class ServerLocationForm(Form):
