@@ -4,6 +4,12 @@
 <head>
     <title>{% block title %}XMPP server list{% endblock %}</title>
     <link rel="icon" type="image/x-icon" href="{{ STATIC_URL }}img/favicon.ico">
+
+    <script type="text/javascript">
+        var service_url = "{% url "servers_ajax" %}";
+        var csrftoken = "{{ csrf_token }}";
+        var csrfinput = "{% csrf_token %}";
+    </script>
     
     <script type="text/javascript" src="{{ STATIC_URL }}js/lib/jquery-1.7.1{% if debug %}.min{% endif %}.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/lib/js/jquery-ui-1.8.16.custom.min.js"></script>

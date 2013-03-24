@@ -11,6 +11,23 @@ body {
 	width: 10em;
 }
 
+select.contact_type {
+    width: 7em !important;
+}
+
+input.ssl_port {
+    width: 5em !important;
+}
+input.datepicker {
+    width: 7em !important;
+}
+input.mapwidget {
+    width: 7em !important;
+}
+select.ca {
+    width: 8em !important;
+}
+
 #profile-overview {
 	width: 60%;
 }

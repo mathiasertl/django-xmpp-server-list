@@ -31,7 +31,7 @@ function set_datepicker(row) {
 }
 
 function get_csrftoken() {
-    return $(csrftoken).find('input');
+    return $(csrfinput);
 }
 
 var overlay_params = {
@@ -47,18 +47,19 @@ var overlay_params = {
     }
 }
 
+/**
+ * Responsible for adding the coordinates of a point clicked on the MapWidget
+ * to the input field.
+ */
 add_wkt = function(event) {
     map = this.map;
     feature = event.feature;
     feat = OpenLayers.Util.properFeatures(feature, this.options.geom_type);
     point = feat.geometry;
-    //alert(point.x + ', ' + point.y);
     
     var lonlat = point.transform(map.getProjectionObject(), new OpenLayers.Projection("EPSG:4326"));
-    //alert(lonlat.x + ", " + lonlat.y);
-    
     // find: id_1-location (we have: id_1-osmlocation_map)
-    input_id =         this.options.map_id.replace(/osmlocation_map/, 'location');
+    input_id = this.options.map_id.replace(/osmlocation_map/, 'location');
     document.getElementById(input_id).value = lonlat.x.toFixed(2) + ',' + lonlat.y.toFixed(2);
     input = $(document).find('#' + input_id);
     cell = input.parent().parent();
@@ -89,9 +90,9 @@ $(document).ready(function() {
 	$.ajax({
             url: get_service_url(row),
             type: 'DELETE',
-	    beforeSend: function(xhr) {
-		xhr.setRequestHeader("X-CSRFToken", $(csrftoken).attr('value'));
-	    },
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            },
             success: function() {
                 row.hide(500);
             }
@@ -123,7 +124,9 @@ $(document).ready(function() {
     $("table").on("click", ".button-add", function() {
         cell = $(this).parent();
         row = cell.parent()
+        console.log(get_csrftoken());
         form_fields = row.find('input,select').add(get_csrftoken());
+        console.log(form_fields.serialize());
     
         $.post(service_url, form_fields.serialize(), function(data) {        
             new_row = $(data);

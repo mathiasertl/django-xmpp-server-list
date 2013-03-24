@@ -185,7 +185,8 @@ LOGGING = {
     'handlers': {
         'mail_admins': {
             'level': LOG_LEVEL,
-            'class': 'django.utils.log.AdminEmailHandler'
+            'class': 'django.utils.log.AdminEmailHandler',
+            'formatter': 'simple',
         },
         'console': {
             'level': LOG_LEVEL,

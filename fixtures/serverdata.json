@@ -1,0 +1,119 @@
+[
+{
+    "pk": 1, 
+    "model": "server.certificateauthority", 
+    "fields": {
+        "website": "https://www.startssl.com/", 
+        "name": "StartSSL", 
+        "certificate": "/usr/local/home/xmpplist/xmpplist/static/certs/startssl.pem"
+    }
+},
+{
+    "pk": 2, 
+    "model": "server.certificateauthority", 
+    "fields": {
+        "website": "https://www.cacert.org/", 
+        "name": "CAcert", 
+        "certificate": "/usr/local/home/xmpplist/xmpplist/static/certs/cacert.pem"
+    }
+},
+{
+    "pk": 3, 
+    "model": "server.certificateauthority", 
+    "fields": {
+        "website": "http://example.com/", 
+        "name": "other", 
+        "certificate": ""
+    }
+},
+{
+    "pk": 4, 
+    "model": "server.certificateauthority", 
+    "fields": {
+        "website": "http://en.gandi.net/ssl", 
+        "name": "Gandi", 
+        "certificate": "/usr/local/home/xmpplist/xmpplist/static/certs/gandi.pem"
+    }
+},
+{
+    "pk": 5, 
+    "model": "server.certificateauthority", 
+    "fields": {
+        "website": "http://www.rapidssl.com/", 
+        "name": "RapidSSL", 
+        "certificate": "/usr/local/home/xmpplist/xmpplist/static/certs/rapidssl.pem"
+    }
+},
+{
+    "pk": 6, 
+    "model": "server.certificateauthority", 
+    "fields": {
+        "website": "http://www.comodo.com/", 
+        "name": "Comodo", 
+        "certificate": "/usr/local/home/xmpplist/xmpplist/static/certs/comodo.pem"
+    }
+},
+{
+    "pk": 7, 
+    "model": "server.certificateauthority", 
+    "fields": {
+        "website": "http://www.thawte.com/", 
+        "name": "Thawte", 
+        "certificate": "/usr/local/home/xmpplist/xmpplist/static/certs/thawte.pem"
+    }
+},
+{
+    "pk": 8, 
+    "model": "server.certificateauthority", 
+    "fields": {
+        "website": "http://www.globalsign.com/", 
+        "name": "GlobalSign", 
+        "certificate": "/usr/local/home/xmpplist/xmpplist/static/certs/globalsign.pem"
+    }
+},
+{
+    "pk": 9, 
+    "model": "server.certificateauthority", 
+    "fields": {
+        "website": "http://www.alphassl.com/", 
+        "name": "AlphaSSL", 
+        "certificate": "/usr/local/home/xmpplist/xmpplist/static/certs/alphassl.pem"
+    }
+},
+{
+    "pk": 10, 
+    "model": "server.certificateauthority", 
+    "fields": {
+        "website": "https://www.godaddy.com/", 
+        "name": "GoDaddy", 
+        "certificate": "/usr/local/home/xmpplist/xmpplist/static/certs/godaddy.pem"
+    }
+},
+{
+    "pk": 1, 
+    "model": "server.serversoftware", 
+    "fields": {
+        "website": "http://www.ejabberd.im", 
+        "newest_version": "2.1.10", 
+        "name": "ejabberd"
+    }
+},
+{
+    "pk": 2, 
+    "model": "server.serversoftware", 
+    "fields": {
+        "website": "http://www.prosody.im/", 
+        "newest_version": "0.8.2", 
+        "name": "Prosody"
+    }
+},
+{
+    "pk": 3, 
+    "model": "server.serversoftware", 
+    "fields": {
+        "website": "http://www.tigase.org/", 
+        "newest_version": "5.1.0", 
+        "name": "Tigase"
+    }
+}
+]
