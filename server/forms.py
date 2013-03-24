@@ -1,6 +1,5 @@
 from urlparse import urlparse
 
-from django.contrib.gis.admin.widgets import OpenLayersWidget
 from django.contrib.gis.geos import Point
 from django.core import validators
 from django.forms import ModelForm
@@ -10,8 +9,9 @@ from django.forms.forms import ValidationError
 from django.forms.widgets import DateInput
 from django.forms.widgets import TextInput
 
-from models import Server
 import floppyforms
+
+from server.models import Server
 
 
 class ServerForm(ModelForm):
@@ -135,8 +135,8 @@ class ServerForm(ModelForm):
 #    mouse_position = False
 
 
-class PointWidget(floppyforms.gis.PointWidget, floppyforms.gis.BaseGMapWidget):
-    pass
+class PointWidget(floppyforms.gis.BaseOsmWidget, floppyforms.gis.PointWidget):
+    template_name = 'forms/pointwidget.html'
 
 
 class ServerLocationForm(Form):
