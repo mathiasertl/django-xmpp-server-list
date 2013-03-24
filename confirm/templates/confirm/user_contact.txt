@@ -1,12 +1,12 @@
 {% load url from future %}Dear {{ key.user.username }},
 
 You have attempted to create an account or change your {{ key.address_type }} at
-{{ protocol }}://{{ site.domain }}.
+{{ protocol }}://{{ domain }}.
 
 To confirm your {{ key.address_type }}, please go to:
 
-{{ protocol }}://{{ site.domain }}{{ key.get_absolute_url }}
+{{ protocol }}://{{ domain }}{{ key.get_absolute_url }}
 
 Cheers,
 
-    {{ site.domain }}
+    {{ protocol }}://{{ domain }}
