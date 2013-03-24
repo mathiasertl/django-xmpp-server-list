@@ -5,7 +5,7 @@ http{% if request.is_secure %}s{% endif %}://{{request.get_host}}.
 
 To confirm your email address, please go to:
 
-    http{% if request.is_secure %}s{% endif %}://{{request.get_host}}{% url users_confirm_email key %}
+    http{% if request.is_secure %}s{% endif %}://{{request.get_host}}{% url "users_confirm_email" key %}
 
 Cheers,
 
