@@ -88,6 +88,9 @@ $(document).ready(function() {
         $.ajax({
             url: get_service_url(row),
             type: 'DELETE',
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader("X-CSRFToken", $(csrftoken).attr('value'));
+            },
             success: function() {
                 row.hide(500);
             }
