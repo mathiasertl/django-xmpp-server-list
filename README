@@ -1,0 +1,21 @@
+= Dependencies =
+
+Install dependencies, on Debian/Ubuntu:
+
+    root@host:~# apt-get install python-virtualenv
+
+= Deployment/Installation =
+
+Clone the repository:
+
+    git clone https://git.fsinf.at/mati/xmpplist.git
+
+In the cloned repository, deploy a virtualenv:
+
+    root@host:~/xmpplist# virtualenv .
+    root@host:~/xmpplist# source/bin/activate
+    (xmpplist)root@host:~/xmpplist# pip install -r requirements.txt
+
+
+= Further reading =
+GeoDjango Tutorial: https://docs.djangoproject.com/en/dev/ref/contrib/gis/tutorial/
