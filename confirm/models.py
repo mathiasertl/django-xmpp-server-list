@@ -148,7 +148,7 @@ class ServerConfirmationKey(ConfirmationKey):
     def set_random_key(self):
         salt = hashlib.sha1('%s-%s' % (settings.SECRET_KEY,
                                           time.time())).hexdigest()
-        return sha_constructor('%s-%s' % (salt,
+        return hashlib.sha1('%s-%s' % (salt,
                                           self.server.domain)).hexdigest()
 
     @models.permalink
