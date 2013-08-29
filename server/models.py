@@ -3,8 +3,7 @@ from xml.etree import ElementTree
 
 import dns.resolver
 
-#from django.db import models
-from django.contrib.gis.db import models
+from django.db import models
 from django.conf import settings
 
 from django.contrib.auth.models import User
@@ -186,8 +185,6 @@ class Server(models.Model):
     # queried information
     software = models.ForeignKey(ServerSoftware, related_name='servers', null=True, blank=True)
     software_version = models.CharField(max_length=30, blank=True)
-
-    objects = models.GeoManager()
 
     # contact information
     CONTACT_TYPE_CHOICES=(
