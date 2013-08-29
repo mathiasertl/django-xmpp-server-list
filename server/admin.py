@@ -1,9 +1,13 @@
-#from django.contrib import admin
-from django.contrib.gis import admin
+from django.contrib import admin
 
-from models import Server, CertificateAuthority, ServerSoftware, Features, LogEntry
+from models import CertificateAuthority
+from models import Features
+from models import LogEntry
+from models import Server
+from models import ServerSoftware
 
-admin.site.register(Server, admin.OSMGeoAdmin)
+
+admin.site.register(Server)
 admin.site.register(ServerSoftware)
 admin.site.register(Features)
 admin.site.register(CertificateAuthority)
