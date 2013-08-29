@@ -102,9 +102,9 @@ class UserConfirmationKey(ConfirmationKey):
 
     def set_random_key(self):
         salt = hashlib.sha1('%s-%s-%s' % (settings.SECRET_KEY, time.time(),
-                                             self.type)).hexdigest()
+                                          self.type)).hexdigest()
         return hashlib.sha1('%s-%s-%s' % (salt, self.user.username,
-                                             self.user.email)).hexdigest()
+                                          self.user.email)).hexdigest()
 
     @models.permalink
     def get_absolute_url(self):
