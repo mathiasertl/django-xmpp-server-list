@@ -137,7 +137,6 @@ class Migration(SchemaMigration):
             'features': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'server'", 'unique': 'True', 'to': u"orm['server.Features']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'launched': ('django.db.models.fields.DateField', [], {}),
-            'location': ('django.contrib.gis.db.models.fields.PointField', [], {'default': '<Point object at 0x2f1fe20>'}),
             'moderated': ('django.db.models.fields.NullBooleanField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'auto_now_add': 'True', 'blank': 'True'}),
             'software': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'servers'", 'null': 'True', 'to': u"orm['server.ServerSoftware']"}),
