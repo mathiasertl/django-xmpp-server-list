@@ -1,0 +1,3 @@
+# verify that all dependencies are still in place.
+  # if lxml is no longer required, remove libxml2-dev libxslt-dev
+  # if psycopg2 isn't required either, remove python-all-dev
