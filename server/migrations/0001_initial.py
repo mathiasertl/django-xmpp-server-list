@@ -50,7 +50,7 @@ class Migration(SchemaMigration):
             ('added', self.gf('django.db.models.fields.DateField')(auto_now_add=True, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, auto_now_add=True, blank=True)),
             ('launched', self.gf('django.db.models.fields.DateField')()),
-            ('location', self.gf('django.contrib.gis.db.models.fields.PointField')(default=<Point object at 0x2a79e20>)),
+            ('location', self.gf('django.contrib.gis.db.models.fields.PointField')(default='')),
             ('domain', self.gf('django.db.models.fields.CharField')(unique=True, max_length=60)),
             ('website', self.gf('django.db.models.fields.URLField')(max_length=200, blank=True)),
             ('ca', self.gf('django.db.models.fields.related.ForeignKey')(related_name='servers', to=orm['server.CertificateAuthority'])),
