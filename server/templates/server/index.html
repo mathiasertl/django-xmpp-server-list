@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% load url from future %}
-{% load fieldwidget %}
 
 {% block title %}Your servers{% endblock %}
 {% block pagetitle %}Your servers{% endblock %}
@@ -50,7 +49,7 @@
     <tr class="new-server">
         <td></td>
         {% for field in new_server_form %}
-            <td title="{{ field.help_text }}">{{ field|fieldwidget }}</td>
+            <td title="{{ field.help_text }}">{{ field }}</td>
         {% endfor %}
         <td class="right">
             <img class="button-add" src="{{ STATIC_URL }}img/add.png" alt="add new server" title="add new server" />

@@ -1,5 +1,4 @@
 {% load fieldvalue %}
-{% load fieldwidget %}
 
 <td title="{{ field.help_text }}">
     <div class="value-display"
@@ -7,7 +6,7 @@
         {{ field|fieldvalue }}
     </div>
     <div class="value-edit" {% if form.errors %}style="display: block;" {% endif %}>
-        {{ field|fieldwidget }}
+        {{ field }}
         <div class='fielderrors'>
             {{ field.errors }}
         </div>
