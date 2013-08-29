@@ -8,8 +8,6 @@ from django.conf import settings
 
 from django.contrib.auth.models import User
 
-from xmpplist.world.models import WorldBorders
-
 logger = logging.getLogger('xmpplist.server')
 LOG_TYPE_MODERATION = 1
 LOG_TYPE_VERIFICATION = 2
@@ -474,12 +472,7 @@ class Server(models.Model):
         self.save()
 
     def get_country(self):
-        if settings.DATABASES['default']['ENGINE'] == 'django.contrib.gis.db.backends.mysql':
-            countries = WorldBorders.objects.filter(geom__intersects=self.location)
-            country = [c for c in countries if c.geom.contains(self.location)][0]
-        else:
-            country = WorldBorders.objects.get(geom__intersects=self.location)
-        return country
+        return 'TODO'
 
     def get_website(self):
         if self.website:
