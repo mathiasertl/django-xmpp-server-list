@@ -162,15 +162,6 @@
         }
     },
     {
-        "pk": 19,
-        "model": "contenttypes.contenttype",
-        "fields": {
-            "model": "worldborders",
-            "name": "world borders",
-            "app_label": "world"
-        }
-    },
-    {
         "pk": 1,
         "model": "sites.site",
         "fields": {
@@ -3336,33 +3327,6 @@
             "codename": "delete_site",
             "name": "Can delete site",
             "content_type": 7
-        }
-    },
-    {
-        "pk": 56,
-        "model": "auth.permission",
-        "fields": {
-            "codename": "add_worldborders",
-            "name": "Can add world borders",
-            "content_type": 19
-        }
-    },
-    {
-        "pk": 57,
-        "model": "auth.permission",
-        "fields": {
-            "codename": "change_worldborders",
-            "name": "Can change world borders",
-            "content_type": 19
-        }
-    },
-    {
-        "pk": 58,
-        "model": "auth.permission",
-        "fields": {
-            "codename": "delete_worldborders",
-            "name": "Can delete world borders",
-            "content_type": 19
         }
     },
     {
