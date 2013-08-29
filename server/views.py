@@ -18,17 +18,10 @@ class IndexView(TemplateView):
         context = super(IndexView, self).get_context_data(**kwargs)
 
         servers = self.request.user.servers.all()
-        forms = [ServerForm(instance=s, prefix=s.id,
-                            initial={
-                                'location': '%s,%s' % (s.location.x, s.location.y)
-                            })
-            for s in servers]
+        forms = [ServerForm(instance=s, prefix=s.id) for s in servers]
 
         context['new_server_form'] = ServerForm()
         context['forms'] = forms
-
-        # add location form to preload location-form media:
-        context['location_form'] = ServerLocationForm()
 
         return context
 
@@ -66,21 +59,12 @@ def ajax(request):
             server.save()
 
             form = ServerForm(
-                instance=server, prefix=server.id, initial={
-                    'location': '%s,%s' % (
-                        server.location.x, server.location.y),
-                })
+                instance=server, prefix=server.id)
             return render(request, 'ajax/server_table_row.html',
                           {'form': form})
         return render(request, 'ajax/server_table_row.html',
                       {'form': form}, status=400)
     return HttpResponseForbidden("No humans allowed.")
-
-
-@login_required
-def ajax_mapbrowse(request):
-    form = ServerLocationForm()
-    return render(request, 'ajax/mapbrowse.html', {'form': form})
 
 
 @login_required
@@ -123,11 +107,7 @@ def ajax_id(request, server_id):
             server.save()
 
             form = ServerForm(
-                instance=server, prefix=server.id, initial={
-                    'location': '%s,%s' % (server.location.x,
-                                           server.location.y)
-                }
-            )
+                instance=server, prefix=server.id)
 
         return render(request, 'ajax/server_table_row.html', {'form': form})
 
@@ -148,17 +128,3 @@ def ajax_moderate(request):
         return HttpResponse('ok')
     else:
         return HttpResponseForbidden('Sorry, only POST')
-
-
-@login_required
-def ajax_id_mapbrowse(request, server_id):
-    server = Server.objects.get(id=server_id)
-    if server.user != request.user:
-        return HttpResponseForbidden(
-            "Thou shal only osmbrowse your own server!")
-
-    form = ServerLocationForm(initial={'osmlocation': server.location},
-                              prefix=server.id)
-    maplocation = 'map_%s_osmlocation' % server.id
-    return render(request, 'ajax/mapbrowse.html',
-                  {'form': form, 'maplocation': maplocation})
