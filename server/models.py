@@ -8,8 +8,6 @@ from django.contrib.gis.db import models
 from django.conf import settings
 
 from django.contrib.auth.models import User
-from django.contrib.gis.db import models as gismodels
-from django.contrib.gis.geos import Point
 
 from xmpplist.world.models import WorldBorders
 
@@ -83,7 +81,7 @@ def get_hosts(host, port, ipv4=True, ipv6=True):
             hosts += socket.getaddrinfo(host, port, socket.AF_INET6, socket.SOCK_STREAM)
 
         return hosts
-    except Exception as e:
+    except Exception:
         return []
 
 class CertificateAuthority(models.Model):
@@ -152,7 +150,6 @@ class Features(models.Model):
 
         return self.has_ipv6
 
-from django.contrib.gis.geos import Point
 
 class Server(models.Model):
     class Meta:
@@ -165,7 +162,6 @@ class Server(models.Model):
     added = models.DateField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True, auto_now_add=True)
     launched = models.DateField(help_text="When the server was launched.")
-    location = models.PointField(default=Point(0,0), help_text="Where the server is located.")
 
     # information about the service:
     domain = models.CharField(unique=True, max_length=60,
