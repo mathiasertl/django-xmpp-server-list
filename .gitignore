@@ -1,4 +1,3 @@
-Makefile
 *.pyc
 localsettings.py
 xmpplist.sqlite
