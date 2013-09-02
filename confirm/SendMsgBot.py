@@ -20,11 +20,14 @@ Code retrieved from
     getting_started/sendlogout.html
 from the official SleekXMPP docs
 """
+
+import logging
 import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-import sleekxmpp, logging
+import sleekxmpp
+
 
 class SendMsgBot(sleekxmpp.ClientXMPP):
     """

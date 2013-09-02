@@ -149,7 +149,8 @@ class ServerConfirmationKey(ConfirmationKey):
     server = models.ForeignKey(Server, related_name='confirmations')
 
     template = 'confirm/server_contact.txt'
-    subject = 'Confirm contact details for %(serverdomain)s on %(protocol)s://%(domain)s'
+    subject = 'Confirm contact details for %(serverdomain)s on '
+    '%(protocol)s://%(domain)s'
 
     def add_context(self):
         return {'serverdomain': self.server.domain}
@@ -164,9 +165,9 @@ class ServerConfirmationKey(ConfirmationKey):
 
     def set_random_key(self):
         salt = hashlib.sha1('%s-%s' % (settings.SECRET_KEY,
-                                          time.time())).hexdigest()
+                                       time.time())).hexdigest()
         return hashlib.sha1('%s-%s' % (salt,
-                                          self.server.domain)).hexdigest()
+                                       self.server.domain)).hexdigest()
 
     @models.permalink
     def get_absolute_url(self):
