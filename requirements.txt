@@ -1,8 +1,5 @@
 Django==1.5.2
-django-floppyforms
-sleekxmpp
-psycopg2==2.5.1
-dnspython==1.11.0
-django-geo==0.3b1
-lxml==3.2.3
 South==0.8.2
+dnspython==1.11.0
+lxml==3.2.3
+sleekxmpp
