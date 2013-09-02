@@ -10,17 +10,10 @@ from django.forms.widgets import DateInput
 from django.forms.widgets import Select
 from django.forms.widgets import TextInput
 
-import floppyforms
-
 from xmpplist.server.models import Server
 
 
 class ServerForm(ModelForm):
-    location = CharField(
-        min_length=3, widget=TextInput(
-            attrs={'size': 8, 'class': 'mapwidget'}),
-        help_text="Where the server is located.")
-
     def verify_domain(self, value):
         """
         verify a domain (we need this in multiple places)
@@ -44,21 +37,6 @@ class ServerForm(ModelForm):
         if ssl_port > 65535:
             raise ValidationError("Maximum port number is 65545.")
         return ssl_port
-
-    def clean_location(self):
-        try:
-            x, y = self.cleaned_data['location'].strip().split(',')
-            x = float(x)
-            y = float(y)
-        except ValueError:
-            raise ValidationError(
-                "Format for coordinates is 'long,lat', example: 16.37,48.2")
-
-        if x > 180 or x < -180:
-            raise ValidationError('Longitude must be between -180 and +180!')
-        if y > 90 or y < -90:
-            raise ValidationError('Latitude must be between -90 and +90!')
-        return Point(x=x, y=y)
 
     def clean_domain(self):
         domain = self.cleaned_data['domain']
@@ -111,7 +89,7 @@ class ServerForm(ModelForm):
     class Meta:
         model = Server
         fields = (
-            'domain', 'website', 'ca', 'ssl_port', 'launched', 'location',
+            'domain', 'website', 'ca', 'ssl_port', 'launched',
             'contact_type', 'contact', 'contact_name',
         )
         widgets = {
@@ -126,26 +104,3 @@ class ServerForm(ModelForm):
             'launched': DateInput(attrs={
                 'size': 8, 'class': 'datepicker'}, format='%Y-%m-%d'),
         }
-
-
-class BaseGMapWidget(floppyforms.gis.BaseGeometryWidget):
-    """A Google Maps base widget
-
-    Copied from floppyforms.gis to include https resources.
-    """
-    map_srid = 900913
-    template_name = 'floppyforms/gis/google.html'
-
-    class Media:
-        js = (
-            'floppyforms/js/MapWidget.js',
-            'https://maps.google.com/maps/api/js?sensor=false',
-        )
-
-
-class PointWidget(floppyforms.gis.PointWidget, BaseGMapWidget):
-    pass
-
-
-class ServerLocationForm(Form):
-    osmlocation = floppyforms.gis.PointField(widget=PointWidget)
