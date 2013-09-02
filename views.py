@@ -1,4 +1,3 @@
-from django.http import HttpResponse
 from server.models import Server
 from django.shortcuts import render
 
