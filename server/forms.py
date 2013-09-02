@@ -1,10 +1,7 @@
 from urlparse import urlparse
 
-from django.contrib.gis.geos import Point
 from django.core import validators
 from django.forms import ModelForm
-from django.forms.fields import CharField
-from django.forms.forms import Form
 from django.forms.forms import ValidationError
 from django.forms.widgets import DateInput
 from django.forms.widgets import Select

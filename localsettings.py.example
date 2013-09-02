@@ -11,8 +11,7 @@ EMAIL_FILE_PATH = '/tmp/xmpplist' # change this to a proper location
 
 DATABASES = {
     'default': {
-        #'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'ENGINE': 'django.contrib.gis.db.backends.mysql',
+        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': 'xmpplist',                      # Or path to database file if using sqlite3.
         'USER': 'xmpplist',                      # Not used with sqlite3.
         'PASSWORD': 'nopass',                  # Not used with sqlite3.
