@@ -19,11 +19,13 @@ import json
 
 from lxml import etree
 
-from django.core import serializers
-from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest
+from django.http import HttpResponse
+from django.http import HttpResponseBadRequest
+from django.http import HttpResponseForbidden
 from django.shortcuts import render
 
 from xmpplist.server.models import Server
+
 
 def index(request):
     # get request format
@@ -55,14 +57,17 @@ def index(request):
 
     fields = ['domain']
 
-    # http://xmpp.org/services/services.xml / http://xmpp.org/services/services-full.xml formats
-    # already deprecated, i hope :)
+    # http://xmpp.org/services/services.xml and
+    # http://xmpp.org/services/services-full.xml formats already deprecated, i
+    # hope :)
     # does fetching + serialization in one step
-    if request_format == 'services.xml' or request_format == 'services-full.xml':
-        root_element = etree.Element('query') # , nsmap={None: 'http://jabber.org/protocol/disco#items'})
+    if request_format == 'services.xml' \
+            or request_format == 'services-full.xml':
+        root_element = etree.Element('query')
 
         if request_format == 'services-full.xml':
-            fields += ['software__name', 'contact', 'contact_type', 'website', 'location']
+            fields += ['software__name', 'contact', 'contact_type', 'website',
+                       'location', ]
 
         contact_prefixes = {'M': 'xmpp:', 'J': 'xmpp:', 'E': 'mailto:'}
 
