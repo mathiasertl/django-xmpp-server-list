@@ -1,4 +1,7 @@
-import ssl, socket, logging
+import logging
+import socket
+import ssl
+
 from xml.etree import ElementTree
 
 import dns.resolver
@@ -16,44 +19,50 @@ LOG_TYPE_INFO = 4
 
 LOG_MESSAGES = {
     'srv-client': 'No xmpp-client SRV-records where found for this server.<br>'
-        'Note that if this check fails, some successing tests are skipped, so fixing this issue '
-        'might reveal further problems.',
+    'Note that if this check fails, some successive tests are skipped, so '
+    'fixing this issue might reveal further problems.',
     'srv-server': 'No xmpp-server SRV-records where found for this server.<br>'
-        'Note that if this check fails, some successing tests are skipped, so fixing this issue '
-        'might reveal further problems.',
+    'Note that if this check fails, some successing tests are skipped, so '
+    'fixing this issue might reveal further problems.',
     'client-offline': 'Could not verify client connectivity.<br>'
-        'None of the hosts referred to by the xmpp-client SRV records where found to '
-        'be online. Note that if you use <a href="http://en.wikipedia.org/wiki/Round-robin_DNS">'
-        'round-robin DNS</a>, each host must be online for an xmpp-client SRV record to be '
-        'considered online. The following hosts where checked:',
+    'None of the hosts referred to by the xmpp-client SRV records where '
+    'found to be online. Note that if you use '
+    '<a href="http://en.wikipedia.org/wiki/Round-robin_DNS">round-robin '
+    'DNS</a>, each host must be online for an xmpp-client SRV record to '
+    'be considered online. The following hosts where checked:',
     'server-offline': 'Could not verify server connectivity.<br>'
-        'None of the hosts referred to by the xmpp-server SRV records where found to '
-        'be online. Note that if you use <a href="http://en.wikipedia.org/wiki/Round-robin_DNS">'
-        'round-robin DNS</a>, each host must be online for an xmpp-server SRV record to be '
-        'considered online. The following hosts where checked:',
+    'None of the hosts referred to by the xmpp-server SRV records where '
+    'found to be online. Note that if you use '
+    '<a href="http://en.wikipedia.org/wiki/Round-robin_DNS">round-robin '
+    'DNS</a>, each host must be online for an xmpp-server SRV record to '
+    'be considered online. The following hosts where checked:',
     'ssl-offline': 'Could not verify SSL connectivity.<br>'
-        'If you do not offer SSL connections, please leave the "SSL port" field empty. Otherwise '
-        'you have to specify the correct SSL certificate authority, or, if you use a self-signed '
-        'certificate, specify "other" in that field. If your certificate authority is not listed, '
-        'please contact us. The following errors where encountered:',
+    'If you do not offer SSL connections, please leave the "SSL port" '
+    'field empty. Otherwise you have to specify the correct SSL '
+    'certificate authority, or, if you use a self-signed certificate, '
+    'specify "other" in that field. If your certificate authority is not '
+    'listed, please contact us. The following errors where encountered:',
     'tls-cert': 'Could not verify TLS connectivity.'
-        'TLS negotiation failed. You have to specify the correct certificate authority, or, if '
-        'you use a self-signed certificate, specify "other" in that field. If your certificate '
-        'authority is not listed, please just contact us. <br>'
-        'The following error was encountered:',
+    'TLS negotiation failed. You have to specify the correct certificate '
+    'authority, or, if you use a self-signed certificate, specify "other" '
+    'in that field. If your certificate authority is not listed, please '
+    'just contact us. <br>The following error was encountered:',
 
     # warnings:
-    'hosts-offline': 'An error was encountered connecting to the following hosts:',
+    'hosts-offline': 'An error was encountered connecting to the following '
+    'hosts:',
 
     # info
     'no-ipv6': 'No IPv6 records were found for at least one SRV record.',
 }
+
 
 def get_addr_str(af, args, hostname):
     if af == socket.AF_INET:
         return '%s:%s (%s)' % (args[0], args[1], hostname)
     elif af == socket.AF_INET6:
         return '[%s]:%s (%s)' % (args[0], args[1], hostname)
+
 
 def wrap_socket(s, ca):
     if ca.certificate:
@@ -63,8 +72,10 @@ def wrap_socket(s, ca):
 
     return ssl.wrap_socket(s, ssl_version=ssl.PROTOCOL_TLSv1, **kwargs)
 
+
 def html_list(l):
     return '<ul><li>%s</li></ul>' % '</li><li>'.join(l)
+
 
 def get_hosts(host, port, ipv4=True, ipv6=True):
     hosts = []
@@ -73,21 +84,26 @@ def get_hosts(host, port, ipv4=True, ipv6=True):
 
     try:
         if ipv4:
-            hosts += socket.getaddrinfo(host, port, socket.AF_INET, socket.SOCK_STREAM)
+            hosts += socket.getaddrinfo(host, port, socket.AF_INET,
+                                        socket.SOCK_STREAM)
         if ipv6:
-            hosts += socket.getaddrinfo(host, port, socket.AF_INET6, socket.SOCK_STREAM)
+            hosts += socket.getaddrinfo(host, port, socket.AF_INET6,
+                                        socket.SOCK_STREAM)
 
         return hosts
     except Exception:
         return []
 
+
 class CertificateAuthority(models.Model):
     name = models.CharField(max_length=30, unique=True)
     website = models.URLField(unique=True)
-    certificate = models.FilePathField(path=settings.CERTIFICATES_PATH, null=True, blank=True)
+    certificate = models.FilePathField(path=settings.CERTIFICATES_PATH,
+                                       null=True, blank=True)
 
     def __unicode__(self):
         return self.name
+
 
 class ServerSoftware(models.Model):
     name = models.CharField(max_length=16)
@@ -96,6 +112,7 @@ class ServerSoftware(models.Model):
 
     def __unicode__(self):
         return self.name
+
 
 class Features(models.Model):
     # connection-related:
@@ -125,7 +142,8 @@ class Features(models.Model):
         """
         Check for correct IPv6 DNS entries.
 
-        This test succeeds if all servers returned by the xmpp-client lookup have a AAAA record.
+        This test succeeds if all servers returned by the xmpp-client lookup
+        have a AAAA record.
         """
         if self.server.failed('srv-client'):
             self.has_ipv6 = False
@@ -136,8 +154,9 @@ class Features(models.Model):
             try:
                 if not get_hosts(hostname, port, ipv4=False, ipv6=True):
                     self.has_ipv6 = False
-                    self.server.log('no-ipv6', msg='%s has no IPv6 record.' % hostname,
-                                    typ=LOG_TYPE_INFO)
+                    self.server.log(
+                        'no-ipv6', msg='%s has no IPv6 record.' % hostname,
+                        typ=LOG_TYPE_INFO)
                     break
             except Exception as e:
                 msg = 'An error occured while checking IPv6 records for %s: %s' % (hostname, e)
@@ -161,17 +180,20 @@ class Server(models.Model):
     launched = models.DateField(help_text="When the server was launched.")
 
     # information about the service:
-    domain = models.CharField(unique=True, max_length=60,
+    domain = models.CharField(
+        unique=True, max_length=60,
         help_text="The primary domain of your server.")
-    website = models.URLField(blank=True,
-        help_text="A homepage where one can find information on your server. If left empty, "
-            "the default is http://<domain>.")
-    ca = models.ForeignKey(CertificateAuthority, related_name='servers', verbose_name='CA',
-        help_text="The Certificate Authority of the certificate used in SSL/TLS connections.")
-    ssl_port = models.PositiveIntegerField(default=5223, blank=True, null=True,
-        verbose_name='SSL port',
-        help_text="The Port where your server allows SSL connections. Leave empty if your server "
-            "does not allow SSL connections.")
+    website = models.URLField(
+        blank=True, help_text="A homepage where one can find information on "
+        "your server. If left empty, the default is http://<domain>.")
+    ca = models.ForeignKey(
+        CertificateAuthority, related_name='servers', verbose_name='CA',
+        help_text="The Certificate Authority of the certificate used in "
+        "SSL/TLS connections.")
+    ssl_port = models.PositiveIntegerField(
+        default=5223, blank=True, null=True, verbose_name='SSL port',
+        help_text="The Port where your server allows SSL connections. Leave "
+        "empty if your server does not allow SSL connections.")
 
     # verification
     verified = models.NullBooleanField(default=None)
@@ -181,62 +203,74 @@ class Server(models.Model):
     features = models.OneToOneField(Features, related_name='server')
 
     # queried information
-    software = models.ForeignKey(ServerSoftware, related_name='servers', null=True, blank=True)
+    software = models.ForeignKey(ServerSoftware, related_name='servers',
+                                 null=True, blank=True)
     software_version = models.CharField(max_length=30, blank=True)
 
     # contact information
-    CONTACT_TYPE_CHOICES=(
+    CONTACT_TYPE_CHOICES = (
         ('M', 'MUC'),
         ('J', 'JID'),
         ('E', 'e-mail'),
         ('W', 'website'),
     )
-    contact = models.CharField(max_length=60,
+    contact = models.CharField(
+        max_length=60,
         help_text="The address where the server-admins can be reached.")
-    contact_type = models.CharField(max_length=1, choices=CONTACT_TYPE_CHOICES, default='J',
-        help_text="What type your contact details are. This setting will affect how the contact "
-            "details are rendered on the front page. If you choose a JID or an e-mail address, you "
-            "will receive an automated confirmation message.")
-    contact_name = models.CharField(max_length=60, blank=True,
-        help_text="If you want to display a custom link-text for your contact details, give it "
-            "here.")
+    contact_type = models.CharField(
+        max_length=1, choices=CONTACT_TYPE_CHOICES, default='J',
+        help_text="What type your contact details are. This setting will "
+        "affect how the contact details are rendered on the front page. If "
+        "you choose a JID or an e-mail address, you will receive an automated "
+        "confirmation message.")
+    contact_name = models.CharField(
+        max_length=60, blank=True,
+        help_text="If you want to display a custom link-text for your contact "
+        "details, give it here.")
     contact_verified = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.domain
 
-    def check_hostname(self, hostname, port, ipv4=True, ipv6=True, ssl=False, tls=False,
-                       features=False, xmlns='jabber:client'):
+    def check_hostname(self, hostname, port, ipv4=True, ipv6=True, ssl=False,
+                       tls=False, features=False, xmlns='jabber:client'):
         """
-        Returns True if all addresses for the given host are reachable on the given port.
+        Returns True if all addresses for the given host are reachable on the
+        given port.
 
         :param hostname: A hostname specified by an SRV record.
         :param     port: A port specified by an SRV record.
         :param     ipv4: If False, IPv4 addresses are not checked.
         :param     ipv6: If False, IPv6 addresses are not checked.
         :param   domain: If given, XML stream features will be checked.
-        :param    xmlns: The XML stream namespace used if XML stream features are checked
+        :param    xmlns: The XML stream namespace used if XML stream features
+            are checked
         """
-        logger.debug('Verify connectivity for %s %s (IPv4: %s, IPv6: %s)', hostname, port, ipv4, ipv6)
+        logger.debug('Verify connectivity for %s %s (IPv4: %s, IPv6: %s)',
+                     hostname, port, ipv4, ipv6)
         myfeatures = set()
         hosts = get_hosts(hostname, port, ipv4, ipv6)
         if not hosts:
             args = (hostname, ipv4, ipv6)
-            raise RuntimeError("%s: No hosts returned by DNS lookup (IPv4: %s, IPv6: %s)" % args)
+            raise RuntimeError(
+                "%s: No hosts returned by DNS lookup (IPv4: %s, IPv6: %s)"
+                % args)
         first_iter = True
 
         for af, socktype, proto, canonname, connect_args in hosts:
             if af == socket.AF_INET:
-                addr_str = '%s:%s (%s)' % (connect_args[0], connect_args[1], hostname)
+                addr_str = '%s:%s (%s)' % (connect_args[0], connect_args[1],
+                                           hostname)
             elif af == socket.AF_INET6:
-                addr_str = '[%s]:%s (%s)' % (connect_args[0], connect_args[1], hostname)
+                addr_str = '[%s]:%s (%s)' % (connect_args[0], connect_args[1],
+                                             hostname)
 
             try:
                 s = socket.socket(af, socktype, proto)
                 s.settimeout(1.0)
                 s.connect(connect_args)
 
-                if ssl: # wrap SSL if requested
+                if ssl:  # wrap SSL if requested
                     s = wrap_socket(s, self.ca)
 
                 if features:
@@ -251,13 +285,20 @@ class Server(models.Model):
             except RuntimeError as e:
                 raise e
             except Exception as e:
-                raise RuntimeError('Failed to connect to %s (%s): %s' % (addr_str, hostname, e))
+                raise RuntimeError('Failed to connect to %s (%s): %s'
+                                   % (addr_str, hostname, e))
 
         return myfeatures
 
     def get_stream_features(self, sock, xmlns='jabber:client'):
         """
-        <stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' id='00a5101e-4e49-43b8-8449-670a862d33f7' from='gajim.org' version='1.0' xml:lang='en'>
+        <stream:stream
+                xmlns='jabber:client'
+                xmlns:stream='http://etherx.jabber.org/streams'
+                id='00a5101e-4e49-43b8-8449-670a862d33f7'
+                from='gajim.org'
+                version='1.0'
+                xml:lang='en'>
             <stream:features>
                 <mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>
                     <mechanism>SCRAM-SHA-1</mechanism>
@@ -271,17 +312,21 @@ class Server(models.Model):
         try:
             msg = """<stream:stream xmlns='%s'
                 xmlns:stream='http://etherx.jabber.org/streams'
-                to='%s' version='1.0'>""" %(xmlns, self.domain)
+                to='%s' version='1.0'>""" % (xmlns, self.domain)
             sock.send(msg.encode('utf-8'))
-            resp = sock.recv(4096).decode('utf-8')
-            if not resp: # happens at sternenschweif.de
-                raise RuntimeError('%s: No answer received during stream negotiation.' % self.domain)
+            resp = sock.recv(4096).decode('u    tf-8')
+            if not resp:  # happens at sternenschweif.de
+                raise RuntimeError(
+                    '%s: No answer received during stream negotiation.'
+                    % self.domain)
             if '<stream:error>' in resp:
-                raise RuntimeError('%s: Received error during stream negotiation.' % self.domain)
+                raise RuntimeError(
+                    '%s: Received error during stream negotiation.'
+                    % self.domain)
 
             i = 0
             while not resp.endswith('</stream:features>') and i < 10:
-                resp += sock.recv(4096).decode( 'utf-8' )
+                resp += sock.recv(4096).decode('utf-8')
                 i += 1
 
             elem = ElementTree.fromstring(resp + '</stream:stream>')
@@ -290,20 +335,27 @@ class Server(models.Model):
             starttls = elem.find('{urn:ietf:params:xml:ns:xmpp-tls}starttls')
             if starttls is not None:
                 features.add('starttls')
-            if starttls is None or starttls.find('{urn:ietf:params:xml:ns:xmpp-tls}required') is None:
+
+            stanza = '{urn:ietf:params:xml:ns:xmpp-tls}required'
+            if starttls is None or starttls.find(stanza) is None:
                 features.add('plain')
-            if elem.find('{http://jabber.org/features/iq-register}register') is not None:
+
+            stanza = '{http://jabber.org/features/iq-register}register'
+            if elem.find(stanza) is not None:
                 features.add('register')
 
             if 'starttls' in features and not self.failed('tls-cert'):
                 try:
-                    sock.send('''<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>'''.encode('utf-8'))
+                    stanza = "<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>"
+                    sock.send(stanza.encode('utf-8'))
                     sock.recv(4096).decode('utf-8')
                     sock = wrap_socket(sock, self.ca)
                 except Exception as e:
                     peer = sock.getpeername()
                     addr, port = peer[0], peer[1]
-                    self.fail('tls-cert', '<ul><li>%s, port %s: %s</li></ul>' % (addr, port, e))
+                    self.fail(
+                        'tls-cert',
+                        '<ul><li>%s, port %s: %s</li></ul>' % (addr, port, e))
 
             # close stream again:
             sock.send('</stream:stream>'.encode('utf-8'))
@@ -328,14 +380,16 @@ class Server(models.Model):
             return []
         hosts = []
         for answer in answers:
-            hosts.append((answer.target.to_text(True), answer.port, answer.priority))
+            hosts.append((answer.target.to_text(True), answer.port,
+                          answer.priority))
         return sorted(hosts, key=lambda host: host[2])
 
     def verify_srv_client(self):
         """
         Verify xmpp-client SRV records.
 
-        This test succeeds if the 'xmpp-client' SRV record has one or more entries.
+        This test succeeds if the 'xmpp-client' SRV record has one or more
+        entries.
         """
         hosts = self.srv_lookup('xmpp-client')
         if not hosts:
@@ -347,7 +401,8 @@ class Server(models.Model):
         """
         Verify xmpp-server SRV records.
 
-        This test succeeds if the 'xmpp-server' SRV record has one or more entries.
+        This test succeeds if the 'xmpp-server' SRV record has one or more
+        entries.
         """
         hosts = self.srv_lookup('xmpp-server')
         if not hosts:
@@ -357,8 +412,8 @@ class Server(models.Model):
 
     def verify_client_online(self, records, ipv4=True, ipv6=True):
         """
-        Verify that at least one of the hosts referred to by the xmpp-client SRV records is
-        currently online.
+        Verify that at least one of the hosts referred to by the xmpp-client
+        SRV records is currently online.
         """
         errors, online, features = [], [], set()
         if self.failed('srv-client') or not records:
@@ -367,7 +422,8 @@ class Server(models.Model):
         for hostname, port, priority in records:
             try:
                 myfeatures = self.check_hostname(
-                    hostname, port, ipv4=ipv4, ipv6=ipv6, tls=True, features=True
+                    hostname, port, ipv4=ipv4, ipv6=ipv6, tls=True,
+                    features=True
                 )
             except RuntimeError as e:
                 errors.append(str(e))
@@ -375,7 +431,7 @@ class Server(models.Model):
 
             if online:
                 features &= myfeatures
-            else: # first online host
+            else:  # first online host
                 features = myfeatures
 
             online.append((hostname, port, priority))
@@ -383,17 +439,18 @@ class Server(models.Model):
         if 'starttls' not in features:
             self.fail('tls-cert')
 
-        if not online: # no hosts online, so append errors to 'client-offline' message
+        if not online:  # not online, append errors to 'client-offline' message
             self.fail('client-offline', msg=html_list(errors))
-        elif errors: # only some hosts are offline, so this is only a warning
-            self.log('hosts-offline', msg=html_list(errors), typ=LOG_TYPE_WARNING)
+        elif errors:  # only some hosts are offline, so this is only a warning
+            self.log('hosts-offline', msg=html_list(errors),
+                     typ=LOG_TYPE_WARNING)
 
         return online, features
 
     def verify_server_online(self, hosts, ipv4=True, ipv6=True):
         """
-        Verify that at least one of the hosts referred to by the xmpp-server SRV records is
-        currently online.
+        Verify that at least one of the hosts referred to by the xmpp-server
+        SRV records is currently online.
         """
         online, errors = [], []
         if self.failed('srv-server') or not hosts:
@@ -401,33 +458,35 @@ class Server(models.Model):
 
         for host in hosts:
             try:
-                features = self.check_hostname(host[0], host[1], ipv4=ipv4, ipv6=ipv6)
+                features = self.check_hostname(
+                    host[0], host[1], ipv4=ipv4, ipv6=ipv6)
             except RuntimeError as e:
                 errors.append(str(e))
                 continue
 
             online.append(host)
 
-        if not online: # no hosts online, so append errors to 'server-online' message
+        if not online:  # not online, append errors to 'server-online' message
             self.fail('server-offline', msg=html_list(errors))
-        elif errors: # only some hosts are offline, so this is only a warning
-            self.log('hosts-offline', msg=html_list(errors), typ=LOG_TYPE_WARNING)
+        elif errors:  # only some hosts are offline, so this is only a warning
+            self.log('hosts-offline', msg=html_list(errors),
+                     typ=LOG_TYPE_WARNING)
 
         return online
 
     def verify_ssl(self, hosts, ipv4=True, ipv6=True):
-        """
-        Verify SSL connectivity.
+        """Verify SSL connectivity.
 
-        This check receives only the hosts returned by verify_client_online and, unlike that method,
-        fails if only one of the connections fails (since all hosts are assumed to be in fact
-        online.)
+        This check receives only the hosts returned by verify_client_online
+        and, unlike that method, fails if only one of the connections fails
+        (since all hosts are assumed to be in fact online.)
         """
         self.ssl_cert = True
         online, errors = [], []
         for host, port, priority in hosts:
             try:
-                self.check_hostname(host, int(self.ssl_port), ipv4=ipv4, ipv6=ipv6, ssl=True)
+                self.check_hostname(
+                    host, int(self.ssl_port), ipv4=ipv4, ipv6=ipv6, ssl=True)
                 online.append(host)
             except RuntimeError as e:
                 errors.append(str(e))
@@ -442,7 +501,8 @@ class Server(models.Model):
         # perform various checks:
         client_hosts = self.verify_srv_client()
         ipv6 = self.features.check_ipv6(client_hosts)
-        client_hosts, stream_features = self.verify_client_online(client_hosts, ipv6=ipv6)
+        client_hosts, stream_features = self.verify_client_online(
+            client_hosts, ipv6=ipv6)
 
         server_hosts = self.verify_srv_server()
         server_hosts = self.verify_server_online(server_hosts, ipv6=ipv6)
@@ -450,7 +510,7 @@ class Server(models.Model):
         if self.ssl_port:
             self.features.has_ssl = True
             self.verify_ssl(client_hosts, ipv6=ipv6)
-        else: # no ssl port specified
+        else:  # no ssl port specified
             self.features.has_ssl = False
 
         if 'starttls' in stream_features:
@@ -491,6 +551,7 @@ class Server(models.Model):
 
     def failed(self, key):
         return self.logentries.filter(key=key).exists()
+
     def passed(self, key):
         return self.failed(key)
 
@@ -499,10 +560,13 @@ class Server(models.Model):
 
     def get_moderations(self):
         return self.logentries.filter(typ=LOG_TYPE_MODERATION)
+
     def get_verifications(self):
         return self.logentries.filter(typ=LOG_TYPE_VERIFICATION)
+
     def get_warnings(self):
         return self.logentries.filter(typ=LOG_TYPE_WARNING)
+
     def get_infos(self):
         return self.logentries.filter(typ=LOG_TYPE_INFO)
 
@@ -510,20 +574,23 @@ class Server(models.Model):
         typ = self.contact_type
         profile = self.user.profile
 
-        if typ == 'E' and self.user.email == self.contact and profile.email_confirmed:
+        # Set contact_verified if it sthe same as your email or JID:
+        if typ == 'E' and self.user.email == self.contact \
+                and profile.email_confirmed:
             self.contact_verified = True
-        elif typ == 'J' and profile.jid == self.contact and profile.jid_confirmed:
+        elif typ == 'J' and profile.jid == self.contact \
+                and profile.jid_confirmed:
             self.contact_verified = True
         elif typ in ['J', 'E']:
-            #ServerConfirmationKey.objects.filter(server=server).delete()
-            #key = ServerConfirmationKey.objects.create(server=server)
             key = self.confirmations.create(server=self)
             key.send()
 
     def save(self, *args, **kwargs):
-        if self.verified != None:
-            self.verified = not self.logentries.filter(typ=LOG_TYPE_VERIFICATION).exists()
+        if self.verified is not None:
+            qs = self.logentries.filter(typ=LOG_TYPE_VERIFICATION)
+            self.verified = not qs.exists()
         return super(Server, self).save(*args, **kwargs)
+
 
 class LogEntry(models.Model):
     LOG_TYPE_CHOICES = (
