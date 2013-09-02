@@ -34,6 +34,7 @@ class ModerateView(TemplateView):
 
         return context
 
+
 @login_required
 def report(request, server_id):
     server = Server.objects.get(id=server_id)
