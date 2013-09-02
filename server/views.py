@@ -6,7 +6,6 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 
 from xmpplist.server.forms import ServerForm
-from xmpplist.server.forms import ServerLocationForm
 from xmpplist.server.models import Features
 from xmpplist.server.models import Server
 
