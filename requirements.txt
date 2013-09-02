@@ -3,4 +3,4 @@ South==0.8.2
 dnspython==1.11.0
 lxml==3.2.3
 pygeoip==0.2.7
-sleekxmpp=1.1.11
+sleekxmpp==1.1.11
