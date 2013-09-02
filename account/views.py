@@ -16,20 +16,26 @@
 # along with xmpplist.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf import settings
-from django.core.urlresolvers import reverse
 from django.contrib.auth import login
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.core.urlresolvers import reverse
+from django.shortcuts import redirect
+from django.shortcuts import render
 from django.views.generic import FormView
 
-from forms import CreationForm, PreferencesForm, ProfileForm, PasswordResetForm
+from forms import CreationForm
+from forms import PasswordResetForm
+from forms import PreferencesForm
+from forms import ProfileForm
 
-from xmpplist.confirm.models import UserConfirmationKey, UserPasswordResetKey
+from xmpplist.confirm.models import UserConfirmationKey
+from xmpplist.confirm.models import UserPasswordResetKey
+
 
 @login_required
 def index(request):
     return render(request, 'account/index.html')
+
 
 def create(request):
     if request.method == 'POST':
@@ -57,14 +63,16 @@ def create(request):
         profile_form = ProfileForm(prefix='profile')
 
     return render(request, 'account/create.html',
-                  {'user_form': user_form, 'profile_form': profile_form}
-    )
+                  {'user_form': user_form, 'profile_form': profile_form})
+
 
 @login_required
 def edit(request):
     if request.method == 'POST':
-        user_form = PreferencesForm(request.POST, instance=request.user, prefix='user')
-        profile_form = ProfileForm(request.POST, instance=request.user.profile, prefix='profile')
+        user_form = PreferencesForm(request.POST, instance=request.user,
+                                    prefix='user')
+        profile_form = ProfileForm(request.POST, instance=request.user.profile,
+                                   prefix='profile')
 
         if user_form.is_valid() and profile_form.is_valid():
             user = user_form.save()
@@ -73,24 +81,26 @@ def edit(request):
             if 'email' in user_form.changed_data:
                 profile.email_confirmed = False
                 profile.save()
-                UserConfirmationKey.objects.filter(user=user, type='E').delete()
+                UserConfirmationKey.objects.filter(
+                    user=user, type='E').delete()
                 key = UserConfirmationKey.objects.create(user=user, type='E')
                 key.send()
             if 'jid' in profile_form.changed_data:
                 profile.jid_confirmed = False
                 profile.save()
-                UserConfirmationKey.objects.filter(user=user, type='J').delete()
+                UserConfirmationKey.objects.filter(
+                    user=user, type='J').delete()
                 key = UserConfirmationKey.objects.create(user=user, type='J')
                 key.send()
 
             return redirect('account')
     else:
         user_form = PreferencesForm(instance=request.user, prefix='user')
-        profile_form = ProfileForm(instance=request.user.profile, prefix='profile')
+        profile_form = ProfileForm(instance=request.user.profile,
+                                   prefix='profile')
 
     return render(request, 'account/edit.html',
-                  {'user_form': user_form, 'profile_form': profile_form}
-    )
+                  {'user_form': user_form, 'profile_form': profile_form})
 
 
 class ResetPassword(FormView):
@@ -113,8 +123,10 @@ class ResetPassword(FormView):
 
         return super(ResetPassword, self).form_valid(form)
 
+
 def reset_password_ok(request):
     return render(request, 'account/reset_password_ok.html')
+
 
 @login_required
 def resend_confirmation(request):
@@ -125,5 +137,4 @@ def resend_confirmation(request):
         key = UserConfirmationKey.objects.create(user=request.user, type='J')
         key.send()
     return render(request, 'account/resend_confirmation.html',
-        {'jid': settings.XMPP['default']['jid']}
-    )
+                  {'jid': settings.XMPP['default']['jid']})
