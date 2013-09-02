@@ -8,10 +8,6 @@
     <script type="text/javascript" src="{{ STATIC_URL }}js/lib/OpenLayers-2.12/OpenLayers.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}floppyforms/js/MapWidget.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/edit-table.js"></script>
-
-    <script id="foo"></script>
-    {{ location_form.media }}
-    <script id="bar"></script>
 {% endblock %}
 
 {% block content %}
@@ -77,11 +73,6 @@ A few notes on adding/editing servers:
     <li>
         Don't go into to much detail on the <strong>Launched</strong> field. Only the year is
         actually used, don't hesitate to just pick January 1st of that year.
-    </li>
-    <li>
-        Please especially note the <strong>Location</strong> field. It should be in the
-        input format "long,lat", for example, "16.37,48.2". The easiest way to retrieve coordinates
-        is to click on the little OSM-button right of the input field and use the fancy applet :-).
     </li>
     <li>
         Also take special care of the <strong>Contact type</strong> and <strong>Contact</strong>
