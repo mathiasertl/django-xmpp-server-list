@@ -3,7 +3,7 @@ from django.core.management.base import BaseCommand, CommandError
 from xmpplist.server.models import Server
 
 class Command(BaseCommand):
-#    args = '[domain ...]'
+    args = '[domain ...]'
     help = 'Verify servers'
 
     def handle(self, *args, **options):
