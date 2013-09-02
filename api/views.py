@@ -50,10 +50,9 @@ def index(request):
             servers = servers.filter(features__has_ipv6=True)
 
     # filter by country
-#TODO: re-enable country filtering functionality? Was removed during location.
-#    if 'country' in request.GET:
-#        country = request.GET['country']
-#        servers = servers.filter(location__within=country.geom)
+    if 'country' in request.GET:
+        country = request.GET['country']
+        servers = servers.filter(country=country)
 
     fields = ['domain']
 
@@ -67,7 +66,7 @@ def index(request):
 
         if request_format == 'services-full.xml':
             fields += ['software__name', 'contact', 'contact_type', 'website',
-                       'location', ]
+                       'country', ]
 
         contact_prefixes = {'M': 'xmpp:', 'J': 'xmpp:', 'E': 'mailto:'}
 
@@ -87,8 +86,8 @@ def index(request):
                     contact_prefix = contact_prefixes[item['contact_type']]
 
                 etree.SubElement(item_element, 'primary-admin').text = contact_prefix + item['contact']
-                etree.SubElement(item_element, 'longitude').text = str(item['location'].x)
-                etree.SubElement(item_element, 'latitude').text = str(item['location'].y)
+                etree.SubElement(item_element, 'country').text = item['country']
+                etree.SubElement(item_element, 'city').text = item['city']
                 etree.SubElement(item_element, 'description').text = None
 
         return HttpResponse(etree.tostring(root_element, pretty_print=True), mimetype='text/xml')
@@ -96,8 +95,8 @@ def index(request):
     # we now continue by parsing the fields parameter
     if 'fields' in request.GET:
         custom_fields = request.GET['fields'].split(',')
-        valid_fields = ['launched', 'location', 'website', 'ca', 'software',
-                        'software_version', 'contact']
+        valid_fields = ['launched', 'country', 'city', 'website', 'ca',
+                        'software', 'software_version', 'contact']
         if set(custom_fields) - set(valid_fields):
             return HttpResponseForbidden("tried to retrieve forbidden fields.")
 
@@ -131,9 +130,6 @@ def index(request):
                 contact = value.pop('contact')
                 contact_type = value.pop('contact_type')
                 value['contact'] = (contact, contact_type)
-            if 'location' in value:
-                location = value.pop('location')
-                value['location'] = '%s,%s' % (location.x, location.y)
             if 'launched' in value:
                 launched = value.pop('launched')
                 value['launched'] = launched.strftime('%Y-%m-%d')
