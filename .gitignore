@@ -12,3 +12,4 @@ mystatic
 /local/
 /share/
 /xmpplist.sqlite3
+/geoip
