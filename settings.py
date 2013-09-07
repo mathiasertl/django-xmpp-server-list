@@ -175,6 +175,9 @@ INTERNAL_IPS=('127.0.0.1')
 CHECK_IPV6 = True
 USE_HTTPS = False
 
+USE_IP4 = True
+USE_IP6 = True
+
 try:
     from localsettings import *
 except ImportError:
