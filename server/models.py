@@ -16,12 +16,14 @@
 # along with xmpplist.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
+import os
 import socket
 import ssl
 
 from xml.etree import ElementTree
 
 import dns.resolver
+import pygeoip
 
 from django.db import models
 from django.conf import settings
@@ -29,6 +31,10 @@ from django.conf import settings
 from django.contrib.auth.models import User
 
 logger = logging.getLogger('xmpplist.server')
+geoip = pygeoip.GeoIP(
+    os.path.join(settings.GEOIP_CONFIG_ROOT, 'GeoLiteCity.dat'),
+    pygeoip.MEMORY_CACHE
+)
 LOG_TYPE_MODERATION = 1
 LOG_TYPE_VERIFICATION = 2
 LOG_TYPE_WARNING = 3
@@ -506,18 +512,33 @@ class Server(models.Model):
         if errors:
             self.fail('ssl-offline', msg=html_list(errors))
 
+    def set_location(self, hostname):
+        try:
+            data = geoip.record_by_name(hostname)
+            self.city = data['city']
+            self.country = data['country_name']
+        except Exception:
+            self.city = ''
+            self.countr = ''
+
     def verify(self):
         self.verified = False
         self.logentries.all().delete()
 
         # perform various checks:
-        client_hosts = self.verify_srv_client()
+        client_srv = self.verify_srv_client()
+        client_hosts, stream_features = self.verify_client_online(client_srv)
 
-        client_hosts, stream_features = self.verify_client_online(
-            client_hosts)
+        server_srv = self.verify_srv_server()
+        self.verify_server_online(server_srv)
 
-        server_hosts = self.verify_srv_server()
-        server_hosts = self.verify_server_online(server_hosts)
+        if client_hosts:  # use first online client host if available
+            self.set_location(client_hosts[0][0])
+        elif client_srv:  # use other srv-record otherwise
+            self.set_location(client_srv[0][0])
+        else:  # no way to query location - reset!
+            self.city = ''
+            self.country = ''
 
         if self.ssl_port:
             self.features.has_ssl = True
