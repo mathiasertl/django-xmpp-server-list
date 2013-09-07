@@ -543,9 +543,6 @@ class Server(models.Model):
         self.features.save()
         self.save()
 
-    def get_country(self):
-        return 'TODO'
-
     def get_website(self):
         if self.website:
             return self.website

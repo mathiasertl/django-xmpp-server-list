@@ -31,7 +31,7 @@ always communicate with users on other servers. This list is kindly brought to y
 {% for server in servers %}
     <tr>
         <td>{% include "includes/server_homepage.html" %}</td>
-        <td>{{ server.get_country.name|default:"unknown" }}</td>
+        <td>{{ server.country|default:"unknown" }}</td>
         <td>
             {% if server.ca.name == 'other' %}
                 other
