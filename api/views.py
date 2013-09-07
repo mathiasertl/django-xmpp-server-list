@@ -66,7 +66,7 @@ def index(request):
 
         if request_format == 'services-full.xml':
             fields += ['software__name', 'contact', 'contact_type', 'website',
-                       'country', ]
+                       'country', 'city', ]
 
         contact_prefixes = {'M': 'xmpp:', 'J': 'xmpp:', 'E': 'mailto:'}
 
