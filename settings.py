@@ -195,22 +195,28 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s',
         },
         'simple': {
-            'format': '%(levelname)s: %(message)s'
+            'format': '%(levelname)s: %(message)s',
         },
     },
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+     },
     'handlers': {
         'mail_admins': {
             'level': LOG_LEVEL,
             'class': 'django.utils.log.AdminEmailHandler',
             'formatter': 'simple',
+            'filters': ['require_debug_false'],
         },
         'console': {
             'level': LOG_LEVEL,
             'class': 'logging.StreamHandler',
-            'formatter': 'simple'
+            'formatter': 'simple',
         },
     },
     'loggers': {
@@ -223,7 +229,7 @@ LOGGING = {
             'handlers': ['console'],
             'level': LOG_LEVEL,
         },
-    }
+    },
 }
 
 CERTIFICATES_PATH = 'static/certs'
