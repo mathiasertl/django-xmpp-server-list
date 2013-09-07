@@ -47,28 +47,6 @@ var overlay_params = {
     }
 }
 
-/**
- * Responsible for adding the coordinates of a point clicked on the MapWidget
- * to the input field.
- */
-add_wkt = function(event) {
-    map = this.map;
-    feature = event.feature;
-    feat = OpenLayers.Util.properFeatures(feature, this.options.geom_type);
-    point = feat.geometry;
-    
-    var lonlat = point.transform(map.getProjectionObject(), new OpenLayers.Projection("EPSG:4326"));
-    // find: id_1-location (we have: id_1-osmlocation_map)
-    input_id = this.options.map_id.replace(/osmlocation_map/, 'location');
-    document.getElementById(input_id).value = lonlat.x.toFixed(2) + ',' + lonlat.y.toFixed(2);
-    input = $(document).find('#' + input_id);
-    cell = input.parent().parent();
-    row = cell.parent();
-    if (!row.hasClass('changed')) {
-        row.addClass('changed');
-    }
-}
-
 $(document).ready(function() {
     $("a[rel]").overlay(overlay_params);
     
