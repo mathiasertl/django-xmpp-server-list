@@ -195,6 +195,12 @@ class Server(models.Model):
     added = models.DateField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True, auto_now_add=True)
     launched = models.DateField(help_text="When the server was launched.")
+    city = models.CharField(
+        default='', null=True, blank=True, max_length=100,
+        help_text="City the server is located in.")
+    country = models.CharField(
+        default='', null=True, blank=True, max_length=100,
+        help_text="Country the server is located in.")
 
     # information about the service:
     domain = models.CharField(
