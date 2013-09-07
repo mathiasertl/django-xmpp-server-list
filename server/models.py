@@ -96,14 +96,12 @@ def html_list(l):
 
 def get_hosts(host, port, ipv4=True, ipv6=True):
     hosts = []
-    if not settings.CHECK_IPV6:
-        ipv6 = False
 
     try:
-        if ipv4:
+        if ipv4 and settings.USE_IP4:
             hosts += socket.getaddrinfo(host, port, socket.AF_INET,
                                         socket.SOCK_STREAM)
-        if ipv6:
+        if ipv6 and settings.USE_IP6:
             hosts += socket.getaddrinfo(host, port, socket.AF_INET6,
                                         socket.SOCK_STREAM)
 
@@ -255,31 +253,26 @@ class Server(models.Model):
     def __unicode__(self):
         return self.domain
 
-    def check_hostname(self, hostname, port, ipv4=True, ipv6=True, ssl=False,
-                       tls=False, features=False, xmlns='jabber:client'):
+    def check_hostname(self, hostname, port, ssl=False, tls=False,
+                       features=False, xmlns='jabber:client'):
         """
         Returns True if all addresses for the given host are reachable on the
         given port.
 
         :param hostname: A hostname specified by an SRV record.
         :param     port: A port specified by an SRV record.
-        :param     ipv4: If False, IPv4 addresses are not checked.
-        :param     ipv6: If False, IPv6 addresses are not checked.
         :param   domain: If given, XML stream features will be checked.
         :param    xmlns: The XML stream namespace used if XML stream features
             are checked
         """
-        logger.debug('Verify connectivity for %s %s (IPv4: %s, IPv6: %s)',
-                     hostname, port, ipv4, ipv6)
+        logger.debug('Verify connectivity for %s %s', hostname, port)
         myfeatures = set()
-        hosts = get_hosts(hostname, port, ipv4, ipv6)
+        hosts = get_hosts(hostname, port)
         if not hosts:
-            args = (hostname, ipv4, ipv6)
             raise RuntimeError(
-                "%s: No hosts returned by DNS lookup (IPv4: %s, IPv6: %s)"
-                % args)
-        first_iter = True
+                "%s: No hosts returned by DNS lookup" % hostname)
 
+        first_iter = True
         for af, socktype, proto, canonname, connect_args in hosts:
             if af == socket.AF_INET:
                 addr_str = '%s:%s (%s)' % (connect_args[0], connect_args[1],
@@ -337,7 +330,7 @@ class Server(models.Model):
                 xmlns:stream='http://etherx.jabber.org/streams'
                 to='%s' version='1.0'>""" % (xmlns, self.domain)
             sock.send(msg.encode('utf-8'))
-            resp = sock.recv(4096).decode('u    tf-8')
+            resp = sock.recv(4096).decode('utf-8')
             if not resp:  # happens at sternenschweif.de
                 raise RuntimeError(
                     '%s: No answer received during stream negotiation.'
@@ -433,7 +426,7 @@ class Server(models.Model):
 
         return hosts
 
-    def verify_client_online(self, records, ipv4=True, ipv6=True):
+    def verify_client_online(self, records):
         """
         Verify that at least one of the hosts referred to by the xmpp-client
         SRV records is currently online.
@@ -444,10 +437,8 @@ class Server(models.Model):
 
         for hostname, port, priority in records:
             try:
-                myfeatures = self.check_hostname(
-                    hostname, port, ipv4=ipv4, ipv6=ipv6, tls=True,
-                    features=True
-                )
+                myfeatures = self.check_hostname(hostname, port, tls=True,
+                    features=True)
             except RuntimeError as e:
                 errors.append(str(e))
                 continue
@@ -470,7 +461,7 @@ class Server(models.Model):
 
         return online, features
 
-    def verify_server_online(self, hosts, ipv4=True, ipv6=True):
+    def verify_server_online(self, hosts):
         """
         Verify that at least one of the hosts referred to by the xmpp-server
         SRV records is currently online.
@@ -481,8 +472,7 @@ class Server(models.Model):
 
         for host in hosts:
             try:
-                features = self.check_hostname(
-                    host[0], host[1], ipv4=ipv4, ipv6=ipv6)
+                self.check_hostname(host[0], host[1])
             except RuntimeError as e:
                 errors.append(str(e))
                 continue
@@ -497,7 +487,7 @@ class Server(models.Model):
 
         return online
 
-    def verify_ssl(self, hosts, ipv4=True, ipv6=True):
+    def verify_ssl(self, hosts):
         """Verify SSL connectivity.
 
         This check receives only the hosts returned by verify_client_online
@@ -508,8 +498,7 @@ class Server(models.Model):
         online, errors = [], []
         for host, port, priority in hosts:
             try:
-                self.check_hostname(
-                    host, int(self.ssl_port), ipv4=ipv4, ipv6=ipv6, ssl=True)
+                self.check_hostname(host, int(self.ssl_port), ssl=True)
                 online.append(host)
             except RuntimeError as e:
                 errors.append(str(e))
@@ -523,16 +512,16 @@ class Server(models.Model):
 
         # perform various checks:
         client_hosts = self.verify_srv_client()
-        ipv6 = self.features.check_ipv6(client_hosts)
+
         client_hosts, stream_features = self.verify_client_online(
-            client_hosts, ipv6=ipv6)
+            client_hosts)
 
         server_hosts = self.verify_srv_server()
-        server_hosts = self.verify_server_online(server_hosts, ipv6=ipv6)
+        server_hosts = self.verify_server_online(server_hosts)
 
         if self.ssl_port:
             self.features.has_ssl = True
-            self.verify_ssl(client_hosts, ipv6=ipv6)
+            self.verify_ssl(client_hosts)
         else:  # no ssl port specified
             self.features.has_ssl = False
 
