@@ -512,6 +512,14 @@ class Server(models.Model):
         if errors:
             self.fail('ssl-offline', msg=html_list(errors))
 
+    @property
+    def location(self):
+        if not self.city or not self.country:
+            return 'Unknown'
+        else:
+            return '%s/%s' % (self.city, self.country)
+
+
     def set_location(self, hostname):
         try:
             data = geoip.record_by_name(hostname)
