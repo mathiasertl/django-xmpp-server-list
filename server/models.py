@@ -30,8 +30,6 @@ import pygeoip
 from django.db import models
 from django.conf import settings
 
-from django.contrib.auth.models import User
-
 logger = logging.getLogger('xmpplist.server')
 geoip = pygeoip.GeoIP(
     os.path.join(settings.GEOIP_CONFIG_ROOT, 'GeoLiteCity.dat'),
