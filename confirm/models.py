@@ -28,6 +28,7 @@ from xmpplist.server.models import Server
 from SendMsgBot import SendMsgBot
 
 from managers import ConfirmationKeyManager
+from managers import ServerConfirmationKeyManager
 
 CONFIRMATION_TYPE_CHOICES = (
     ('J', 'JID'),
@@ -158,6 +159,7 @@ class UserPasswordResetKey(ConfirmationKey, UserConfirmationMixin):
 
 class ServerConfirmationKey(ConfirmationKey):
     subject = models.ForeignKey(Server, related_name='confirmations')
+    objects = ServerConfirmationKeyManager()
 
     message_template = 'confirm/server_contact.txt'
     message_subject = 'Confirm contact details for %(serverdomain)s on '
@@ -175,8 +177,8 @@ class ServerConfirmationKey(ConfirmationKey):
         self.type = self.subject.contact_type
 
     def confirm(self):
-        self.server.contact_verified = True
-        self.server.save()
+        self.subject.contact_verified = True
+        self.subject.save()
 
     @property
     def user(self):
