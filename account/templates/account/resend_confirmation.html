@@ -11,13 +11,13 @@
 </p>
 
 <ul>
-{% if not user.profile.email_confirmed %}
+{% if not user.email_confirmed %}
     <li>An email containing a verification URL has been sent to {{ user.email }}.</li>
 {% endif %}
-{% if not user.profile.jid_confirmed %}
+{% if not user.jid_confirmed %}
     <li>
         <p>
-            An XMPP message containing a verification URL has been sent to {{ user.profile.jid }}.
+            An XMPP message containing a verification URL has been sent to {{ user.jid }}.
         </p>
         <p>
             <strong>Note:</strong> The verification message will come from {{ jid }}. Some clients
