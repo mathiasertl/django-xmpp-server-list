@@ -29,8 +29,6 @@ function resend_service_notification(row) {
         csrfmiddlewaretoken: csrftoken,
     }
     $.post(resend_url, data, function(data) {});
-        alert('Resent notification.');
-    });
 }
 
 function set_datepicker(row) {
