@@ -90,19 +90,8 @@ class ConfirmationKey(models.Model):
             raise RuntimeError("Confirmation messages can only be sent to JIDs"
                                "or email addresses")
 
-    def confirm(self):
-        if self.type == 'E':
-            self.subject.email_confirmed = True
-        elif self.type == 'J':
-            self.subject.jid_confirmed = True
-        self.subject.save()
-
     def add_context(self):
         return {}
-
-    @property
-    def user(self):
-        return self.subject
 
     @property
     def address_type(self):
@@ -116,12 +105,10 @@ class ConfirmationKey(models.Model):
     class Meta:
         abstract = True
 
-
-class UserConfirmationKey(ConfirmationKey):
-    subject = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='confirmations')
-
-    message_template = 'confirm/user_contact.txt'
-    message_subject = 'Confirm your %(addr_type)s on %(protocol)s://%(domain)s'
+class UserConfirmationMixin(object):
+    @property
+    def user(self):
+        return self.subject
 
     @property
     def recipient(self):
@@ -130,12 +117,26 @@ class UserConfirmationKey(ConfirmationKey):
         elif self.type == 'J':
             return self.subject.jid
 
+
+class UserConfirmationKey(ConfirmationKey, UserConfirmationMixin):
+    subject = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='confirmations')
+
+    message_template = 'confirm/user_contact.txt'
+    message_subject = 'Confirm your %(addr_type)s on %(protocol)s://%(domain)s'
+
+    def confirm(self):
+        if self.type == 'E':
+            self.subject.email_confirmed = True
+        elif self.type == 'J':
+            self.subject.jid_confirmed = True
+        self.subject.save()
+
     @models.permalink
     def get_absolute_url(self):
         return ('confirm_user_contact', (), {'key': self.key})
 
 
-class UserPasswordResetKey(UserConfirmationKey):
+class UserPasswordResetKey(UserConfirmationKey, UserConfirmationMixin):
     def __init__(self, *args, **kwargs):
         super(UserPasswordResetKey, self).__init__(*args, **kwargs)
         if 'type' not in kwargs:
