@@ -26,8 +26,5 @@ class ConfirmationKeyManager(models.Manager):
     def get_queryset(self):
         return ConfirmationKeyQuerySet(self.model)
 
-    def invalid(self, subject):
-        return self.get_queryset().invalid(subject=subject)
-
     def invalidate(self, subject):
         return self.get_queryset().invalidate(subject=subject)
