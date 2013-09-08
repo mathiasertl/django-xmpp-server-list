@@ -15,10 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with xmpplist.  If not, see <http://www.gnu.org/licenses/>.
 
-import hashlib
 import logging
 import threading
-import time
 
 from django.conf import settings
 from django.core.mail import send_mail
