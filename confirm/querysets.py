@@ -21,6 +21,7 @@ from django.db.models.query import QuerySet
 from datetime import datetime
 
 import hashlib
+import random
 import time
 
 
@@ -31,7 +32,8 @@ class ConfirmationKeyQuerySet(QuerySet):
 
     @property
     def key(self):
-        secret = '%s-%s' % (settings.SECRET_KEY, time.time())
+        rand = random.random()
+        secret = '%s-%s-%s' % (settings.SECRET_KEY, time.time(), rand)
         return hashlib.sha1(secret).hexdigest()
 
     def create(self, **kwargs):
