@@ -26,7 +26,7 @@ from django.views.generic import FormView
 from forms import CreationForm
 from forms import PasswordResetForm
 from forms import PreferencesForm
-from forms import ProfileForm
+#from forms import ProfileForm
 
 from xmpplist.confirm.models import UserConfirmationKey
 from xmpplist.confirm.models import UserPasswordResetKey
@@ -40,13 +40,9 @@ def index(request):
 def create(request):
     if request.method == 'POST':
         user_form = CreationForm(request.POST, prefix='user')
-        profile_form = ProfileForm(request.POST, prefix='profile')
-        if user_form.is_valid() and profile_form.is_valid():
+        if user_form.is_valid():
             # create user
             user = user_form.save()
-            profile = profile_form.save(commit=False)
-            profile.user = user
-            profile.save()
 
             # create confirmations:
             ekey = UserConfirmationKey.objects.create(user=user, type='E')
@@ -60,10 +56,8 @@ def create(request):
             return redirect('account')
     else:
         user_form = CreationForm(prefix='user')
-        profile_form = ProfileForm(prefix='profile')
 
-    return render(request, 'account/create.html',
-                  {'user_form': user_form, 'profile_form': profile_form})
+    return render(request, 'account/create.html', {'user_form': user_form, })
 
 
 @login_required
@@ -71,36 +65,38 @@ def edit(request):
     if request.method == 'POST':
         user_form = PreferencesForm(request.POST, instance=request.user,
                                     prefix='user')
-        profile_form = ProfileForm(request.POST, instance=request.user.profile,
-                                   prefix='profile')
+#TODO        profile_form = ProfileForm(request.POST, instance=request.user.profile,
+#TODO                                   prefix='profile')
 
-        if user_form.is_valid() and profile_form.is_valid():
+        if user_form.is_valid():  #TODO and profile_form.is_valid():
             user = user_form.save()
-            profile = profile_form.save()
+#TODO            profile = profile_form.save()
 
             if 'email' in user_form.changed_data:
-                profile.email_confirmed = False
-                profile.save()
+#TODO                profile.email_confirmed = False
+#TODO                profile.save()
                 UserConfirmationKey.objects.filter(
                     user=user, type='E').delete()
                 key = UserConfirmationKey.objects.create(user=user, type='E')
                 key.send()
-            if 'jid' in profile_form.changed_data:
-                profile.jid_confirmed = False
-                profile.save()
-                UserConfirmationKey.objects.filter(
-                    user=user, type='J').delete()
-                key = UserConfirmationKey.objects.create(user=user, type='J')
-                key.send()
+#TODO            if 'jid' in profile_form.changed_data:
+#TODO                profile.jid_confirmed = False
+#TODO                profile.save()
+#TODO                UserConfirmationKey.objects.filter(
+#TODO                    user=user, type='J').delete()
+#TODO                key = UserConfirmationKey.objects.create(user=user, type='J')
+#TODO                key.send()
 
             return redirect('account')
     else:
         user_form = PreferencesForm(instance=request.user, prefix='user')
-        profile_form = ProfileForm(instance=request.user.profile,
-                                   prefix='profile')
+#TODO        profile_form = ProfileForm(instance=request.user.profile,
+#TODO                                   prefix='profile')
 
     return render(request, 'account/edit.html',
-                  {'user_form': user_form, 'profile_form': profile_form})
+                  {'user_form': user_form,
+#TODO                   'profile_form': profile_form
+                  })
 
 
 class ResetPassword(FormView):
