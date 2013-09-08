@@ -104,6 +104,7 @@ class ConfirmationKey(models.Model):
     class Meta:
         abstract = True
 
+
 class UserConfirmationMixin(object):
     @property
     def user(self):
@@ -118,7 +119,8 @@ class UserConfirmationMixin(object):
 
 
 class UserConfirmationKey(ConfirmationKey, UserConfirmationMixin):
-    subject = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='confirmations')
+    subject = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                related_name='confirmations')
 
     message_template = 'confirm/user_contact.txt'
     message_subject = 'Confirm your %(addr_type)s on %(protocol)s://%(domain)s'
@@ -136,7 +138,8 @@ class UserConfirmationKey(ConfirmationKey, UserConfirmationMixin):
 
 
 class UserPasswordResetKey(ConfirmationKey, UserConfirmationMixin):
-    subject = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='password_resets')
+    subject = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                related_name='password_resets')
 
     message_template = 'confirm/user_password_reset.txt'
     message_subject = 'Reset your password on %(protocol)s://%(domain)s'

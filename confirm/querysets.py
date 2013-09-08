@@ -56,7 +56,6 @@ class ConfirmationKeyQuerySet(QuerySet):
 
         return super(ConfirmationKeyQuerySet, self).get_or_create(**kwargs)
 
-
     def valid(self):
         return self.filter(created__gt=self.timestamp)
 
