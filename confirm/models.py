@@ -136,7 +136,9 @@ class UserConfirmationKey(ConfirmationKey, UserConfirmationMixin):
         return ('confirm_user_contact', (), {'key': self.key})
 
 
-class UserPasswordResetKey(UserConfirmationKey, UserConfirmationMixin):
+class UserPasswordResetKey(ConfirmationKey, UserConfirmationMixin):
+    subject = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='password_resets')
+
     message_template = 'confirm/user_password_reset.txt'
     message_subject = 'Reset your password on %(protocol)s://%(domain)s'
 
