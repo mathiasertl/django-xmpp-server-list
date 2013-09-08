@@ -42,7 +42,7 @@ def confirm_user_contact(request, key):
     key.user.save()
 
     # remove existing confirmation keys:
-    UserConfirmationKey.objects.filter(user=key.user, type=key.type).delete()
+    UserConfirmationKey.objects.invalidate(subject=key.user)
     return redirect('account')
 
 
@@ -56,7 +56,7 @@ def reset_user_password(request, key):
         login(request, key.user)
 
     # remove existing keys for this user:
-    UserPasswordResetKey.objects.filter(user=key.user).delete()
+    UserPasswordResetKey.objects.invalidate(subject=key.user)
     return redirect('account_set_password')
 
 
