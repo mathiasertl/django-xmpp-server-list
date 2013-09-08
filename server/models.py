@@ -194,6 +194,8 @@ class Server(models.Model):
     # basic information:
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='servers')
     added = models.DateField(auto_now_add=True)
+    last_seen = models.DateField(auto_now_add=True)
+
     modified = models.DateTimeField(auto_now=True, auto_now_add=True)
     launched = models.DateField(help_text="When the server was launched.")
     city = models.CharField(
