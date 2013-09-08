@@ -17,6 +17,7 @@
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 
 
 class UserProfile(models.Model):
@@ -31,3 +32,7 @@ class UserProfile(models.Model):
 
     def __unicode__(self):
         return self.user.username
+
+
+class LocalUser(AbstractUser):
+    pass
