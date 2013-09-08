@@ -88,7 +88,7 @@ td img {
 }
 
 .button-ok, .button-notok, .button-edit, .button-delete, .button-save, .button-cancel, .button-add {
-	margin: 0 1em;
+	margin: 0 2px;
 	cursor: pointer;
 }
 
