@@ -17,9 +17,9 @@
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
-from models import UserProfile
+UserModel = get_user_model()
 
 
 class CreationForm(UserCreationForm):
@@ -28,29 +28,28 @@ class CreationForm(UserCreationForm):
         help_text='Required, a confirmation email will be sent to this '
         'address.')
 
-    def save(self, commit=True):
-        user = super(CreationForm, self).save(commit=False)
-        user.email = self.cleaned_data['email']
-        if commit:
-            user.save()
+    def clean_username(self):
+        """Override to make the form compatible with custom user models."""
 
-        return user
+        # Since User.username is unique, this check is redundant,
+        # but it sets a nicer error message than the ORM. See #13147.
+        username = self.cleaned_data["username"]
+        try:
+            UserModel._default_manager.get(username=username)
+        except UserModel.DoesNotExist:
+            return username
+        raise forms.ValidationError(self.error_messages['duplicate_username'])
+
 
     class Meta:
-        model = User
-        fields = ('username', 'email',)
+        model = UserModel
+        fields = ('username', 'email', 'jid',)
 
 
 class PreferencesForm(forms.ModelForm):
     class Meta:
-        model = User
-        fields = ('first_name', 'last_name', 'email')
-
-
-class ProfileForm(forms.ModelForm):
-    class Meta:
-        model = UserProfile
-        fields = ('jid',)
+        model = UserModel
+        fields = ('first_name', 'last_name', 'email', 'jid')
 
 
 class PasswordResetForm(forms.Form):
@@ -61,8 +60,8 @@ class PasswordResetForm(forms.Form):
 
         if data['username']:
             try:
-                self.user = User.objects.get(username=data['username'])
-            except User.DoesNotExist:
+                self.user = UserModel.objects.get(username=data['username'])
+            except UserModel.DoesNotExist:
                 raise forms.ValidationError(
                     "No user with that username exists.")
         else:
