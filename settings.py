@@ -18,6 +18,7 @@
 """Django settings for xmpplist project."""
 
 import os
+from datetime import timedelta
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -179,6 +180,7 @@ USE_HTTPS = False
 USE_IP4 = True
 USE_IP6 = True
 GEOIP_CONFIG_ROOT = os.path.join(os.path.dirname(__file__), 'geoip')
+CONFIRMATION_TIMEOUT = timedelta(hours=48)
 
 try:
     from localsettings import *
