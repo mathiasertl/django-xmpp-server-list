@@ -79,8 +79,8 @@ class ConfirmationKey(models.Model):
         subject_format.update(self.add_context())
 
         # build subject and message-text
-        subject = self.subject % subject_format
-        message = render_to_string(self.template, context)
+        subject = self.message_subject % subject_format
+        message = render_to_string(self.message_template, context)
 
         # send message
         if self.type == 'E':
@@ -110,8 +110,8 @@ class ConfirmationKey(models.Model):
 class UserConfirmationKey(ConfirmationKey):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='confirmations')
 
-    template = 'confirm/user_contact.txt'
-    subject = 'Confirm your %(addr_type)s on %(protocol)s://%(domain)s'
+    message_template = 'confirm/user_contact.txt'
+    message_subject = 'Confirm your %(addr_type)s on %(protocol)s://%(domain)s'
 
     @property
     def recipient(self):
@@ -140,8 +140,8 @@ class UserPasswordResetKey(UserConfirmationKey):
             else:
                 self.type = 'J'
 
-    template = 'confirm/user_password_reset.txt'
-    subject = 'Reset your password on %(protocol)s://%(domain)s'
+    message_template = 'confirm/user_password_reset.txt'
+    message_subject = 'Reset your password on %(protocol)s://%(domain)s'
 
     @models.permalink
     def get_absolute_url(self):
@@ -151,8 +151,8 @@ class UserPasswordResetKey(UserConfirmationKey):
 class ServerConfirmationKey(ConfirmationKey):
     server = models.ForeignKey(Server, related_name='confirmations')
 
-    template = 'confirm/server_contact.txt'
-    subject = 'Confirm contact details for %(serverdomain)s on '
+    message_template = 'confirm/server_contact.txt'
+    message_subject = 'Confirm contact details for %(serverdomain)s on '
     '%(protocol)s://%(domain)s'
 
     def add_context(self):
