@@ -20,17 +20,41 @@ from django.db.models.query import QuerySet
 
 from datetime import datetime
 
+import hashlib
+import time
+
 
 class ConfirmationKeyQuerySet(QuerySet):
     @property
     def timestamp(self):
         return datetime.now() - settings.CONFIRMATION_TIMEOUT
 
+    @property
+    def key(self):
+        secret = '%s-%s' % (settings.SECRET_KEY, time.time())
+        return hashlib.sha1(secret)
+
+    def create(self, **kwargs):
+        if 'key' not in kwargs:
+            kwargs['key'] = self.key
+        return super(ConfirmationKeyQuerySet, self).create(**kwargs)
+
+    def get_or_create(self, **kwargs):
+        defaults = kwargs.get('defaults', {})
+        if 'key' not in defaults:
+            if 'key' not in kwargs:
+                defaults['key'] = self.key
+            else:
+                defaults['key'] = kwargs['key']
+
+        return super(ConfirmationKeyQuerySet, self).get_or_create(**kwargs)
+
+
     def valid(self):
-        return self.filter(created__lt=self.timestamp)
+        return self.filter(created__gt=self.timestamp)
 
     def invalid(self):
-        return self.filter(created__gt=self.timestamp)
+        return self.filter(created__lt=self.timestamp)
 
     def invalidate_outdated(self):
         return self.invalid().delete()
