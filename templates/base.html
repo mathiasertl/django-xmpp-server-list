@@ -7,6 +7,7 @@
 
     <script type="text/javascript">
         var service_url = "{% url "servers_ajax" %}";
+        var resend_url = "{% url "server_ajax_resend" %}";
         var csrftoken = "{{ csrf_token }}";
         var csrfinput = "{% csrf_token %}";
     </script>
