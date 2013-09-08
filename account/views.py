@@ -62,40 +62,31 @@ def create(request):
 @login_required
 def edit(request):
     if request.method == 'POST':
-        user_form = PreferencesForm(request.POST, instance=request.user,
-                                    prefix='user')
-#TODO        profile_form = ProfileForm(request.POST, instance=request.user.profile,
-#TODO                                   prefix='profile')
+        form = PreferencesForm(request.POST, instance=request.user)
 
-        if user_form.is_valid():  #TODO and profile_form.is_valid():
-            user = user_form.save()
-#TODO            profile = profile_form.save()
+        if form.is_valid():
+            user = form.save()
 
-            if 'email' in user_form.changed_data:
-#TODO                profile.email_confirmed = False
-#TODO                profile.save()
+            if 'email' in form.changed_data:
+                user.email_confirmed = False
+                user.save()
                 UserConfirmationKey.objects.filter(
                     user=user, type='E').delete()
                 key = UserConfirmationKey.objects.create(user=user, type='E')
                 key.send()
-#TODO            if 'jid' in profile_form.changed_data:
-#TODO                profile.jid_confirmed = False
-#TODO                profile.save()
-#TODO                UserConfirmationKey.objects.filter(
-#TODO                    user=user, type='J').delete()
-#TODO                key = UserConfirmationKey.objects.create(user=user, type='J')
-#TODO                key.send()
+            if 'jid' in form.changed_data:
+                user.jid_confirmed = False
+                user.save()
+                UserConfirmationKey.objects.filter(
+                    user=user, type='J').delete()
+                key = UserConfirmationKey.objects.create(user=user, type='J')
+                key.send()
 
             return redirect('account')
     else:
-        user_form = PreferencesForm(instance=request.user, prefix='user')
-#TODO        profile_form = ProfileForm(instance=request.user.profile,
-#TODO                                   prefix='profile')
+        form = PreferencesForm(instance=request.user)
 
-    return render(request, 'account/edit.html',
-                  {'user_form': user_form,
-#TODO                   'profile_form': profile_form
-                  })
+    return render(request, 'account/edit.html', {'user_form': form, })
 
 
 class ResetPassword(FormView):
