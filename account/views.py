@@ -103,8 +103,7 @@ class ResetPassword(FormView):
         return super(ResetPassword, self).post(request, *args, **kwargs)
 
     def form_valid(self, form):
-        key = UserPasswordResetKey(subject=form.user)
-        key.save()
+        key = UserPasswordResetKey.objects.create(subject=form.user)
         key.send()
 
         return super(ResetPassword, self).form_valid(form)
