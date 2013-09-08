@@ -26,7 +26,6 @@ from django.views.generic import FormView
 from forms import CreationForm
 from forms import PasswordResetForm
 from forms import PreferencesForm
-#from forms import ProfileForm
 
 from xmpplist.confirm.models import UserConfirmationKey
 from xmpplist.confirm.models import UserPasswordResetKey
