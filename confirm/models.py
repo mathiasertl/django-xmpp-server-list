@@ -46,7 +46,6 @@ class ConfirmationKey(models.Model):
 
     def __init__(self, *args, **kwargs):
         super(ConfirmationKey, self).__init__(*args, **kwargs)
-#TODO        self.key = self.set_random_key()
 
     def send_mail(self, to, subject, message):
         frm = settings.DEFAULT_FROM_EMAIL
@@ -131,12 +130,6 @@ class UserConfirmationKey(ConfirmationKey):
         elif self.type == 'J':
             return self.subject.jid
 
-    def set_random_key(self):
-        salt = hashlib.sha1('%s-%s-%s' % (settings.SECRET_KEY, time.time(),
-                                          self.type)).hexdigest()
-        return hashlib.sha1('%s-%s-%s' % (salt, self.subject.username,
-                                          self.subject.email)).hexdigest()
-
     @models.permalink
     def get_absolute_url(self):
         return ('confirm_user_contact', (), {'key': self.key})
@@ -179,12 +172,6 @@ class ServerConfirmationKey(ConfirmationKey):
     def __init__(self, *args, **kwargs):
         super(ServerConfirmationKey, self).__init__(*args, **kwargs)
         self.type = self.subject.contact_type
-
-    def set_random_key(self):
-        salt = hashlib.sha1('%s-%s' % (settings.SECRET_KEY,
-                                       time.time())).hexdigest()
-        return hashlib.sha1('%s-%s' % (salt,
-                                       self.subject.domain)).hexdigest()
 
     def confirm(self):
         self.server.contact_verified = True
