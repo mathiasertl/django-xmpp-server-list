@@ -21,6 +21,7 @@ from django.http import HttpResponse
 from django.http import HttpResponseForbidden
 from django.shortcuts import render
 from django.views.generic import TemplateView
+from django.views.generic.detail import BaseDetailView
 
 from xmpplist.server.forms import ServerForm
 from xmpplist.server.models import Features
@@ -129,6 +130,13 @@ def ajax_id(request, server_id):
         return render(request, 'ajax/server_table_row.html', {'form': form})
 
     return HttpResponse('ok.')
+
+
+class ResendView(BaseDetailView):
+    def get(self, request, *args, **kwargs):
+        server = self.get_object()
+        print(server)
+        return super(ResendView, self).get(request, *args, **kwargs)
 
 
 @permission_required('server.moderate')
