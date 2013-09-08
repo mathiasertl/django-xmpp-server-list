@@ -107,13 +107,17 @@ def get_hosts(host, port, ipv4=True, ipv6=True):
         if ipv4 and settings.USE_IP4:
             hosts += socket.getaddrinfo(host, port, socket.AF_INET,
                                         socket.SOCK_STREAM)
+    except Exception:
+        pass
+
+    try:
         if ipv6 and settings.USE_IP6:
             hosts += socket.getaddrinfo(host, port, socket.AF_INET6,
                                         socket.SOCK_STREAM)
-
-        return hosts
     except Exception:
-        return []
+        pass
+
+    return hosts
 
 
 class CertificateAuthority(models.Model):
