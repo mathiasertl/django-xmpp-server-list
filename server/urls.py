@@ -22,6 +22,7 @@ from django.conf.urls.defaults import url
 
 from xmpplist.server.views import IndexView
 from xmpplist.server.views import ModerateView
+from xmpplist.server.views import ResendView
 
 
 urlpatterns = patterns(
@@ -33,5 +34,7 @@ urlpatterns = patterns(
 
     url(r'^ajax/$', 'ajax', name='servers_ajax'),
     url(r'^ajax/moderate/$', 'ajax_moderate', name='server_ajax_moderate'),
+    url(r'^ajax/resend/$', login_required(ResendView.as_view()),
+        name='server_ajax_resend'),
     url(r'^ajax/(?P<server_id>\w+)/$', 'ajax_id', name='servers_ajax_id'),
 )

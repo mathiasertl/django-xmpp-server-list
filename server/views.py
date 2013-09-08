@@ -133,7 +133,14 @@ def ajax_id(request, server_id):
 
 
 class ResendView(BaseDetailView):
+    http_method_names = ['get', 'post', ]
+
     def get(self, request, *args, **kwargs):
+        server = self.get_object()
+        print(server)
+        return super(ResendView, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
         server = self.get_object()
         print(server)
         return super(ResendView, self).get(request, *args, **kwargs)
