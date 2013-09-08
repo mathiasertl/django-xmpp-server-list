@@ -614,14 +614,13 @@ class Server(models.Model):
 
     def do_contact_verification(self):
         typ = self.contact_type
-        profile = self.user.profile
 
         # Set contact_verified if it sthe same as your email or JID:
         if typ == 'E' and self.user.email == self.contact \
-                and profile.email_confirmed:
+                and self.user.email_confirmed:
             self.contact_verified = True
-        elif typ == 'J' and profile.jid == self.contact \
-                and profile.jid_confirmed:
+        elif typ == 'J' and self.user.jid == self.contact \
+                and self.user.jid_confirmed:
             self.contact_verified = True
         elif typ in ['J', 'E']:
             key = self.confirmations.create(server=self)

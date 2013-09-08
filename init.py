@@ -26,7 +26,6 @@ sys.path.append(os.path.dirname(os.getcwd()))
 from django.conf import settings
 from django.contrib.auth.models import User
 
-from account.models import UserProfile
 from server.models import CertificateAuthority
 from server.models import Features
 from server.models import Server
@@ -35,7 +34,6 @@ from server.models import ServerSoftware
 u = User.objects.create(username='mati', email='mati@er.tl', is_superuser=True, is_staff=True)
 u.set_password('nopass')
 u.save()
-p = UserProfile.objects.create(user=u, email_confirmed=True)
 
 other = CertificateAuthority.objects.create(name='other', website='https://www.jabber.at')
 startssl = CertificateAuthority.objects.create(name='StartSSL', website='https://www.startssl.com',

@@ -34,12 +34,12 @@ def confirm_user_contact(request, key):
         login(request, key.user)
 
     if key.type == 'E':
-        key.user.profile.email_confirmed = True
+        key.user.email_confirmed = True
     elif key.type == 'J':
-        key.user.profile.jid_confirmed = True
+        key.user.jid_confirmed = True
     else:
         raise RuntimeError('Invalid confirmation key-type: %s' % key.type)
-    key.user.profile.save()
+    key.user.save()
 
     # remove existing confirmation keys:
     UserConfirmationKey.objects.filter(user=key.user, type=key.type).delete()
