@@ -23,14 +23,14 @@ from querysets import ConfirmationKeyQuerySet
 class ConfirmationKeyManager(models.Manager):
     use_for_related_fields = True
 
-    def get_queryset(self):
+    def get_query_set(self):
         return ConfirmationKeyQuerySet(self.model)
 
     def valid(self):
-        return self.get_queryset().invalid()
+        return self.get_query_set().invalid()
 
     def invalid(self):
-        return self.get_queryset().valid()
+        return self.get_query_set().valid()
 
     def invalidate(self, subject):
-        return self.get_queryset().invalidate(subject=subject)
+        return self.get_query_set().invalidate(subject=subject)
