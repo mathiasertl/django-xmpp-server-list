@@ -11,7 +11,7 @@ function switch_values(row) {
 }
 
 function get_service_id(row) {
-    return row.attr('id').split('_')[1];
+    return row.attr('data-server');
 }
 
 function get_service_url(row) {
@@ -21,6 +21,16 @@ function get_service_url(row) {
 function edit_service(cell) {
     switch_buttons(cell);
     switch_values(cell.parent());
+}
+
+function resend_service_notification(row) {
+    data = {
+        pk: get_service_id(row),
+        csrfmiddlewaretoken: csrftoken,
+    }
+    $.post(resend_url, data, function(data) {});
+        alert('Resent notification.');
+    });
 }
 
 function set_datepicker(row) {
@@ -59,6 +69,10 @@ $(document).ready(function() {
     
     $("table").on("click", ".button-edit", function() {
         edit_service($(this).parent());
+    });
+
+    $("table").on("click", ".button-resend", function() {
+        resend_service_notification($(this).parent().parent());
     });
     
     $("table").on("click", ".button-delete", function() {

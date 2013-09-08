@@ -133,17 +133,15 @@ def ajax_id(request, server_id):
 
 
 class ResendView(BaseDetailView):
-    http_method_names = ['get', 'post', ]
-
-    def get(self, request, *args, **kwargs):
-        server = self.get_object()
-        print(server)
-        return super(ResendView, self).get(request, *args, **kwargs)
+    queryset = Server.objects.filter(contact_verified=False)
+    http_method_names = ['post', ]
 
     def post(self, request, *args, **kwargs):
+        self.kwargs['pk'] = self.request.POST['pk'][0]
         server = self.get_object()
-        print(server)
-        return super(ResendView, self).get(request, *args, **kwargs)
+        server.do_contact_verification()
+
+        return HttpResponse()
 
 
 @permission_required('server.moderate')
