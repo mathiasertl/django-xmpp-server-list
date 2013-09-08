@@ -137,6 +137,9 @@ class UserConfirmationKey(ConfirmationKey, UserConfirmationMixin):
 
 
 class UserPasswordResetKey(UserConfirmationKey, UserConfirmationMixin):
+    message_template = 'confirm/user_password_reset.txt'
+    message_subject = 'Reset your password on %(protocol)s://%(domain)s'
+
     def __init__(self, *args, **kwargs):
         super(UserPasswordResetKey, self).__init__(*args, **kwargs)
         if 'type' not in kwargs:
@@ -144,9 +147,6 @@ class UserPasswordResetKey(UserConfirmationKey, UserConfirmationMixin):
                 self.type = 'E'
             else:
                 self.type = 'J'
-
-    message_template = 'confirm/user_password_reset.txt'
-    message_subject = 'Reset your password on %(protocol)s://%(domain)s'
 
     def confirm(self):
         pass
