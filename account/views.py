@@ -39,10 +39,10 @@ def index(request):
 
 def create(request):
     if request.method == 'POST':
-        user_form = CreationForm(request.POST, prefix='user')
-        if user_form.is_valid():
+        form = CreationForm(request.POST, prefix='user')
+        if form.is_valid():
             # create user
-            user = user_form.save()
+            user = form.save()
 
             # create confirmations:
             ekey = UserConfirmationKey.objects.create(user=user, type='E')
@@ -55,9 +55,9 @@ def create(request):
 
             return redirect('account')
     else:
-        user_form = CreationForm(prefix='user')
+        form = CreationForm(prefix='user')
 
-    return render(request, 'account/create.html', {'user_form': user_form, })
+    return render(request, 'account/create.html', {'user_form': form, })
 
 
 @login_required
