@@ -154,6 +154,9 @@ class UserPasswordResetKey(UserConfirmationKey):
     message_template = 'confirm/user_password_reset.txt'
     message_subject = 'Reset your password on %(protocol)s://%(domain)s'
 
+    def confirm(self):
+        pass
+
     @models.permalink
     def get_absolute_url(self):
         return ('reset_user_password', (), {'key': self.key})
@@ -182,6 +185,10 @@ class ServerConfirmationKey(ConfirmationKey):
                                        time.time())).hexdigest()
         return hashlib.sha1('%s-%s' % (salt,
                                        self.subject.domain)).hexdigest()
+
+    def confirm(self):
+        self.server.contact_verified = True
+        self.server.save()
 
     @property
     def user(self):
