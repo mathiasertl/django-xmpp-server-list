@@ -108,7 +108,7 @@ class ConfirmationKey(models.Model):
 
 
 class UserConfirmationKey(ConfirmationKey):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='confirmations')
+    subject = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='confirmations')
 
     message_template = 'confirm/user_contact.txt'
     message_subject = 'Confirm your %(addr_type)s on %(protocol)s://%(domain)s'
@@ -116,15 +116,15 @@ class UserConfirmationKey(ConfirmationKey):
     @property
     def recipient(self):
         if self.type == 'E':
-            return self.user.email
+            return self.subject.email
         elif self.type == 'J':
-            return self.user.jid
+            return self.subject.jid
 
     def set_random_key(self):
         salt = hashlib.sha1('%s-%s-%s' % (settings.SECRET_KEY, time.time(),
                                           self.type)).hexdigest()
-        return hashlib.sha1('%s-%s-%s' % (salt, self.user.username,
-                                          self.user.email)).hexdigest()
+        return hashlib.sha1('%s-%s-%s' % (salt, self.subject.username,
+                                          self.subject.email)).hexdigest()
 
     @models.permalink
     def get_absolute_url(self):
@@ -135,7 +135,7 @@ class UserPasswordResetKey(UserConfirmationKey):
     def __init__(self, *args, **kwargs):
         super(UserPasswordResetKey, self).__init__(*args, **kwargs)
         if 'type' not in kwargs:
-            if self.user.email_confirmed:
+            if self.subject.email_confirmed:
                 self.type = 'E'
             else:
                 self.type = 'J'
@@ -149,28 +149,28 @@ class UserPasswordResetKey(UserConfirmationKey):
 
 
 class ServerConfirmationKey(ConfirmationKey):
-    server = models.ForeignKey(Server, related_name='confirmations')
+    subject = models.ForeignKey(Server, related_name='confirmations')
 
     message_template = 'confirm/server_contact.txt'
     message_subject = 'Confirm contact details for %(serverdomain)s on '
     '%(protocol)s://%(domain)s'
 
     def add_context(self):
-        return {'serverdomain': self.server.domain}
+        return {'serverdomain': self.subject.domain}
 
     @property
     def recipient(self):
-        return self.server.contact
+        return self.subject.contact
 
     def __init__(self, *args, **kwargs):
         super(ServerConfirmationKey, self).__init__(*args, **kwargs)
-        self.type = self.server.contact_type
+        self.type = self.subject.contact_type
 
     def set_random_key(self):
         salt = hashlib.sha1('%s-%s' % (settings.SECRET_KEY,
                                        time.time())).hexdigest()
         return hashlib.sha1('%s-%s' % (salt,
-                                       self.server.domain)).hexdigest()
+                                       self.subject.domain)).hexdigest()
 
     @models.permalink
     def get_absolute_url(self):
