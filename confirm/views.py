@@ -64,6 +64,6 @@ def confirm_server(request, key):
     key = get_object_or_404(ServerConfirmationKey, **{'key': key})
     key.server.contact_verified = True
     key.server.save()
-    key.delete()
 
+    ServerConfirmationKey.objects.invalidate(subject=key.server)
     return redirect('server')
