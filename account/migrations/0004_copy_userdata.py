@@ -12,6 +12,7 @@ class Migration(DataMigration):
             user.email_confirmed = profile.email_confirmed
             user.jid_confirmed = profile.jid_confirmed
             user.jid = profile.jid
+            user.save()
 
     def backwards(self, orm):
         "Write your backwards methods here."
