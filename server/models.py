@@ -24,6 +24,8 @@ from datetime import datetime
 
 from xml.etree import ElementTree
 
+from sleekxmpp.xmlstream import XMLStream
+
 import dns.resolver
 import pygeoip
 
@@ -309,6 +311,7 @@ class Server(models.Model):
                 raise RuntimeError('Failed to connect to %s (%s): %s'
                                    % (addr_str, hostname, e))
 
+        print(myfeatures)
         return myfeatures
 
     def get_stream_features(self, sock, xmlns='jabber:client'):
@@ -386,6 +389,11 @@ class Server(models.Model):
                          self.domain, e)
 
         return features
+
+    def connect(self, host, port, tls=True, ssl=False):
+        stream = XMLStream()
+        connected = stream.connect(host, port, use_tls=True, use_ssl=False)
+        return connected
 
     def srv_lookup(self, service, proto='tcp'):
         """
