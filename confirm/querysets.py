@@ -19,4 +19,8 @@ from django.db.models.query import QuerySet
 
 
 class ConfirmationKeyQuerySet(QuerySet):
-    pass
+    def invalid(self, subject):
+        return self.filter(subject=subject)
+
+    def invalidate(self, subject):
+        return self.invalid().delete()
