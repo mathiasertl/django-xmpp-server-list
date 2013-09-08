@@ -18,6 +18,7 @@
 from django.db import models
 
 from querysets import ConfirmationKeyQuerySet
+from querysets import ServerConfirmationKeyQuerySet
 
 
 class ConfirmationKeyManager(models.Manager):
@@ -40,3 +41,8 @@ class ConfirmationKeyManager(models.Manager):
 
     def invalidate(self, subject):
         return self.get_query_set().invalidate(subject=subject)
+
+
+class ServerConfirmationKeyManager(ConfirmationKeyManager):
+    def get_query_set(self):
+        return ServerConfirmationKeyQuerySet(self.model)

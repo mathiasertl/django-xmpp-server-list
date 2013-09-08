@@ -68,3 +68,8 @@ class ConfirmationKeyQuerySet(QuerySet):
 
     def invalidate(self, subject):
         return self.filter(subject=subject).delete()
+
+
+class ServerConfirmationKeyQuerySet(ConfirmationKeyQuerySet):
+    def for_user(self, user):
+        return self.filter(subject__user=user)
