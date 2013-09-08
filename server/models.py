@@ -20,6 +20,8 @@ import os
 import socket
 import ssl
 
+from datetime import datetime
+
 from xml.etree import ElementTree
 
 import dns.resolver
@@ -537,6 +539,9 @@ class Server(models.Model):
         # perform various checks:
         client_srv = self.verify_srv_client()
         client_hosts, stream_features = self.verify_client_online(client_srv)
+
+        if client_hosts:
+            self.last_seen = datetime.now()
 
         server_srv = self.verify_srv_server()
         self.verify_server_online(server_srv)
