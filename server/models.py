@@ -80,13 +80,6 @@ LOG_MESSAGES = {
 }
 
 
-def get_addr_str(af, args, hostname):
-    if af == socket.AF_INET:
-        return '%s:%s (%s)' % (args[0], args[1], hostname)
-    elif af == socket.AF_INET6:
-        return '[%s]:%s (%s)' % (args[0], args[1], hostname)
-
-
 def wrap_socket(s, ca):
     if ca.certificate:
         kwargs = {'cert_reqs': ssl.CERT_REQUIRED, 'ca_certs': ca.certificate}
