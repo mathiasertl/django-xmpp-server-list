@@ -32,7 +32,7 @@ class ConfirmationKeyQuerySet(QuerySet):
     @property
     def key(self):
         secret = '%s-%s' % (settings.SECRET_KEY, time.time())
-        return hashlib.sha1(secret)
+        return hashlib.sha1(secret).hexdigest()
 
     def create(self, **kwargs):
         if 'key' not in kwargs:
