@@ -116,10 +116,10 @@ def reset_password_ok(request):
 
 @login_required
 def resend_confirmation(request):
-    if not request.user.profile.email_confirmed:
+    if not request.user.email_confirmed:
         key = UserConfirmationKey.objects.create(user=request.user, type='E')
         key.send()
-    if not request.user.profile.jid_confirmed:
+    if not request.user.jid_confirmed:
         key = UserConfirmationKey.objects.create(user=request.user, type='J')
         key.send()
     return render(request, 'account/resend_confirmation.html',
