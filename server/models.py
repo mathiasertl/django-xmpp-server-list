@@ -623,7 +623,7 @@ class Server(models.Model):
                 and self.user.jid_confirmed:
             self.contact_verified = True
         elif typ in ['J', 'E']:
-            key = self.confirmations.create(server=self)
+            key = self.confirmations.create(subject=self)
             key.send()
 
     def save(self, *args, **kwargs):
