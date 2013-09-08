@@ -199,7 +199,7 @@ class Server(models.Model):
         )
 
     # basic information:
-    user = models.ForeignKey(User, related_name='servers')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='servers')
     added = models.DateField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True, auto_now_add=True)
     launched = models.DateField(help_text="When the server was launched.")

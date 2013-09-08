@@ -21,7 +21,6 @@ import threading
 import time
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.db import models
 from django.template.loader import render_to_string
@@ -105,7 +104,7 @@ class ConfirmationKey(models.Model):
 
 
 class UserConfirmationKey(ConfirmationKey):
-    user = models.ForeignKey(User, related_name='confirmations')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='confirmations')
 
     template = 'confirm/user_contact.txt'
     subject = 'Confirm your %(addr_type)s on %(protocol)s://%(domain)s'
