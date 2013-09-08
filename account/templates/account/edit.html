@@ -15,7 +15,6 @@ email address.
 
 <form action="{% url "account_edit" %}" method="post">{% csrf_token %}
 {{ user_form|bootstrap }}
-{{ profile_form|bootstrap }}
 <div class="actions">
 <input class="btn primary" type="submit" value="Submit">
 <button class="btn" type="reset">Cancel</button>
