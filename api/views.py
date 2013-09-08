@@ -35,7 +35,7 @@ def index(request):
 
     # initial query-set:
     servers = Server.objects.filter(
-        verified=True, moderated=True, user__profile__email_confirmed=True)
+        verified=True, moderated=True, user__email_confirmed=True)
 
     # filter by required features:
     if 'features' in request.GET:
