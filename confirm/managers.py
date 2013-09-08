@@ -26,6 +26,9 @@ class ConfirmationKeyManager(models.Manager):
     def get_query_set(self):
         return ConfirmationKeyQuerySet(self.model)
 
+    def for_user(self, user):
+        return self.get_query_set().for_user(user=user)
+
     def valid(self):
         return self.get_query_set().invalid()
 

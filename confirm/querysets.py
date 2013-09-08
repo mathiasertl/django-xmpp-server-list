@@ -36,6 +36,11 @@ class ConfirmationKeyQuerySet(QuerySet):
         secret = '%s-%s-%s' % (settings.SECRET_KEY, time.time(), rand)
         return hashlib.sha1(secret).hexdigest()
 
+    def for_user(self, user):
+        if user.is_authenticated():
+            return self.filter(subject=user)
+        return self
+
     def create(self, **kwargs):
         if 'key' not in kwargs:
             kwargs['key'] = self.key
