@@ -612,6 +612,11 @@ class Server(models.Model):
     def get_infos(self):
         return self.logentries.filter(typ=LOG_TYPE_INFO)
 
+    def automatic_verification(self):
+        if self.contact_type in ['J', 'E'] and not self.contact_verified:
+            return True
+        return False
+
     def do_contact_verification(self):
         typ = self.contact_type
 
