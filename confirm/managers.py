@@ -32,5 +32,8 @@ class ConfirmationKeyManager(models.Manager):
     def invalid(self):
         return self.get_query_set().valid()
 
+    def invalidate_outdated(self):
+        return self.get_query_set().invalidate_outdated()
+
     def invalidate(self, subject):
         return self.get_query_set().invalidate(subject=subject)

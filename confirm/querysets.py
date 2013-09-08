@@ -27,10 +27,13 @@ class ConfirmationKeyQuerySet(QuerySet):
         return datetime.now() - settings.CONFIRMATION_TIMEOUT
 
     def valid(self):
-        return self.filter(created__gt=self.timestamp)
+        return self.filter(created__lt=self.timestamp)
 
     def invalid(self):
-        return self.filter(created__lt=self.timestamp)
+        return self.filter(created__gt=self.timestamp)
+
+    def invalidate_outdated(self):
+        return self.invalid().delete()
 
     def invalidate(self, subject):
         return self.filter(subject=subject).delete()
