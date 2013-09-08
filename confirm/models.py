@@ -114,7 +114,7 @@ class UserConfirmationKey(ConfirmationKey):
         if self.type == 'E':
             return self.user.email
         elif self.type == 'J':
-            return self.user.profile.jid
+            return self.user.jid
 
     def set_random_key(self):
         salt = hashlib.sha1('%s-%s-%s' % (settings.SECRET_KEY, time.time(),
@@ -131,7 +131,7 @@ class UserPasswordResetKey(UserConfirmationKey):
     def __init__(self, *args, **kwargs):
         super(UserPasswordResetKey, self).__init__(*args, **kwargs)
         if 'type' not in kwargs:
-            if self.user.profile.email_confirmed:
+            if self.user.email_confirmed:
                 self.type = 'E'
             else:
                 self.type = 'J'
