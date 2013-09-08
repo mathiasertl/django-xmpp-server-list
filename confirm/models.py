@@ -46,7 +46,7 @@ class ConfirmationKey(models.Model):
 
     def __init__(self, *args, **kwargs):
         super(ConfirmationKey, self).__init__(*args, **kwargs)
-        self.key = self.set_random_key()
+#TODO        self.key = self.set_random_key()
 
     def send_mail(self, to, subject, message):
         frm = settings.DEFAULT_FROM_EMAIL
@@ -93,6 +93,10 @@ class ConfirmationKey(models.Model):
 
     def add_context(self):
         return {}
+
+    @property
+    def user(self):
+        return self.subject
 
     @property
     def address_type(self):
@@ -171,6 +175,10 @@ class ServerConfirmationKey(ConfirmationKey):
                                        time.time())).hexdigest()
         return hashlib.sha1('%s-%s' % (salt,
                                        self.subject.domain)).hexdigest()
+
+    @property
+    def user(self):
+        return self.subject.user
 
     @models.permalink
     def get_absolute_url(self):
