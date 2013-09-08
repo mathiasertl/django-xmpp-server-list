@@ -520,6 +520,8 @@ class Server(models.Model):
     def location(self):
         if not self.city or not self.country:
             return 'Unknown'
+        elif not self.city and self.country:
+            return self.country
         else:
             return '%s/%s' % (self.city, self.country)
 
