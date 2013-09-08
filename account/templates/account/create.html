@@ -8,7 +8,6 @@
 {% block content %}
 <form action="{% url "account_create" %}" method="post">{% csrf_token %}
     {{ user_form|bootstrap }}
-    {{ profile_form|bootstrap }}
 
 <div class="actions">
 <input class="btn primary" type="submit" value="Submit">
