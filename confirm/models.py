@@ -29,6 +29,8 @@ from xmpplist.server.util import get_siteinfo
 from xmpplist.server.models import Server
 from SendMsgBot import SendMsgBot
 
+from managers import ConfirmationKeyManager
+
 CONFIRMATION_TYPE_CHOICES = (
     ('J', 'JID'),
     ('E', 'e-mail'),
@@ -39,6 +41,8 @@ class ConfirmationKey(models.Model):
     key = models.CharField(max_length=128, unique=True)
     created = models.DateTimeField(auto_now_add=True)
     type = models.CharField(max_length=1, choices=CONFIRMATION_TYPE_CHOICES)
+
+    objects = ConfirmationKeyManager()
 
     def __init__(self, *args, **kwargs):
         super(ConfirmationKey, self).__init__(*args, **kwargs)
