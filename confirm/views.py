@@ -36,9 +36,6 @@ class ConfirmationView(RedirectView, SingleObjectMixin):
             queryset = self.get_queryset()
         return queryset.get(key=self.kwargs['key'])
 
-    def user_filter(self, queryset):
-        return queryset
-
     def get_redirect_url(self, *args, **kwargs):
         queryset = self.get_queryset().for_user(user=self.request.user)
 
