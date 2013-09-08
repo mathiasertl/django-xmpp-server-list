@@ -16,54 +16,65 @@
 # along with xmpplist.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib.auth import login
+from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
+from django.views.generic.base import RedirectView
+from django.views.generic.detail import SingleObjectMixin
 
 from xmpplist.confirm.models import UserConfirmationKey
 from xmpplist.confirm.models import UserPasswordResetKey
 from xmpplist.confirm.models import ServerConfirmationKey
 
 
-def confirm_user_contact(request, key):
-    if request.user.is_authenticated():
-        key = get_object_or_404(UserConfirmationKey,
-                                **{'key': key, 'user': request.user})
-    else:
-        key = get_object_or_404(UserConfirmationKey, **{'key': key})
-        key.user.backend = 'django.contrib.auth.backends.ModelBackend'
-        login(request, key.user)
+class ConfirmationView(RedirectView, SingleObjectMixin):
+    # from SingleObjectMixin
+    pk_url_kwarg = 'key'
 
-    if key.type == 'E':
-        key.user.email_confirmed = True
-    elif key.type == 'J':
-        key.user.jid_confirmed = True
-    else:
-        raise RuntimeError('Invalid confirmation key-type: %s' % key.type)
-    key.user.save()
+    def get_object(self, queryset=None):
+        if queryset is None:
+            queryset = self.get_queryset()
+        return queryset.get(key=self.kwargs['key'])
 
-    # remove existing confirmation keys:
-    UserConfirmationKey.objects.invalidate(subject=key.user)
-    return redirect('account')
+    def user_filter(self, queryset):
+        return queryset
+
+    def get_redirect_url(self, *args, **kwargs):
+        queryset = self.get_queryset().for_user(user=self.request.user)
+
+        # get confirmation key:
+        key = self.get_object(queryset=queryset.valid())
+
+        if not self.request.user.is_authenticated():
+            key.user.backend = 'django.contrib.auth.backends.ModelBackend'
+            login(self.request, key.user)
+
+        # log user in if not authenticated so far:
+        if not self.request.user.is_authenticated():
+            key.user.backend = 'django.contrib.auth.backends.ModelBackend'
+            login(self.request, key.user)
+
+        # take any confirmation action
+        key.confirm()
+
+        # invalidate old keys/unused keys:
+#TODO: Do not yet cleanup confirmation keys
+#        queryset.invalidate(subject=key.user)
+#        self.get_queryset().invalidate_outdated()
+
+        return reverse(self.url)
 
 
-def reset_user_password(request, key):
-    if request.user.is_authenticated():
-        key = get_object_or_404(UserPasswordResetKey,
-                                **{'key': key, 'user': request.user})
-    else:
-        key = get_object_or_404(UserPasswordResetKey, **{'key': key})
-        key.user.backend = 'django.contrib.auth.backends.ModelBackend'
-        login(request, key.user)
-
-    # remove existing keys for this user:
-    UserPasswordResetKey.objects.invalidate(subject=key.user)
-    return redirect('account_set_password')
+class UserConfirmationView(ConfirmationView):
+    model = UserConfirmationKey
+    url = 'account'
 
 
-def confirm_server(request, key):
-    key = get_object_or_404(ServerConfirmationKey, **{'key': key})
-    key.server.contact_verified = True
-    key.server.save()
+class ResetUserPasswordView(ConfirmationView):
+    model = UserPasswordResetKey
+    url = 'account_set_password'
 
-    ServerConfirmationKey.objects.invalidate(subject=key.server)
-    return redirect('server')
+
+class ConfirmServerContactView(ConfirmationView):
+    model = ServerConfirmationKey
+    url = 'server'

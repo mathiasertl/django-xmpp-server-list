@@ -19,13 +19,17 @@
 from django.conf.urls.defaults import patterns
 from django.conf.urls.defaults import url
 
+from confirm.views import UserConfirmationView
+from confirm.views import ResetUserPasswordView
+from confirm.views import ConfirmServerContactView
+
 
 urlpatterns = patterns(
     'confirm.views',
-    url(r'^user/contact/(?P<key>\w+)/$', 'confirm_user_contact',
+    url(r'^user/contact/(?P<key>\w+)/$', UserConfirmationView.as_view(),
         name='confirm_user_contact'),
-    url(r'^user/password/(?P<key>\w+)/$', 'reset_user_password',
+    url(r'^user/password/(?P<key>\w+)/$', ResetUserPasswordView.as_view(),
         name='reset_user_password'),
-    url(r'^server/(?P<key>\w+)/$', 'confirm_server',
+    url(r'^server/(?P<key>\w+)/$', ConfirmServerContactView.as_view(),
         name='confirm_server'),
 )
