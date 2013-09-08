@@ -170,7 +170,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 LOGIN_URL = '/user/login/'
 LOGIN_REDIRECT_URL = '/user/'
-AUTH_PROFILE_MODULE = 'account.UserProfile'
+AUTH_USER_MODEL = 'account.LocalUser'
 DEFAULT_FROM_EMAIL = 'test@example.com'
 
 INTERNAL_IPS=('127.0.0.1')
