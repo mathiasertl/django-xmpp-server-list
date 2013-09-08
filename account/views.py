@@ -44,9 +44,9 @@ def create(request):
             user = form.save()
 
             # create confirmations:
-            ekey = UserConfirmationKey.objects.create(user=user, type='E')
+            ekey = UserConfirmationKey.objects.create(subject=user, type='E')
             ekey.send()
-            jkey = UserConfirmationKey.objects.create(user=user, type='J')
+            jkey = UserConfirmationKey.objects.create(subject=user, type='J')
             jkey.send()
 
             user.backend = 'django.contrib.auth.backends.ModelBackend'
@@ -71,15 +71,15 @@ def edit(request):
                 user.email_confirmed = False
                 user.save()
                 UserConfirmationKey.objects.filter(
-                    user=user, type='E').delete()
-                key = UserConfirmationKey.objects.create(user=user, type='E')
+                    subject=user, type='E').delete()
+                key = UserConfirmationKey.objects.create(subject=user, type='E')
                 key.send()
             if 'jid' in form.changed_data:
                 user.jid_confirmed = False
                 user.save()
                 UserConfirmationKey.objects.filter(
-                    user=user, type='J').delete()
-                key = UserConfirmationKey.objects.create(user=user, type='J')
+                    subject=user, type='J').delete()
+                key = UserConfirmationKey.objects.create(subject=user, type='J')
                 key.send()
 
             return redirect('account')
@@ -103,7 +103,7 @@ class ResetPassword(FormView):
         return super(ResetPassword, self).post(request, *args, **kwargs)
 
     def form_valid(self, form):
-        key = UserPasswordResetKey(user=form.user)
+        key = UserPasswordResetKey(subject=form.user)
         key.save()
         key.send()
 
@@ -117,10 +117,10 @@ def reset_password_ok(request):
 @login_required
 def resend_confirmation(request):
     if not request.user.email_confirmed:
-        key = UserConfirmationKey.objects.create(user=request.user, type='E')
+        key = UserConfirmationKey.objects.create(subject=request.user, type='E')
         key.send()
     if not request.user.jid_confirmed:
-        key = UserConfirmationKey.objects.create(user=request.user, type='J')
+        key = UserConfirmationKey.objects.create(subject=request.user, type='J')
         key.send()
     return render(request, 'account/resend_confirmation.html',
                   {'jid': settings.XMPP['default']['jid']})
