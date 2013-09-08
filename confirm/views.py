@@ -17,8 +17,7 @@
 
 from django.contrib.auth import login
 from django.core.urlresolvers import reverse
-from django.shortcuts import redirect
-from django.shortcuts import get_object_or_404
+from django.http import Http404
 from django.views.generic.base import RedirectView
 from django.views.generic.detail import SingleObjectMixin
 
@@ -34,7 +33,10 @@ class ConfirmationView(RedirectView, SingleObjectMixin):
     def get_object(self, queryset=None):
         if queryset is None:
             queryset = self.get_queryset()
-        return queryset.get(key=self.kwargs['key'])
+        try:
+            return queryset.get(key=self.kwargs['key'])
+        except self.model.DoesNotExist:
+            raise Http404
 
     def get_redirect_url(self, *args, **kwargs):
         queryset = self.get_queryset().for_user(user=self.request.user)
