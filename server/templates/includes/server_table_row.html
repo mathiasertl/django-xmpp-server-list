@@ -1,7 +1,7 @@
 {% load fieldvalue %}
 {% load url from future %}
 
-<tr id="server_{{ form.instance.id }}">
+<tr id="server_{{ form.instance.id }}" data-server="{{ form.instance.id }}">
     <td class="status">
         {% if form.instance.id %}
         <a href="{% url "server_report" server_id=form.instance.id %}"
