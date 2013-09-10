@@ -23,6 +23,7 @@ from sleekxmpp.xmlstream.matcher import MatchXPath
 from xmpp.plugins import caps
 from xmpp.plugins import compression
 from xmpp.plugins import register
+from xmpp.plugins import starttls
 
 
 class ClientFeatures(BaseXMPP):
@@ -42,7 +43,7 @@ class ClientFeatures(BaseXMPP):
 
         # try to register features
         self.register_plugin('feature_mechanisms')
-        self.register_plugin('feature_starttls')
+        self.register_plugin('feature_starttls', module=starttls)
         self.register_plugin('feature_compression', module=compression)
         self.register_plugin('feature_caps', module=caps)
         self.register_plugin('feature_register', module=register)

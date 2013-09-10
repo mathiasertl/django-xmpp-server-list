@@ -17,5 +17,5 @@ class stanza(object):
     Proceed = Proceed
     Failure = Failure
 
-class FeatureSTARTTLS):
+class FeatureSTARTTLS(_orig_plugin):
     stanza = stanza
