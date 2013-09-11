@@ -23,7 +23,6 @@ from sleekxmpp.xmlstream.matcher import MatchXPath
 from xmpp.plugins import caps
 from xmpp.plugins import compression
 from xmpp.plugins import register
-from xmpp.plugins import starttls
 
 
 class ClientFeatures(BaseXMPP):
@@ -43,7 +42,7 @@ class ClientFeatures(BaseXMPP):
 
         # try to register features
         self.register_plugin('feature_mechanisms')
-        self.register_plugin('feature_starttls', module=starttls)
+        self.register_plugin('feature_starttls')
         self.register_plugin('feature_compression', module=compression)
         self.register_plugin('feature_caps', module=caps)
         self.register_plugin('feature_register', module=register)
@@ -70,7 +69,38 @@ class ClientFeatures(BaseXMPP):
         self._stream_feature_order.sort()
 
     def get_features(self, features):
-        print(features)
-        for name, feature in features.get_features().items():
-            print('feature: %s (%s)' % (name, feature['required']))
-        self.disconnect()
+        """
+
+        .. NOTE:: A list of features is available `here
+            <http://xmpp.org/registrar/stream-features.html>`_
+        """
+        parsed = {}
+
+        try:
+            for name, node in features.get_features().items():
+                if name == 'starttls':
+                    required = node.find('{%s}required' % node.namespace)
+                    if required is None:
+                        parsed[name] = {'required': False}
+                    else:
+                        parsed[name] = {'required': False}
+                elif name == 'compression':
+                    methods = [n.text for n in node.findall('{%s}method' % node.namespace)]
+                    parsed[name] = {'methods': methods}
+                elif name == 'register':
+                    parsed[name] = {}
+                elif name == 'mechanisms':
+                    mechanisms = [n.text for n
+                                  in node.findall('{%s}mechanism' % node.namespace)]
+                    parsed[name] = {'mechanisms': mechanisms}
+                elif name == 'caps':
+                    parsed[name] = {}
+                else:
+                    print('feature: %s (%s), %s' % (name, node['required'], node))
+        finally:
+            self.disconnect()
+
+        print(parsed)
+        print(self.use_tls)
+
+        return parsed
