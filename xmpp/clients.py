@@ -31,6 +31,7 @@ from xmpp.plugins import compression
 from xmpp.plugins import register
 from xmpp.plugins import session
 from xmpp.plugins import sm
+from xmpp.plugins import ver
 
 log = logging.getLogger(__name__)
 
@@ -62,6 +63,7 @@ class StreamFeatureClient(BaseXMPP):
         self.register_plugin('feature_session', module=session)
         self.register_plugin('feature_sm', module=sm)
         self.register_plugin('feature_starttls')
+        self.register_plugin('feature_ver', module=ver)
 
         self.register_stanza(StreamFeatures)
         self.register_handler(
@@ -131,12 +133,15 @@ class StreamFeatureClient(BaseXMPP):
                         parsed[name] = {'required': False, }
                     else:
                         parsed[name] = {'required': False, }
+                elif name == 'ver':  # obsolete, seen on tigase.im
+                    parsed[name] = {}
                 else:
                     log.warn('Unhandled feature: %s - %s' % (name, node))
 
+            print(sorted(parsed.keys()))
             unhandled = found_tags - set(parsed.keys())
             if unhandled:
-                log.warning('%s: Unhandled stream features: %s',
+                log.warning('%s: Unknown stream features: %s',
                             self.boundjid.bare, ', '.join(unhandled))
         finally:
             self.disconnect()
