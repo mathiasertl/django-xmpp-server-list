@@ -16,7 +16,10 @@
 # along with xmpplist.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
-from django.core.management.base import BaseCommand, CommandError
+import os
+import time
+
+from django.core.management.base import BaseCommand
 from xmpplist.server.models import Server
 
 class Command(BaseCommand):
@@ -33,3 +36,6 @@ class Command(BaseCommand):
         else:
             for server in Server.objects.all().order_by('domain'):
                 server.verify()
+
+            time.sleep(2)
+            os._exit(0)
