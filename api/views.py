@@ -47,7 +47,7 @@ def index(request):
         if 'tls' in features:
             servers = servers.tls()
         if 'ipv6' in features:
-            servers = servers.filter(features__has_ipv6=True)
+            servers = servers.filter(ipv6=True)
 
     # filter by country
     if 'country' in request.GET:
