@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with xmpplist.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 import logging
 import re
 
@@ -142,6 +144,9 @@ class StreamFeatureClient(BaseXMPP):
             if unhandled:
                 log.warn('%s: Unknown stream features: %s',
                          self.boundjid.bare, ', '.join(unhandled))
+        except Exception as e:
+            log.error(e)
+            raise
         finally:
             self.disconnect()
 
