@@ -411,7 +411,6 @@ class Server(models.Model):
         self.s2s_tls_verified = True
 
         self.verified = False
-        self.logentries.all().delete()
 
         # verify c2s-connections
         client_srv = self.verify_srv_client()
@@ -483,31 +482,6 @@ class Server(models.Model):
             return self.contact_name
         return self.contact
 
-    def fail(self, key, msg='', typ=LOG_TYPE_VERIFICATION):
-        log.debug('%s: %s' % (key, msg))
-        self.logentries.create(key=key, msg=msg, typ=typ)
-
-    def failed(self, key):
-        return self.logentries.filter(key=key).exists()
-
-    def passed(self, key):
-        return self.failed(key)
-
-    def log(self, key, msg='', typ=LOG_TYPE_WARNING):
-        self.logentries.create(key=key, msg=msg, typ=typ)
-
-    def get_moderations(self):
-        return self.logentries.filter(typ=LOG_TYPE_MODERATION)
-
-    def get_verifications(self):
-        return self.logentries.filter(typ=LOG_TYPE_VERIFICATION)
-
-    def get_warnings(self):
-        return self.logentries.filter(typ=LOG_TYPE_WARNING)
-
-    def get_infos(self):
-        return self.logentries.filter(typ=LOG_TYPE_INFO)
-
     def automatic_verification(self):
         if self.contact_type in ['J', 'E'] and not self.contact_verified:
             return True
@@ -528,38 +502,5 @@ class Server(models.Model):
             key.send()
 
     def save(self, *args, **kwargs):
-        if self.verified is not None:
-            qs = self.logentries.filter(typ=LOG_TYPE_VERIFICATION)
-            self.verified = not qs.exists()
+        #TODO: We should somehow decide what 'verified' means.
         return super(Server, self).save(*args, **kwargs)
-
-
-class LogEntry(models.Model):
-    LOG_TYPE_CHOICES = (
-        (LOG_TYPE_MODERATION, 'moderation'),
-        (LOG_TYPE_VERIFICATION, 'verification'),
-        (LOG_TYPE_WARNING, 'warning'),
-        (LOG_TYPE_INFO, 'info'),
-    )
-
-    timestamp = models.DateTimeField(auto_now_add=True)
-    typ = models.IntegerField(choices=LOG_TYPE_CHOICES)
-    key = models.CharField(max_length=16)
-    msg = models.TextField(default='', null=True, blank=True)
-
-    server = models.ForeignKey(Server, related_name='logentries')
-
-    def get_info(self):
-        return LOG_MESSAGES[self.key]
-
-    def __unicode__(self):
-        if self.typ == LOG_TYPE_MODERATION:
-            type = 'MODE'
-        elif self.typ == LOG_TYPE_VERIFICATION:
-            type = 'VERI'
-        elif self.typ == LOG_TYPE_WARNING:
-            type = 'WARN'
-        elif self.typ == LOG_TYPE_INFO:
-            type = 'INFO'
-
-        return '%s - %s: %s' % (self.server.domain, type, self.key)
