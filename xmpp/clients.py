@@ -186,8 +186,10 @@ class StreamFeatureClient(BaseXMPP):
         try:
             if self._features is None:
                 self._features = self.parse_features(features)
-                self.callback(host=self.address[0], port=self.address[1],
-                              features=self._features)
+                self.callback(
+                    host=self.address[0], port=self.address[1],
+                    features=self._features, ssl=self.use_ssl,
+                    tls=self.use_tls)
 
             # copied from ClientXMPP._handle_stream_features():
             if 'starttls' in features['features']:
@@ -196,9 +198,6 @@ class StreamFeatureClient(BaseXMPP):
                     # Don't continue if the feature requires
                     # restarting the XML stream.
                     return True
-
-            log.debug('Finished processing stream features.')
-            self.event('stream_negotiated')
             # end copied ClientXMPP._handle_stream_features()
 
             self.disconnect()
