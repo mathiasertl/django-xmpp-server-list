@@ -18,7 +18,6 @@
 import copy
 import logging
 import os
-import socket
 
 from datetime import datetime
 
@@ -29,6 +28,9 @@ from django.conf import settings
 
 from xmpp.clients import StreamFeatureClient
 
+from server.constants import CONTACT_TYPE_CHOICES
+from server.constants import C2S_STREAM_FEATURES
+from server.constants import S2S_STREAM_FEATURES
 from server.dns import srv_lookup
 from server.dns import lookup
 from server.managers import ServerManager
@@ -38,73 +40,6 @@ geoip = pygeoip.GeoIP(
     os.path.join(settings.GEOIP_CONFIG_ROOT, 'GeoLiteCity.dat'),
     pygeoip.MEMORY_CACHE
 )
-LOG_TYPE_MODERATION = 1
-LOG_TYPE_VERIFICATION = 2
-LOG_TYPE_WARNING = 3
-LOG_TYPE_INFO = 4
-
-LOG_MESSAGES = {
-    'srv-client': 'No xmpp-client SRV-records where found for this server.<br>'
-    'Note that if this check fails, some successive tests are skipped, so '
-    'fixing this issue might reveal further problems.',
-    'srv-server': 'No xmpp-server SRV-records where found for this server.<br>'
-    'Note that if this check fails, some successing tests are skipped, so '
-    'fixing this issue might reveal further problems.',
-    'client-offline': 'Could not verify client connectivity.<br>'
-    'None of the hosts referred to by the xmpp-client SRV records where '
-    'found to be online. Note that if you use '
-    '<a href="http://en.wikipedia.org/wiki/Round-robin_DNS">round-robin '
-    'DNS</a>, each host must be online for an xmpp-client SRV record to '
-    'be considered online. The following hosts where checked:',
-    'server-offline': 'Could not verify server connectivity.<br>'
-    'None of the hosts referred to by the xmpp-server SRV records where '
-    'found to be online. Note that if you use '
-    '<a href="http://en.wikipedia.org/wiki/Round-robin_DNS">round-robin '
-    'DNS</a>, each host must be online for an xmpp-server SRV record to '
-    'be considered online. The following hosts where checked:',
-    'ssl-offline': 'Could not verify SSL connectivity.<br>'
-    'If you do not offer SSL connections, please leave the "SSL port" '
-    'field empty. Otherwise you have to specify the correct SSL '
-    'certificate authority, or, if you use a self-signed certificate, '
-    'specify "other" in that field. If your certificate authority is not '
-    'listed, please contact us. The following errors where encountered:',
-    'tls-cert': 'Could not verify TLS connectivity.'
-    'TLS negotiation failed. You have to specify the correct certificate '
-    'authority, or, if you use a self-signed certificate, specify "other" '
-    'in that field. If your certificate authority is not listed, please '
-    'just contact us. <br>The following error was encountered:',
-
-    # warnings:
-    'hosts-offline': 'An error was encountered connecting to the following '
-    'hosts:',
-
-    # info
-    'no-ipv6': 'No IPv6 records were found for at least one SRV record.',
-}
-
-
-def html_list(l):
-    return '<ul><li>%s</li></ul>' % '</li><li>'.join(l)
-
-
-def get_hosts(host, port, ipv4=True, ipv6=True):
-    hosts = []
-
-    try:
-        if ipv4 and settings.USE_IP4:
-            hosts += socket.getaddrinfo(host, port, socket.AF_INET,
-                                        socket.SOCK_STREAM)
-    except Exception:
-        pass
-
-    try:
-        if ipv6 and settings.USE_IP6:
-            hosts += socket.getaddrinfo(host, port, socket.AF_INET6,
-                                        socket.SOCK_STREAM)
-    except Exception:
-        pass
-
-    return hosts
 
 
 class CertificateAuthority(models.Model):
@@ -219,26 +154,6 @@ class Server(models.Model):
     s2s_starttls_required = models.BooleanField(default=False)
     s2s_caps = models.BooleanField(default=False)
 
-    # contact information
-    CONTACT_TYPE_CHOICES = (
-        ('M', 'MUC'),
-        ('J', 'JID'),
-        ('E', 'e-mail'),
-        ('W', 'website'),
-    )
-    C2S_STREAM_FEATURES = [
-        'auth',
-        'caps',
-        'compression',
-        'register',
-        'rosterver',
-        'sasl_auth',
-        'starttls',
-    ]
-    S2S_STREAM_FEATURES = [
-        'caps',
-        'starttls',
-    ]
     contact = models.CharField(
         max_length=60,
         help_text="The address where the server-admins can be reached.")
@@ -354,7 +269,7 @@ class Server(models.Model):
 
         self.c2s_starttls_required = features.get(
             'starttls', {}).get('required', False)
-        for key in self.C2S_STREAM_FEATURES:
+        for key in C2S_STREAM_FEATURES:
             setattr(self, 'c2s_%s' % key, key in features)
             features.pop(key, None)
 
@@ -378,7 +293,7 @@ class Server(models.Model):
 
         self.s2s_starttls_required = features.get(
             'starttls', {}).get('required', False)
-        for key in self.S2S_STREAM_FEATURES:
+        for key in S2S_STREAM_FEATURES:
             setattr(self, 's2s_%s' % key, key in features)
             features.pop(key, None)
 
