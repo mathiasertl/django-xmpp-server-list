@@ -20,14 +20,16 @@ from sleekxmpp.basexmpp import BaseXMPP
 from sleekxmpp.xmlstream.handler import Callback
 from sleekxmpp.xmlstream.matcher import MatchXPath
 
+from xmpp.plugins import auth
 from xmpp.plugins import caps
 from xmpp.plugins import compression
 from xmpp.plugins import register
 
 
-class ClientFeatures(BaseXMPP):
-    def __init__(self, jid):
-        super(ClientFeatures, self).__init__(jid, 'jabber:client')
+class StreamFeatureClient(BaseXMPP):
+    def __init__(self, jid, callback):
+        super(StreamFeatureClient, self).__init__(jid, 'jabber:client')
+        self.callback = callback
 
         self.stream_header = "<stream:stream to='%s' %s %s %s %s>" % (
                 self.boundjid.host,
@@ -46,6 +48,7 @@ class ClientFeatures(BaseXMPP):
         self.register_plugin('feature_compression', module=compression)
         self.register_plugin('feature_caps', module=caps)
         self.register_plugin('feature_register', module=register)
+        self.register_plugin('feature_auth', module=auth)
 
         self.register_stanza(StreamFeatures)
         self.register_handler(
@@ -96,7 +99,7 @@ class ClientFeatures(BaseXMPP):
                 elif name == 'caps':
                     parsed[name] = {}
                 else:
-                    print('feature: %s (%s), %s' % (name, node['required'], node))
+                    print('feature: %s - %s' % (name, node))
         finally:
             self.disconnect()
 
