@@ -83,15 +83,6 @@ LOG_MESSAGES = {
 }
 
 
-def wrap_socket(s, ca):
-    if ca.certificate:
-        kwargs = {'cert_reqs': ssl.CERT_REQUIRED, 'ca_certs': ca.certificate}
-    else:
-        kwargs = {'cert_reqs': ssl.CERT_NONE}
-
-    return ssl.wrap_socket(s, ssl_version=ssl.PROTOCOL_TLSv1, **kwargs)
-
-
 def html_list(l):
     return '<ul><li>%s</li></ul>' % '</li><li>'.join(l)
 
