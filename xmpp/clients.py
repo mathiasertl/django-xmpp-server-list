@@ -91,26 +91,26 @@ class StreamFeatureClient(BaseXMPP):
             for name, node in features.get_features().items():
                 ns = node.namespace
 
-                if name == 'starttls':
+                if name == 'compression':
+                    methods = [n.text for n
+                               in node.findall('{%s}method' % ns)]
+                    parsed[name] = {'methods': methods, }
+                elif name == 'caps':  # Note: Not in stream-features.html?
+                    parsed[name] = {}
+                elif name == 'iq-auth':
+                    parsed['auth'] = {}
+                elif name == 'mechanisms':
+                    mechs = [n.text for n
+                             in node.findall('{%s}mechanism' % ns)]
+                    parsed[name] = {'mechanisms': mechs, }
+                elif name == 'register':
+                    parsed[name] = {}
+                elif name == 'starttls':
                     required = node.find('{%s}required' % ns)
                     if required is None:
                         parsed[name] = {'required': False, }
                     else:
                         parsed[name] = {'required': False, }
-                elif name == 'compression':
-                    methods = [n.text for n
-                               in node.findall('{%s}method' % ns)]
-                    parsed[name] = {'methods': methods, }
-                elif name == 'register':
-                    parsed[name] = {}
-                elif name == 'mechanisms':
-                    mechs = [n.text for n
-                             in node.findall('{%s}mechanism' % ns)]
-                    parsed[name] = {'mechanisms': mechs, }
-                elif name == 'caps':
-                    parsed[name] = {}
-                elif name == 'iq-auth':
-                    parsed['auth'] = {}
                 else:
                     log.warn('Unhandled feature: %s - %s' % (name, node))
 
