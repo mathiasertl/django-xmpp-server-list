@@ -197,9 +197,10 @@ class Server(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='servers')
     added = models.DateField(auto_now_add=True)
     last_seen = models.DateField(auto_now_add=True)
-
     modified = models.DateTimeField(auto_now=True, auto_now_add=True)
     launched = models.DateField(help_text="When the server was launched.")
+
+    # geolocation:
     city = models.CharField(
         default='', null=True, blank=True, max_length=100,
         help_text="City the server is located in.")
@@ -235,6 +236,16 @@ class Server(models.Model):
                                  null=True, blank=True)
     software_version = models.CharField(max_length=30, blank=True)
 
+    # stream features:
+    c2s_auth = models.BooleanField(default=False)  # Non-SASL authentication
+    c2s_caps = models.BooleanField(default=False)
+    c2s_compression = models.BooleanField(default=False)
+    c2s_register = models.BooleanField(default=False)  # In-Band registration
+    c2s_rosterver = models.BooleanField(default=False)  # obsolete
+    c2s_sasl_auth = models.BooleanField(default=False)
+    c2s_starttls = models.BooleanField(default=False)
+    c2s_starttls_required = models.BooleanField(default=False)
+
     # contact information
     CONTACT_TYPE_CHOICES = (
         ('M', 'MUC'),
@@ -242,6 +253,15 @@ class Server(models.Model):
         ('E', 'e-mail'),
         ('W', 'website'),
     )
+    C2S_STREAM_FEATURES = [
+        'auth',
+        'caps',
+        'compression',
+        'register',
+        'rosterver',
+        'sasl_auth',
+        'starttls',
+    ]
     contact = models.CharField(
         max_length=60,
         help_text="The address where the server-admins can be reached.")
@@ -433,41 +453,6 @@ class Server(models.Model):
 
         return hosts
 
-    def verify_client_online(self, records):
-        """
-        Verify that at least one of the hosts referred to by the xmpp-client
-        SRV records is currently online.
-        """
-        errors, online, features = [], [], set()
-        if self.failed('srv-client') or not records:
-            return online, features
-
-        for hostname, port, priority in records:
-            try:
-                myfeatures = self.check_hostname(hostname, port, tls=True,
-                    features=True)
-            except RuntimeError as e:
-                errors.append(str(e))
-                continue
-
-            if online:
-                features &= myfeatures
-            else:  # first online host
-                features = myfeatures
-
-            online.append((hostname, port, priority))
-
-        if 'starttls' not in features:
-            self.fail('tls-cert')
-
-        if not online:  # not online, append errors to 'client-offline' message
-            self.fail('client-offline', msg=html_list(errors))
-        elif errors:  # only some hosts are offline, so this is only a warning
-            self.log('hosts-offline', msg=html_list(errors),
-                     typ=LOG_TYPE_WARNING)
-
-        return online, features
-
     def verify_server_online(self, hosts):
         """
         Verify that at least one of the hosts referred to by the xmpp-server
@@ -532,34 +517,63 @@ class Server(models.Model):
             self.city = ''
             self.countr = ''
 
-    def _c2s_callback(self, features):
-        log.debug('%s: %s', self.domain, features)
+    def _c2s_stream_feature_callback(self, features):
+        self.last_seen = datetime.now()  # we saw an online host
+
+        if self._c2s_stream_features is None:
+            self._c2s_stream_features = features.copy()
+
+        if self._c2s_stream_features != features:
+            log.error("%s: Differing stream features found.", self.domain)
+            old = self._c2s_stream_features
+
+            for key in set(features.keys()) - set(old.keys()):
+                # remove new keys found in new but not in old features
+                del features[key]
+            assert sorted(features.keys()) == sorted(old.keys())
+
+            if 'starttls' in features:  # handle starttls required field
+                if features['starttls'] == 'required' \
+                        and not old['starttls']['required']:
+                    features['starttls']['required'] = False
+
+            if features['compression']:
+                meths = set(features['compression']['methods'])
+                old_meths = set(old['compression']['methods'])
+                features['compression']['methods'] = list(meths | old_meths)
+            if features['sasl_auth']:
+                mechs = set(features['sasl_auth']['mechanisms'])
+                old_mechs = set(old['sasl_auth']['mechanisms'])
+                features['sasl_auth']['mechanisms'] = list(mechs | old_mechs)
+
+        self.c2s_starttls_required = features.get(
+            'starttls', {}).get('required')
+        for key in self.C2S_STREAM_FEATURES:
+            setattr(self, 'c2s_%s' % key, key in features)
+            features.pop(key, None)
+
+        if features:
+            log.debug('%s: Unhandled features: %s', self.domain, features)
+        self.save()
 
     def verify(self):
+        self._c2s_stream_features = None  # private var for stream feature checking
+
         self.verified = False
         self.logentries.all().delete()
 
         # perform various checks:
         client_srv = self.verify_srv_client()
         for domain, port, prio in client_srv:
-            print('Features from %s:%s' % (domain, port))
-            feature_client = StreamFeatureClient(self.domain, self._c2s_callback)
+            feature_client = StreamFeatureClient(
+                self.domain, self._c2s_stream_feature_callback)
             feature_client.connect(domain, port)
             feature_client.process()
-        return
-
-        client_hosts, stream_features = self.verify_client_online(client_srv)
-
-
-        if client_hosts:
-            self.last_seen = datetime.now()
 
         server_srv = self.verify_srv_server()
         self.verify_server_online(server_srv)
 
-        if client_hosts:  # use first online client host if available
-            self.set_location(client_hosts[0][0])
-        elif client_srv:  # use other srv-record otherwise
+        if client_srv:  # get location
             self.set_location(client_srv[0][0])
         else:  # no way to query location - reset!
             self.city = ''
@@ -567,26 +581,10 @@ class Server(models.Model):
 
         if self.ssl_port:
             self.features.has_ssl = True
-            self.verify_ssl(client_hosts)
+            self.verify_ssl(client_srv)
         else:  # no ssl port specified
             self.features.has_ssl = False
 
-        if 'starttls' in stream_features:
-            self.features.has_tls = True
-        else:
-            self.features.has_tls = False
-
-        if 'register' in stream_features:
-            self.features.has_ibr = True
-        else:
-            self.features.has_ibr = False
-
-        if 'plain' in stream_features:
-            self.features.has_plain = True
-        else:
-            self.features.has_plain = False
-
-        self.features.save()
         self.save()
 
     def get_website(self):
