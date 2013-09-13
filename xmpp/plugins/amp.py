@@ -23,9 +23,9 @@ from sleekxmpp.xmlstream import ElementBase
 
 class AmpStanza(ElementBase):
     name = 'amp'
-    namespace = 'http://jabber.org/features/iq-amp'
+    namespace = 'http://jabber.org/features/amp'
     interfaces = set()
-    plugin_attrib = 'iq-amp'
+    plugin_attrib = 'amp'
 
 
 class feature_amp(BasePlugin):

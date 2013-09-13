@@ -23,15 +23,15 @@ from sleekxmpp.xmlstream import ElementBase
 
 class SessionStanza(ElementBase):
     name = 'session'
-    namespace = 'http://jabber.org/features/iq-session'
+    namespace = 'urn:ietf:params:xml:ns:xmpp-session'
     interfaces = set()
-    plugin_attrib = 'iq-session'
+    plugin_attrib = 'session'
 
 
 class feature_session(BasePlugin):
-    """Plugin for Advanced Message Processing (XEP-0079).
+    """Plugin for IM Session Establishment (RFC 6121: XMPP IM).
 
-    .. seealso:: http://www.xmpp.org/extensions/xep-0079.html
+    .. seealso:: http://www.ietf.org/rfc/rfc6121.txt
     """
 
     def plugin_init(self):

@@ -6,7 +6,7 @@ from sleekxmpp.xmlstream import ElementBase
 
 class AmpStanza(ElementBase):
     name = 'bind'
-    namespace = 'http://jabber.org/features/iq-bind'
+    namespace = 'urn:ietf:params:xml:ns:xmpp-bind'
     interfaces = set()
     plugin_attrib = 'bind'
 

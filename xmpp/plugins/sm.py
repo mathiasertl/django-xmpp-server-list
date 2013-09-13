@@ -23,7 +23,7 @@ from sleekxmpp.xmlstream import ElementBase
 
 class SMStanza(ElementBase):
     name = 'sm'
-    namespace = 'http://jabber.org/features/iq-sm'
+    namespace = 'urn:xmpp:sm:3'
     interfaces = set()
     plugin_attrib = 'sm'
 
