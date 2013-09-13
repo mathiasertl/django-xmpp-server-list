@@ -113,7 +113,7 @@ class StreamFeatureClient(BaseXMPP):
                     methods = [n.text for n
                                in node.findall('{%s}method' % ns)]
                     parsed[name] = {'methods': methods, }
-                elif name == 'caps':  # Note: Not in stream-features.html?
+                elif name == 'c':  # Entity Capabilities (XEP-0115)
                     parsed[name] = {}
                 elif name == 'iq-auth':
                     parsed['auth'] = {}
@@ -144,6 +144,10 @@ class StreamFeatureClient(BaseXMPP):
             if unhandled:
                 log.warn('%s: Unknown stream features: %s',
                          self.boundjid.bare, ', '.join(unhandled))
+
+            # beautify the dict a bit:
+            if 'c' in parsed:
+                parsed['caps'] = parsed.pop('c')
         except Exception as e:
             log.error(e)
             raise

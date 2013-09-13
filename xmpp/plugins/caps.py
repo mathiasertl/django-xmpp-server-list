@@ -27,7 +27,7 @@ class CapsStanza(ElementBase):
     name = 'c'
     namespace = 'http://jabber.org/protocol/caps'
     interfaces = set()
-    plugin_attrib = 'caps'
+    plugin_attrib = name
 
 
 class feature_caps(BasePlugin):
