@@ -53,7 +53,7 @@ class StreamFeatureClient(BaseXMPP):
         self.register_plugin('feature_compression', module=compression)
         self.register_plugin('feature_caps', module=caps)
         self.register_plugin('feature_register', module=register)
-#        self.register_plugin('feature_auth', module=auth)
+        self.register_plugin('feature_auth', module=auth)
 
         self.register_stanza(StreamFeatures)
         self.register_handler(
@@ -109,8 +109,10 @@ class StreamFeatureClient(BaseXMPP):
                     parsed[name] = {'mechanisms': mechs, }
                 elif name == 'caps':
                     parsed[name] = {}
+                elif name == 'iq-auth':
+                    parsed['auth'] = {}
                 else:
-                    print('feature: %s - %s' % (name, node))
+                    log.warn('Unhandled feature: %s - %s' % (name, node))
 
             unhandled = found_tags - set(parsed.keys())
             if unhandled:
