@@ -20,6 +20,6 @@ from django.shortcuts import render
 
 def home(request):
     servers = Server.objects.filter(verified=True, moderated=True,
-        user__email_confirmed=True, user__jid_confirmed=True).order_by('domain')
+        user__email_confirmed=True, user__jid_confirmed=True).verified().order_by('domain')
 
     return render(request, 'index.html', {'servers': servers})
