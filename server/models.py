@@ -236,6 +236,11 @@ class Server(models.Model):
                                  null=True, blank=True)
     software_version = models.CharField(max_length=30, blank=True)
 
+    # SSL/TLS verification
+    c2s_tls_verified = models.BooleanField(default=True)
+    c2s_ssl_verified = models.BooleanField(default=True)
+    s2s_tls_verified = models.BooleanField(default=True)
+
     # stream features:
     c2s_auth = models.BooleanField(default=False)  # Non-SASL authentication
     c2s_caps = models.BooleanField(default=False)
