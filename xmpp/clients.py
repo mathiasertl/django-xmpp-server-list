@@ -134,7 +134,7 @@ class StreamFeatureClient(BaseXMPP):
                     if required is None:
                         parsed[name] = {'required': False, }
                     else:
-                        parsed[name] = {'required': False, }
+                        parsed[name] = {'required': True, }
                 elif name == 'ver':  # obsolete, seen on tigase.im
                     parsed[name] = {}
                 else:
@@ -148,6 +148,10 @@ class StreamFeatureClient(BaseXMPP):
             # beautify the dict a bit:
             if 'c' in parsed:
                 parsed['caps'] = parsed.pop('c')
+            if 'ver' in parsed:
+                parsed['rosterver'] = parsed.pop('ver')
+            if 'mechanisms' in parsed:
+                parsed['sasl_auth'] = parsed.pop('mechanisms')
         except Exception as e:
             log.error(e)
             raise
