@@ -15,6 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with xmpplist.  If not, see <http://www.gnu.org/licenses/>.
 
+import logging
+import re
+
 from sleekxmpp.stanza import StreamFeatures
 from sleekxmpp.basexmpp import BaseXMPP
 from sleekxmpp.xmlstream.handler import Callback
@@ -24,6 +27,8 @@ from xmpp.plugins import auth
 from xmpp.plugins import caps
 from xmpp.plugins import compression
 from xmpp.plugins import register
+
+log = logging.getLogger(__name__)
 
 
 class StreamFeatureClient(BaseXMPP):
@@ -48,7 +53,7 @@ class StreamFeatureClient(BaseXMPP):
         self.register_plugin('feature_compression', module=compression)
         self.register_plugin('feature_caps', module=caps)
         self.register_plugin('feature_register', module=register)
-        self.register_plugin('feature_auth', module=auth)
+#        self.register_plugin('feature_auth', module=auth)
 
         self.register_stanza(StreamFeatures)
         self.register_handler(
@@ -80,6 +85,9 @@ class StreamFeatureClient(BaseXMPP):
         parsed = {}
 
         try:
+            found_tags = set([re.match('{.*}(.*)', n.tag).groups(1)[0]
+                             for n in features.xml.getchildren()])
+
             for name, node in features.get_features().items():
                 if name == 'starttls':
                     required = node.find('{%s}required' % node.namespace)
@@ -100,10 +108,13 @@ class StreamFeatureClient(BaseXMPP):
                     parsed[name] = {}
                 else:
                     print('feature: %s - %s' % (name, node))
+
+            unhandled = found_tags - set(parsed.keys())
+            if unhandled:
+                log.warning('%s: Unhandled stream features: %s',
+                               self.boundjid.bare, ', '.join(unhandled))
         finally:
             self.disconnect()
 
-        print(parsed)
-        print(self.use_tls)
-
+        self.callback(parsed)
         return parsed
