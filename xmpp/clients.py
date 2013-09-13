@@ -20,6 +20,8 @@ from __future__ import unicode_literals
 import logging
 import re
 
+from django.conf import settings
+
 from sleekxmpp.stanza import StreamFeatures
 from sleekxmpp.basexmpp import BaseXMPP
 from sleekxmpp.xmlstream.handler import Callback
@@ -41,8 +43,10 @@ log = logging.getLogger(__name__)
 class StreamFeatureClient(BaseXMPP):
     def __init__(self, jid, callback):
         super(StreamFeatureClient, self).__init__(jid, 'jabber:client')
+        self.use_ipv6 = settings.USE_IP6
         self.callback = callback
 
+        # copied from ClientXMPP
         self.stream_header = "<stream:stream to='%s' %s %s %s %s>" % (
             self.boundjid.host,
             "xmlns:stream='%s'" % self.stream_ns,
@@ -54,7 +58,7 @@ class StreamFeatureClient(BaseXMPP):
         self._stream_feature_handlers = {}
         self._stream_feature_order = []
 
-        # try to register features
+        # register known features:
         self.register_plugin('feature_amp', module=amp)
         self.register_plugin('feature_auth', module=auth)
         self.register_plugin('feature_bind', module=bind)
@@ -158,5 +162,6 @@ class StreamFeatureClient(BaseXMPP):
         finally:
             self.disconnect()
 
-        self.callback(parsed)
+        self.callback(host=self.address[0], port=self.address[1],
+                      features=parsed)
         return parsed
