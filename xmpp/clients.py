@@ -37,11 +37,11 @@ class StreamFeatureClient(BaseXMPP):
         self.callback = callback
 
         self.stream_header = "<stream:stream to='%s' %s %s %s %s>" % (
-                self.boundjid.host,
-                "xmlns:stream='%s'" % self.stream_ns,
-                "xmlns='%s'" % self.default_ns,
-                "xml:lang='%s'" % self.default_lang,
-                "version='1.0'")
+            self.boundjid.host,
+            "xmlns:stream='%s'" % self.stream_ns,
+            "xmlns='%s'" % self.default_ns,
+            "xml:lang='%s'" % self.default_lang,
+            "version='1.0'")
         self.stream_footer = "</stream:stream>"
         self.features = set()
         self._stream_feature_handlers = {}
@@ -58,8 +58,8 @@ class StreamFeatureClient(BaseXMPP):
         self.register_stanza(StreamFeatures)
         self.register_handler(
             Callback('Stream Features',
-                      MatchXPath('{%s}features' % self.stream_ns),
-                      self.get_features))
+                     MatchXPath('{%s}features' % self.stream_ns),
+                     self.get_features))
 
     def register_feature(self, name, handler,  restart=False, order=5000):
         """Register a stream feature handler.
@@ -89,21 +89,24 @@ class StreamFeatureClient(BaseXMPP):
                              for n in features.xml.getchildren()])
 
             for name, node in features.get_features().items():
+                ns = node.namespace
+
                 if name == 'starttls':
-                    required = node.find('{%s}required' % node.namespace)
+                    required = node.find('{%s}required' % ns)
                     if required is None:
-                        parsed[name] = {'required': False}
+                        parsed[name] = {'required': False, }
                     else:
-                        parsed[name] = {'required': False}
+                        parsed[name] = {'required': False, }
                 elif name == 'compression':
-                    methods = [n.text for n in node.findall('{%s}method' % node.namespace)]
-                    parsed[name] = {'methods': methods}
+                    methods = [n.text for n
+                               in node.findall('{%s}method' % ns)]
+                    parsed[name] = {'methods': methods, }
                 elif name == 'register':
                     parsed[name] = {}
                 elif name == 'mechanisms':
-                    mechanisms = [n.text for n
-                                  in node.findall('{%s}mechanism' % node.namespace)]
-                    parsed[name] = {'mechanisms': mechanisms}
+                    mechs = [n.text for n
+                             in node.findall('{%s}mechanism' % ns)]
+                    parsed[name] = {'mechanisms': mechs, }
                 elif name == 'caps':
                     parsed[name] = {}
                 else:
@@ -112,7 +115,7 @@ class StreamFeatureClient(BaseXMPP):
             unhandled = found_tags - set(parsed.keys())
             if unhandled:
                 log.warning('%s: Unhandled stream features: %s',
-                               self.boundjid.bare, ', '.join(unhandled))
+                            self.boundjid.bare, ', '.join(unhandled))
         finally:
             self.disconnect()
 
