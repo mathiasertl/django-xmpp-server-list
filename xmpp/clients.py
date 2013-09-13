@@ -92,6 +92,7 @@ class StreamFeatureClient(BaseXMPP):
                      self.get_features))
 
         self.add_event_handler('ssl_invalid_chain', self._cert_errback)
+        self.add_event_handler('ssl_invalid_cert', self._cert_errback)
 
         # do not reparse features:
         self._features = None
