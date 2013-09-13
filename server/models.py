@@ -128,11 +128,7 @@ class ServerSoftware(models.Model):
 
 class Features(models.Model):
     # connection-related:
-    has_plain = models.BooleanField(default=False)
-    has_ssl = models.BooleanField(default=False)
-    has_tls = models.BooleanField(default=False)
     has_ipv6 = models.BooleanField(default=False)
-    has_ibr = models.BooleanField(default=False)
 
     # features:
     has_muc = models.BooleanField(default=False)
