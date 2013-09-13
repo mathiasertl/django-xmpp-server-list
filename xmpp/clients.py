@@ -30,6 +30,7 @@ from xmpp.plugins import caps
 from xmpp.plugins import compression
 from xmpp.plugins import register
 from xmpp.plugins import session
+from xmpp.plugins import sm
 
 log = logging.getLogger(__name__)
 
@@ -59,6 +60,7 @@ class StreamFeatureClient(BaseXMPP):
         self.register_plugin('feature_mechanisms')
         self.register_plugin('feature_register', module=register)
         self.register_plugin('feature_session', module=session)
+        self.register_plugin('feature_sm', module=sm)
         self.register_plugin('feature_starttls')
 
         self.register_stanza(StreamFeatures)
@@ -118,6 +120,9 @@ class StreamFeatureClient(BaseXMPP):
                              in node.findall('{%s}mechanism' % ns)]
                     parsed[name] = {'mechanisms': mechs, }
                 elif name == 'session':  # not yet seen in the wild!
+                    log.error("Untested plugin: %s", node)
+                    parsed[name] = {}
+                elif name == 'sm':  # not yet seen in the wild!
                     log.error("Untested plugin: %s", node)
                     parsed[name] = {}
                 elif name == 'starttls':
