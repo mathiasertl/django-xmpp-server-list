@@ -517,7 +517,7 @@ class Server(models.Model):
             self.city = ''
             self.countr = ''
 
-    def _c2s_stream_feature_callback(self, features):
+    def _c2s_stream_feature_cb(self, features):
         self.last_seen = datetime.now()  # we saw an online host
 
         if self._c2s_stream_features is None:
@@ -568,8 +568,8 @@ class Server(models.Model):
         # perform various checks:
         client_srv = self.verify_srv_client()
         for domain, port, prio in client_srv:
-            feature_client = StreamFeatureClient(
-                self.domain, self._c2s_stream_feature_callback)
+            feature_client = StreamFeatureClient(self.domain,
+                                                 self._c2s_stream_feature_cb)
             feature_client.connect(domain, port)
             feature_client.process(block=True)
 
