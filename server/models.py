@@ -23,8 +23,6 @@ import ssl
 
 from datetime import datetime
 
-from xml.etree import ElementTree
-
 import dns.resolver
 import pygeoip
 
