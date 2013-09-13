@@ -571,8 +571,11 @@ class Server(models.Model):
         # verify c2s-connections
         client_srv = self.verify_srv_client()
         for domain, port, prio in client_srv:
-            feature_client = StreamFeatureClient(domain=self.domain,
-                                                 callback=self._c2s_stream_feature_cb)
+            feature_client = StreamFeatureClient(
+                domain=self.domain,
+                callback=self._c2s_stream_feature_cb,
+                cert=self.ca.certificate,
+            )
             feature_client.connect(domain, port)
             feature_client.process(block=True)
 
