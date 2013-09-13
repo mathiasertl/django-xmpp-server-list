@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with xmpplist.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import with_statement
+
 import copy
 import logging
 import os
@@ -40,6 +42,25 @@ geoip = pygeoip.GeoIP(
     os.path.join(settings.GEOIP_CONFIG_ROOT, 'GeoLiteCity.dat'),
     pygeoip.MEMORY_CACHE
 )
+
+import signal
+from contextlib import contextmanager
+
+class TimeoutException(Exception):
+    pass
+
+@contextmanager
+def timeout(seconds, client):
+    def signal_handler(signum, frame):
+        log.error('Timeout: use_tls=%s, use_ssl=%s', client.use_tls, client.use_ssl)
+        client.disconnect(wait=False, send_close=False, reconnect=False)
+        raise TimeoutException()
+    signal.signal(signal.SIGALRM, signal_handler)
+    signal.alarm(seconds)
+    try:
+        yield
+    finally:
+        signal.alarm(0)
 
 
 class CertificateAuthority(models.Model):
@@ -247,20 +268,20 @@ class Server(models.Model):
                 if not old_req and new_req:
                     new['starttls']['required'] = False
 
-            if new['compression']:
+            if 'compression' in new:
                 meths = set(new['compression']['methods'])
-                old_meths = set(old['compression']['methods'])
+                old_meths = set(old.get('compression', {}).get('methods', []))
                 new['compression']['methods'] = list(meths | old_meths)
-            if new['sasl_auth']:
+            if 'sasl_auth' in new:
                 mechs = set(new['sasl_auth']['mechanisms'])
-                old_mechs = set(old['sasl_auth']['mechanisms'])
+                old_mechs = set(old.get('sasl_auth', {}).get('mechanisms', []))
                 new['sasl_auth']['mechanisms'] = list(mechs | old_mechs)
 
         setattr(self, attr, copy.deepcopy(new))
         return new
 
     def _c2s_stream_feature_cb(self, host, port, features, ssl, tls):
-        log.info('Stream Features: %s:%s: %s', host, port,
+        log.debug('Stream Features: %s:%s: %s', host, port,
                  sorted(features.keys()))
         self._c2s_online.add((host, port))
         self.last_seen = datetime.now()  # we saw an online host
@@ -285,8 +306,8 @@ class Server(models.Model):
             self.c2s_tls_verified = False
 
     def _s2s_stream_feature_cb(self, host, port, features, ssl, tls):
-        log.info('Stream Features: %s:%s: %s', host, port,
-                 sorted(features.keys()))
+        log.debug('Stream Features: %s:%s: %s', host, port,
+                  sorted(features.keys()))
         self._s2s_online.add((host, port))
 
         features = self._merge_features(features, 's2s')
@@ -301,7 +322,7 @@ class Server(models.Model):
             log.debug('%s: Unhandled features: %s', self.domain, features)
 
     def _s2s_cert_invalid(self, host, port, ssl, tls):
-        log.error('Invalid SSL certificate: %s:%s')
+        log.error('Invalid SSL certificate: %s:%s', host, port)
         self.s2s_tls_verified = False
 
     def verify_ipv6(self, hosts):
@@ -315,6 +336,7 @@ class Server(models.Model):
             self.ipv6 = False
 
     def verify(self):
+        log.info('Verify %s', self.domain)
         self._c2s_online = set()  # list of online c2s SRV records
         self._s2s_online = set()  # list of online s2s SRV records
         self._c2s_stream_features = None  # private var for stream feature checking
@@ -330,31 +352,43 @@ class Server(models.Model):
         # verify c2s-connections
         client_srv = self.verify_srv_client()
         for domain, port, prio in client_srv:
+            log.debug('Verify c2s on %s:%s', domain, port)
             client = StreamFeatureClient(
                 domain=self.domain,
                 callback=self._c2s_stream_feature_cb,
                 cert=self.ca.certificate,
                 cert_errback=self._c2s_cert_invalid
             )
-            client.connect(domain, port)
-            client.process(block=True)
+            try:
+                with timeout(3, client):
+                    client.connect(domain, port, reattempt=False)
+                    client.process(block=True)
+            except TimeoutException:
+                self.c2s_tls_verified = False
 
         # verify legacy SSL connections
         if self.ssl_port:
             for host in list(self._c2s_online):
+                log.debug('Verify c2s/ssl on %s:%s', host[0], self.ssl_port)
                 client = StreamFeatureClient(
                     domain=self.domain,
                     callback=self._c2s_stream_feature_cb,
                     cert=self.ca.certificate,
                     cert_errback=self._c2s_cert_invalid
                 )
-                client.connect(host[0], self.ssl_port,
-                               use_tls=False, use_ssl=True)
-                client.process(block=True)
+
+                try:
+                    with timeout(3, client):
+                        client.connect(host[0], self.ssl_port,
+                                       use_tls=False, use_ssl=True, reattempt=False)
+                        client.process(block=True)
+                except TimeoutException:
+                    self.c2s_ssl_verified = False
 
         # verify s2s connections
         server_srv = self.verify_srv_server()
         for domain, port, prio in server_srv:
+            log.debug('Verify s2s on %s:%s', domain, port)
             client = StreamFeatureClient(
                 domain=self.domain,
                 callback=self._s2s_stream_feature_cb,
@@ -362,8 +396,12 @@ class Server(models.Model):
                 cert_errback=self._s2s_cert_invalid,
                 ns='jabber:server',
             )
-            client.connect(domain, port)
-            client.process(block=True)
+            try:
+                with timeout(3, client):
+                    client.connect(domain, port, reattempt=False)
+                    client.process(block=True)
+            except TimeoutException:
+                self.s2s_tls_verified = False
 
         # get location:
         if self._c2s_online:
