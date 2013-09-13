@@ -517,7 +517,8 @@ class Server(models.Model):
             self.city = ''
             self.countr = ''
 
-    def _c2s_stream_feature_cb(self, features):
+    def _c2s_stream_feature_cb(self, host, port, features):
+        self._c2s_online.add((host, port))
         self.last_seen = datetime.now()  # we saw an online host
 
         if self._c2s_stream_features is None:
@@ -560,12 +561,13 @@ class Server(models.Model):
         self.save()
 
     def verify(self):
+        self._c2s_online = set()  # list of online c2s SRV records
         self._c2s_stream_features = None  # private var for stream feature checking
 
         self.verified = False
         self.logentries.all().delete()
 
-        # perform various checks:
+        # verify c2s-connections
         client_srv = self.verify_srv_client()
         for domain, port, prio in client_srv:
             feature_client = StreamFeatureClient(self.domain,
@@ -576,7 +578,9 @@ class Server(models.Model):
         server_srv = self.verify_srv_server()
         self.verify_server_online(server_srv)
 
-        if client_srv:  # get location
+        if self._c2s_online:
+            self.set_location(list(self._c2s_online)[0])
+        elif client_srv:  # get location
             self.set_location(client_srv[0][0])
         else:  # no way to query location - reset!
             self.city = ''
