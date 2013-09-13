@@ -97,7 +97,8 @@ class StreamFeatureClient(BaseXMPP):
 
     def _cert_errback(self, *args, **kwargs):
         self.disconnect(self.auto_reconnect, send_close=False)
-        self.cert_errback(host=self.address[0], port=self.address[1])
+        self.cert_errback(host=self.address[0], port=self.address[1],
+                          ssl=self.use_ssl, tls=self.use_tls)
 
     def register_feature(self, name, handler,  restart=False, order=5000):
         """Register a stream feature handler.
