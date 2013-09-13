@@ -230,6 +230,11 @@ class Server(models.Model):
     c2s_ssl_verified = models.BooleanField(default=True)
     s2s_tls_verified = models.BooleanField(default=True)
 
+    # DNS-related information:
+    c2s_srv_records = models.BooleanField(default=False)
+    s2s_srv_records = models.BooleanField(default=False)
+    ipv6 = models.BooleanField(default=False)
+
     # c2s stream features:
     c2s_auth = models.BooleanField(default=False)  # Non-SASL authentication
     c2s_caps = models.BooleanField(default=False)
@@ -309,8 +314,10 @@ class Server(models.Model):
         entries.
         """
         hosts = self.srv_lookup('xmpp-client')
-        if not hosts:
-            self.fail('srv-client')
+        if hosts:
+            self.c2s_srv_records = True
+        else:
+            self.c2s_srv_records = False
 
         return hosts
 
@@ -322,8 +329,10 @@ class Server(models.Model):
         entries.
         """
         hosts = self.srv_lookup('xmpp-server')
-        if not hosts:
-            self.fail('srv-server')
+        if hosts:
+            self.s2s_srv_records = True
+        else:
+            self.s2s_srv_records = False
 
         return hosts
 
@@ -429,6 +438,16 @@ class Server(models.Model):
         log.error('Invalid SSL certificate: %s:%s')
         self.s2s_tls_verified = False
 
+    def verify_ipv6(self, hosts):
+        self.ipv6 = True
+        try:
+            for host in set(hosts):
+                resolver = dns.resolver.Resolver()
+                resolver.lifetime = 3.0
+                resolver.query(host, 'AAAA')
+        except:
+            self.ipv6 = False
+
     def verify(self):
         self._c2s_online = set()  # list of online c2s SRV records
         self._s2s_online = set()  # list of online s2s SRV records
@@ -481,6 +500,7 @@ class Server(models.Model):
             client.connect(domain, port)
             client.process(block=True)
 
+        # get location:
         if self._c2s_online:
             self.set_location(list(self._c2s_online)[0])
         elif client_srv:  # get location
@@ -488,6 +508,9 @@ class Server(models.Model):
         else:  # no way to query location - reset!
             self.city = ''
             self.country = ''
+
+        # check IPv6 DNS records:
+        self.verify_ipv6([r[0] for r in client_srv + server_srv])
 
         # If my CA has no certificates (the "other" ca), no certificates were
         # actually verified, so set them to false manually.
