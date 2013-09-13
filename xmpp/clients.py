@@ -19,11 +19,13 @@ from __future__ import unicode_literals
 
 import logging
 import re
+import ssl
 
 from django.conf import settings
 
 from sleekxmpp.stanza import StreamFeatures
 from sleekxmpp.basexmpp import BaseXMPP
+from sleekxmpp.xmlstream import XMLStream
 from sleekxmpp.xmlstream.handler import Callback
 from sleekxmpp.xmlstream.matcher import MatchXPath
 
@@ -53,7 +55,8 @@ class StreamFeatureClient(BaseXMPP):
         super(StreamFeatureClient, self).__init__(domain, 'jabber:client')
         self.use_ipv6 = settings.USE_IP6
         self.callback = callback
-        self.ca_certs = cert
+#        self.ca_certs = cert
+#        self.ssl_version = ssl.PROTOCOL_SSLv3
 
         # copied from ClientXMPP
         self.stream_header = "<stream:stream to='%s' %s %s %s %s>" % (
@@ -165,12 +168,22 @@ class StreamFeatureClient(BaseXMPP):
                 parsed['rosterver'] = parsed.pop('ver')
             if 'mechanisms' in parsed:
                 parsed['sasl_auth'] = parsed.pop('mechanisms')
+
+            # copied from ClientXMPP._handle_stream_features:
+            for order, name in self._stream_feature_order:
+                if name in features['features']:
+                    handler, restart = self._stream_feature_handlers[name]
+                    if handler(features) and restart:
+                        # Don't continue if the feature requires
+                        # restarting the XML stream.
+                        return True
+            log.debug('Finished processing stream features.')
+            self.event('stream_negotiated')
+
+            self.callback(host=self.address[0], port=self.address[1],
+                          features=parsed)
         except Exception as e:
             log.error(e)
             raise
         finally:
             self.disconnect()
-
-        self.callback(host=self.address[0], port=self.address[1],
-                      features=parsed)
-        return parsed
