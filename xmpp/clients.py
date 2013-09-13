@@ -138,11 +138,10 @@ class StreamFeatureClient(BaseXMPP):
                 else:
                     log.warn('Unhandled feature: %s - %s' % (name, node))
 
-            print(sorted(parsed.keys()))
             unhandled = found_tags - set(parsed.keys())
             if unhandled:
-                log.warning('%s: Unknown stream features: %s',
-                            self.boundjid.bare, ', '.join(unhandled))
+                log.warn('%s: Unknown stream features: %s',
+                         self.boundjid.bare, ', '.join(unhandled))
         finally:
             self.disconnect()
 
