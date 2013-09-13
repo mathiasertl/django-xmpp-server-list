@@ -19,13 +19,11 @@ from __future__ import unicode_literals
 
 import logging
 import re
-import ssl
 
 from django.conf import settings
 
 from sleekxmpp.stanza import StreamFeatures
 from sleekxmpp.basexmpp import BaseXMPP
-from sleekxmpp.xmlstream import XMLStream
 from sleekxmpp.xmlstream.handler import Callback
 from sleekxmpp.xmlstream.matcher import MatchXPath
 
@@ -37,7 +35,7 @@ from xmpp.plugins import compression
 from xmpp.plugins import register
 from xmpp.plugins import session
 from xmpp.plugins import sm
-from xmpp.plugins import ver
+from xmpp.plugins import rosterver
 
 log = logging.getLogger(__name__)
 
@@ -51,7 +49,7 @@ class StreamFeatureClient(BaseXMPP):
     :param cert: Certificate
     """
 
-    def __init__(self, domain, callback, cert):
+    def __init__(self, domain, callback, cert, lang='en'):
         super(StreamFeatureClient, self).__init__(domain, 'jabber:client')
         self.use_ipv6 = settings.USE_IP6
         self.callback = callback
@@ -59,6 +57,7 @@ class StreamFeatureClient(BaseXMPP):
 #        self.ssl_version = ssl.PROTOCOL_SSLv3
 
         # copied from ClientXMPP
+        self.default_lang = lang
         self.stream_header = "<stream:stream to='%s' %s %s %s %s>" % (
             self.boundjid.host,
             "xmlns:stream='%s'" % self.stream_ns,
@@ -81,7 +80,7 @@ class StreamFeatureClient(BaseXMPP):
         self.register_plugin('feature_session', module=session)
         self.register_plugin('feature_sm', module=sm)
         self.register_plugin('feature_starttls')
-        self.register_plugin('feature_ver', module=ver)
+        self.register_plugin('feature_rosterver', module=rosterver)
 
         self.register_stanza(StreamFeatures)
         self.register_handler(
@@ -151,8 +150,8 @@ class StreamFeatureClient(BaseXMPP):
                         parsed[name] = {'required': False, }
                     else:
                         parsed[name] = {'required': True, }
-                elif name == 'ver':  # obsolete, seen on tigase.im
-                    parsed[name] = {}
+                elif name == 'rosterver':  # obsolete, seen on tigase.im
+                    parsed['ver'] = {}
                 else:
                     log.warn('Unhandled feature: %s - %s' % (name, node))
 
@@ -169,21 +168,21 @@ class StreamFeatureClient(BaseXMPP):
             if 'mechanisms' in parsed:
                 parsed['sasl_auth'] = parsed.pop('mechanisms')
 
-            # copied from ClientXMPP._handle_stream_features:
-            for order, name in self._stream_feature_order:
-                if name in features['features']:
-                    handler, restart = self._stream_feature_handlers[name]
-                    if handler(features) and restart:
-                        # Don't continue if the feature requires
-                        # restarting the XML stream.
-                        return True
-            log.debug('Finished processing stream features.')
+            # copied from ClientXMPP._handle_stream_features():
+            if 'starttls' in features['features']:
+                handler, restart = self._stream_feature_handlers['starttls']
+                if handler(features) and restart:
+                    # Don't continue if the feature requires
+                    # restarting the XML stream.
+                    return True
+
+            log.debug('Finished processing stream features: %s', self.features)
             self.event('stream_negotiated')
+            # end copied ClientXMPP._handle_stream_features()
 
             self.callback(host=self.address[0], port=self.address[1],
                           features=parsed)
+            self.disconnect()
         except Exception as e:
             log.error(e)
             raise
-        finally:
-            self.disconnect()

@@ -518,6 +518,7 @@ class Server(models.Model):
             self.countr = ''
 
     def _c2s_stream_feature_cb(self, host, port, features):
+        log.info('Stream Features: %s', sorted(features.keys()))
         self._c2s_online.add((host, port))
         self.last_seen = datetime.now()  # we saw an online host
 
@@ -551,7 +552,7 @@ class Server(models.Model):
                 features['sasl_auth']['mechanisms'] = list(mechs | old_mechs)
 
         self.c2s_starttls_required = features.get(
-            'starttls', {}).get('required')
+            'starttls', {}).get('required', False)
         for key in self.C2S_STREAM_FEATURES:
             setattr(self, 'c2s_%s' % key, key in features)
             features.pop(key, None)
@@ -570,11 +571,12 @@ class Server(models.Model):
         # verify c2s-connections
         client_srv = self.verify_srv_client()
         for domain, port, prio in client_srv:
-            feature_client = StreamFeatureClient(self.domain,
-                                                 self._c2s_stream_feature_cb)
+            feature_client = StreamFeatureClient(domain=self.domain,
+                                                 callback=self._c2s_stream_feature_cb)
             feature_client.connect(domain, port)
             feature_client.process(block=True)
 
+        # verify s2s connections
         server_srv = self.verify_srv_server()
         self.verify_server_online(server_srv)
 
