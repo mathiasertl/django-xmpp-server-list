@@ -57,7 +57,6 @@ class StreamFeatureClient(BaseXMPP):
         self.callback = callback
         self.cert_errback = cert_errback
         self.ca_certs = cert
-#        self.ssl_version = ssl.PROTOCOL_SSLv3
 
         # copied from ClientXMPP
         self.default_lang = lang
