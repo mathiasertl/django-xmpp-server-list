@@ -88,6 +88,9 @@ class StreamFeatureClient(BaseXMPP):
                      MatchXPath('{%s}features' % self.stream_ns),
                      self.get_features))
 
+        # do not reparse features:
+        self._features = None
+
     def register_feature(self, name, handler,  restart=False, order=5000):
         """Register a stream feature handler.
 
@@ -103,70 +106,79 @@ class StreamFeatureClient(BaseXMPP):
         self._stream_feature_order.append((order, name))
         self._stream_feature_order.sort()
 
+    def parse_features(self, features):
+        parsed = {}
+
+        found_tags = set([re.match('{.*}(.*)', n.tag).groups(1)[0]
+                         for n in features.xml.getchildren()])
+
+        for name, node in features.get_features().items():
+            ns = node.namespace
+
+            if name == 'amp':  # not yet seen in the wild!
+                log.error("Untested plugin: %s", node)
+                parsed[name] = {}
+            elif name == 'bind':  # not yet seen in the wild!
+                log.error("Untested plugin: %s", node)
+                parsed[name] = {}
+            elif name == 'compression':
+                methods = [n.text for n
+                           in node.findall('{%s}method' % ns)]
+                parsed[name] = {'methods': methods, }
+            elif name == 'c':  # Entity Capabilities (XEP-0115)
+                parsed[name] = {}
+            elif name == 'iq-auth':
+                parsed['auth'] = {}
+            elif name == 'iq-register':
+                parsed['register'] = {}
+            elif name == 'mechanisms':
+                mechs = [n.text for n
+                         in node.findall('{%s}mechanism' % ns)]
+                parsed[name] = {'mechanisms': mechs, }
+            elif name == 'session':  # not yet seen in the wild!
+                log.error("Untested plugin: %s", node)
+                parsed[name] = {}
+            elif name == 'sm':  # not yet seen in the wild!
+                log.error("Untested plugin: %s", node)
+                parsed[name] = {}
+            elif name == 'starttls':
+                required = node.find('{%s}required' % ns)
+                if required is None:
+                    parsed[name] = {'required': False, }
+                else:
+                    parsed[name] = {'required': True, }
+            elif name == 'rosterver':  # obsolete, seen on tigase.im
+                parsed['ver'] = {}
+            else:
+                log.warn('Unhandled feature: %s - %s' % (name, node))
+
+        unhandled = found_tags - set(parsed.keys())
+        if unhandled:
+            log.warn('%s: Unknown stream features: %s',
+                     self.boundjid.bare, ', '.join(unhandled))
+
+        # beautify the dict a bit:
+        if 'c' in parsed:
+            parsed['caps'] = parsed.pop('c')
+        if 'ver' in parsed:
+            parsed['rosterver'] = parsed.pop('ver')
+        if 'mechanisms' in parsed:
+            parsed['sasl_auth'] = parsed.pop('mechanisms')
+
+        return parsed
+
     def get_features(self, features):
         """
 
         .. NOTE:: A list of features is available `here
             <http://xmpp.org/registrar/stream-features.html>`_
         """
-        parsed = {}
-
         try:
-            found_tags = set([re.match('{.*}(.*)', n.tag).groups(1)[0]
-                             for n in features.xml.getchildren()])
-
-            for name, node in features.get_features().items():
-                ns = node.namespace
-
-                if name == 'amp':  # not yet seen in the wild!
-                    log.error("Untested plugin: %s", node)
-                    parsed[name] = {}
-                elif name == 'bind':  # not yet seen in the wild!
-                    log.error("Untested plugin: %s", node)
-                    parsed[name] = {}
-                elif name == 'compression':
-                    methods = [n.text for n
-                               in node.findall('{%s}method' % ns)]
-                    parsed[name] = {'methods': methods, }
-                elif name == 'c':  # Entity Capabilities (XEP-0115)
-                    parsed[name] = {}
-                elif name == 'iq-auth':
-                    parsed['auth'] = {}
-                elif name == 'iq-register':
-                    parsed['register'] = {}
-                elif name == 'mechanisms':
-                    mechs = [n.text for n
-                             in node.findall('{%s}mechanism' % ns)]
-                    parsed[name] = {'mechanisms': mechs, }
-                elif name == 'session':  # not yet seen in the wild!
-                    log.error("Untested plugin: %s", node)
-                    parsed[name] = {}
-                elif name == 'sm':  # not yet seen in the wild!
-                    log.error("Untested plugin: %s", node)
-                    parsed[name] = {}
-                elif name == 'starttls':
-                    required = node.find('{%s}required' % ns)
-                    if required is None:
-                        parsed[name] = {'required': False, }
-                    else:
-                        parsed[name] = {'required': True, }
-                elif name == 'rosterver':  # obsolete, seen on tigase.im
-                    parsed['ver'] = {}
-                else:
-                    log.warn('Unhandled feature: %s - %s' % (name, node))
-
-            unhandled = found_tags - set(parsed.keys())
-            if unhandled:
-                log.warn('%s: Unknown stream features: %s',
-                         self.boundjid.bare, ', '.join(unhandled))
-
-            # beautify the dict a bit:
-            if 'c' in parsed:
-                parsed['caps'] = parsed.pop('c')
-            if 'ver' in parsed:
-                parsed['rosterver'] = parsed.pop('ver')
-            if 'mechanisms' in parsed:
-                parsed['sasl_auth'] = parsed.pop('mechanisms')
+            if self._features is None:
+                self._features = self.parse_features(features)
+                self.callback(host=self.address[0], port=self.address[1],
+                              features=self._features)
+                print(features)
 
             # copied from ClientXMPP._handle_stream_features():
             if 'starttls' in features['features']:
@@ -176,12 +188,10 @@ class StreamFeatureClient(BaseXMPP):
                     # restarting the XML stream.
                     return True
 
-            log.debug('Finished processing stream features: %s', self.features)
+            log.debug('Finished processing stream features.')
             self.event('stream_negotiated')
             # end copied ClientXMPP._handle_stream_features()
 
-            self.callback(host=self.address[0], port=self.address[1],
-                          features=parsed)
             self.disconnect()
         except Exception as e:
             log.error(e)
