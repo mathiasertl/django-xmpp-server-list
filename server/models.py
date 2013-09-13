@@ -24,15 +24,15 @@ from datetime import datetime
 
 from xml.etree import ElementTree
 
-from sleekxmpp.xmlstream import XMLStream
-
 import dns.resolver
 import pygeoip
 
 from django.db import models
 from django.conf import settings
 
-logger = logging.getLogger('xmpplist.server')
+from xmpp.clients import StreamFeatureClient
+
+log = logging.getLogger(__name__)
 geoip = pygeoip.GeoIP(
     os.path.join(settings.GEOIP_CONFIG_ROOT, 'GeoLiteCity.dat'),
     pygeoip.MEMORY_CACHE
@@ -272,7 +272,7 @@ class Server(models.Model):
         :param    xmlns: The XML stream namespace used if XML stream features
             are checked
         """
-        logger.debug('Verify connectivity for %s %s', hostname, port)
+        log.debug('Verify connectivity for %s %s', hostname, port)
         myfeatures = set()
         hosts = get_hosts(hostname, port)
         if not hosts:
@@ -311,7 +311,6 @@ class Server(models.Model):
                 raise RuntimeError('Failed to connect to %s (%s): %s'
                                    % (addr_str, hostname, e))
 
-        print(myfeatures)
         return myfeatures
 
     def get_stream_features(self, sock, xmlns='jabber:client'):
@@ -385,15 +384,10 @@ class Server(models.Model):
             sock.send('</stream:stream>'.encode('utf-8'))
             sock.recv(4096)
         except Exception as e:
-            logger.error('%s: Exception while getting stream features: %s',
+            log.error('%s: Exception while getting stream features: %s',
                          self.domain, e)
 
         return features
-
-    def connect(self, host, port, tls=True, ssl=False):
-        stream = XMLStream()
-        connected = stream.connect(host, port, use_tls=True, use_ssl=False)
-        return connected
 
     def srv_lookup(self, service, proto='tcp'):
         """
@@ -538,13 +532,24 @@ class Server(models.Model):
             self.city = ''
             self.countr = ''
 
+    def _c2s_callback(self, features):
+        log.debug('%s: %s', self.domain, features)
+
     def verify(self):
         self.verified = False
         self.logentries.all().delete()
 
         # perform various checks:
         client_srv = self.verify_srv_client()
+        for domain, port, prio in client_srv:
+            print('Features from %s:%s' % (domain, port))
+            feature_client = StreamFeatureClient(self.domain, self._c2s_callback)
+            feature_client.connect(domain, port)
+            feature_client.process()
+        return
+
         client_hosts, stream_features = self.verify_client_online(client_srv)
+
 
         if client_hosts:
             self.last_seen = datetime.now()
@@ -596,7 +601,7 @@ class Server(models.Model):
         return self.contact
 
     def fail(self, key, msg='', typ=LOG_TYPE_VERIFICATION):
-        logger.debug('%s: %s' % (key, msg))
+        log.debug('%s: %s' % (key, msg))
         self.logentries.create(key=key, msg=msg, typ=typ)
 
     def failed(self, key):
