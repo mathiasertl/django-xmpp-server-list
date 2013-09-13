@@ -93,9 +93,12 @@ class StreamFeatureClient(BaseXMPP):
             for name, node in features.get_features().items():
                 ns = node.namespace
 
-                if name == 'amp':
+                if name == 'amp':  # not yet seen in the wild!
                     log.error("Untested plugin: %s", node)
                     parsed['amp'] = {}
+                elif name == 'bind':  # not yet seen in the wild!
+                    log.error("Untested plugin: %s", node)
+                    parsed['bind'] = {}
                 elif name == 'compression':
                     methods = [n.text for n
                                in node.findall('{%s}method' % ns)]
