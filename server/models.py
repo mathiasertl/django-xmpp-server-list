@@ -19,11 +19,9 @@ import copy
 import logging
 import os
 import socket
-import ssl
 
 from datetime import datetime
 
-import dns.resolver
 import pygeoip
 
 from django.db import models
@@ -31,6 +29,8 @@ from django.conf import settings
 
 from xmpp.clients import StreamFeatureClient
 
+from server.dns import srv_lookup
+from server.dns import lookup
 from server.managers import ServerManager
 
 log = logging.getLogger(__name__)
@@ -127,9 +127,6 @@ class ServerSoftware(models.Model):
 
 
 class Features(models.Model):
-    # connection-related:
-    has_ipv6 = models.BooleanField(default=False)
-
     # features:
     has_muc = models.BooleanField(default=False)
     has_irc = models.BooleanField(default=False)
@@ -145,34 +142,6 @@ class Features(models.Model):
             domain = 'INVALID SERVER!'
 
         return 'Features for %s' % (domain)
-
-    def check_ipv6(self, servers):
-        """
-        Check for correct IPv6 DNS entries.
-
-        This test succeeds if all servers returned by the xmpp-client lookup
-        have a AAAA record.
-        """
-        if self.server.failed('srv-client'):
-            self.has_ipv6 = False
-            return self.has_ipv6
-
-        self.has_ipv6 = True
-        for hostname, port, priority in servers:
-            try:
-                if not get_hosts(hostname, port, ipv4=False, ipv6=True):
-                    self.has_ipv6 = False
-                    self.server.log(
-                        'no-ipv6', msg='%s has no IPv6 record.' % hostname,
-                        typ=LOG_TYPE_INFO)
-                    break
-            except Exception as e:
-                msg = 'An error occured while checking IPv6 records for %s: %s' % (hostname, e)
-                self.server.log('no-ipv6', msg=msg, typ=LOG_TYPE_INFO)
-                self.has_ipv6 = False
-                break
-
-        return self.has_ipv6
 
 
 class Server(models.Model):
@@ -288,24 +257,6 @@ class Server(models.Model):
     def __unicode__(self):
         return self.domain
 
-    def srv_lookup(self, service, proto='tcp'):
-        """
-        Function for doing SRV-lookups. Returns a list of host/port tuples for
-        the given srv-record.
-        """
-        record = '_%s._%s.%s' % (service, proto, self.domain)
-        try:
-            resolver = dns.resolver.Resolver()
-            resolver.lifetime = 3.0
-            answers = resolver.query(record, 'SRV')
-        except:
-            return []
-        hosts = []
-        for answer in answers:
-            hosts.append((answer.target.to_text(True), answer.port,
-                          answer.priority))
-        return sorted(hosts, key=lambda host: host[2])
-
     def verify_srv_client(self):
         """
         Verify xmpp-client SRV records.
@@ -313,7 +264,7 @@ class Server(models.Model):
         This test succeeds if the 'xmpp-client' SRV record has one or more
         entries.
         """
-        hosts = self.srv_lookup('xmpp-client')
+        hosts = srv_lookup(self.domain, 'xmpp-client')
         if hosts:
             self.c2s_srv_records = True
         else:
@@ -328,7 +279,7 @@ class Server(models.Model):
         This test succeeds if the 'xmpp-server' SRV record has one or more
         entries.
         """
-        hosts = self.srv_lookup('xmpp-server')
+        hosts = srv_lookup(self.domain, 'xmpp-server')
         if hosts:
             self.s2s_srv_records = True
         else:
@@ -442,9 +393,9 @@ class Server(models.Model):
         self.ipv6 = True
         try:
             for host in set(hosts):
-                resolver = dns.resolver.Resolver()
-                resolver.lifetime = 3.0
-                resolver.query(host, 'AAAA')
+                if not lookup(host, ipv4=False):
+                    self.ipv6 = False
+                    return
         except:
             self.ipv6 = False
 
