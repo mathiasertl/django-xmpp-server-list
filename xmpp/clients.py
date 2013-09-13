@@ -23,6 +23,7 @@ from sleekxmpp.basexmpp import BaseXMPP
 from sleekxmpp.xmlstream.handler import Callback
 from sleekxmpp.xmlstream.matcher import MatchXPath
 
+from xmpp.plugins import amp
 from xmpp.plugins import auth
 from xmpp.plugins import caps
 from xmpp.plugins import compression
@@ -54,6 +55,7 @@ class StreamFeatureClient(BaseXMPP):
         self.register_plugin('feature_caps', module=caps)
         self.register_plugin('feature_register', module=register)
         self.register_plugin('feature_auth', module=auth)
+        self.register_plugin('feature_amp', module=amp)
 
         self.register_stanza(StreamFeatures)
         self.register_handler(
