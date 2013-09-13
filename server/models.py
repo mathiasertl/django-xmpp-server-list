@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with xmpplist.  If not, see <http://www.gnu.org/licenses/>.
 
+import copy
 import logging
 import os
 import socket
@@ -241,7 +242,7 @@ class Server(models.Model):
     c2s_ssl_verified = models.BooleanField(default=True)
     s2s_tls_verified = models.BooleanField(default=True)
 
-    # stream features:
+    # c2s stream features:
     c2s_auth = models.BooleanField(default=False)  # Non-SASL authentication
     c2s_caps = models.BooleanField(default=False)
     c2s_compression = models.BooleanField(default=False)
@@ -250,6 +251,11 @@ class Server(models.Model):
     c2s_sasl_auth = models.BooleanField(default=False)
     c2s_starttls = models.BooleanField(default=False)
     c2s_starttls_required = models.BooleanField(default=False)
+
+    # s2s stream features:
+    s2s_starttls = models.BooleanField(default=False)
+    s2s_starttls_required = models.BooleanField(default=False)
+    s2s_caps = models.BooleanField(default=False)
 
     # contact information
     CONTACT_TYPE_CHOICES = (
@@ -265,6 +271,10 @@ class Server(models.Model):
         'register',
         'rosterver',
         'sasl_auth',
+        'starttls',
+    ]
+    S2S_STREAM_FEATURES = [
+        'caps',
         'starttls',
     ]
     contact = models.CharField(
@@ -512,7 +522,6 @@ class Server(models.Model):
         else:
             return '%s/%s' % (self.city, self.country)
 
-
     def set_location(self, hostname):
         try:
             data = geoip.record_by_name(hostname)
@@ -522,39 +531,48 @@ class Server(models.Model):
             self.city = ''
             self.countr = ''
 
+    def _merge_features(self, new, kind):
+        attr = '_%s_stream_features' % kind
+        old = getattr(self, attr)
+        if old is None:
+            setattr(self, attr, copy.deepcopy(new))
+            return new
+
+        if old != new:
+            # This host does not deliver the exact same stream features as a
+            # previous host. We modify the features to only include the
+            # features common to both hosts.
+            log.error("%s: Differing stream features found.", self.domain)
+
+            for key in set(new.keys()) - set(old.keys()):
+                # remove new keys found in new but not in old features
+                del new[key]
+            assert sorted(new.keys()) == sorted(old.keys())
+
+            if 'starttls' in new:  # handle starttls required field
+                old_req = old['starttls']['required']
+                new_req = new['starttls']['required']
+                if not old_req and new_req:
+                    new['starttls']['required'] = False
+
+            if new['compression']:
+                meths = set(new['compression']['methods'])
+                old_meths = set(old['compression']['methods'])
+                new['compression']['methods'] = list(meths | old_meths)
+            if new['sasl_auth']:
+                mechs = set(new['sasl_auth']['mechanisms'])
+                old_mechs = set(old['sasl_auth']['mechanisms'])
+                new['sasl_auth']['mechanisms'] = list(mechs | old_mechs)
+
+        setattr(self, attr, copy.deepcopy(new))
+        return new
+
     def _c2s_stream_feature_cb(self, host, port, features):
         log.info('Stream Features: %s', sorted(features.keys()))
         self._c2s_online.add((host, port))
         self.last_seen = datetime.now()  # we saw an online host
 
-        if self._c2s_stream_features is None:
-            self._c2s_stream_features = features.copy()
-
-        if self._c2s_stream_features != features:
-            # This host does not deliver the exact same stream features as a
-            # previous host. We modify the features to only include the
-            # features common to both hosts.
-            log.error("%s: Differing stream features found.", self.domain)
-            old = self._c2s_stream_features
-
-            for key in set(features.keys()) - set(old.keys()):
-                # remove new keys found in new but not in old features
-                del features[key]
-            assert sorted(features.keys()) == sorted(old.keys())
-
-            if 'starttls' in features:  # handle starttls required field
-                if features['starttls'] == 'required' \
-                        and not old['starttls']['required']:
-                    features['starttls']['required'] = False
-
-            if features['compression']:
-                meths = set(features['compression']['methods'])
-                old_meths = set(old['compression']['methods'])
-                features['compression']['methods'] = list(meths | old_meths)
-            if features['sasl_auth']:
-                mechs = set(features['sasl_auth']['mechanisms'])
-                old_mechs = set(old['sasl_auth']['mechanisms'])
-                features['sasl_auth']['mechanisms'] = list(mechs | old_mechs)
+        features = self._merge_features(features, 'c2s')
 
         self.c2s_starttls_required = features.get(
             'starttls', {}).get('required', False)
@@ -575,9 +593,37 @@ class Server(models.Model):
             self.c2s_tls_verified = False
         self.save()
 
+    def _s2s_stream_feature_cb(self, host, port, features):
+        log.info('Stream Features: %s', sorted(features.keys()))
+        self._s2s_online.add((host, port))
+
+        features = self._merge_features(features, 's2s')
+
+        self.s2s_starttls_required = features.get(
+            'starttls', {}).get('required', False)
+        for key in self.S2S_STREAM_FEATURES:
+            setattr(self, 's2s_%s' % key, key in features)
+            features.pop(key, None)
+
+        if features:
+            log.debug('%s: Unhandled features: %s', self.domain, features)
+        self.save()
+
+    def _s2s_cert_invalid(self, host, port, ssl, tls):
+        log.error('Invalid SSL certificate: %s:%s')
+        self.s2s_tls_verified = False
+        self.save()
+
     def verify(self):
         self._c2s_online = set()  # list of online c2s SRV records
+        self._s2s_online = set()  # list of online s2s SRV records
         self._c2s_stream_features = None  # private var for stream feature checking
+        self._s2s_stream_features = None  # private var for stream feature checking
+
+        # set the default to True, error callbacks will set to false on error
+        self.c2s_ssl_verified = True
+        self.c2s_tls_verified = True
+        self.s2s_tls_verified = True
 
         self.verified = False
         self.logentries.all().delete()
@@ -585,18 +631,27 @@ class Server(models.Model):
         # verify c2s-connections
         client_srv = self.verify_srv_client()
         for domain, port, prio in client_srv:
-            feature_client = StreamFeatureClient(
+            client = StreamFeatureClient(
                 domain=self.domain,
                 callback=self._c2s_stream_feature_cb,
                 cert=self.ca.certificate,
                 cert_errback=self._c2s_cert_invalid
             )
-            feature_client.connect(domain, port)
-            feature_client.process(block=True)
+            client.connect(domain, port)
+            client.process(block=True)
 
         # verify s2s connections
         server_srv = self.verify_srv_server()
-        self.verify_server_online(server_srv)
+        for domain, port, prio in server_srv:
+            client = StreamFeatureClient(
+                domain=self.domain,
+                callback=self._s2s_stream_feature_cb,
+                cert=self.ca.certificate,
+                cert_errback=self._s2s_cert_invalid,
+                ns='jabber:server',
+            )
+            client.connect(domain, port)
+            client.process(block=True)
 
         if self._c2s_online:
             self.set_location(list(self._c2s_online)[0])
