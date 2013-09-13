@@ -23,5 +23,23 @@ from server.querysets import ServerQuerySet
 
 
 class ServerManager(models.Manager):
-    def get_queryset(self):
-        return ServerQuerySet()
+    def get_query_set(self):
+        return ServerQuerySet(self.model)
+
+    def plain(self):
+        return self.get_queryset().plain()
+
+    def c2s_secure(self):
+        return self.get_queryset().c2s_secure()
+
+    def s2s_secure(self):
+        return self.get_queryset().s2s_secure()
+
+    def secure(self):
+        return self.get_queryset().secure()
+
+    def ssl(self):
+        return self.get_queryset().ssl()
+
+    def tls(self):
+        return self.get_queryset().tls()

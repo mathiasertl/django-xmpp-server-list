@@ -41,11 +41,11 @@ def index(request):
     if 'features' in request.GET:
         features = request.GET['features'].split(',')
         if 'plain' in features:
-            servers = servers.filter(features__has_plain=True)
+            servers = servers.plain()
         if 'ssl' in features:
-            servers = servers.filter(features__has_ssl=True)
+            servers = servers.ssl()
         if 'tls' in features:
-            servers = servers.filter(features__has_tls=True)
+            servers = servers.tls()
         if 'ipv6' in features:
             servers = servers.filter(features__has_ipv6=True)
 

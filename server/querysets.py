@@ -21,4 +21,26 @@ from django.db.models.query import QuerySet
 
 
 class ServerQuerySet(QuerySet):
-    pass
+    def plain(self):
+        """Servers that allow unencrypted connections."""
+        return self.filter(c2s_starttls_required=False)
+
+    def c2s_secure(self):
+        """Servers that only allow encrypted c2s connections."""
+        return self.exclude(c2s_starttls_required=True)
+
+    def s2s_secure(self):
+        """Servers that only allow encrypted s2s connections."""
+        return self.exclude(s2s_starttls_required=True)
+
+    def secure(self):
+        """Servers that only allow encrypted c2s/s2s connections."""
+        return self.c2s_secure().s2s_secure()
+
+    def ssl(self):
+        """Return servers that allow SSL connections."""
+        return self.filter(ssl_port__isnull=False)
+
+    def tls(self):
+        """Return servers that allow TLS connections."""
+        return self
