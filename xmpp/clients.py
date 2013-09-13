@@ -99,12 +99,12 @@ class StreamFeatureClient(BaseXMPP):
                     parsed[name] = {}
                 elif name == 'iq-auth':
                     parsed['auth'] = {}
+                elif name == 'iq-register':
+                    parsed['register'] = {}
                 elif name == 'mechanisms':
                     mechs = [n.text for n
                              in node.findall('{%s}mechanism' % ns)]
                     parsed[name] = {'mechanisms': mechs, }
-                elif name == 'register':
-                    parsed[name] = {}
                 elif name == 'starttls':
                     required = node.find('{%s}required' % ns)
                     if required is None:

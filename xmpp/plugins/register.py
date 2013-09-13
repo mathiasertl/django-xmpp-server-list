@@ -7,7 +7,7 @@ class RegisterStanza(ElementBase):
     name = 'register'
     namespace = 'http://jabber.org/features/iq-register'
     interfaces = set()
-    plugin_attrib = name
+    plugin_attrib = 'iq-register'
 
 
 class feature_register(BasePlugin):
