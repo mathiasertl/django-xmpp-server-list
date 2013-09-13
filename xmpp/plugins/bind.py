@@ -37,6 +37,7 @@ class feature_bind(BasePlugin):
     """
 
     def plugin_init(self):
+        self.description = 'RFC 6120: Stream Feature: Resource Binding'
         self.xmpp.register_feature(
             'bind',
             self._handle_bind,

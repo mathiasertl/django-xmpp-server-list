@@ -35,6 +35,7 @@ class feature_sm(BasePlugin):
     """
 
     def plugin_init(self):
+        self.description = 'XEP-0198: Stream Management'
         self.xmpp.register_feature(
             'sm',
             self._handle_sm,

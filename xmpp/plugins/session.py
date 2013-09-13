@@ -35,6 +35,7 @@ class feature_session(BasePlugin):
     """
 
     def plugin_init(self):
+        self.description = 'RFC 6121: Stream Feature: Session Establishment'
         self.xmpp.register_feature(
             'session',
             self._handle_session,

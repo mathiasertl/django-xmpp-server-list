@@ -31,9 +31,13 @@ class CapsStanza(ElementBase):
 
 
 class feature_caps(BasePlugin):
-    """Caps"""
+    """Plugin for Entity Capabilities (XEP-0115).
+
+    .. seealso:: http://xmpp.org/extensions/xep-0115.html
+    """
 
     def plugin_init(self):
+        self.description = 'XEP-0115: Entity Capabilities'
         self.xmpp.register_feature(
             'c',
             self._handle_caps,

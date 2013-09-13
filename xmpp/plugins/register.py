@@ -37,6 +37,7 @@ class feature_register(BasePlugin):
     """
 
     def plugin_init(self):
+        self.description = 'XEP-0077: In-Band Registration'
         self.xmpp.register_feature(
             'register',
             self._handle_register,

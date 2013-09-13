@@ -31,10 +31,13 @@ class CompressionStanza(ElementBase):
 
 
 class feature_compression(BasePlugin):
-    """Compression"""
+    """Plugin for Stream Compression (XEP-0138).
+
+    .. seealso:: http://xmpp.org/extensions/xep-0138.html
+    """
 
     def plugin_init(self):
-        self.description = "Compression"
+        self.description = 'XEP-0138: Stream Compression'
         self.xmpp.register_feature(
             'compression',
             self._handle_compression,

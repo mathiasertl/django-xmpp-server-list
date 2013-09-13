@@ -37,6 +37,7 @@ class feature_auth(BasePlugin):
     """
 
     def plugin_init(self):
+        self.description = 'XEP-0078: Non-SASL Authentication'
         self.xmpp.register_feature(
             'auth',
             self._handle_auth,

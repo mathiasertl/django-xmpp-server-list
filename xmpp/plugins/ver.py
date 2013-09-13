@@ -35,6 +35,7 @@ class feature_ver(BasePlugin):
     """
 
     def plugin_init(self):
+        self.description = 'XEP-0237: Roster Versioning (obsolete)'
         self.xmpp.register_feature(
             'ver',
             self._handle_ver,

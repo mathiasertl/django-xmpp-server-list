@@ -35,6 +35,7 @@ class feature_amp(BasePlugin):
     """
 
     def plugin_init(self):
+        self.description = 'XEP-0079: Advanced Message Processing'
         self.xmpp.register_feature(
             'amp',
             self._handle_amp,
