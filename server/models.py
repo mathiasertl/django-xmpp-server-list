@@ -33,6 +33,8 @@ from django.conf import settings
 
 from xmpp.clients import StreamFeatureClient
 
+from server.managers import ServerManager
+
 log = logging.getLogger(__name__)
 geoip = pygeoip.GeoIP(
     os.path.join(settings.GEOIP_CONFIG_ROOT, 'GeoLiteCity.dat'),
@@ -193,6 +195,7 @@ class Server(models.Model):
         permissions = (
             ('moderate', 'can moderate servers'),
         )
+    objects = ServerManager()
 
     # basic information:
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='servers')
