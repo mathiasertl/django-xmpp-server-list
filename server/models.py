@@ -342,10 +342,10 @@ class Server(models.Model):
         self._c2s_stream_features = None  # private var for stream feature checking
         self._s2s_stream_features = None  # private var for stream feature checking
 
-        # set the default to True, error callbacks will set to false on error
-        self.c2s_ssl_verified = True
-        self.c2s_tls_verified = True
-        self.s2s_tls_verified = True
+        # set some defaults:
+        self.c2s_ssl_verified = False
+        self.c2s_tls_verified = False
+        self.s2s_tls_verified = False
 
         self.verified = False
 
@@ -353,6 +353,9 @@ class Server(models.Model):
         client_srv = self.verify_srv_client()
         for domain, port, prio in client_srv:
             log.debug('Verify c2s on %s:%s', domain, port)
+            # Set to True, the cert_errback will set this to False:
+            self.c2s_tls_verified = True
+
             client = StreamFeatureClient(
                 domain=self.domain,
                 callback=self._c2s_stream_feature_cb,
@@ -370,6 +373,9 @@ class Server(models.Model):
         if self.ssl_port:
             for host in list(self._c2s_online):
                 log.debug('Verify c2s/ssl on %s:%s', host[0], self.ssl_port)
+                # Set to True, the cert_errback will set this to False:
+                self.c2s_ssl_verified = True
+
                 client = StreamFeatureClient(
                     domain=self.domain,
                     callback=self._c2s_stream_feature_cb,
@@ -389,6 +395,9 @@ class Server(models.Model):
         server_srv = self.verify_srv_server()
         for domain, port, prio in server_srv:
             log.debug('Verify s2s on %s:%s', domain, port)
+            # Set to True, the cert_errback will set this to False:
+            self.s2s_tls_verified = True
+
             client = StreamFeatureClient(
                 domain=self.domain,
                 callback=self._s2s_stream_feature_cb,
