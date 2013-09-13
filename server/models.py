@@ -347,7 +347,7 @@ class Server(models.Model):
         self.c2s_tls_verified = False
         self.s2s_tls_verified = False
 
-        self.verified = False
+        self.verified = True  # only says that we had a verification run!
 
         # verify c2s-connections
         client_srv = self.verify_srv_client()
@@ -363,7 +363,7 @@ class Server(models.Model):
                 cert_errback=self._c2s_cert_invalid
             )
             try:
-                with timeout(3, client):
+                with timeout(5, client):
                     client.connect(domain, port, reattempt=False)
                     client.process(block=True)
             except TimeoutException:
@@ -384,7 +384,7 @@ class Server(models.Model):
                 )
 
                 try:
-                    with timeout(3, client):
+                    with timeout(5, client):
                         client.connect(host[0], self.ssl_port,
                                        use_tls=False, use_ssl=True, reattempt=False)
                         client.process(block=True)
@@ -406,7 +406,7 @@ class Server(models.Model):
                 ns='jabber:server',
             )
             try:
-                with timeout(3, client):
+                with timeout(5, client):
                     client.connect(domain, port, reattempt=False)
                     client.process(block=True)
             except TimeoutException:
