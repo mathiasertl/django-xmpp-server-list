@@ -25,9 +25,11 @@ from sleekxmpp.xmlstream.matcher import MatchXPath
 
 from xmpp.plugins import amp
 from xmpp.plugins import auth
+from xmpp.plugins import bind
 from xmpp.plugins import caps
 from xmpp.plugins import compression
 from xmpp.plugins import register
+from xmpp.plugins import session
 
 log = logging.getLogger(__name__)
 
@@ -51,10 +53,12 @@ class StreamFeatureClient(BaseXMPP):
         # try to register features
         self.register_plugin('feature_amp', module=amp)
         self.register_plugin('feature_auth', module=auth)
+        self.register_plugin('feature_bind', module=bind)
         self.register_plugin('feature_caps', module=caps)
         self.register_plugin('feature_compression', module=compression)
         self.register_plugin('feature_mechanisms')
         self.register_plugin('feature_register', module=register)
+        self.register_plugin('feature_session', module=session)
         self.register_plugin('feature_starttls')
 
         self.register_stanza(StreamFeatures)
@@ -95,10 +99,10 @@ class StreamFeatureClient(BaseXMPP):
 
                 if name == 'amp':  # not yet seen in the wild!
                     log.error("Untested plugin: %s", node)
-                    parsed['amp'] = {}
+                    parsed[name] = {}
                 elif name == 'bind':  # not yet seen in the wild!
                     log.error("Untested plugin: %s", node)
-                    parsed['bind'] = {}
+                    parsed[name] = {}
                 elif name == 'compression':
                     methods = [n.text for n
                                in node.findall('{%s}method' % ns)]
@@ -113,6 +117,9 @@ class StreamFeatureClient(BaseXMPP):
                     mechs = [n.text for n
                              in node.findall('{%s}mechanism' % ns)]
                     parsed[name] = {'mechanisms': mechs, }
+                elif name == 'session':  # not yet seen in the wild!
+                    log.error("Untested plugin: %s", node)
+                    parsed[name] = {}
                 elif name == 'starttls':
                     required = node.find('{%s}required' % ns)
                     if required is None:
