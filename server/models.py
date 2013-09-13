@@ -295,135 +295,6 @@ class Server(models.Model):
     def __unicode__(self):
         return self.domain
 
-    def check_hostname(self, hostname, port, ssl=False, tls=False,
-                       features=False, xmlns='jabber:client'):
-        """
-        Returns True if all addresses for the given host are reachable on the
-        given port.
-
-        :param hostname: A hostname specified by an SRV record.
-        :param     port: A port specified by an SRV record.
-        :param   domain: If given, XML stream features will be checked.
-        :param    xmlns: The XML stream namespace used if XML stream features
-            are checked
-        """
-        log.debug('Verify connectivity for %s %s', hostname, port)
-        myfeatures = set()
-        hosts = get_hosts(hostname, port)
-        if not hosts:
-            raise RuntimeError(
-                "%s: No hosts returned by DNS lookup" % hostname)
-
-        first_iter = True
-        for af, socktype, proto, canonname, connect_args in hosts:
-            if af == socket.AF_INET:
-                addr_str = '%s:%s (%s)' % (connect_args[0], connect_args[1],
-                                           hostname)
-            elif af == socket.AF_INET6:
-                addr_str = '[%s]:%s (%s)' % (connect_args[0], connect_args[1],
-                                             hostname)
-
-            try:
-                s = socket.socket(af, socktype, proto)
-                s.settimeout(1.0)
-                s.connect(connect_args)
-
-                if ssl:  # wrap SSL if requested
-                    s = wrap_socket(s, self.ca)
-
-                if features:
-                    sock_features = self.get_stream_features(s, xmlns)
-                    if first_iter:
-                        myfeatures = sock_features
-                        first_iter = False
-                    else:
-                        myfeatures &= sock_features
-
-                s.close()
-            except RuntimeError as e:
-                raise e
-            except Exception as e:
-                raise RuntimeError('Failed to connect to %s (%s): %s'
-                                   % (addr_str, hostname, e))
-
-        return myfeatures
-
-    def get_stream_features(self, sock, xmlns='jabber:client'):
-        """
-        <stream:stream
-                xmlns='jabber:client'
-                xmlns:stream='http://etherx.jabber.org/streams'
-                id='00a5101e-4e49-43b8-8449-670a862d33f7'
-                from='gajim.org'
-                version='1.0'
-                xml:lang='en'>
-            <stream:features>
-                <mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>
-                    <mechanism>SCRAM-SHA-1</mechanism>
-                    <mechanism>DIGEST-MD5</mechanism>
-                </mechanisms>
-                <starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>
-            </stream:features>
-        """
-        features = set()
-
-        try:
-            msg = """<stream:stream xmlns='%s'
-                xmlns:stream='http://etherx.jabber.org/streams'
-                to='%s' version='1.0'>""" % (xmlns, self.domain)
-            sock.send(msg.encode('utf-8'))
-            resp = sock.recv(4096).decode('utf-8')
-            if not resp:  # happens at sternenschweif.de
-                raise RuntimeError(
-                    '%s: No answer received during stream negotiation.'
-                    % self.domain)
-            if '<stream:error>' in resp:
-                raise RuntimeError(
-                    '%s: Received error during stream negotiation.'
-                    % self.domain)
-
-            i = 0
-            while not resp.endswith('</stream:features>') and i < 10:
-                resp += sock.recv(4096).decode('utf-8')
-                i += 1
-
-            elem = ElementTree.fromstring(resp + '</stream:stream>')
-            elem = elem.find('{http://etherx.jabber.org/streams}features')
-
-            starttls = elem.find('{urn:ietf:params:xml:ns:xmpp-tls}starttls')
-            if starttls is not None:
-                features.add('starttls')
-
-            stanza = '{urn:ietf:params:xml:ns:xmpp-tls}required'
-            if starttls is None or starttls.find(stanza) is None:
-                features.add('plain')
-
-            stanza = '{http://jabber.org/features/iq-register}register'
-            if elem.find(stanza) is not None:
-                features.add('register')
-
-            if 'starttls' in features and not self.failed('tls-cert'):
-                try:
-                    stanza = "<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>"
-                    sock.send(stanza.encode('utf-8'))
-                    sock.recv(4096).decode('utf-8')
-                    sock = wrap_socket(sock, self.ca)
-                except Exception as e:
-                    peer = sock.getpeername()
-                    addr, port = peer[0], peer[1]
-                    self.fail(
-                        'tls-cert',
-                        '<ul><li>%s, port %s: %s</li></ul>' % (addr, port, e))
-
-            # close stream again:
-            sock.send('</stream:stream>'.encode('utf-8'))
-            sock.recv(4096)
-        except Exception as e:
-            log.error('%s: Exception while getting stream features: %s',
-                         self.domain, e)
-
-        return features
-
     def srv_lookup(self, service, proto='tcp'):
         """
         Function for doing SRV-lookups. Returns a list of host/port tuples for
@@ -468,51 +339,6 @@ class Server(models.Model):
 
         return hosts
 
-    def verify_server_online(self, hosts):
-        """
-        Verify that at least one of the hosts referred to by the xmpp-server
-        SRV records is currently online.
-        """
-        online, errors = [], []
-        if self.failed('srv-server') or not hosts:
-            return online
-
-        for host in hosts:
-            try:
-                self.check_hostname(host[0], host[1])
-            except RuntimeError as e:
-                errors.append(str(e))
-                continue
-
-            online.append(host)
-
-        if not online:  # not online, append errors to 'server-online' message
-            self.fail('server-offline', msg=html_list(errors))
-        elif errors:  # only some hosts are offline, so this is only a warning
-            self.log('hosts-offline', msg=html_list(errors),
-                     typ=LOG_TYPE_WARNING)
-
-        return online
-
-    def verify_ssl(self, hosts):
-        """Verify SSL connectivity.
-
-        This check receives only the hosts returned by verify_client_online
-        and, unlike that method, fails if only one of the connections fails
-        (since all hosts are assumed to be in fact online.)
-        """
-        self.ssl_cert = True
-        online, errors = [], []
-        for host, port, priority in hosts:
-            try:
-                self.check_hostname(host, int(self.ssl_port), ssl=True)
-                online.append(host)
-            except RuntimeError as e:
-                errors.append(str(e))
-
-        if errors:
-            self.fail('ssl-offline', msg=html_list(errors))
-
     @property
     def location(self):
         if not self.city and not self.country:
@@ -531,12 +357,16 @@ class Server(models.Model):
             self.city = ''
             self.countr = ''
 
-    def _merge_features(self, new, kind):
+    def _merge_features(self, new, kind, ssl=False):
         attr = '_%s_stream_features' % kind
         old = getattr(self, attr)
         if old is None:
             setattr(self, attr, copy.deepcopy(new))
             return new
+
+        if ssl and 'starttls' in old:
+            # fake starttls stanza on legacy SSL so merging works
+            new['starttls'] = old['starttls']
 
         if old != new:
             # This host does not deliver the exact same stream features as a
@@ -547,7 +377,6 @@ class Server(models.Model):
             for key in set(new.keys()) - set(old.keys()):
                 # remove new keys found in new but not in old features
                 del new[key]
-            assert sorted(new.keys()) == sorted(old.keys())
 
             if 'starttls' in new:  # handle starttls required field
                 old_req = old['starttls']['required']
@@ -567,12 +396,13 @@ class Server(models.Model):
         setattr(self, attr, copy.deepcopy(new))
         return new
 
-    def _c2s_stream_feature_cb(self, host, port, features):
-        log.info('Stream Features: %s', sorted(features.keys()))
+    def _c2s_stream_feature_cb(self, host, port, features, ssl, tls):
+        log.info('Stream Features: %s:%s: %s', host, port,
+                 sorted(features.keys()))
         self._c2s_online.add((host, port))
         self.last_seen = datetime.now()  # we saw an online host
 
-        features = self._merge_features(features, 'c2s')
+        features = self._merge_features(features, 'c2s', ssl)
 
         self.c2s_starttls_required = features.get(
             'starttls', {}).get('required', False)
@@ -582,7 +412,6 @@ class Server(models.Model):
 
         if features:
             log.debug('%s: Unhandled features: %s', self.domain, features)
-        self.save()
 
     def _c2s_cert_invalid(self, host, port, ssl, tls):
         log.error('Invalid SSL certificate: %s:%s (ssl=%s, tls=%s)',
@@ -591,10 +420,10 @@ class Server(models.Model):
             self.c2s_ssl_verified = False
         else:
             self.c2s_tls_verified = False
-        self.save()
 
-    def _s2s_stream_feature_cb(self, host, port, features):
-        log.info('Stream Features: %s', sorted(features.keys()))
+    def _s2s_stream_feature_cb(self, host, port, features, ssl, tls):
+        log.info('Stream Features: %s:%s: %s', host, port,
+                 sorted(features.keys()))
         self._s2s_online.add((host, port))
 
         features = self._merge_features(features, 's2s')
@@ -607,12 +436,10 @@ class Server(models.Model):
 
         if features:
             log.debug('%s: Unhandled features: %s', self.domain, features)
-        self.save()
 
     def _s2s_cert_invalid(self, host, port, ssl, tls):
         log.error('Invalid SSL certificate: %s:%s')
         self.s2s_tls_verified = False
-        self.save()
 
     def verify(self):
         self._c2s_online = set()  # list of online c2s SRV records
@@ -640,6 +467,19 @@ class Server(models.Model):
             client.connect(domain, port)
             client.process(block=True)
 
+        # verify legacy SSL connections
+        if self.ssl_port:
+            for host in list(self._c2s_online):
+                client = StreamFeatureClient(
+                    domain=self.domain,
+                    callback=self._c2s_stream_feature_cb,
+                    cert=self.ca.certificate,
+                    cert_errback=self._c2s_cert_invalid
+                )
+                client.connect(host[0], self.ssl_port,
+                               use_tls=False, use_ssl=True)
+                client.process(block=True)
+
         # verify s2s connections
         server_srv = self.verify_srv_server()
         for domain, port, prio in server_srv:
@@ -660,12 +500,6 @@ class Server(models.Model):
         else:  # no way to query location - reset!
             self.city = ''
             self.country = ''
-
-        if self.ssl_port:
-            self.features.has_ssl = True
-            self.verify_ssl(client_srv)
-        else:  # no ssl port specified
-            self.features.has_ssl = False
 
         # If my CA has no certificates (the "other" ca), no certificates were
         # actually verified, so set them to false manually.
