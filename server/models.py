@@ -561,6 +561,9 @@ class Server(models.Model):
             log.debug('%s: Unhandled features: %s', self.domain, features)
         self.save()
 
+    def _c2s_cert_invalid(self, host, port):
+        log.error('Invalid SSL certificate: %s:%s', host, port)
+
     def verify(self):
         self._c2s_online = set()  # list of online c2s SRV records
         self._c2s_stream_features = None  # private var for stream feature checking
@@ -571,10 +574,13 @@ class Server(models.Model):
         # verify c2s-connections
         client_srv = self.verify_srv_client()
         for domain, port, prio in client_srv:
+            ca = CertificateAuthority.objects.get(name='CAcert')
+#            ca = self.ca
             feature_client = StreamFeatureClient(
                 domain=self.domain,
                 callback=self._c2s_stream_feature_cb,
-                cert=self.ca.certificate,
+                cert=ca.certificate,
+                cert_errback=self._c2s_cert_invalid
             )
             feature_client.connect(domain, port)
             feature_client.process(block=True)

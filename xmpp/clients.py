@@ -49,11 +49,13 @@ class StreamFeatureClient(BaseXMPP):
     :param cert: Certificate
     """
 
-    def __init__(self, domain, callback, cert, lang='en'):
+    def __init__(self, domain, callback, cert, cert_errback, lang='en'):
         super(StreamFeatureClient, self).__init__(domain, 'jabber:client')
         self.use_ipv6 = settings.USE_IP6
+        self.auto_reconnect=False
         self.callback = callback
-#        self.ca_certs = cert
+        self.cert_errback = cert_errback
+        self.ca_certs = cert
 #        self.ssl_version = ssl.PROTOCOL_SSLv3
 
         # copied from ClientXMPP
@@ -88,8 +90,14 @@ class StreamFeatureClient(BaseXMPP):
                      MatchXPath('{%s}features' % self.stream_ns),
                      self.get_features))
 
+        self.add_event_handler('ssl_invalid_chain', self._cert_errback)
+
         # do not reparse features:
         self._features = None
+
+    def _cert_errback(self, *args, **kwargs):
+        self.disconnect(self.auto_reconnect, send_close=False)
+        self.cert_errback(host=self.address[0], port=self.address[1])
 
     def register_feature(self, name, handler,  restart=False, order=5000):
         """Register a stream feature handler.
@@ -178,7 +186,6 @@ class StreamFeatureClient(BaseXMPP):
                 self._features = self.parse_features(features)
                 self.callback(host=self.address[0], port=self.address[1],
                               features=self._features)
-                print(features)
 
             # copied from ClientXMPP._handle_stream_features():
             if 'starttls' in features['features']:
