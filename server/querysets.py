@@ -17,6 +17,7 @@
 
 from __future__ import unicode_literals
 
+from django.db.models import Q
 from django.db.models.query import QuerySet
 
 
@@ -39,8 +40,10 @@ class ServerQuerySet(QuerySet):
 
     def ssl(self):
         """Return servers that allow SSL connections."""
-        return self.filter(ssl_port__isnull=False)
+        return self.filter(ssl_port__isnull=False).filter(
+            Q(c2s_ssl_verified=True) | Q(ca__certificate__isnull=True))
 
     def tls(self):
         """Return servers that allow TLS connections."""
-        return self
+        return self.filter(c2s_starttls=True).filter(
+            Q(c2s_tls_verified=True) | Q(ca__certificate__isnull=True))
