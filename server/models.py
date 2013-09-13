@@ -566,8 +566,14 @@ class Server(models.Model):
             log.debug('%s: Unhandled features: %s', self.domain, features)
         self.save()
 
-    def _c2s_cert_invalid(self, host, port):
-        log.error('Invalid SSL certificate: %s:%s', host, port)
+    def _c2s_cert_invalid(self, host, port, ssl, tls):
+        log.error('Invalid SSL certificate: %s:%s (ssl=%s, tls=%s)',
+                  host, port, ssl, tls)
+        if ssl:
+            self.c2s_ssl_verified = False
+        else:
+            self.c2s_tls_verified = False
+        self.save()
 
     def verify(self):
         self._c2s_online = set()  # list of online c2s SRV records
@@ -579,12 +585,10 @@ class Server(models.Model):
         # verify c2s-connections
         client_srv = self.verify_srv_client()
         for domain, port, prio in client_srv:
-            ca = CertificateAuthority.objects.get(name='CAcert')
-#            ca = self.ca
             feature_client = StreamFeatureClient(
                 domain=self.domain,
                 callback=self._c2s_stream_feature_cb,
-                cert=ca.certificate,
+                cert=self.ca.certificate,
                 cert_errback=self._c2s_cert_invalid
             )
             feature_client.connect(domain, port)
@@ -607,6 +611,13 @@ class Server(models.Model):
             self.verify_ssl(client_srv)
         else:  # no ssl port specified
             self.features.has_ssl = False
+
+        # If my CA has no certificates (the "other" ca), no certificates were
+        # actually verified, so set them to false manually.
+        if not self.ca.certificate:
+            self.c2s_ssl_verified = False
+            self.c2s_tls_verified = False
+            self.s2s_tls_verified = False
 
         self.save()
 
