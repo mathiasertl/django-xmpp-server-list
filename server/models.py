@@ -524,6 +524,9 @@ class Server(models.Model):
             self._c2s_stream_features = features.copy()
 
         if self._c2s_stream_features != features:
+            # This host does not deliver the exact same stream features as a
+            # previous host. We modify the features to only include the
+            # features common to both hosts.
             log.error("%s: Differing stream features found.", self.domain)
             old = self._c2s_stream_features
 
@@ -568,7 +571,7 @@ class Server(models.Model):
             feature_client = StreamFeatureClient(
                 self.domain, self._c2s_stream_feature_callback)
             feature_client.connect(domain, port)
-            feature_client.process()
+            feature_client.process(block=True)
 
         server_srv = self.verify_srv_server()
         self.verify_server_online(server_srv)
