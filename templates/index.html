@@ -16,7 +16,7 @@ always communicate with users on other servers. This list is kindly brought to y
 <a href="https://jabber.at">jabber.at</a>, which is run by the
 <a href="https://fsinf.at">Fachschaft Informatik</a>.</p>
 
-<table>
+<table class="table table-hover">
     <thead>
     <tr>
         <th>Server</th>
@@ -29,8 +29,10 @@ always communicate with users on other servers. This list is kindly brought to y
     </thead>
     <tbody>
 {% for server in servers %}
-    <tr>
-        <td>{% include "includes/server_homepage.html" %}</td>
+<tr id="server-{{server.id}}" class="server-row" data-content='bootstrap-{{server.id}}'>
+        <td>{% include "includes/server_homepage.html" %}
+
+        </td>
         <td>{{ server.location }}</td>
         <td>
             {% if server.ca.name == 'other' %}
@@ -43,6 +45,9 @@ always communicate with users on other servers. This list is kindly brought to y
         <!--<td><a href="{{ server.software.website }}">{{ server.software.name }} {{ server.software_version }}</a></td>-->
         <td>{% include "includes/server_contact.html" %}
         </td>
+            <div class="overlay" id="serverinfo-{{server.id}}">
+                <div class="contentWrap">{{server.id}}<p>foo<p>bar</div>
+            </div>
     </tr>
 {% endfor %}
     </tbody>
