@@ -1,74 +1,140 @@
-{% if server.verified and server.moderated %}
-    This server is verified working and is displayed on the front-page.
-{% else %}
-    {% if not server.verified %}
-        <h4>Verification</h4>
-        {% if server.verified == None %}
-            The formal aspects (SRV records, CA, ...) have not yet been verified. Formal aspects
-            are verified once per day. This means that either
-            <ul>
-                <li>you just added this server.</li>
-                <li>you just changed formal aspects of this server.</li>
-            </ul>
-            In either case, just wait a few hours until the server has been verified.
-        {% else %}
-            Some aspects of this server do not seem right. Please correct them:
-            <ul>
-            {% for verification in server.get_verifications %}
-                <li>
-                    {{ verification.get_info|safe }}
-                    {{ verification.msg|safe }}
-                </li>
-            {% endfor %}
-            </ul>
-        {% endif %}
+{% load i18n %}
+<h4 class="popover-title">{% trans "Summary" %}</h4>
+<ul class="report">
+    {% if server.verified %}
+        <li class="ok">{% trans "Technical aspects have been automatically verified. See below for any additional notes." %}</li>
+    {% elif server.verified == None %}
+        <li class="warn">{% trans "Technical aspects (SRV, TLS, ...) will be automatically verified with 24 hours." %}</li>
+    {% else %}
+        <li class="fail">{% trans "This server failed verification. See below for details." %}</li>
     {% endif %}
-    
-    {% if not server.moderated %}
-        <h4>Moderation</h4>
-        {% if server.moderated == None %}
-            This server has not yet been moderated, you will have to wait until somebody has the
-            time to do so. This happens when you either just added this server or modified the
-            homepage or contact details.
-            
-            {% if server.contact_verified %}
-                <p>The administration contact has been automaticaly verified.</p>
+    {% if server.moderated %}
+        <li class="ok">{% trans "Contact details and homepage have been verified." %}</li>
+    {% elif server.moderated == None %}
+        <li class="warn">{% trans "Contact details and/or homepage have not yet been verified." %}</li>
+    {% else %}
+        <li class="fail">
+        {% blocktrans %}
+            Contact details and/or homepage have been rejected. Please make
+            sure you have a usable homepage and contact details.
+        {% endblocktrans %}
+        </li>
+        {% endif %}
+
+    {% if server.verified and server.moderated %}
+        <li class="ok">{% trans "Server is verified and displayed on the front page." %}</li>
+    {% else %}
+        <li class="fail">{% trans "Server is not displayed on the front page." %}</li>
+    {% endif %}
+</ul>
+<h4 class="popover-title">{% trans "DNS records" %}</h4>
+<ul class="report">
+    <li class="{% if server.c2s_srv_records %}ok{% else %}fail{% endif %}">
+        {% if server.c2s_srv_records %}
+            {% blocktrans %}xmpp-client SRV records ok.{% endblocktrans %}
+        {% else %}
+            {% blocktrans %}No xmpp-client SRV records.{% endblocktrans %}
+        {% endif %}
+    </li>
+    <li class="{% if server.s2s_srv_records %}ok{% else %}fail{% endif %}">
+        {% if server.s2s_srv_records %}
+            {% blocktrans %}xmpp-server SRV records ok.{% endblocktrans %}
+        {% else %}
+            {% blocktrans %}No xmpp-server SRV records.{% endblocktrans %}
+        {% endif %}
+    </li>
+    {% if server.c2s_srv_records or server.s2s_srv_records %}
+    {% if settings.USE_IP6 %}
+        <li class="{% if server.ipv6 %}ok{% else %}warn{% endif %}">
+            {% if server.ipv6 %}
+                {% blocktrans %}All SRV records have IPv6 records{% endblocktrans %}
+            {% else %}
+                {% blocktrans %}IPv6 record missing at one or more SRV records.{% endblocktrans %}
             {% endif %}
-        {% else %}
-            This server was moderated, but rejected by a moderator. This means that either the
-            homepage is not correct or the contact details could not be verified. Please check:
-            <ul>
-                <li>Your homepage, {% include "includes/server_homepage.html" %}</li>
-                <li>Your contact details, {% include "includes/server_contact.html" %}</li>
-            </ul>
-            Once you corrected any mistakes, this server will be automatically but back in the
-            moderation queue.
-        {% endif %}
+        </li>
     {% endif %}
-{% endif %}
+    {% endif %}
+</ul>
 
-{% if server.get_warnings %}
-    <h4>Warning</h4>
-    Some warnings were issued while verifying this server:
-    <ul>
-    {% for warning in server.get_warnings %}
+<h4 class="popover-title">{% trans "Encryption" %}</h4>
+<ul class="report">
+    {% if server.ca.certificate == None %}
+        <li class="warn">
+            {% blocktrans %}
+            Your server uses no Certificate Authority known by this website, hence your certificate was not validated.
+            If you use a common one, please consider sending <a href="mailto:jabber@jabber.at">an e-mail</a>.
+            {% endblocktrans %}
         <li>
-            {{ warning.get_info|safe }}
-            {{ warning.msg|safe }}
-        </li>
-    {% endfor %}
-    </ul>
-{% endif %}
+    {% endif %}
 
-{% if server.get_infos %}
-    <h4>Information</h4>
-    Some informational messages were issued while verifying this server:
-    <ul>
-    {% for info in server.get_infos %}
-        <li>
-            {{ info.get_info|safe }}
-            {{ info.msg|safe }}
+    {% if server.c2s_starttls %}
+        <li class="{% if server.c2s_tls_verified %}ok{% else %}fail{% endif %}">
+            {% if server.c2s_tls_verified %}
+                {% blocktrans %}C2S certificate verified.{% endblocktrans %}
+            {% else %}
+                {% blocktrans %}C2S certificate could not be verified.{% endblocktrans %}
+            {% endif %}
         </li>
-    {% endfor %}
-    </ul>
-{% endif %}
+        {% if server.ssl_port %}
+        <li class="{% if server.c2s_ssl_verified %}ok{% else %}fail{% endif %}">
+                {% if server.c2s_ssl_verified %}
+                    {% blocktrans %}C2S certificate verified via SSL.{% endblocktrans %}
+                {% else %}
+                    {% blocktrans %}C2S certificate could not be verified via SSL.{% endblocktrans %}
+                {% endif %}
+            </li>
+        {% endif %}
+        {% if not server.c2s_starttls_required %}
+            <li class="warn">
+                {% trans "C2S encryption not mandatory." %}
+            </li>
+        {% endif %}
+    {% elif server.ca.certificate != None %}
+        <li class="fail">{% trans "Your server does not support TLS on C2S connections." %}</li>
+    {% endif %}
+
+    {% if server.s2s_starttls %}
+        <li class="{% if server.s2s_tls_verified %}ok{% else %}fail{% endif %}">
+            {% if server.s2s_tls_verified %}
+                {% blocktrans %}S2S certificate verified.{% endblocktrans %}
+            {% else %}
+                {% blocktrans %}S2S certificate could not be verified.{% endblocktrans %}
+            {% endif %}
+        </li>
+        {% if not server.s2s_starttls_required %}
+            <li class="warn">
+                {% trans "S2S encryption not mandatory." %}
+            </li>
+        {% endif %}
+    {% elif server.ca.certificate != None %}
+        <li class="fail">{% trans "Your server does not support TLS on S2S connections." %}</li>
+    {% endif %}
+</ul>
+
+<h4 class="popover-title">{% trans "Moderation" %}</h4>
+<ul class="report">
+    {% if server.moderated %}
+        <li class="ok">{% trans "Contact details and homepage have been verified." %}</li>
+    {% elif server.contact_verified %}
+        <li class="fail">{% trans "Homepage will be checked manually." %}</li>
+    {% else %}
+        {% if server.contact_type == "J" %}
+            <li class="fail">
+                {% blocktrans with medium="Jabber" %}
+                    You should have received a verification message via {{ medium }}.
+                    If you haven't, please resend the confirmation with the
+                    button on the very right of this row.{% endblocktrans %}
+            </li>
+        {% elif server.contact_type == "E" %}
+            <li class="fail">
+                {% blocktrans with medium="E-Mail" %}
+                    You should have received a verification message via {{ medium }}.
+                    If you haven't, please resend the confirmation with the
+                    button on the very right of this row.{% endblocktrans %}
+                    </li>
+        {% else %}
+            <li class="fail">{% trans "Contact details will be verified manually." %}</li>
+        {% endif %}
+        <li class="fail">{% trans "Homepage will be checked manually." %}</li>
+    {% endif %}
+</ul>

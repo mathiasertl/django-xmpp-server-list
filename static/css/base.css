@@ -107,34 +107,6 @@ td img {
     display: none;
 }
 
-.overlay {
-    /* must be initially hidden */
-    display: none;
-    
-    /* place overlay on top of other elements */
-    z-index: 10000;
-    padding: 5px;
-    padding-right: 50px;
-    text-align: left;
-    
-    /* styling */
-    background-color: white;
-
-    max-width: 600px;
-    border: 1px solid #666;
-}
-
-/* close button positioned on upper right corner */
-.overlay .close {
-	background-image: url(../img/close.png);
-	position:absolute;
-	right:-15px;
-	top:-15px;
-	cursor:pointer;
-	height:35px;
-	width:35px;
-}
-
 .ui-widget {
     font-size: smaller;
 }
@@ -145,4 +117,30 @@ td img {
     list-style-image: none;
     list-style-type: none;
     padding-left: 0px;
+}
+
+.popover {
+    max-width: 500px;
+}
+
+ul.report {
+    list-style-type: none;
+    padding: 0px;
+    margin: 0px;
+}
+
+ul.report li {
+    background-repeat: no-repeat;
+    background-position: 0px 4px; 
+    padding-left: 20px; 
+}
+
+ul.report li.ok {
+    background-image: url(/static/img/save.png);
+}
+ul.report li.warn {
+    background-image: url(/static/img/alert.png);
+}
+ul.report li.fail {
+    background-image: url(/static/img/delete.png);
 }
