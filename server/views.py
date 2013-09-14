@@ -19,9 +19,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden
+from django.http import Http404
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.views.generic.detail import BaseDetailView
+from django.views.generic.detail import DetailView
 
 from xmpplist.server.forms import ServerForm
 from xmpplist.server.models import Features
@@ -53,14 +55,15 @@ class ModerateView(TemplateView):
         return context
 
 
-@login_required
-def report(request, server_id):
-    server = Server.objects.get(id=server_id)
-    if server.user != request.user:
-        return HttpResponseForbidden(
-            "Thou shal only view reports of your own servers!")
+class ReportView(DetailView):
+    queryset = Server.objects.all()
+    template_name = 'server/ajax/report.html'
 
-    return render(request, 'server/report.html', {'server': server})
+    def get_object(self, queryset=None):
+        obj = super(ReportView, self).get_object(queryset=queryset)
+        if obj.user != self.request.user:
+            raise Http404
+        return obj
 
 
 @login_required
