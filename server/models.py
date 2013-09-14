@@ -147,15 +147,15 @@ class Server(models.Model):
                                  null=True, blank=True)
     software_version = models.CharField(max_length=30, blank=True)
 
-    # SSL/TLS verification
-    c2s_tls_verified = models.BooleanField(default=True)
-    c2s_ssl_verified = models.BooleanField(default=True)
-    s2s_tls_verified = models.BooleanField(default=True)
-
     # DNS-related information:
     c2s_srv_records = models.BooleanField(default=False)
     s2s_srv_records = models.BooleanField(default=False)
     ipv6 = models.BooleanField(default=False)
+
+    # SSL/TLS verification
+    c2s_tls_verified = models.BooleanField(default=True)
+    c2s_ssl_verified = models.BooleanField(default=True)
+    s2s_tls_verified = models.BooleanField(default=True)
 
     # c2s stream features:
     c2s_auth = models.BooleanField(default=False)  # Non-SASL authentication
@@ -189,6 +189,15 @@ class Server(models.Model):
 
     def __unicode__(self):
         return self.domain
+
+    @property
+    def verified(self):
+        if self.last_seen is None:
+            return None
+        return self.c2s_srv_records and self.s2s_srv_records \
+            and (self.c2s_tls_verified or self.ca.certificate is None) \
+            and (self.s2s_tls_verified or self.ca.certificate is None) \
+            and self.c2s_starttls
 
     def verify_srv_client(self):
         """
