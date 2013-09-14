@@ -45,9 +45,6 @@ always communicate with users on other servers. This list is kindly brought to y
         <!--<td><a href="{{ server.software.website }}">{{ server.software.name }} {{ server.software_version }}</a></td>-->
         <td>{% include "includes/server_contact.html" %}
         </td>
-            <div class="overlay" id="serverinfo-{{server.id}}">
-                <div class="contentWrap">{{server.id}}<p>foo<p>bar</div>
-            </div>
     </tr>
 {% endfor %}
     </tbody>
