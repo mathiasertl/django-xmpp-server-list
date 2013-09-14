@@ -42,22 +42,7 @@ function get_csrftoken() {
     return $(csrfinput);
 }
 
-var overlay_params = {
-    top: 'relative',
-    left: 'relative',
-    closeOnClick: true,
-    onBeforeLoad: function() {
-        // grab wrapper element inside content
-        var wrap = this.getOverlay().find(".contentWrap");
-
-        // load the page specified in the trigger
-        wrap.load(this.getTrigger().attr("href"));
-    }
-}
-
 $(document).ready(function() {
-    $("a[rel]").overlay(overlay_params);
-    
     $("table").on("change", "input,select", function() {
         row = $(this).parent().parent().parent();
         if (!row.hasClass('changed')) {

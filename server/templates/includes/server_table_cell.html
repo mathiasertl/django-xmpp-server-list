@@ -1,11 +1,11 @@
 {% load fieldvalue %}
 
-<td title="{{ field.help_text }}">
+<td>
     <div class="value-display"
             {% if form.errors %}style="display: none;" {% endif %}>
         {{ field|fieldvalue }}
     </div>
-    <div class="value-edit" {% if form.errors %}style="display: block;" {% endif %}>
+    <div class="tooltip-field value-edit" {% if form.errors %}style="display: block;" {% endif %} data-tip="{{field.name}}">
         {{ field }}
         <div class='fielderrors'>
             {{ field.errors }}

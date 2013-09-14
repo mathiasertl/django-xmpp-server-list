@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% load url from future %}
 
 {% block title %}Your servers{% endblock %}
@@ -25,13 +26,38 @@
         you misspelled your JID, you can <a href="{% url "account_edit" %}">change it here</a>.
     </div>
 {% endif %}
-    
-<table class="table table-condensed" id="your-servers">
+
+<div class="tooltip" id="tooltip-domain">
+    {% blocktrans %}The domain of your server.{% endblocktrans %}
+</div>
+<div class="tooltip" id="tooltip-website">
+    {% blocktrans %}Website for your server, if different from http://&lt;domain&gt;{% endblocktrans %}
+</div>
+<div class="tooltip" id="tooltip-ca">
+    {% blocktrans %}The certificate authority used by the server. If yours is not available, specify "other".{% endblocktrans %}
+</div>
+<div class="tooltip" id="tooltip-ssl_port">
+    {% blocktrans %}Optional: Port for legacy SSL connections, typically 5223.{% endblocktrans %}
+</div>
+<div class="tooltip" id="tooltip-launched">
+    {% blocktrans %}When the service was launched.{% endblocktrans %}
+</div>
+<div class="tooltip" id="tooltip-contact_type">
+    {% blocktrans %}Type of the given contact address. Verification messages will be sent to email/xmpp addresses, websites (i.e. a contact-form) or MUCs will be manually checked.{% endblocktrans %}
+</div>
+<div class="tooltip" id="tooltip-contact">
+    {% blocktrans %}The contact Adress to use.{% endblocktrans %}
+</div>
+<div class="tooltip" id="tooltip-contact_name">
+    {% blocktrans %}Optional: A different text for the contact link.{% endblocktrans %}
+</div>
+
+<table class="table" id="your-servers">
     <thead>
     <tr>
         <th>Status</th>
         {% for field in new_server_form %}
-            <th title="{{ field.help_text }}">{{ field.label }}</th>
+            <th class="tooltip-field" data-tip="{{field.name}}">{{ field.label }}</th>
         {% endfor %}
         <th></th>
     </tr>
@@ -43,7 +69,7 @@
     <tr class="new-server">
         <td></td>
         {% for field in new_server_form %}
-            <td title="{{ field.help_text }}">{{ field }}</td>
+            <td class="tooltip-field" data-tip="{{field.name}}">{{ field }}</td>
         {% endfor %}
         <td class="right">
             <img class="button-add" src="{{ STATIC_URL }}img/add.png" alt="add new server" title="add new server" />

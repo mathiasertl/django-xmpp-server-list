@@ -2,10 +2,8 @@
 {% load url from future %}
 
 <tr id="server_{{ form.instance.id }}" data-server="{{ form.instance.id }}">
-    <td class="status">
+    <td class="status popover-field" data-url="{% url "server_report" server_id=form.instance.id %}">
         {% if form.instance.id %}
-        <a href="{% url "server_report" server_id=form.instance.id %}"
-                rel="#verification_{{ form.prefix }}" style="text-decoration: none">
             {% if form.instance.verified  and form.instance.moderated %}
                 <img src="{{ STATIC_URL }}img/save.png" alt="verified" title="verified" />
             {% else %}
@@ -14,9 +12,6 @@
                     title="Not verified, click to see details." />    
             {% endif %}
         </a>
-        <div class="overlay" id="verification_{{ form.prefix }}">
-            <div class="contentWrap"></div>
-        </div>
         {% endif %}
     </td>
     {% for field in form %}
