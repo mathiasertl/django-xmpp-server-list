@@ -43,3 +43,6 @@ class ServerManager(models.Manager):
 
     def tls(self):
         return self.get_queryset().tls()
+
+    def verified(self):
+        return self.get_queryset().verified()
