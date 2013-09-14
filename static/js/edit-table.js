@@ -85,7 +85,7 @@ $(document).ready(function() {
                 
                 row.replaceWith(new_row);
                 set_datepicker(new_row);
-                new_row.find("a[rel]").overlay(overlay_params);
+                register_popover();
             })
         } else {
             edit_service(cell);
@@ -107,7 +107,7 @@ $(document).ready(function() {
             new_row = $(data);
             row.before(new_row); // append new row above
             set_datepicker(new_row); // set datepicker
-            new_row.find("a[rel]").overlay(overlay_params);
+            register_popover();
             
             row.find("input").val(''); // clear input values of this row
             row.find(".fielderrors").html('');
