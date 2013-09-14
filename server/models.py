@@ -138,9 +138,6 @@ class Server(models.Model):
         help_text="The Port where your server allows SSL connections. Leave "
         "empty if your server does not allow SSL connections.")
 
-    # verification
-    verified = models.NullBooleanField(default=None)
-
     # moderation:
     moderated = models.NullBooleanField(default=None)
     features = models.OneToOneField(Features, related_name='server')
@@ -347,7 +344,7 @@ class Server(models.Model):
         self.c2s_tls_verified = False
         self.s2s_tls_verified = False
 
-        self.verified = True  # only says that we had a verification run!
+        start = datetime.now()
 
         # verify c2s-connections
         client_srv = self.verify_srv_client()
@@ -368,6 +365,10 @@ class Server(models.Model):
                     client.process(block=True)
             except TimeoutException:
                 self.c2s_tls_verified = False
+
+        # return right away if no hosts where seen:
+        if self.last_seen is None or self.last_seen < start:
+            return
 
         # verify legacy SSL connections
         if self.ssl_port:
