@@ -369,7 +369,7 @@ class Server(models.Model):
                 cert_errback=self._c2s_cert_invalid
             )
             try:
-                with timeout(5, client):
+                with timeout(10, client):
                     client.connect(domain, port, reattempt=False)
                     client.process(block=True)
             except TimeoutException:
@@ -394,7 +394,7 @@ class Server(models.Model):
                 )
 
                 try:
-                    with timeout(5, client):
+                    with timeout(10, client):
                         client.connect(host[0], self.ssl_port,
                                        use_tls=False, use_ssl=True, reattempt=False)
                         client.process(block=True)
@@ -416,7 +416,7 @@ class Server(models.Model):
                 ns='jabber:server',
             )
             try:
-                with timeout(5, client):
+                with timeout(10, client):
                     client.connect(domain, port, reattempt=False)
                     client.process(block=True)
             except TimeoutException:
