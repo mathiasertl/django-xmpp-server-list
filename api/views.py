@@ -34,8 +34,7 @@ def index(request):
         request_format = request.GET['format']
 
     # initial query-set:
-    servers = Server.objects.filter(
-        verified=True, moderated=True, user__email_confirmed=True)
+    servers = Server.objects.verified().filter(moderated=True, user__email_confirmed=True)
 
     # filter by required features:
     if 'features' in request.GET:
