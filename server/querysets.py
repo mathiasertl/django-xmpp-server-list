@@ -55,3 +55,7 @@ class ServerQuerySet(QuerySet):
         ).tls()
 
         return qs
+
+    def moderated(self):
+        return self.filter(moderated=True, user__email_confirmed=True,
+                           user__jid_confirmed=True)

@@ -46,3 +46,6 @@ class ServerManager(models.Manager):
 
     def verified(self):
         return self.get_queryset().verified()
+
+    def moderated(self):
+        return self.get_queryset().moderated()
