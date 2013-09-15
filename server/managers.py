@@ -27,25 +27,25 @@ class ServerManager(models.Manager):
         return ServerQuerySet(self.model)
 
     def plain(self):
-        return self.get_queryset().plain()
+        return self.get_query_set().plain()
 
     def c2s_secure(self):
-        return self.get_queryset().c2s_secure()
+        return self.get_query_set().c2s_secure()
 
     def s2s_secure(self):
-        return self.get_queryset().s2s_secure()
+        return self.get_query_set().s2s_secure()
 
     def secure(self):
-        return self.get_queryset().secure()
+        return self.get_query_set().secure()
 
     def ssl(self):
-        return self.get_queryset().ssl()
+        return self.get_query_set().ssl()
 
     def tls(self):
-        return self.get_queryset().tls()
+        return self.get_query_set().tls()
 
     def verified(self):
-        return self.get_queryset().verified()
+        return self.get_query_set().verified()
 
     def moderated(self):
-        return self.get_queryset().moderated()
+        return self.get_query_set().moderated()
