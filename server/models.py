@@ -354,6 +354,7 @@ class Server(models.Model):
         self.s2s_tls_verified = False
 
         start = datetime.now()
+        cert = self.ca.certificate or None
 
         # verify c2s-connections
         client_srv = self.verify_srv_client()
@@ -365,7 +366,7 @@ class Server(models.Model):
             client = StreamFeatureClient(
                 domain=self.domain,
                 callback=self._c2s_stream_feature_cb,
-                cert=self.ca.certificate,
+                cert=cert,
                 cert_errback=self._c2s_cert_invalid
             )
             try:
@@ -389,7 +390,7 @@ class Server(models.Model):
                 client = StreamFeatureClient(
                     domain=self.domain,
                     callback=self._c2s_stream_feature_cb,
-                    cert=self.ca.certificate,
+                    cert=cert,
                     cert_errback=self._c2s_cert_invalid
                 )
 
@@ -411,7 +412,7 @@ class Server(models.Model):
             client = StreamFeatureClient(
                 domain=self.domain,
                 callback=self._s2s_stream_feature_cb,
-                cert=self.ca.certificate,
+                cert=cert,
                 cert_errback=self._s2s_cert_invalid,
                 ns='jabber:server',
             )
