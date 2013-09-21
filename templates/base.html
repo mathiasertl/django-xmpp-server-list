@@ -4,6 +4,7 @@
 <head>
     <title>{% block title %}XMPP server list{% endblock %}</title>
     <link rel="icon" type="image/x-icon" href="{{ STATIC_URL }}img/favicon.ico">
+    <link rel="apple-touch-icon" href="{{ STATIC_URL }}img/apple-touch-icon.png"/>
 
     <script type="text/javascript">
         var service_url = "{% url "servers_ajax" %}";
