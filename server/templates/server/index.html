@@ -55,7 +55,7 @@
 <table class="table" id="your-servers">
     <thead>
     <tr>
-        <th>Status</th>
+        <th class="status">Status</th>
         {% for field in new_server_form %}
             <th class="tooltip-field" data-tip="{{field.name}}">{{ field.label }}</th>
         {% endfor %}
