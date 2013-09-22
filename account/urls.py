@@ -19,8 +19,9 @@ from django.conf.urls.defaults import patterns
 from django.conf.urls.defaults import url
 #from django.contrib.auth.forms import SetPasswordForm
 
-from views import ResetPassword
+from forms import AuthenticationFormSub
 from forms import SetPasswordForm
+from views import ResetPassword
 
 urlpatterns = patterns(
     'account.views',
@@ -37,7 +38,9 @@ urlpatterns = patterns(
 urlpatterns += patterns(
     '',
     url(r'^login/', 'django.contrib.auth.views.login',
-        {'template_name': 'account/login.html'}, name='login'),
+        {'template_name': 'account/login.html',
+         'authentication_form': AuthenticationFormSub,
+        }, name='login'),
     url(r'^logout/', 'django.contrib.auth.views.logout',
         {'template_name': 'logout.html'}),
     url(r'^password/', 'django.contrib.auth.views.password_change',
