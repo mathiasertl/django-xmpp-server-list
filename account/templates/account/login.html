@@ -3,8 +3,8 @@
 
 {% block login %}{% endblock %}
 
-{% block title %}Login{% endblock %}
-{% block pagetitle %}Login{% endblock %}
+{% block title %}{% trans "Login" %}{% endblock %}
+{% block pagetitle %}{% trans "Login" %}{% endblock %}
 
 {% block content %}
 
@@ -19,10 +19,6 @@ You must login to add and manage your public servers.
 
 
 <form class="form-horizontal" role="form" method="post" action="{% url 'django.contrib.auth.views.login' %}">
-
-{% if form.errors %}
-<p>Your username and password didn't match. Please try again.</p>
-{% endif %}
 
 {% csrf_token %}
 {{form|bootstrap}}
