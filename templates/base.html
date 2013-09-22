@@ -1,4 +1,5 @@
 {% load url from future %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,39 +30,52 @@
 </head>
 <body>
 <div class="container">
-<div class="breadcrumb">
-{% block header %}
-    <span class="navigation">
-        {% block navigation %}
-            <a href="{% url "home" %}">home</a>
-            {% if user.is_authenticated %}
-                | <a href="{% url "server" %}">my servers</a>
-            {% endif %}
-            {% if perms.server.moderate %}
-                | <a href="{% url "server_moderate" %}">moderate</a>
-            {% endif %}
-        {% endblock %}
-    </span>
-    <span class="login">
-    {% block login %}
-    {% if user.is_authenticated %}
-            <a href="{% url "account" %}">profile</a> | 
-            <a href="{% url "django.contrib.auth.views.logout" %}?next={{ request.path }}">logout</a>
-    {% else %}
-        {% with view_path="django.contrib.auth.views.login" %}
-            <a href="{% url view_path %}?next={{ request.path }}">login</a>
-        {% endwith %}
-    {% endif %}
-    {% endblock %}
-    </span>
-{% endblock %}
-</div>
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">{% trans "Toggle navigation" %}</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
 
-<div class="span16">
-<h1 id="pagetitle">{% block pagetitle %}{% endblock %}</h1>
-{% block content %}{% endblock %}
-</div>
-{% block footer %}{% endblock %}
-</div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="{% url "home" %}">{% trans "Home" %}</a>
+                </li>
+                {% if user.is_authenticated %}
+                    <li ><a href="{% url "server" %}">
+                        {% trans "My servers" %}</a></li>   
+                {% endif %}
+                {% if perms.server.moderate %}
+                    <li>
+                        <a href="{% url "server_moderate" %}">{% trans "Moderate" %}</a>
+                    </li>
+                {% endif %}
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% if user.is_authenticated %}
+                    <li><a href="{% url "account" %}">profile</a></li>
+                    <li><a href="{% url "django.contrib.auth.views.logout" %}?next={{ request.path }}">logout</a></li>
+                {% else %}
+                    <li><a href="{% url "django.contrib.auth.views.login" %}?next={{ request.path }}">login</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <div class="row content">
+        <div class="col-md-12">
+            <h1 id="pagetitle">{% block pagetitle %}{% endblock %}</h1>
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <div class="row footer">
+        <div class="col-md-12">{% block footer %}{% endblock %}</div>
+    </div>
+</div><!-- container end -->
 </body>
 </html>
