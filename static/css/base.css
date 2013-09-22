@@ -37,21 +37,22 @@ select.ca {
 	width: 10em;
 }
 
-.footer {
-    background-color: #f0f0f0;
-    border-top: 1px solid #eeeeee;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.024) inset;
+footer {
+    background-color: #f8f8f8;
+    padding-top: 10px;
+    padding-left: 10px;
 }
-.footer .container {
+
+footer .content {
    background-repeat: no-repeat;
    background-position: 0 0;
    background-image: url('../img/logo.png');
    min-height: 64px;
    
-   color: #888888;
+   color: #777;
 }
 
-.footer .container p {
+.footer .content p {
    margin-left: 56px;
 }
 

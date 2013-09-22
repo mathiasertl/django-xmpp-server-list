@@ -92,8 +92,26 @@
         </div>
     </div>
 
+
     <div class="row footer">
-        <div class="col-md-12">{% block footer %}{% endblock %}</div>
+        <div class="col-md-12">
+            {% block footer %}
+            <footer>
+                <div class="content">
+                    <p>{% blocktrans %}© 2005-2013, Mathias Ertl unless otherwise noted. 
+                        This project is powered by <a href="https://www.djangoproject.com/">Django</a>.
+                        The source code is available on <a href="http://git.fsinf.at/mati/xmpplist/">git.fsinf.at</a>.
+                        {% endblocktrans %}
+                    </p>
+                    <p>
+                        {% blocktrans %}
+                        The logo is based on the Jabber logo by the <a href="http://jabber.org">Jabber.org</a> Team.
+                        {% endblocktrans %}
+                    </p>
+                </div>
+            </div>
+            {% endblock %}
+        </div>
     </div>
 </div><!-- container end -->
 </body>
