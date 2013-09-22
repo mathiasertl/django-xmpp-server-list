@@ -37,6 +37,10 @@ select.ca {
 	width: 10em;
 }
 
+div.row.content {
+    padding-bottom: 10px;
+}
+
 footer {
     background-color: #f8f8f8;
     padding-top: 10px;
