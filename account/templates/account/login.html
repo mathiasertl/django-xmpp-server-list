@@ -1,6 +1,5 @@
 {% extends "base.html" %}
-{% load url from future %}
-{% load bootstrap %}
+{% load bootstrap i18n %}
 
 {% block login %}{% endblock %}
 
@@ -18,18 +17,15 @@ You must login to add and manage your public servers.
     <li>If you forgot your password, you can <a href="{% url "account_reset_password" %}">reset it</a>.</li>
 </ul>
 
+
+<form class="form-horizontal" role="form" method="post" action="{% url 'django.contrib.auth.views.login' %}">
+
 {% if form.errors %}
 <p>Your username and password didn't match. Please try again.</p>
 {% endif %}
 
-<form method="post" action="{% url 'django.contrib.auth.views.login' %}">
 {% csrf_token %}
 {{form|bootstrap}}
-
-<div class="actions">
-<input class="btn primary" type="submit" value="Login">
-<button class="btn" type="reset">Cancel</button>
-</div>
 
 <input type="hidden" name="next" value="{{ next }}" />
 </form>

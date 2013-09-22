@@ -16,11 +16,5 @@ email address.
 
 <form class="form-horizontal" role="form" action="{% url "account_edit" %}" method="post">{% csrf_token %}
     {{ user_form|bootstrap }}
-    <div class="form-group">
-        <div class="col-lg-offset-2 col-lg-2">
-            <button class="btn btn-default" type="submit">{% trans "Submit" %}</button>
-            <button class="btn" type="reset">{% trans "Cancel" %}</button>
-        </div>
-    </div>
 </form>
 {% endblock %}
