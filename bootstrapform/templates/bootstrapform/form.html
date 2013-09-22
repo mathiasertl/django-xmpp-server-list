@@ -33,9 +33,7 @@
             <label class="col-lg-2 control-label" for="{{ field.id }}">{{field.label_tag }}</label>
             <div class="col-lg-5">
                 {{ field }}
-                {% for error in field.errors %}
-                    <span class="help-inline">{{ error }}</span>
-                {% endfor %}
+                {{ field.errors }}
                 {% if field.help_text %}
                 <span class="help-block">
                     {{ field.help_text }}
