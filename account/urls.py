@@ -17,9 +17,10 @@
 
 from django.conf.urls.defaults import patterns
 from django.conf.urls.defaults import url
-from django.contrib.auth.forms import SetPasswordForm
+#from django.contrib.auth.forms import SetPasswordForm
 
 from views import ResetPassword
+from forms import SetPasswordForm
 
 urlpatterns = patterns(
     'account.views',
