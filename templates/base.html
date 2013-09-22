@@ -1,10 +1,12 @@
 {% load url from future %}
-
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <title>{% block title %}XMPP server list{% endblock %}</title>
     <link rel="icon" type="image/x-icon" href="{{ STATIC_URL }}img/favicon.ico">
     <link rel="apple-touch-icon" href="{{ STATIC_URL }}img/apple-touch-icon.png"/>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <script type="text/javascript">
         var service_url = "{% url "servers_ajax" %}";
@@ -59,7 +61,7 @@
 <h1 id="pagetitle">{% block pagetitle %}{% endblock %}</h1>
 {% block content %}{% endblock %}
 </div>
-</div>
 {% block footer %}{% endblock %}
+</div>
 </body>
 </html>
