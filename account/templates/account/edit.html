@@ -1,6 +1,5 @@
 {% extends "base.html" %}
-{% load url from future %}
-{% load bootstrap %}
+{% load bootstrap i18n %}
 
 {% block title %}Edit profile{% endblock %}
 {% block pagetitle %}Edit your profile{% endblock %}
@@ -15,11 +14,12 @@ servers will not show up on the public list until you confirm your
 email address.
 </p>
 
-<form action="{% url "account_edit" %}" method="post">{% csrf_token %}
-{{ user_form|bootstrap }}
-<div class="actions">
-<input class="btn primary" type="submit" value="Submit">
-<button class="btn" type="reset">Cancel</button>
-</div>
+<form class="form-horizontal" role="form" action="{% url "account_edit" %}" method="post">{% csrf_token %}
+    {{ user_form|bootstrap }}
+    <div class="form-group">
+        <div class="col-lg-offset-2 col-lg-2">
+            <button class="btn btn-default" type="submit">{% trans "Submit" %}</button>
+        </div>
+    </div>
 </form>
 {% endblock %}
