@@ -30,7 +30,7 @@
                 </li>
             </ul>
         {% else %}
-            <label class="col-lg-2 control-label" for="{{ field.id }}">{{field.label_tag }}</label>
+            <label class="col-lg-2 control-label" for="{{ field.html_name }}">{{field.label }}</label>
             <div class="col-lg-3">
                 {{ field }}
                 {{ field.errors }}
