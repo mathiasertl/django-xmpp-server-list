@@ -7,8 +7,9 @@
 {% endfor %}
 
 {% for field in form.visible_fields %}
-    <div class="clearfix{% if field.errors %} error{% endif %}">
+    <div class="form-group clearfix{% if field.errors %} error{% endif %}">
         {% if field|is_checkbox %}
+        <!-- todo: still boostrap 2.3 -->
             <ul class="inputs-list">
                 <li>
                     <div class="input">
@@ -29,21 +30,20 @@
                 </li>
             </ul>
         {% else %}
-            {{ field.label_tag }}
-            <div class="input">
+            <label class="col-lg-2 control-label" for="{{ field.id }}">{{field.label_tag }}</label>
+            <div class="col-lg-5">
                 {{ field }}
-
                 {% for error in field.errors %}
                     <span class="help-inline">{{ error }}</span>
                 {% endfor %}
-
                 {% if field.help_text %}
                 <span class="help-block">
                     {{ field.help_text }}
                 </span>
                 {% endif %}
-
             </div>
+
+
         {% endif %}
     </div>
 {% endfor %}
