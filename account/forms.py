@@ -17,7 +17,9 @@
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth import get_user_model
+from django.utils.translation import ugettext_lazy as _
 
 UserModel = get_user_model()
 
@@ -50,6 +52,21 @@ class PreferencesForm(forms.ModelForm):
     class Meta:
         model = UserModel
         fields = ('first_name', 'last_name', 'email', 'jid')
+
+        _widget = forms.TextInput(attrs={'maxlength': 30, 'class': 'form-control'})
+
+        widgets = {
+            'first_name': _widget,
+            'last_name': _widget,
+            'email': _widget,
+            'jid': _widget,
+        }
+
+class SetPasswordForm(SetPasswordForm):
+    new_password1 = forms.CharField(label=_("New password"),
+                                    widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    new_password2 = forms.CharField(label=_("Confirm"),
+                                    widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
 
 class PasswordResetForm(forms.Form):
