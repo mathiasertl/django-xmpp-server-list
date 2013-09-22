@@ -55,10 +55,6 @@ select.ca {
    margin-left: 56px;
 }
 
-input {
-	height: auto;
-}
-
 .navbar {
     margin-top: 8px;
 }
@@ -103,9 +99,9 @@ td img {
 .errorlist {
     font-size: small;
     color: red;
-    list-style-image: none;
-    list-style-type: none;
-    padding-left: 0px;
+    padding-left: 20px;
+    margin-top: 5px;
+    margin-bottom: 0px;
 }
 
 .popover {
