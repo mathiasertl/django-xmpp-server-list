@@ -21,9 +21,6 @@ input.ssl_port {
 input.datepicker {
     width: 7em !important;
 }
-input.mapwidget {
-    width: 7em !important;
-}
 select.ca {
     width: 8em !important;
 }
