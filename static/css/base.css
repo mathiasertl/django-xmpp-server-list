@@ -63,6 +63,13 @@ h3 {
 	margin-top: 1em;
 }
 
+th.status, td.status {
+    text-align: center;
+}
+td.status {
+    cursor:pointer;
+}
+
 td img {
     display: inline;
     vertical-align: middle;
