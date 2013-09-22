@@ -140,7 +140,7 @@ class ResendView(BaseDetailView):
     http_method_names = ['post', ]
 
     def post(self, request, *args, **kwargs):
-        self.kwargs['pk'] = self.request.POST['pk'][0]
+        self.kwargs['pk'] = self.request.POST['pk']
         server = self.get_object()
         server.do_contact_verification()
 
