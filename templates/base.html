@@ -70,7 +70,7 @@
         <div class="col-md-12">
             <h1 id="pagetitle">{% block pagetitle %}{% endblock %}</h1>
             {% block danger %}
-            {% if not user.email_confirmed %}
+            {% if user.is_authenticated and not user.email_confirmed %}
                 <div class="alert alert-danger">
                     Your E-Mail address has not yet been confirmed. You should have received a confirmation message
                     containing the link needed to confirm it. If you haven't received such a message,
@@ -78,7 +78,7 @@
                     you misspelled your address, you can <a href="{% url "account_edit" %}">change it here</a>.
                 </div>
             {% endif %}
-            {% if not user.jid_confirmed %}
+            {% if user.is_authenticated and not user.jid_confirmed %}
                 <div class="alert alert-danger">
                     Your JID has not yet been confirmed. You should have received a confirmation message
                     containing the link needed to confirm it. If you haven't received such a message,
