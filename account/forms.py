@@ -25,14 +25,30 @@ from django.utils.translation import ugettext_lazy as _
 UserModel = get_user_model()
 
 _fieldattrs = {'class': 'form-control', 'maxlength': 30, }
+_emailattrs = _fieldattrs.copy()
+_emailattrs['type'] = 'email'
 _textwidget = forms.TextInput(attrs=_fieldattrs)
 _passwidget = forms.PasswordInput(attrs=_fieldattrs)
+_mailwidget = forms.TextInput(attrs=_emailattrs)
 
 class CreationForm(UserCreationForm):
     email = forms.EmailField(
-        max_length=30,
-        help_text='Required, a confirmation email will be sent to this '
-        'address.')
+        max_length=30, widget=_mailwidget,
+        help_text=_(
+            'Required, a confirmation email will be sent to this address.')
+    )
+    username = forms.RegexField(label=_("Username"), max_length=30,
+        regex=r'^[\w.@+-]+$', widget=_textwidget,
+        help_text=_("Required. 30 characters or fewer. Letters, digits and "
+                      "@/./+/-/_ only."),
+        error_messages={
+            'invalid': _("This value may contain only letters, numbers and "
+                         "@/./+/-/_ characters.")})
+    password1 = forms.CharField(label=_("Password"),
+                                widget=_passwidget)
+    password2 = forms.CharField(label=_("Confirm"),
+        widget=_passwidget,
+        help_text=_("Enter the same password as above, for verification."))
 
     def clean_username(self):
         """Override to make the form compatible with custom user models."""
@@ -51,6 +67,10 @@ class CreationForm(UserCreationForm):
         model = UserModel
         fields = ('username', 'email', 'jid',)
 
+        widgets = {
+            'jid': _textwidget,
+        }
+
 
 class PreferencesForm(forms.ModelForm):
     class Meta:
@@ -60,7 +80,7 @@ class PreferencesForm(forms.ModelForm):
         widgets = {
             'first_name': _textwidget,
             'last_name': _textwidget,
-            'email': _textwidget,
+            'email': _mailwidget,
             'jid': _textwidget,
         }
 
