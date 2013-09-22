@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% load url from future %}
 
-{% block title %}Overview{% endblock %}
-{% block pagetitle %}Overview{% endblock %}
+{% block title %}Profile{% endblock %}
+{% block pagetitle %}Profile{% endblock %}
 
 {% block content %}
 {% if not user.email_confirmed %}
-    <div class="alert-message warning">
+    <div class="alert alert-danger">
         Your E-Mail address has not yet been confirmed. You should have received a confirmation message
         containing the link needed to confirm it. If you haven't received such a message,
         you can <a href="{% url "account_resend_confirmation" %}">resend it</a>. If
@@ -14,7 +14,7 @@
     </div>
 {% endif %}
 {% if not user.jid_confirmed %}
-    <div class="alert-message warning">
+    <div class="alert alert-danger">
         Your JID has not yet been confirmed. You should have received a confirmation message
         containing the link needed to confirm it. If you haven't received such a message,
         you can <a href="{% url "account_resend_confirmation" %}">resend it</a>. If
@@ -22,12 +22,6 @@
     </div>
 {% endif %}    
 
-Here you can:
-<ul>
-    <li><a href="{% url "server" %}">Manage your servers</a></li>   
-</ul>
-
-<h2>Your profile</h2>
 <p>
     You may want to <a href="{% url "account_edit" %}">edit your profile</a> or
     <a href="{% url "account_set_password" %}">set your password</a>.
