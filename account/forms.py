@@ -16,13 +16,17 @@
 # along with xmpplist.  If not, see <http://www.gnu.org/licenses/>.
 
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.forms import SetPasswordForm
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
 
 UserModel = get_user_model()
 
+_fieldattrs = {'class': 'form-control', 'maxlength': 30, }
+_textwidget = forms.TextInput(attrs=_fieldattrs)
+_passwidget = forms.PasswordInput(attrs=_fieldattrs)
 
 class CreationForm(UserCreationForm):
     email = forms.EmailField(
@@ -53,24 +57,27 @@ class PreferencesForm(forms.ModelForm):
         model = UserModel
         fields = ('first_name', 'last_name', 'email', 'jid')
 
-        _widget = forms.TextInput(attrs={'maxlength': 30, 'class': 'form-control'})
-
         widgets = {
-            'first_name': _widget,
-            'last_name': _widget,
-            'email': _widget,
-            'jid': _widget,
+            'first_name': _textwidget,
+            'last_name': _textwidget,
+            'email': _textwidget,
+            'jid': _textwidget,
         }
+
+class AuthenticationFormSub(AuthenticationForm):
+    username = forms.CharField(max_length=254, widget=_textwidget)
+    password = forms.CharField(label=_("Password"),
+                               widget=_passwidget)
+
 
 class SetPasswordForm(SetPasswordForm):
     new_password1 = forms.CharField(label=_("New password"),
-                                    widget=forms.PasswordInput(attrs={'class': 'form-control'}))
-    new_password2 = forms.CharField(label=_("Confirm"),
-                                    widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+                                    widget=_passwidget)
+    new_password2 = forms.CharField(label=_("Confirm"), widget=_passwidget)
 
 
 class PasswordResetForm(forms.Form):
-    username = forms.CharField(max_length=30, required=False)
+    username = forms.CharField(max_length=30, required=True, widget=_textwidget)
 
     def clean(self):
         data = self.cleaned_data
