@@ -10,22 +10,6 @@
 {% endblock %}
 
 {% block content %}
-{% if not user.email_confirmed %}
-    <div class="alert-message warning">
-        Your E-Mail address has not yet been confirmed. You should have received a confirmation message
-        containing the link needed to confirm it. If you haven't received such a message,
-        you can <a href="{% url "account_resend_confirmation" %}">resend it</a>. If
-        you misspelled your address, you can <a href="{% url "account_edit" %}">change it here</a>.
-    </div>
-{% endif %}
-{% if not user.jid_confirmed %}
-    <div class="alert-message warning">
-        Your JID has not yet been confirmed. You should have received a confirmation message
-        containing the link needed to confirm it. If you haven't received such a message,
-        you can <a href="{% url "account_resend_confirmation" %}">resend it</a>. If
-        you misspelled your JID, you can <a href="{% url "account_edit" %}">change it here</a>.
-    </div>
-{% endif %}
 
 <div class="tooltip" id="tooltip-domain">
     {% blocktrans %}The domain of your server.{% endblocktrans %}
