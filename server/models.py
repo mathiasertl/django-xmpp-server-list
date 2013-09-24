@@ -199,6 +199,18 @@ class Server(models.Model):
             and (self.s2s_tls_verified or self.ca.certificate is None) \
             and self.c2s_starttls
 
+    @verified.setter
+    def verified(self, value):
+        if not value:
+            self.c2s_srv_records = False
+            self.s2s_srv_records = False
+            self.c2s_tls_verified = False
+            self.ca.certificate = False
+            self.s2s_tls_verified = False
+            self.ca.certificate = False
+            self.c2s_starttls = False
+
+
     def verify_srv_client(self):
         """
         Verify xmpp-client SRV records.
