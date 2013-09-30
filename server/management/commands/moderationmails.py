@@ -61,4 +61,5 @@ class Command(BaseCommand):
             body = t.render(c)
 
             send_mail(subject, body, settings.DEFAULT_FROM_EMAIL,
-                          [user.email], fail_silently=False)
+                      [user.email], fail_silently=False)
+#
