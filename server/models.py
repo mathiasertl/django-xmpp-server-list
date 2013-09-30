@@ -319,9 +319,9 @@ class Server(models.Model):
         log.error('Invalid SSL certificate: %s:%s (ssl=%s, tls=%s)',
                   host, port, ssl, tls)
         if ssl:
-            self.c2s_ssl_verified = False
+            self._c2s_ssl_verified = False
         else:
-            self.c2s_tls_verified = False
+            self._c2s_tls_verified = False
 
     def _s2s_stream_feature_cb(self, host, port, features, ssl, tls):
         log.debug('Stream Features: %s:%s: %s', host, port,
@@ -341,7 +341,7 @@ class Server(models.Model):
 
     def _s2s_cert_invalid(self, host, port, ssl, tls):
         log.error('Invalid SSL certificate: %s:%s', host, port)
-        self.s2s_tls_verified = False
+        self._s2s_tls_verified = False
 
     def verify_ipv6(self, hosts):
         self.ipv6 = True
@@ -367,6 +367,9 @@ class Server(models.Model):
 
         start = datetime.now()
         cert = self.ca.certificate or None
+        self._c2s_tls_verified = True
+        self._c2s_ssl_verified = True
+        self._s2s_tls_verified = True
 
         # verify c2s-connections
         client_srv = self.verify_srv_client()
@@ -386,7 +389,7 @@ class Server(models.Model):
                     client.connect(domain, port, reattempt=False)
                     client.process(block=True)
             except TimeoutException:
-                self.c2s_tls_verified = False
+                self._c2s_tls_verified = False
 
         # return right away if no hosts where seen:
         if self.last_seen is None or self.last_seen < start:
@@ -412,7 +415,7 @@ class Server(models.Model):
                                        use_tls=False, use_ssl=True, reattempt=False)
                         client.process(block=True)
                 except TimeoutException:
-                    self.c2s_ssl_verified = False
+                    self._c2s_ssl_verified = False
 
         # verify s2s connections
         server_srv = self.verify_srv_server()
@@ -433,7 +436,7 @@ class Server(models.Model):
                     client.connect(domain, port, reattempt=False)
                     client.process(block=True)
             except TimeoutException:
-                self.s2s_tls_verified = False
+                self._s2s_tls_verified = False
 
         # get location:
         if self._c2s_online:
@@ -453,6 +456,10 @@ class Server(models.Model):
             self.c2s_ssl_verified = False
             self.c2s_tls_verified = False
             self.s2s_tls_verified = False
+        else:
+            self.c2s_ssl_verified = self._c2s_ssl_verified
+            self.c2s_tls_verified = self._c2s_tls_verified
+            self.s2s_tls_verified = self._s2s_tls_verified
 
         self.save()
 
