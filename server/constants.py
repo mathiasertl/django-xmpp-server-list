@@ -34,5 +34,6 @@ C2S_STREAM_FEATURES = {
 }
 S2S_STREAM_FEATURES = {
     'caps',
+    'dialback',
     'starttls',
 }

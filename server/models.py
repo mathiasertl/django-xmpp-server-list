@@ -171,6 +171,7 @@ class Server(models.Model):
     s2s_starttls = models.BooleanField(default=False)
     s2s_starttls_required = models.BooleanField(default=False)
     s2s_caps = models.BooleanField(default=False)
+    s2s_dialback = models.BooleanField(default=False)
 
     contact = models.CharField(
         max_length=60,

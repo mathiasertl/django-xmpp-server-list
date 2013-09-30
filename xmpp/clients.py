@@ -32,11 +32,11 @@ from xmpp.plugins import auth
 from xmpp.plugins import bind
 from xmpp.plugins import caps
 from xmpp.plugins import compression
+from xmpp.plugins import dialback
 from xmpp.plugins import register
+from xmpp.plugins import rosterver
 from xmpp.plugins import session
 from xmpp.plugins import sm
-from xmpp.plugins import rosterver
-from xmpp.plugins import dialback
 
 log = logging.getLogger(__name__)
 
@@ -143,6 +143,8 @@ class StreamFeatureClient(BaseXMPP):
                 parsed['auth'] = {}
             elif name == 'iq-register':
                 parsed['register'] = {}
+            elif name == 'dialback':
+                parsed['dialback'] = {}
             elif name == 'mechanisms':
                 mechs = [n.text for n
                          in node.findall('{%s}mechanism' % ns)]
