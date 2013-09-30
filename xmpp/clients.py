@@ -36,6 +36,7 @@ from xmpp.plugins import register
 from xmpp.plugins import session
 from xmpp.plugins import sm
 from xmpp.plugins import rosterver
+from xmpp.plugins import dialback
 
 log = logging.getLogger(__name__)
 
@@ -83,6 +84,7 @@ class StreamFeatureClient(BaseXMPP):
         self.register_plugin('feature_sm', module=sm)
         self.register_plugin('feature_starttls')
         self.register_plugin('feature_rosterver', module=rosterver)
+        self.register_plugin('feature_dialback', module=dialback)
 
         self.register_stanza(StreamFeatures)
         self.register_handler(
