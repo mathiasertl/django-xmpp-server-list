@@ -153,9 +153,9 @@ class Server(models.Model):
     ipv6 = models.BooleanField(default=False)
 
     # SSL/TLS verification
-    c2s_tls_verified = models.BooleanField(default=True)
-    c2s_ssl_verified = models.BooleanField(default=True)
-    s2s_tls_verified = models.BooleanField(default=True)
+    c2s_tls_verified = models.BooleanField(default=False)
+    c2s_ssl_verified = models.BooleanField(default=False)
+    s2s_tls_verified = models.BooleanField(default=False)
 
     # c2s stream features:
     c2s_auth = models.BooleanField(default=False)  # Non-SASL authentication
