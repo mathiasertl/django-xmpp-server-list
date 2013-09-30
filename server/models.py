@@ -275,7 +275,7 @@ class Server(models.Model):
             # This host does not deliver the exact same stream features as a
             # previous host. We modify the features to only include the
             # features common to both hosts.
-            log.error("%s: Differing stream features found.", self.domain)
+            log.warn("%s: Differing stream features found.", self.domain)
 
             for key in set(new.keys()) - set(old.keys()):
                 # remove new keys found in new but not in old features
@@ -290,11 +290,11 @@ class Server(models.Model):
             if 'compression' in new:
                 meths = set(new['compression']['methods'])
                 old_meths = set(old.get('compression', {}).get('methods', []))
-                new['compression']['methods'] = list(meths | old_meths)
+                new['compression']['methods'] = list(meths & old_meths)
             if 'sasl_auth' in new:
                 mechs = set(new['sasl_auth']['mechanisms'])
                 old_mechs = set(old.get('sasl_auth', {}).get('mechanisms', []))
-                new['sasl_auth']['mechanisms'] = list(mechs | old_mechs)
+                new['sasl_auth']['mechanisms'] = list(mechs & old_mechs)
 
         setattr(self, attr, copy.deepcopy(new))
         return new
