@@ -124,6 +124,10 @@ class StreamFeatureClient(BaseXMPP):
         found_tags = set([re.match('{.*}(.*)', n.tag).groups(1)[0]
                          for n in features.xml.getchildren()])
 
+        # no XEP, defined here: http://delta.affinix.com/specs/xmppstream.html
+        if 'address' in found_tags:
+            found_tags.remove('address')
+
         for name, node in features.get_features().items():
             ns = node.namespace
 
