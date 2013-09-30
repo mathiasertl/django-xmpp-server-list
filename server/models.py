@@ -316,8 +316,9 @@ class Server(models.Model):
             log.debug('%s: Unhandled features: %s', self.domain, features)
 
     def _c2s_cert_invalid(self, host, port, ssl, tls):
-        log.error('Invalid SSL certificate: %s:%s (ssl=%s, tls=%s)',
-                  host, port, ssl, tls)
+        proto = 'SSL' if ssl else 'TLS'
+        log.error('Invalid %s certificate: %s:%s',
+                  proto, host, port)
         if ssl:
             self._c2s_ssl_verified = False
         else:
