@@ -422,7 +422,8 @@ class Server(models.Model):
             for host in set(hosts):
                 if not lookup(host, ipv4=False):
                     self.ipv6 = False
-                    self.warn('%s has no IPv6 record.', host)
+                    if settings.USE_IP6:
+                        self.warn('%s has no IPv6 record.', host)
         except:
             self.ipv6 = False
 
