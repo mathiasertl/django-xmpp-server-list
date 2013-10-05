@@ -233,8 +233,7 @@ LOGGING = {
         },
         'sleekxmpp': {
             'handlers': ['console'],
-#            'level': LOG_LEVEL,
-            'level': 'WARN',
+            'level': 'CRITICAL',
         },
         'xmpp': {
             'handlers': ['console'],
