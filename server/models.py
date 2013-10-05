@@ -100,6 +100,11 @@ class Features(models.Model):
         return 'Features for %s' % (domain)
 
 
+class LogEntry(models.Model):
+    server = models.ForeignKey('Server', related_name='logs')
+    message = models.TextField()
+
+
 class Server(models.Model):
     class Meta:
         permissions = (
