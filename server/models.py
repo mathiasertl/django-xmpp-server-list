@@ -320,9 +320,9 @@ class Server(models.Model):
         log.error('Invalid %s certificate: %s:%s',
                   'SSL' if ssl else 'TLS', host, port)
 
-        if ns == 'jabber:client' and ssl:  # c2s connection
+        if ns == 'jabber:client' and ssl:  # c2s using SSL
             self._c2s_ssl_verified = False
-        elif ns == 'jabber:client' and tls:
+        elif ns == 'jabber:client' and tls:  # c2s using TLS
             self._c2s_tls_verified = False
         elif ns == 'jabber:server':  # s2s connection
             self._s2s_tls_verified = False
