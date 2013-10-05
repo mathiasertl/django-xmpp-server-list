@@ -372,6 +372,7 @@ class Server(models.Model):
         self._s2s_online = set()  # list of online s2s SRV records
         self._c2s_stream_features = None  # private var for stream feature checking
         self._s2s_stream_features = None  # private var for stream feature checking
+        self.logs.all().delete()
 
         # set some defaults:
         self.c2s_ssl_verified = False
