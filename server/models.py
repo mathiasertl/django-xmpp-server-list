@@ -381,7 +381,6 @@ class Server(models.Model):
             self.c2s_tls_verified = True
 
             client = StreamFeatureClient(self,
-                domain=self.domain,
                 callback=self._c2s_stream_feature_cb,
                 cert=cert,
                 cert_errback=self._c2s_cert_invalid
@@ -405,7 +404,6 @@ class Server(models.Model):
                 self.c2s_ssl_verified = True
 
                 client = StreamFeatureClient(self,
-                    domain=self.domain,
                     callback=self._c2s_stream_feature_cb,
                     cert=cert,
                     cert_errback=self._c2s_cert_invalid
@@ -427,7 +425,6 @@ class Server(models.Model):
             self.s2s_tls_verified = True
 
             client = StreamFeatureClient(self,
-                domain=self.domain,
                 callback=self._s2s_stream_feature_cb,
                 cert=cert,
                 cert_errback=self._s2s_cert_invalid,

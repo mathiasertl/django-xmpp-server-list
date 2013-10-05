@@ -44,15 +44,15 @@ log = logging.getLogger(__name__)
 class StreamFeatureClient(BaseXMPP):
     """A client to test c2s stream features.
 
-    :param domain: The domain that this server serves (not the DNS-name
-        under which it is available!)
+    :param server: The server to connect to.
+    :type  server: :py:class:`~xmpplist.server.models.Server`
     :param callback: Callback to call with stream features.
     :param cert: Certificate
     """
 
-    def __init__(self, server, domain, callback, cert, cert_errback, lang='en',
+    def __init__(self, server, callback, cert, cert_errback, lang='en',
                  ns='jabber:client'):
-        super(StreamFeatureClient, self).__init__(domain, default_ns=ns)
+        super(StreamFeatureClient, self).__init__(server.domain, default_ns=ns)
         self.server = server
 
         self.use_ipv6 = settings.USE_IP6
