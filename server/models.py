@@ -308,7 +308,18 @@ class Server(models.Model):
             # This host does not deliver the exact same stream features as a
             # previous host. We modify the features to only include the
             # features common to both hosts.
-            log.warn("%s: Differing stream features found.", self.domain)
+            log.debug('%s: Differing stream features found.', self.domain)
+
+            oldkeys = set(old.keys())
+            newkeys = set(new.keys())
+
+            if oldkeys != newkeys:
+                # we strip starttls from output because SSL does not have that
+                # stanza and we fake it above.
+                self.warn(
+                    "Hosts (%s) offer different stream features: %s vs. %s",
+                    kind, ', '.join(sorted(oldkeys - {'starttls', })),
+                    ', '.join(sorted(newkeys - {'starttls', })))
 
             for key in set(new.keys()) - set(old.keys()):
                 # remove new keys found in new but not in old features
@@ -318,15 +329,25 @@ class Server(models.Model):
                 old_req = old['starttls']['required']
                 new_req = new['starttls']['required']
                 if not old_req and new_req:
+                    self.error('STARTTLS not required on all hosts.')
                     new['starttls']['required'] = False
 
             if 'compression' in new:
                 meths = set(new['compression']['methods'])
                 old_meths = set(old.get('compression', {}).get('methods', []))
+                if meths != old_meths:
+                    self.warn(
+                        'Hosts offer different compression methods: %s vs. %s',
+                        ', '.join(sorted(meths)), ', '.join(sorted(old_meths)))
                 new['compression']['methods'] = list(meths & old_meths)
             if 'sasl_auth' in new:
                 mechs = set(new['sasl_auth']['mechanisms'])
                 old_mechs = set(old.get('sasl_auth', {}).get('mechanisms', []))
+                if mechs != old_mechs:
+                    self.warn(
+                        'Hosts offer different SASL auth mechanisms: %s vs. %s',
+                        ', '.join(sorted(mechs)),
+                        ', '.join(sorted(old_mechs)))
                 new['sasl_auth']['mechanisms'] = list(mechs & old_mechs)
 
         setattr(self, attr, copy.deepcopy(new))
@@ -401,12 +422,12 @@ class Server(models.Model):
             for host in set(hosts):
                 if not lookup(host, ipv4=False):
                     self.ipv6 = False
-                    return
+                    self.warn('%s has no IPv6 record.', host)
         except:
             self.ipv6 = False
 
     def verify(self):
-        log.info('Verify %s', self.domain)
+        log.debug('Verify %s', self.domain)
         self._c2s_online = set()  # list of online c2s SRV records
         self._s2s_online = set()  # list of online s2s SRV records
         self._c2s_stream_features = None  # private var for stream feature checking
