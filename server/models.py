@@ -322,9 +322,6 @@ class Server(models.Model):
             log.debug('%s: Unhandled features: %s', self.domain, features)
 
     def _invalid_tls(self, host, port, ssl, tls, ns):
-        log.error('Invalid %s certificate: %s:%s',
-                  'SSL' if ssl else 'TLS', host, port)
-
         if ns == 'jabber:client' and ssl:  # c2s using SSL
             self._c2s_ssl_verified = False
         elif ns == 'jabber:client' and tls:  # c2s using TLS
@@ -335,9 +332,11 @@ class Server(models.Model):
             log.error('Unknown namespace: %s', ns)
 
     def invalid_chain(self, host, port, ssl, tls, ns):
+        self.log('Invalid certificate chain at %s:%s' % (host, port))
         self._invalid_tls(host, port, ssl, tls, ns)
 
     def invalid_cert(self, host, port, ssl, tls, ns):
+        self.log('Invalid %s certificate at %s:%s' % (host, port))
         self._invalid_tls(host, port, ssl, tls, ns)
 
     def _s2s_stream_feature_cb(self, host, port, features, ssl, tls):
@@ -355,6 +354,9 @@ class Server(models.Model):
 
         if features:
             log.debug('%s: Unhandled features: %s', self.domain, features)
+
+    def log(self, message):
+        self.logs.create(message=message)
 
     def verify_ipv6(self, hosts):
         self.ipv6 = True
