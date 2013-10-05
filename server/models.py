@@ -101,8 +101,36 @@ class Features(models.Model):
 
 
 class LogEntry(models.Model):
+    CONDITIONS = (
+        (logging.CRITICAL, logging.getLevelName(logging.CRITICAL)),
+        (logging.ERROR, logging.getLevelName(logging.ERROR)),
+        (logging.WARNING, logging.getLevelName(logging.WARNING)),
+        (logging.INFO, logging.getLevelName(logging.INFO)),
+        (logging.DEBUG, logging.getLevelName(logging.DEBUG)),
+    )
     server = models.ForeignKey('Server', related_name='logs')
+    level = models.PositiveSmallIntegerField(choices=CONDITIONS)
     message = models.TextField()
+
+    @property
+    def critical(self):
+        return self.level == logging.CRITICAL
+
+    @property
+    def error(self):
+        return self.level == logging.ERROR
+
+    @property
+    def warning(self):
+        return self.level == logging.WARNING
+
+    @property
+    def info(self):
+        return self.level == logging.INFO
+
+    @property
+    def debug(self):
+        return self.level == logging.DEBUG
 
 
 class Server(models.Model):
@@ -332,11 +360,11 @@ class Server(models.Model):
             log.error('Unknown namespace: %s', ns)
 
     def invalid_chain(self, host, port, ssl, tls, ns):
-        self.log('Invalid certificate chain at %s:%s' % (host, port))
+        self.error('Invalid certificate chain at %s:%s', host, port)
         self._invalid_tls(host, port, ssl, tls, ns)
 
     def invalid_cert(self, host, port, ssl, tls, ns):
-        self.log('Invalid %s certificate at %s:%s' % (host, port))
+        self.error('Invalid %s certificate at %s:%s', host, port)
         self._invalid_tls(host, port, ssl, tls, ns)
 
     def _s2s_stream_feature_cb(self, host, port, features, ssl, tls):
@@ -355,8 +383,17 @@ class Server(models.Model):
         if features:
             log.debug('%s: Unhandled features: %s', self.domain, features)
 
-    def log(self, message):
-        self.logs.create(message=message)
+    def _log(self, message, level, *args):
+        try:
+            self.logs.create(message=message % args, level=level)
+        except Exception as e:
+            log.error("Could not format message: %s", e)
+
+    def warn(self, message, *args):
+        self._log(message, logging.WARNING, *args)
+
+    def error(self, message, *args):
+        self._log(message, logging.ERROR, *args)
 
     def verify_ipv6(self, hosts):
         self.ipv6 = True
