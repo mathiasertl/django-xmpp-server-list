@@ -317,18 +317,17 @@ class Server(models.Model):
             log.debug('%s: Unhandled features: %s', self.domain, features)
 
     def _invalid_tls(self, host, port, ssl, tls, ns):
-        proto = 'SSL' if ssl else 'TLS'
-        log.error('Invalid %s certificate: %s:%s', proto, host, port)
+        log.error('Invalid %s certificate: %s:%s',
+                  'SSL' if ssl else 'TLS', host, port)
 
-        if ns == 'jabber:client':  # c2s connection
-            if ssl:
-                self._c2s_ssl_verified = False
-            else:
-                self._c2s_tls_verified = False
+        if ns == 'jabber:client' and ssl:  # c2s connection
+            self._c2s_ssl_verified = False
+        elif ns == 'jabber:client' and tls:
+            self._c2s_tls_verified = False
         elif ns == 'jabber:server':  # s2s connection
             self._s2s_tls_verified = False
         else:
-            log.error('Invalid cert chain for unknown namespace: %s', ns)
+            log.error('Unknown namespace: %s', ns)
 
     def invalid_chain(self, host, port, ssl, tls, ns):
         self._invalid_tls(host, port, ssl, tls, ns)
