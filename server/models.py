@@ -316,14 +316,25 @@ class Server(models.Model):
         if features:
             log.debug('%s: Unhandled features: %s', self.domain, features)
 
-    def _c2s_cert_invalid(self, host, port, ssl, tls):
+    def _invalid_tls(self, host, port, ssl, tls, ns):
         proto = 'SSL' if ssl else 'TLS'
-        log.error('Invalid %s certificate: %s:%s',
-                  proto, host, port)
-        if ssl:
-            self._c2s_ssl_verified = False
+        log.error('Invalid %s certificate: %s:%s', proto, host, port)
+
+        if ns == 'jabber:client':  # c2s connection
+            if ssl:
+                self._c2s_ssl_verified = False
+            else:
+                self._c2s_tls_verified = False
+        elif ns == 'jabber:server':  # s2s connection
+            self._s2s_tls_verified = False
         else:
-            self._c2s_tls_verified = False
+            log.error('Invalid cert chain for unknown namespace: %s', ns)
+
+    def invalid_chain(self, host, port, ssl, tls, ns):
+        self._invalid_tls(host, port, ssl, tls, ns)
+
+    def invalid_cert(self, host, port, ssl, tls, ns):
+        self._invalid_tls(host, port, ssl, tls, ns)
 
     def _s2s_stream_feature_cb(self, host, port, features, ssl, tls):
         log.debug('Stream Features: %s:%s: %s', host, port,
@@ -340,10 +351,6 @@ class Server(models.Model):
 
         if features:
             log.debug('%s: Unhandled features: %s', self.domain, features)
-
-    def _s2s_cert_invalid(self, host, port, ssl, tls):
-        log.error('Invalid SSL certificate: %s:%s', host, port)
-        self._s2s_tls_verified = False
 
     def verify_ipv6(self, hosts):
         self.ipv6 = True
@@ -380,9 +387,7 @@ class Server(models.Model):
             self.c2s_tls_verified = True
 
             client = StreamFeatureClient(self,
-                callback=self._c2s_stream_feature_cb,
-                cert_errback=self._c2s_cert_invalid
-            )
+                callback=self._c2s_stream_feature_cb)
             try:
                 with timeout(10, client):
                     client.connect(domain, port, reattempt=False)
@@ -402,9 +407,7 @@ class Server(models.Model):
                 self.c2s_ssl_verified = True
 
                 client = StreamFeatureClient(self,
-                    callback=self._c2s_stream_feature_cb,
-                    cert_errback=self._c2s_cert_invalid
-                )
+                    callback=self._c2s_stream_feature_cb)
 
                 try:
                     with timeout(10, client):
@@ -422,10 +425,7 @@ class Server(models.Model):
             self.s2s_tls_verified = True
 
             client = StreamFeatureClient(self,
-                callback=self._s2s_stream_feature_cb,
-                cert_errback=self._s2s_cert_invalid,
-                ns='jabber:server',
-            )
+                callback=self._s2s_stream_feature_cb, ns='jabber:server')
             try:
                 with timeout(10, client):
                     client.connect(domain, port, reattempt=False)

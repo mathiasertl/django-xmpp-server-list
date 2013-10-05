@@ -50,15 +50,13 @@ class StreamFeatureClient(BaseXMPP):
     :param cert: Certificate
     """
 
-    def __init__(self, server, callback, cert_errback, lang='en',
-                 ns='jabber:client'):
+    def __init__(self, server, callback, lang='en', ns='jabber:client'):
         super(StreamFeatureClient, self).__init__(server.domain, default_ns=ns)
         self._listed_server = server
 
         self.use_ipv6 = settings.USE_IP6
         self.auto_reconnect=False
         self.callback = callback
-        self.cert_errback = cert_errback
         self.ca_certs = server.ca.certificate or None
 
         # copied from ClientXMPP
@@ -94,16 +92,24 @@ class StreamFeatureClient(BaseXMPP):
                      MatchXPath('{%s}features' % self.stream_ns),
                      self.get_features))
 
-        self.add_event_handler('ssl_invalid_chain', self._cert_errback)
-        self.add_event_handler('ssl_invalid_cert', self._cert_errback)
+        self.add_event_handler('ssl_invalid_chain', self._invalid_chain)
+        self.add_event_handler('ssl_invalid_cert', self._invalid_cert)
 
         # do not reparse features:
         self._features = None
 
-    def _cert_errback(self, *args, **kwargs):
+    def _invalid_chain(self, *args, **kwargs):
         self.disconnect(self.auto_reconnect, send_close=False)
-        self.cert_errback(host=self.address[0], port=self.address[1],
-                          ssl=self.use_ssl, tls=self.use_tls)
+        self._listed_server.invalid_chain(
+            host=self.address[0], port=self.address[1], ns=self.default_ns,
+            ssl=self.use_ssl, tls=self.use_tls
+        )
+
+    def _invalid_cert(self, *args, **kwargs):
+        self.disconnect(self.auto_reconnect, send_close=False)
+        self._listed_server.invalid_cert(
+            host=self.address[0], port=self.address[1], ns=self.default_ns,
+            ssl=self.use_ssl, tls=self.use_tls)
 
     def register_feature(self, name, handler,  restart=False, order=5000):
         """Register a stream feature handler.
