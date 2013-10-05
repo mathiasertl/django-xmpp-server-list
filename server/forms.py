@@ -55,12 +55,12 @@ class ServerForm(ModelForm):
     def clean_domain(self):
         try:
             domain = self.cleaned_data['domain']
+
             if not self.verify_domain(domain):
                 raise ValidationError(
-                    'Domain must be a simple domain. Use "%s" instead.'
-                    % parsed.hostname)
+                    'Domain must be a simple domain, i.e. "example.com"')
         except:
-            raise Validationerror("Could not parse domain.")
+            raise ValidationError("Could not parse domain.")
         return domain
 
     def clean_contact(self):
