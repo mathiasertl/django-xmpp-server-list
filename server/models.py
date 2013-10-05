@@ -380,7 +380,7 @@ class Server(models.Model):
             # Set to True, the cert_errback will set this to False:
             self.c2s_tls_verified = True
 
-            client = StreamFeatureClient(
+            client = StreamFeatureClient(self,
                 domain=self.domain,
                 callback=self._c2s_stream_feature_cb,
                 cert=cert,
@@ -404,7 +404,7 @@ class Server(models.Model):
                 # Set to True, the cert_errback will set this to False:
                 self.c2s_ssl_verified = True
 
-                client = StreamFeatureClient(
+                client = StreamFeatureClient(self,
                     domain=self.domain,
                     callback=self._c2s_stream_feature_cb,
                     cert=cert,
@@ -426,7 +426,7 @@ class Server(models.Model):
             # Set to True, the cert_errback will set this to False:
             self.s2s_tls_verified = True
 
-            client = StreamFeatureClient(
+            client = StreamFeatureClient(self,
                 domain=self.domain,
                 callback=self._s2s_stream_feature_cb,
                 cert=cert,
