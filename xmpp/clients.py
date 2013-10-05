@@ -53,7 +53,7 @@ class StreamFeatureClient(BaseXMPP):
     def __init__(self, server, callback, cert, cert_errback, lang='en',
                  ns='jabber:client'):
         super(StreamFeatureClient, self).__init__(server.domain, default_ns=ns)
-        self.server = server
+        self._listed_server = server
 
         self.use_ipv6 = settings.USE_IP6
         self.auto_reconnect=False
