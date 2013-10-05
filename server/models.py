@@ -385,7 +385,7 @@ class Server(models.Model):
         self._invalid_tls(host, port, ssl, tls, ns)
 
     def invalid_cert(self, host, port, ssl, tls, ns):
-        self.error('Invalid %s certificate at %s:%s', host, port)
+        self.error('Invalid certificate at %s:%s', host, port)
         self._invalid_tls(host, port, ssl, tls, ns)
 
     def _s2s_stream_feature_cb(self, host, port, features, ssl, tls):
