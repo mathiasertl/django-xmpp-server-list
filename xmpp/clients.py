@@ -50,7 +50,7 @@ class StreamFeatureClient(BaseXMPP):
     :param cert: Certificate
     """
 
-    def __init__(self, server, callback, cert, cert_errback, lang='en',
+    def __init__(self, server, callback, cert_errback, lang='en',
                  ns='jabber:client'):
         super(StreamFeatureClient, self).__init__(server.domain, default_ns=ns)
         self._listed_server = server
@@ -59,7 +59,7 @@ class StreamFeatureClient(BaseXMPP):
         self.auto_reconnect=False
         self.callback = callback
         self.cert_errback = cert_errback
-        self.ca_certs = cert
+        self.ca_certs = server.ca.certificate or None
 
         # copied from ClientXMPP
         self.default_lang = lang
