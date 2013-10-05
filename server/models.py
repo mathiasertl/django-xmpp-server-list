@@ -408,7 +408,7 @@ class Server(models.Model):
         try:
             self.logs.create(message=message % args, level=level)
         except Exception as e:
-            log.error("Could not format message: %s", e)
+            log.error("Could not format message %s: %s", message, e)
 
     def warn(self, message, *args):
         self._log(message, logging.WARNING, *args)
