@@ -181,6 +181,7 @@ USE_IP4 = True
 USE_IP6 = True
 GEOIP_CONFIG_ROOT = os.path.join(os.path.dirname(__file__), 'geoip')
 CONFIRMATION_TIMEOUT = timedelta(hours=48)
+CERTIFICATES_PATH = 'static/certs'
 
 try:
     from localsettings import *
@@ -241,5 +242,3 @@ LOGGING = {
         },
     },
 }
-
-CERTIFICATES_PATH = 'static/certs'
