@@ -52,7 +52,6 @@ class TimeoutException(Exception):
 @contextmanager
 def timeout(seconds, client):
     def signal_handler(signum, frame):
-        log.error('Timeout: use_tls=%s, use_ssl=%s', client.use_tls, client.use_ssl)
         client.disconnect(wait=False, send_close=False, reconnect=False)
         raise TimeoutException()
     signal.signal(signal.SIGALRM, signal_handler)
@@ -459,6 +458,7 @@ class Server(models.Model):
                     client.connect(domain, port, reattempt=False)
                     client.process(block=True)
             except TimeoutException:
+                self.error('Could not connect to %s:%s', domain, port)
                 self._c2s_tls_verified = False
 
         # return right away if no hosts where seen:
@@ -481,6 +481,7 @@ class Server(models.Model):
                                        use_tls=False, use_ssl=True, reattempt=False)
                         client.process(block=True)
                 except TimeoutException:
+                    self.error('Could not connect to %s:%s', host[0], port)
                     self._c2s_ssl_verified = False
 
         # verify s2s connections
@@ -497,6 +498,7 @@ class Server(models.Model):
                     client.connect(domain, port, reattempt=False)
                     client.process(block=True)
             except TimeoutException:
+                self.error('Could not connect to %s:%s', domain, port)
                 self._s2s_tls_verified = False
 
         # get location:
