@@ -24,13 +24,17 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.views.generic.detail import BaseDetailView
 from django.views.generic.detail import DetailView
+from django.views.generic.list import ListView
 
 from xmpplist.server.forms import ServerForm
 from xmpplist.server.models import Features
 from xmpplist.server.models import Server
 
 
-class IndexView(TemplateView):
+class IndexView(ListView):
+    queryset = Server.objects.moderated().verified().order_by('domain')
+
+class EditView(TemplateView):
     template_name = 'server/index.html'
 
     def get_context_data(self, **kwargs):

@@ -24,9 +24,11 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
 admin.autodiscover()
 
+from server.views import IndexView
+
 urlpatterns = patterns('',
     # Examples:
-    url(r'^$', 'xmpplist.views.home', name='home'),
+    url(r'^$', IndexView.as_view(), name='home'),
     url(r'^user/', include('account.urls')),
     url(r'^server/', include('server.urls')),
     url(r'^api/', include('api.urls')),
