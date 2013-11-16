@@ -38,7 +38,7 @@ class EditView(TemplateView):
     template_name = 'server/index.html'
 
     def get_context_data(self, **kwargs):
-        context = super(IndexView, self).get_context_data(**kwargs)
+        context = super(EditView, self).get_context_data(**kwargs)
 
         servers = self.request.user.servers.all()
         forms = [ServerForm(instance=s, prefix=s.id) for s in servers]
