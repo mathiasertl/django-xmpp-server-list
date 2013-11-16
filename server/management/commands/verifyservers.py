@@ -23,7 +23,7 @@ from datetime import datetime
 from datetime import timedelta
 
 from django.core.management.base import BaseCommand
-from xmpplist.server.models import Server
+from server.models import Server
 
 class Command(BaseCommand):
     args = '[domain ...]'

@@ -24,8 +24,8 @@ from django.db.models import Q
 from django.template import Context
 from django.template import loader
 
-from xmpplist.server.models import Server
-from xmpplist.server.util import get_siteinfo
+from server.models import Server
+from server.util import get_siteinfo
 
 User = get_user_model()
 
