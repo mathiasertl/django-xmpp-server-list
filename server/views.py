@@ -26,9 +26,9 @@ from django.views.generic.detail import BaseDetailView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
-from xmpplist.server.forms import ServerForm
-from xmpplist.server.models import Features
-from xmpplist.server.models import Server
+from server.forms import ServerForm
+from server.models import Features
+from server.models import Server
 
 
 class IndexView(ListView):

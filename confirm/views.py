@@ -21,9 +21,9 @@ from django.http import Http404
 from django.views.generic.base import RedirectView
 from django.views.generic.detail import SingleObjectMixin
 
-from xmpplist.confirm.models import UserConfirmationKey
-from xmpplist.confirm.models import UserPasswordResetKey
-from xmpplist.confirm.models import ServerConfirmationKey
+from confirm.models import UserConfirmationKey
+from confirm.models import UserPasswordResetKey
+from confirm.models import ServerConfirmationKey
 
 
 class ConfirmationView(RedirectView, SingleObjectMixin):

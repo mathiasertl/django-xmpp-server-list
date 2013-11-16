@@ -23,12 +23,12 @@ from django.shortcuts import redirect
 from django.shortcuts import render
 from django.views.generic import FormView
 
-from forms import CreationForm
-from forms import PasswordResetForm
-from forms import PreferencesForm
+from account.forms import CreationForm
+from account.forms import PasswordResetForm
+from account.forms import PreferencesForm
 
-from xmpplist.confirm.models import UserConfirmationKey
-from xmpplist.confirm.models import UserPasswordResetKey
+from confirm.models import UserConfirmationKey
+from confirm.models import UserPasswordResetKey
 
 
 @login_required

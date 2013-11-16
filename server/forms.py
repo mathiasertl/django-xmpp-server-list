@@ -24,7 +24,7 @@ from django.forms.widgets import DateInput
 from django.forms.widgets import Select
 from django.forms.widgets import TextInput
 
-from xmpplist.server.models import Server
+from server.models import Server
 
 
 class ServerForm(ModelForm):

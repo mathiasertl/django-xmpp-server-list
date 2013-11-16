@@ -16,8 +16,8 @@
 # along with xmpplist.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from django.conf.urls.defaults import patterns
-from django.conf.urls.defaults import url
+from django.conf.urls import patterns
+from django.conf.urls import url
 
 from confirm.views import UserConfirmationView
 from confirm.views import ResetUserPasswordView
