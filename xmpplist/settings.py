@@ -166,7 +166,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
     "django.core.context_processors.request",
 
-    "xmpplist.server.context_processors.siteinfo",
+    "server.context_processors.siteinfo",
 )
 
 LOGIN_URL = '/user/login/'

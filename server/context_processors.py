@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with xmpplist.  If not, see <http://www.gnu.org/licenses/>.
 
-from xmpplist.server.util import get_siteinfo
+from server.util import get_siteinfo
 
 
 def siteinfo(request):
