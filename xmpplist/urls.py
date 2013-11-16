@@ -15,9 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with xmpplist.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls.defaults import include
-from django.conf.urls.defaults import patterns
-from django.conf.urls.defaults import url
+from django.conf.urls import include
+from django.conf.urls import patterns
+from django.conf.urls import url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 # Uncomment the next two lines to enable the admin:
