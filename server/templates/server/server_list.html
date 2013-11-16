@@ -28,7 +28,7 @@ always communicate with users on other servers. This list is kindly brought to y
     </tr>
     </thead>
     <tbody>
-{% for server in servers %}
+{% for server in object_list %}
 <tr id="server-{{server.id}}" class="server-row" data-content='bootstrap-{{server.id}}'>
         <td>{% include "includes/server_homepage.html" %}
 
