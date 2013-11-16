@@ -23,8 +23,8 @@ from django.core.mail import send_mail
 from django.db import models
 from django.template.loader import render_to_string
 
-from xmpplist.server.util import get_siteinfo
-from xmpplist.server.models import Server
+from server.util import get_siteinfo
+from server.models import Server
 from SendMsgBot import SendMsgBot
 
 from managers import ConfirmationKeyManager
