@@ -225,7 +225,7 @@ LOGGING = {
     'loggers': {
         'django.request': {
             'handlers': ['mail_admins'],
-            'level': LOG_LEVEL,
+            'level': 'ERROR',
             'propagate': True,
         },
         'xmpplist.server': {
