@@ -15,13 +15,5 @@ deploy:
 
 refresh-geoip:
 	mkdir -p geoip
-
-	curl ${MAXMIND}/GeoLiteCountry/GeoIP.dat.gz -o geoip/GeoIP.dat.gz
-	curl ${MAXMIND}/GeoIPv6.dat.gz -o geoip/GeoIPv6.dat.gz
 	curl ${MAXMIND}/GeoLiteCity.dat.gz -o geoip/GeoLiteCity.dat.gz
-	curl ${MAXMIND}/GeoLiteCityv6-beta/GeoLiteCityv6.dat.gz -o geoip/GeoLiteCityv6.dat.gz
-
-	gunzip -f geoip/GeoIP.dat.gz
-	gunzip -f geoip/GeoIPv6.dat.gz
 	gunzip -f geoip/GeoLiteCity.dat.gz
-	gunzip -f geoip/GeoLiteCityv6.dat.gz
