@@ -1,8 +1,8 @@
-Django==1.6.1
+Django==1.6.2
 South==0.8.4
 dnspython==1.11.1
-lxml==3.3.0beta1
+lxml==3.3.4
 pyasn1==0.1.7
 pyasn1-modules==0.0.5
-pygeoip==0.3.0
-sleekxmpp==1.1.11
+pygeoip==0.3.1
+sleekxmpp==1.2.4
