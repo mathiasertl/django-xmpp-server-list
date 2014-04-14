@@ -19,7 +19,6 @@ from server.models import Server
 from django.shortcuts import render
 
 def home(request):
-    servers = Server.objects.filter(
-        moderated=True, user__email_confirmed=True, user__jid_confirmed=True).verified().order_by('domain')
+    servers = Server.objects.moderated().verified().order_by('domain')
 
     return render(request, 'index.html', {'servers': servers})
