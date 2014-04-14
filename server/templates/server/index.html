@@ -61,11 +61,28 @@
     </tr>
     </tbody>
 </table>
+<h2>{% trans "Requirements for being listed" %}</h2>
+<ul>
+    <li>{% blocktrans %}<strong>Technical aspects:</strong> The most important aspects of your
+server configuration (SRV records, valid SSL certificate, ...) are
+automatically checked every six hours. If your server ever fails any check,
+your server will not be listed until the problems are fixed.{% endblocktrans%}</li>
+    <li>{% blocktrans%}<strong>Homepage:</strong> Your homepage has to include some details
+about your server. At the very least, it should indicate who (e.g. what
+organisation, or just you privately) is running your server and give the same
+contact address as given in the "Contact" field.{% endblocktrans %}</li>
+    <li>{% blocktrans %}<strong>Contact:</strong> If you give a JID or E-Mail address, it has to be
+verified (unless it was already verified via <a href="{% url "account"%}">your
+profile</a>) via an automatic message. Webpages or MUCs will be manually
+verified. <strong>Note:</strong> Your server will be rejected if a JID/E-Mail
+address is not verified.{% endblocktrans %}</li>
+</ul>
+
 <h2>Help on adding/editing servers</h2>
 A few notes on adding/editing servers:
 <ul>
     <li>
-        When adding a server, use the last row to fill out data of your server. When you are done,
+        Use the last row in the table above to add a server. When you are done,
         click the '+' sign on the right. If you are unsure what a field means, a description is
         shown when you hover over an input field.
     </li>
