@@ -11,6 +11,8 @@
 
 {% block content %}
 
+{% url "account" as account_url %}
+
 <div class="tooltip" id="tooltip-domain">
     {% blocktrans %}The domain of your server.{% endblocktrans %}
 </div>
@@ -72,7 +74,7 @@ about your server. At the very least, it should indicate who (e.g. what
 organisation, or just you privately) is running your server and give the same
 contact address as given in the "Contact" field.{% endblocktrans %}</li>
     <li>{% blocktrans %}<strong>Contact:</strong> If you give a JID or E-Mail address, it has to be
-verified (unless it was already verified via <a href="{% url "account"%}">your
+    verified (unless it was already verified via <a href="{{ account_url }}">your
 profile</a>) via an automatic message. Webpages or MUCs will be manually
 verified. <strong>Note:</strong> Your server will be rejected if a JID/E-Mail
 address is not verified.{% endblocktrans %}</li>
@@ -118,7 +120,7 @@ A few notes on adding/editing servers:
     </li>
     <li>
         Please note that servers are never shown on the frontpage if your personal JID and e-mail
-        are not verified. See <a href="{% url "account"%}">your profile</a> for details.
+        are not verified. See <a href="{{ account_url }}">your profile</a> for details.
     </li>
     <li>
         If you have multiple virtual hosts running on the same server, simply add them as if they
