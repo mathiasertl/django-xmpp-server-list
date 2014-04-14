@@ -24,7 +24,7 @@ from django.forms.widgets import DateInput
 from django.forms.widgets import Select
 from django.forms.widgets import TextInput
 
-from xmpplist.server.models import Server
+from server.models import Server
 
 
 class ServerForm(ModelForm):
@@ -53,11 +53,14 @@ class ServerForm(ModelForm):
         return ssl_port
 
     def clean_domain(self):
-        domain = self.cleaned_data['domain']
-        if not self.verify_domain(domain):
-            raise ValidationError(
-                'Domain must be a simple domain. Use "%s" instead.'
-                % parsed.hostname)
+        try:
+            domain = self.cleaned_data['domain']
+
+            if not self.verify_domain(domain):
+                raise ValidationError(
+                    'Domain must be a simple domain, i.e. "example.com"')
+        except:
+            raise ValidationError("Could not parse domain.")
         return domain
 
     def clean_contact(self):

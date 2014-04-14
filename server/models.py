@@ -52,7 +52,6 @@ class TimeoutException(Exception):
 @contextmanager
 def timeout(seconds, client):
     def signal_handler(signum, frame):
-        log.error('Timeout: use_tls=%s, use_ssl=%s', client.use_tls, client.use_ssl)
         client.disconnect(wait=False, send_close=False, reconnect=False)
         raise TimeoutException()
     signal.signal(signal.SIGALRM, signal_handler)
@@ -98,6 +97,39 @@ class Features(models.Model):
             domain = 'INVALID SERVER!'
 
         return 'Features for %s' % (domain)
+
+
+class LogEntry(models.Model):
+    CONDITIONS = (
+        (logging.CRITICAL, logging.getLevelName(logging.CRITICAL)),
+        (logging.ERROR, logging.getLevelName(logging.ERROR)),
+        (logging.WARNING, logging.getLevelName(logging.WARNING)),
+        (logging.INFO, logging.getLevelName(logging.INFO)),
+        (logging.DEBUG, logging.getLevelName(logging.DEBUG)),
+    )
+    server = models.ForeignKey('Server', related_name='logs')
+    level = models.PositiveSmallIntegerField(choices=CONDITIONS)
+    message = models.TextField()
+
+    @property
+    def critical(self):
+        return self.level == logging.CRITICAL
+
+    @property
+    def error(self):
+        return self.level == logging.ERROR
+
+    @property
+    def warning(self):
+        return self.level == logging.WARNING
+
+    @property
+    def info(self):
+        return self.level == logging.INFO
+
+    @property
+    def debug(self):
+        return self.level == logging.DEBUG
 
 
 class Server(models.Model):
@@ -153,9 +185,9 @@ class Server(models.Model):
     ipv6 = models.BooleanField(default=False)
 
     # SSL/TLS verification
-    c2s_tls_verified = models.BooleanField(default=True)
-    c2s_ssl_verified = models.BooleanField(default=True)
-    s2s_tls_verified = models.BooleanField(default=True)
+    c2s_tls_verified = models.BooleanField(default=False)
+    c2s_ssl_verified = models.BooleanField(default=False)
+    s2s_tls_verified = models.BooleanField(default=False)
 
     # c2s stream features:
     c2s_auth = models.BooleanField(default=False)  # Non-SASL authentication
@@ -171,6 +203,7 @@ class Server(models.Model):
     s2s_starttls = models.BooleanField(default=False)
     s2s_starttls_required = models.BooleanField(default=False)
     s2s_caps = models.BooleanField(default=False)
+    s2s_dialback = models.BooleanField(default=False)
 
     contact = models.CharField(
         max_length=60,
@@ -198,6 +231,18 @@ class Server(models.Model):
             and (self.c2s_tls_verified or self.ca.certificate is None) \
             and (self.s2s_tls_verified or self.ca.certificate is None) \
             and self.c2s_starttls
+
+    @verified.setter
+    def verified(self, value):
+        if not value:
+            self.c2s_srv_records = False
+            self.s2s_srv_records = False
+            self.c2s_tls_verified = False
+            self.ca.certificate = False
+            self.s2s_tls_verified = False
+            self.ca.certificate = False
+            self.c2s_starttls = False
+
 
     def verify_srv_client(self):
         """
@@ -262,7 +307,18 @@ class Server(models.Model):
             # This host does not deliver the exact same stream features as a
             # previous host. We modify the features to only include the
             # features common to both hosts.
-            log.error("%s: Differing stream features found.", self.domain)
+            log.debug('%s: Differing stream features found.', self.domain)
+
+            oldkeys = set(old.keys())
+            newkeys = set(new.keys())
+
+            if oldkeys != newkeys:
+                # we strip starttls from output because SSL does not have that
+                # stanza and we fake it above.
+                self.warn(
+                    "Hosts (%s) offer different stream features: %s vs. %s",
+                    kind, ', '.join(sorted(oldkeys - {'starttls', })),
+                    ', '.join(sorted(newkeys - {'starttls', })))
 
             for key in set(new.keys()) - set(old.keys()):
                 # remove new keys found in new but not in old features
@@ -272,16 +328,26 @@ class Server(models.Model):
                 old_req = old['starttls']['required']
                 new_req = new['starttls']['required']
                 if not old_req and new_req:
+                    self.error('STARTTLS not required on all hosts.')
                     new['starttls']['required'] = False
 
             if 'compression' in new:
                 meths = set(new['compression']['methods'])
                 old_meths = set(old.get('compression', {}).get('methods', []))
-                new['compression']['methods'] = list(meths | old_meths)
+                if meths != old_meths:
+                    self.warn(
+                        'Hosts offer different compression methods: %s vs. %s',
+                        ', '.join(sorted(meths)), ', '.join(sorted(old_meths)))
+                new['compression']['methods'] = list(meths & old_meths)
             if 'sasl_auth' in new:
                 mechs = set(new['sasl_auth']['mechanisms'])
                 old_mechs = set(old.get('sasl_auth', {}).get('mechanisms', []))
-                new['sasl_auth']['mechanisms'] = list(mechs | old_mechs)
+                if mechs != old_mechs:
+                    self.warn(
+                        'Hosts offer different SASL auth mechanisms: %s vs. %s',
+                        ', '.join(sorted(mechs)),
+                        ', '.join(sorted(old_mechs)))
+                new['sasl_auth']['mechanisms'] = list(mechs & old_mechs)
 
         setattr(self, attr, copy.deepcopy(new))
         return new
@@ -303,13 +369,23 @@ class Server(models.Model):
         if features:
             log.debug('%s: Unhandled features: %s', self.domain, features)
 
-    def _c2s_cert_invalid(self, host, port, ssl, tls):
-        log.error('Invalid SSL certificate: %s:%s (ssl=%s, tls=%s)',
-                  host, port, ssl, tls)
-        if ssl:
-            self.c2s_ssl_verified = False
+    def _invalid_tls(self, host, port, ssl, tls, ns):
+        if ns == 'jabber:client' and ssl:  # c2s using SSL
+            self._c2s_ssl_verified = False
+        elif ns == 'jabber:client' and tls:  # c2s using TLS
+            self._c2s_tls_verified = False
+        elif ns == 'jabber:server':  # s2s connection
+            self._s2s_tls_verified = False
         else:
-            self.c2s_tls_verified = False
+            log.error('Unknown namespace: %s', ns)
+
+    def invalid_chain(self, host, port, ssl, tls, ns):
+        self.error('Invalid certificate chain at %s:%s', host, port)
+        self._invalid_tls(host, port, ssl, tls, ns)
+
+    def invalid_cert(self, host, port, ssl, tls, ns):
+        self.error('Invalid certificate at %s:%s', host, port)
+        self._invalid_tls(host, port, ssl, tls, ns)
 
     def _s2s_stream_feature_cb(self, host, port, features, ssl, tls):
         log.debug('Stream Features: %s:%s: %s', host, port,
@@ -327,9 +403,17 @@ class Server(models.Model):
         if features:
             log.debug('%s: Unhandled features: %s', self.domain, features)
 
-    def _s2s_cert_invalid(self, host, port, ssl, tls):
-        log.error('Invalid SSL certificate: %s:%s', host, port)
-        self.s2s_tls_verified = False
+    def _log(self, message, level, *args):
+        try:
+            self.logs.create(message=message % args, level=level)
+        except Exception as e:
+            log.error("Could not format message %s: %s", message, e)
+
+    def warn(self, message, *args):
+        self._log(message, logging.WARNING, *args)
+
+    def error(self, message, *args):
+        self._log(message, logging.ERROR, *args)
 
     def verify_ipv6(self, hosts):
         self.ipv6 = True
@@ -337,16 +421,18 @@ class Server(models.Model):
             for host in set(hosts):
                 if not lookup(host, ipv4=False):
                     self.ipv6 = False
-                    return
+                    if settings.USE_IP6:
+                        self.warn('%s has no IPv6 record.', host)
         except:
             self.ipv6 = False
 
     def verify(self):
-        log.info('Verify %s', self.domain)
+        log.debug('Verify %s', self.domain)
         self._c2s_online = set()  # list of online c2s SRV records
         self._s2s_online = set()  # list of online s2s SRV records
         self._c2s_stream_features = None  # private var for stream feature checking
         self._s2s_stream_features = None  # private var for stream feature checking
+        self.logs.all().delete()
 
         # set some defaults:
         self.c2s_ssl_verified = False
@@ -354,7 +440,9 @@ class Server(models.Model):
         self.s2s_tls_verified = False
 
         start = datetime.now()
-        cert = self.ca.certificate or None
+        self._c2s_tls_verified = True
+        self._c2s_ssl_verified = True
+        self._s2s_tls_verified = True
 
         # verify c2s-connections
         client_srv = self.verify_srv_client()
@@ -363,18 +451,15 @@ class Server(models.Model):
             # Set to True, the cert_errback will set this to False:
             self.c2s_tls_verified = True
 
-            client = StreamFeatureClient(
-                domain=self.domain,
-                callback=self._c2s_stream_feature_cb,
-                cert=cert,
-                cert_errback=self._c2s_cert_invalid
-            )
+            client = StreamFeatureClient(self,
+                callback=self._c2s_stream_feature_cb)
             try:
                 with timeout(10, client):
                     client.connect(domain, port, reattempt=False)
                     client.process(block=True)
             except TimeoutException:
-                self.c2s_tls_verified = False
+                self.error('Could not connect to %s:%s', domain, port)
+                self._c2s_tls_verified = False
 
         # return right away if no hosts where seen:
         if self.last_seen is None or self.last_seen < start:
@@ -387,12 +472,8 @@ class Server(models.Model):
                 # Set to True, the cert_errback will set this to False:
                 self.c2s_ssl_verified = True
 
-                client = StreamFeatureClient(
-                    domain=self.domain,
-                    callback=self._c2s_stream_feature_cb,
-                    cert=cert,
-                    cert_errback=self._c2s_cert_invalid
-                )
+                client = StreamFeatureClient(self,
+                    callback=self._c2s_stream_feature_cb)
 
                 try:
                     with timeout(10, client):
@@ -400,7 +481,8 @@ class Server(models.Model):
                                        use_tls=False, use_ssl=True, reattempt=False)
                         client.process(block=True)
                 except TimeoutException:
-                    self.c2s_ssl_verified = False
+                    self.error('Could not connect to %s:%s', host[0], port)
+                    self._c2s_ssl_verified = False
 
         # verify s2s connections
         server_srv = self.verify_srv_server()
@@ -409,19 +491,15 @@ class Server(models.Model):
             # Set to True, the cert_errback will set this to False:
             self.s2s_tls_verified = True
 
-            client = StreamFeatureClient(
-                domain=self.domain,
-                callback=self._s2s_stream_feature_cb,
-                cert=cert,
-                cert_errback=self._s2s_cert_invalid,
-                ns='jabber:server',
-            )
+            client = StreamFeatureClient(self,
+                callback=self._s2s_stream_feature_cb, ns='jabber:server')
             try:
                 with timeout(10, client):
                     client.connect(domain, port, reattempt=False)
                     client.process(block=True)
             except TimeoutException:
-                self.s2s_tls_verified = False
+                self.error('Could not connect to %s:%s', domain, port)
+                self._s2s_tls_verified = False
 
         # get location:
         if self._c2s_online:
@@ -441,6 +519,10 @@ class Server(models.Model):
             self.c2s_ssl_verified = False
             self.c2s_tls_verified = False
             self.s2s_tls_verified = False
+        else:
+            self.c2s_ssl_verified = self._c2s_ssl_verified
+            self.c2s_tls_verified = self._c2s_tls_verified
+            self.s2s_tls_verified = self._s2s_tls_verified
 
         self.save()
 

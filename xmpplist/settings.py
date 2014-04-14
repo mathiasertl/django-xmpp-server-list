@@ -166,7 +166,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
     "django.core.context_processors.request",
 
-    "xmpplist.server.context_processors.siteinfo",
+    "server.context_processors.siteinfo",
 )
 
 LOGIN_URL = '/user/login/'
@@ -179,8 +179,9 @@ USE_HTTPS = False
 
 USE_IP4 = True
 USE_IP6 = True
-GEOIP_CONFIG_ROOT = os.path.join(os.path.dirname(__file__), 'geoip')
+GEOIP_CONFIG_ROOT = os.path.join(os.path.dirname(__file__), '..', 'geoip')
 CONFIRMATION_TIMEOUT = timedelta(hours=48)
+CERTIFICATES_PATH = 'static/certs'
 
 try:
     from localsettings import *
@@ -224,7 +225,7 @@ LOGGING = {
     'loggers': {
         'django.request': {
             'handlers': ['mail_admins'],
-            'level': LOG_LEVEL,
+            'level': 'ERROR',
             'propagate': True,
         },
         'xmpplist.server': {
@@ -233,8 +234,7 @@ LOGGING = {
         },
         'sleekxmpp': {
             'handlers': ['console'],
-#            'level': LOG_LEVEL,
-            'level': 'WARN',
+            'level': 'CRITICAL',
         },
         'xmpp': {
             'handlers': ['console'],
@@ -242,5 +242,3 @@ LOGGING = {
         },
     },
 }
-
-CERTIFICATES_PATH = 'static/certs'

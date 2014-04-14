@@ -17,18 +17,18 @@
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
-from django.conf.urls.defaults import patterns
-from django.conf.urls.defaults import url
+from django.conf.urls import patterns
+from django.conf.urls import url
 
-from xmpplist.server.views import IndexView
-from xmpplist.server.views import ModerateView
-from xmpplist.server.views import ReportView
-from xmpplist.server.views import ResendView
+from server.views import EditView
+from server.views import ModerateView
+from server.views import ReportView
+from server.views import ResendView
 
 
 urlpatterns = patterns(
     'server.views',
-    url(r'^$', login_required(IndexView.as_view()), name='server'),
+    url(r'^$', login_required(EditView.as_view()), name='server'),
     url(r'^moderate/$', permission_required('server.moderate')(
         ModerateView.as_view()), name='server_moderate'),
     url(r'^(?P<pk>\w+)/report/$', login_required(ReportView.as_view()),

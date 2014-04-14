@@ -1,3 +1,12 @@
 # verify that all dependencies are still in place.
   # if lxml is no longer required, remove libxml2-dev libxslt-dev
   # if psycopg2 isn't required either, remove python-all-dev
+
+===
+ERROR    hot-chilli.eu: Differing stream features found.
+ERROR    hot-chilli.net: Differing stream features found.
+===
+
+===
+WARNING  jabber.org: Unknown stream features: dialback, sm, bidi
+===

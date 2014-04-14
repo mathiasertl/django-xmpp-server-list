@@ -24,7 +24,7 @@ from django.http import HttpResponseBadRequest
 from django.http import HttpResponseForbidden
 from django.shortcuts import render
 
-from xmpplist.server.models import Server
+from server.models import Server
 
 
 def index(request):

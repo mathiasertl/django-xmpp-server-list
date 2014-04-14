@@ -24,7 +24,7 @@
     {% if server.verified and server.moderated %}
         <li class="ok">{% trans "Server is verified and displayed on the front page." %}</li>
     {% else %}
-        <li class="fail">{% trans "Server is not displayed on the front page." %}</li>
+        <li class="fail">{% trans "Server is not displayed on the front page. Please see additional details below." %}</li>
     {% endif %}
 </ul>
 <h4 class="popover-title">{% trans "DNS records" %}</h4>
@@ -138,3 +138,16 @@
         <li class="fail">{% trans "Homepage will be checked manually." %}</li>
     {% endif %}
 </ul>
+
+{% with server.logs.all as entries %}
+{% if entries %}
+<h4 class="popover-title">{% trans "Log entries" %}</h4>
+<ul class="report">
+    {% for entry in entries %}
+    <li class="{% if entry.error %}fail{% elif entry.warning%}warn{%endif%}">
+        {{ entry.message }}
+        </li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}

@@ -28,7 +28,7 @@ always communicate with users on other servers. This list is kindly brought to y
     </tr>
     </thead>
     <tbody>
-{% for server in servers %}
+{% for server in object_list %}
 <tr id="server-{{server.id}}" class="server-row" data-content='bootstrap-{{server.id}}'>
         <td>{% include "includes/server_homepage.html" %}
 
@@ -65,18 +65,3 @@ always communicate with users on other servers. This list is kindly brought to y
 </p>
 
 {% endblock content %}
-
-{% block footer %}
-<footer class="footer">
-    <div class="container">
-        <p>
-            The source code of this <a href="https://www.djangoproject.com/">Django</a> powered project is
-            available on <a href="http://git.fsinf.at/mati/xmpplist/">git.fsinf.at</a>.
-        </p>
-        <p>
-            The logo is based on the Jabber logo by the <a href="http://jabber.org">Jabber.org</a> Team.
-        </p>
-    </div>
-</div>
-{% endblock footer %}
-

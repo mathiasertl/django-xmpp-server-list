@@ -1,9 +1,13 @@
 {% load url from future %}
-
-<html>
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <title>{% block title %}XMPP server list{% endblock %}</title>
     <link rel="icon" type="image/x-icon" href="{{ STATIC_URL }}img/favicon.ico">
+    <link rel="apple-touch-icon" href="{{ STATIC_URL }}img/apple-touch-icon.png"/>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <script type="text/javascript">
         var service_url = "{% url "servers_ajax" %}";
@@ -26,39 +30,89 @@
 </head>
 <body>
 <div class="container">
-<div class="breadcrumb">
-{% block header %}
-    <span class="navigation">
-        {% block navigation %}
-            <a href="{% url "home" %}">home</a>
-            {% if user.is_authenticated %}
-                | <a href="{% url "server" %}">my servers</a>
-            {% endif %}
-            {% if perms.server.moderate %}
-                | <a href="{% url "server_moderate" %}">moderate</a>
-            {% endif %}
-        {% endblock %}
-    </span>
-    <span class="login">
-    {% block login %}
-    {% if user.is_authenticated %}
-            <a href="{% url "account" %}">profile</a> | 
-            <a href="{% url "django.contrib.auth.views.logout" %}?next={{ request.path }}">logout</a>
-    {% else %}
-        {% with view_path="django.contrib.auth.views.login" %}
-            <a href="{% url view_path %}?next={{ request.path }}">login</a>
-        {% endwith %}
-    {% endif %}
-    {% endblock %}
-    </span>
-{% endblock %}
-</div>
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">{% trans "Toggle navigation" %}</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
 
-<div class="span16">
-<h1 id="pagetitle">{% block pagetitle %}{% endblock %}</h1>
-{% block content %}{% endblock %}
-</div>
-</div>
-{% block footer %}{% endblock %}
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="{% url "home" %}">{% trans "Home" %}</a>
+                </li>
+                {% if user.is_authenticated %}
+                    <li ><a href="{% url "server" %}">
+                        {% trans "My servers" %}</a></li>   
+                {% endif %}
+                {% if perms.server.moderate %}
+                    <li>
+                        <a href="{% url "server_moderate" %}">{% trans "Moderate" %}</a>
+                    </li>
+                {% endif %}
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% if user.is_authenticated %}
+                    <li><a href="{% url "account" %}">profile</a></li>
+                    <li><a href="{% url "django.contrib.auth.views.logout" %}?next={{ request.path }}">logout</a></li>
+                {% else %}
+                    <li><a href="{% url "django.contrib.auth.views.login" %}?next={{ request.path }}">login</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <div class="row content">
+        <div class="col-md-12">
+            <h1 id="pagetitle">{% block pagetitle %}{% endblock %}</h1>
+            {% block danger %}
+            {% if user.is_authenticated and not user.email_confirmed %}
+                <div class="alert alert-danger">
+                    Your E-Mail address has not yet been confirmed. You should have received a confirmation message
+                    containing the link needed to confirm it. If you haven't received such a message,
+                    you can <a href="{% url "account_resend_confirmation" %}">resend it</a>. If
+                    you misspelled your address, you can <a href="{% url "account_edit" %}">change it here</a>.
+                </div>
+            {% endif %}
+            {% if user.is_authenticated and not user.jid_confirmed %}
+                <div class="alert alert-danger">
+                    Your JID has not yet been confirmed. You should have received a confirmation message
+                    containing the link needed to confirm it. If you haven't received such a message,
+                    you can <a href="{% url "account_resend_confirmation" %}">resend it</a>. If
+                    you misspelled your JID, you can <a href="{% url "account_edit" %}">change it here</a>.
+                </div>
+            {% endif %}
+            {% endblock danger %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+
+    <div class="row footer">
+        <div class="col-md-12">
+            {% block footer %}
+            <footer>
+                <div class="content">
+                    <p>{% blocktrans %}© 2005-2013, Mathias Ertl unless otherwise noted. 
+                        This project is powered by <a href="https://www.djangoproject.com/">Django</a>.
+                        The source code is available on <a href="http://git.fsinf.at/mati/xmpplist/">git.fsinf.at</a>.
+                        {% endblocktrans %}
+                    </p>
+                    <p>
+                        {% blocktrans %}
+                        The logo is based on the Jabber logo by the <a href="http://jabber.org">Jabber.org</a> Team.
+                        {% endblocktrans %}
+                    </p>
+                </div>
+            </div>
+            {% endblock %}
+        </div>
+    </div>
+</div><!-- container end -->
 </body>
 </html>

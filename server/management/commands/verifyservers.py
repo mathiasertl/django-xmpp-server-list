@@ -19,14 +19,21 @@ import logging
 import os
 import time
 
+from datetime import datetime
+from datetime import timedelta
+
 from django.core.management.base import BaseCommand
-from xmpplist.server.models import Server
+from server.models import Server
 
 class Command(BaseCommand):
     args = '[domain ...]'
     help = 'Verify servers'
 
     def handle(self, *args, **options):
+        # some initial cleanup first:
+        delta = datetime.today() - timedelta(days=14)
+        Server.objects.filter(last_seen__lt=delta).delete()
+
         if args:
             for domain in args:
                 try:

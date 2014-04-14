@@ -1,4 +1,4 @@
-{% load bootstrap %}
+{% load bootstrap i18n %}
 
 {{ form.non_field_errors }}
 
@@ -7,8 +7,9 @@
 {% endfor %}
 
 {% for field in form.visible_fields %}
-    <div class="clearfix{% if field.errors %} error{% endif %}">
+    <div class="form-group clearfix{% if field.errors %} error{% endif %}">
         {% if field|is_checkbox %}
+        <!-- todo: still boostrap 2.3 -->
             <ul class="inputs-list">
                 <li>
                     <div class="input">
@@ -29,22 +30,24 @@
                 </li>
             </ul>
         {% else %}
-            {{ field.label_tag }}
-            <div class="input">
+            <label class="col-lg-2 control-label" for="{{ field.html_name }}">{{field.label }}</label>
+            <div class="col-lg-3">
                 {{ field }}
-
-                {% for error in field.errors %}
-                    <span class="help-inline">{{ error }}</span>
-                {% endfor %}
-
+                {{ field.errors }}
                 {% if field.help_text %}
                 <span class="help-block">
                     {{ field.help_text }}
                 </span>
                 {% endif %}
-
             </div>
+
+
         {% endif %}
     </div>
 {% endfor %}
-
+<div class="form-group">
+    <div class="col-lg-offset-2 col-lg-2">
+        <button class="btn btn-default" type="submit">{% trans "Submit" %}</button>
+        <button class="btn" type="reset">{% trans "Cancel" %}</button>
+    </div>
+</div>

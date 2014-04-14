@@ -17,15 +17,17 @@
 
 from django.conf import settings
 from django.contrib.auth.models import Permission
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 from django.template import Context
 from django.template import loader
 
-from xmpplist.server.models import Server
-from xmpplist.server.util import get_siteinfo
+from server.models import Server
+from server.util import get_siteinfo
+
+User = get_user_model()
 
 
 class Command(BaseCommand):
@@ -59,4 +61,5 @@ class Command(BaseCommand):
             body = t.render(c)
 
             send_mail(subject, body, settings.DEFAULT_FROM_EMAIL,
-                          [user.email], fail_silently=False)
+                      [user.email], fail_silently=False)
+#

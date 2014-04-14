@@ -32,10 +32,11 @@ from xmpp.plugins import auth
 from xmpp.plugins import bind
 from xmpp.plugins import caps
 from xmpp.plugins import compression
+from xmpp.plugins import dialback
 from xmpp.plugins import register
+from xmpp.plugins import rosterver
 from xmpp.plugins import session
 from xmpp.plugins import sm
-from xmpp.plugins import rosterver
 
 log = logging.getLogger(__name__)
 
@@ -43,20 +44,20 @@ log = logging.getLogger(__name__)
 class StreamFeatureClient(BaseXMPP):
     """A client to test c2s stream features.
 
-    :param domain: The domain that this server serves (not the DNS-name
-        under which it is available!)
+    :param server: The server to connect to.
+    :type  server: :py:class:`~xmpplist.server.models.Server`
     :param callback: Callback to call with stream features.
     :param cert: Certificate
     """
 
-    def __init__(self, domain, callback, cert, cert_errback, lang='en',
-                 ns='jabber:client'):
-        super(StreamFeatureClient, self).__init__(domain, default_ns=ns)
+    def __init__(self, server, callback, lang='en', ns='jabber:client'):
+        super(StreamFeatureClient, self).__init__(server.domain, default_ns=ns)
+        self._listed_server = server
+
         self.use_ipv6 = settings.USE_IP6
         self.auto_reconnect=False
         self.callback = callback
-        self.cert_errback = cert_errback
-        self.ca_certs = cert
+        self.ca_certs = server.ca.certificate or None
 
         # copied from ClientXMPP
         self.default_lang = lang
@@ -83,6 +84,7 @@ class StreamFeatureClient(BaseXMPP):
         self.register_plugin('feature_sm', module=sm)
         self.register_plugin('feature_starttls')
         self.register_plugin('feature_rosterver', module=rosterver)
+        self.register_plugin('feature_dialback', module=dialback)
 
         self.register_stanza(StreamFeatures)
         self.register_handler(
@@ -90,16 +92,24 @@ class StreamFeatureClient(BaseXMPP):
                      MatchXPath('{%s}features' % self.stream_ns),
                      self.get_features))
 
-        self.add_event_handler('ssl_invalid_chain', self._cert_errback)
-        self.add_event_handler('ssl_invalid_cert', self._cert_errback)
+        self.add_event_handler('ssl_invalid_chain', self._invalid_chain)
+        self.add_event_handler('ssl_invalid_cert', self._invalid_cert)
 
         # do not reparse features:
         self._features = None
 
-    def _cert_errback(self, *args, **kwargs):
+    def _invalid_chain(self, *args, **kwargs):
         self.disconnect(self.auto_reconnect, send_close=False)
-        self.cert_errback(host=self.address[0], port=self.address[1],
-                          ssl=self.use_ssl, tls=self.use_tls)
+        self._listed_server.invalid_chain(
+            host=self.address[0], port=self.address[1], ns=self.default_ns,
+            ssl=self.use_ssl, tls=self.use_tls
+        )
+
+    def _invalid_cert(self, *args, **kwargs):
+        self.disconnect(self.auto_reconnect, send_close=False)
+        self._listed_server.invalid_cert(
+            host=self.address[0], port=self.address[1], ns=self.default_ns,
+            ssl=self.use_ssl, tls=self.use_tls)
 
     def register_feature(self, name, handler,  restart=False, order=5000):
         """Register a stream feature handler.
@@ -122,6 +132,10 @@ class StreamFeatureClient(BaseXMPP):
         found_tags = set([re.match('{.*}(.*)', n.tag).groups(1)[0]
                          for n in features.xml.getchildren()])
 
+        # no XEP, defined here: http://delta.affinix.com/specs/xmppstream.html
+        if 'address' in found_tags:
+            found_tags.remove('address')
+
         for name, node in features.get_features().items():
             ns = node.namespace
 
@@ -141,6 +155,8 @@ class StreamFeatureClient(BaseXMPP):
                 parsed['auth'] = {}
             elif name == 'iq-register':
                 parsed['register'] = {}
+            elif name == 'dialback':
+                parsed['dialback'] = {}
             elif name == 'mechanisms':
                 mechs = [n.text for n
                          in node.findall('{%s}mechanism' % ns)]

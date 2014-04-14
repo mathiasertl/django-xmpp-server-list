@@ -21,9 +21,6 @@ input.ssl_port {
 input.datepicker {
     width: 7em !important;
 }
-input.mapwidget {
-    width: 7em !important;
-}
 select.ca {
     width: 8em !important;
 }
@@ -40,42 +37,42 @@ select.ca {
 	width: 10em;
 }
 
-.footer {
-    background-color: #f0f0f0;
-    border-top: 1px solid #eeeeee;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.024) inset;
+div.row.content {
+    padding-bottom: 10px;
 }
-.footer .container {
+
+footer {
+    background-color: #f8f8f8;
+    padding-top: 10px;
+    padding-left: 10px;
+}
+
+footer .content {
    background-repeat: no-repeat;
    background-position: 0 0;
    background-image: url('../img/logo.png');
    min-height: 64px;
    
-   color: #888888;
+   color: #777;
 }
 
-.footer .container p {
+.footer .content p {
    margin-left: 56px;
 }
 
-input {
-	height: auto;
-}
-
-.breadcrumb {
+.navbar {
     margin-top: 8px;
-}
-
-.breadcrumb .login {
-    float: right;
 }
 
 h3 {
 	margin-top: 1em;
 }
 
-ul li {
-	margin: 0.5em;
+th.status, td.status {
+    text-align: center;
+}
+td.status {
+    cursor:pointer;
 }
 
 td img {
@@ -114,9 +111,9 @@ td img {
 .errorlist {
     font-size: small;
     color: red;
-    list-style-image: none;
-    list-style-type: none;
-    padding-left: 0px;
+    padding-left: 20px;
+    margin-top: 5px;
+    margin-bottom: 0px;
 }
 
 .popover {
@@ -127,6 +124,8 @@ ul.report {
     list-style-type: none;
     padding: 0px;
     margin: 0px;
+    padding-bottom: 5px;
+    padding-left: 5px;
 }
 
 ul.report li {

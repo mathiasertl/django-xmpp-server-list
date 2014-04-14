@@ -15,10 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with xmpplist.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls.defaults import patterns
-from django.conf.urls.defaults import url
-from django.contrib.auth.forms import SetPasswordForm
+from django.conf.urls import patterns
+from django.conf.urls import url
 
+from forms import AuthenticationFormSub
+from forms import SetPasswordForm
 from views import ResetPassword
 
 urlpatterns = patterns(
@@ -36,7 +37,9 @@ urlpatterns = patterns(
 urlpatterns += patterns(
     '',
     url(r'^login/', 'django.contrib.auth.views.login',
-        {'template_name': 'account/login.html'}, name='login'),
+        {'template_name': 'account/login.html',
+         'authentication_form': AuthenticationFormSub,
+        }, name='login'),
     url(r'^logout/', 'django.contrib.auth.views.logout',
         {'template_name': 'logout.html'}),
     url(r'^password/', 'django.contrib.auth.views.password_change',
