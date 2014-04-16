@@ -78,7 +78,7 @@ class StreamFeatureClient(BaseXMPP):
         self.register_plugin('feature_bind', module=bind)
         self.register_plugin('feature_caps', module=caps)
         self.register_plugin('feature_compression', module=compression)
-        self.register_plugin('feature_mechanisms')
+        self.register_plugin('feature_mechanisms', pconfig={'sasl_callback': self.sasl_callback})
         self.register_plugin('feature_register', module=register)
         self.register_plugin('feature_session', module=session)
         self.register_plugin('feature_sm', module=sm)
@@ -97,6 +97,9 @@ class StreamFeatureClient(BaseXMPP):
 
         # do not reparse features:
         self._features = None
+
+    def sasl_callback(self, *args, **kwargs):
+        return {'username': 'bogus', }
 
     def _invalid_chain(self, *args, **kwargs):
         self.disconnect(self.auto_reconnect, send_close=False)
