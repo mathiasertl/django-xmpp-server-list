@@ -177,11 +177,15 @@ class ServerConfirmationKey(ConfirmationKey):
 
     def __init__(self, *args, **kwargs):
         super(ServerConfirmationKey, self).__init__(*args, **kwargs)
-        self.type = self.subject.contact_type
+        if self.id:
+            self.type = self.subject.contact_type
 
     def confirm(self):
         self.subject.contact_verified = True
         self.subject.save()
+
+    def __str__(self):
+        return self.subject.domain
 
     @property
     def user(self):
