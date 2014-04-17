@@ -27,6 +27,7 @@ import pygeoip
 
 from django.db import models
 from django.conf import settings
+from django.utils.translation import ugettext as _
 
 from xmpp.clients import StreamFeatureClient
 
@@ -68,6 +69,9 @@ class CertificateAuthority(models.Model):
     certificate = models.FilePathField(path='core/static/certs',
                                        null=True, blank=True)
 
+    class Meta:
+        verbose_name_plural = _('Certificate authorities')
+
     def __unicode__(self):
         return self.name
 
@@ -76,6 +80,9 @@ class ServerSoftware(models.Model):
     name = models.CharField(max_length=16)
     website = models.URLField()
     newest_version = models.CharField(max_length=8)
+
+    class Meta:
+        verbose_name_plural = _('Server software')
 
     def __unicode__(self):
         return self.name
@@ -89,6 +96,9 @@ class Features(models.Model):
     has_pep = models.BooleanField(default=False)
     has_proxy = models.BooleanField(default=False)
     has_webpresence = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name_plural = _('Features')
 
     def __unicode__(self):
         try:
