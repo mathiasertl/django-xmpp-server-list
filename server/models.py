@@ -148,6 +148,9 @@ class Server(models.Model):
     # When the server was last seen online:
     last_seen = models.DateTimeField(null=True, blank=True)
 
+    # When the server was last successfully checked:
+    last_checked = models.DateTimeField(null=True, blank=True)
+
     # geolocation:
     city = models.CharField(
         default='', null=True, blank=True, max_length=100,
@@ -462,6 +465,10 @@ class Server(models.Model):
             except TimeoutException:
                 self.error('Could not connect to %s:%s', domain, port)
                 self._c2s_tls_verified = False
+
+        # set the last_checked field:
+        self.last_checked = datetime.now()
+        self.save()
 
         # return right away if no hosts where seen:
         if self.last_seen is None or self.last_seen < start:
