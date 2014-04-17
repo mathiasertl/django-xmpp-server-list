@@ -145,6 +145,7 @@ INSTALLED_APPS = (
     # style
     'bootstrapform',
 
+    'core',
     'server',
     'account',
     'api',
