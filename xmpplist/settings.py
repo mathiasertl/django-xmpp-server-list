@@ -229,7 +229,7 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
-        'xmpplist.server': {
+        'server': {
             'handlers': ['console'],
             'level': LOG_LEVEL,
         },
