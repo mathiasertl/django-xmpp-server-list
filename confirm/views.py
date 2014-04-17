@@ -57,9 +57,8 @@ class ConfirmationView(RedirectView, SingleObjectMixin):
         key.confirm()
 
         # invalidate old keys/unused keys:
-#TODO: Do not yet cleanup confirmation keys
-#        queryset.invalidate(subject=key.user)
-#        self.get_queryset().invalidate_outdated()
+        queryset.invalidate(subject=key.user)  # delete all old ones for this user
+        self.get_queryset().invalidate_outdated()  # delete expired keys
 
         return reverse(self.url)
 
