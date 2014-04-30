@@ -86,8 +86,7 @@ class ConfirmationKey(models.Model):
         elif self.type == 'J':
             self.send_jid(self.recipient, subject, message)
         else:
-            raise RuntimeError("Confirmation messages can only be sent to JIDs"
-                               "or email addresses")
+            raise RuntimeError("Confirmation messages can only be sent to JIDs or email addresses")
 
     def add_context(self):
         return {}
