@@ -565,14 +565,12 @@ class Server(models.Model):
         typ = self.contact_type
 
         # Set contact_verified if it sthe same as your email or JID:
-        if typ == 'E' and self.user.email == self.contact \
-                and self.user.email_confirmed:
+        if typ == 'E' and self.user.email == self.contact and self.user.email_confirmed:
             self.contact_verified = True
-        elif typ == 'J' and self.user.jid == self.contact \
-                and self.user.jid_confirmed:
+        elif typ == 'J' and self.user.jid == self.contact and self.user.jid_confirmed:
             self.contact_verified = True
         elif typ in ['J', 'E']:
-            key = self.confirmations.create(subject=self)
+            key = self.confirmations.create(subject=self, type=self.contact_type)
             key.send()
 
     def save(self, *args, **kwargs):
