@@ -172,7 +172,8 @@ class StreamFeatureClient(BaseXMPP):
                     parsed[name] = {'required': False, }
                 else:
                     parsed[name] = {'required': True, }
-            elif name == 'rosterver':  # obsolete, seen on tigase.im
+            elif name == 'rosterver' or name == 'ver':
+                # obsolete, rosterver seen on tigase.im, ver seen on 1big.ru
                 parsed['ver'] = {}
             else:
                 log.warn('%s: %s: Unhandled feature: %s - %s', self.boundjid.bare, self.default_ns,
