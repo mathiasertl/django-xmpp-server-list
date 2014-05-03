@@ -175,11 +175,13 @@ class StreamFeatureClient(BaseXMPP):
             elif name == 'rosterver':  # obsolete, seen on tigase.im
                 parsed['ver'] = {}
             else:
-                log.warn('Unhandled feature: %s - %s' % (name, node))
+                log.warn('%s: %s: Unhandled feature: %s - %s', self.boundjid.bare, self.default_ns,
+                         name, node)
 
         unhandled = found_tags - set(parsed.keys())
         if unhandled:
-            log.warn('%s: Unknown stream features: %s', self.boundjid.bare, ', '.join(unhandled))
+            log.warn('%s: %s: Unknown stream features: %s', self.boundjid.bare, self.default_ns,
+                     ', '.join(unhandled))
 
         # beautify the dict a bit:
         if 'c' in parsed:
