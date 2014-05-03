@@ -164,7 +164,6 @@ class StreamFeatureClient(BaseXMPP):
                 log.error("Untested plugin: %s", node)
                 parsed[name] = {}
             elif name == 'sm':  # not yet seen in the wild!
-                log.error("Untested plugin: %s", node)
                 parsed[name] = {}
             elif name == 'starttls':
                 required = node.find('{%s}required' % ns)
