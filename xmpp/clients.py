@@ -78,7 +78,7 @@ class StreamFeatureClient(BaseXMPP):
         self.register_plugin('feature_bind', module=bind)
         self.register_plugin('feature_caps', module=caps)
         self.register_plugin('feature_compression', module=compression)
-        self.register_plugin('feature_mechanisms')
+        self.register_plugin('feature_mechanisms', pconfig={'sasl_callback': self.sasl_callback})
         self.register_plugin('feature_register', module=register)
         self.register_plugin('feature_session', module=session)
         self.register_plugin('feature_sm', module=sm)
@@ -88,8 +88,7 @@ class StreamFeatureClient(BaseXMPP):
 
         self.register_stanza(StreamFeatures)
         self.register_handler(
-            Callback('Stream Features',
-                     MatchXPath('{%s}features' % self.stream_ns),
+            Callback('Stream Features', MatchXPath('{%s}features' % self.stream_ns),
                      self.get_features))
 
         self.add_event_handler('ssl_invalid_chain', self._invalid_chain)
@@ -98,11 +97,14 @@ class StreamFeatureClient(BaseXMPP):
         # do not reparse features:
         self._features = None
 
+    def sasl_callback(self, *args, **kwargs):
+        return {'username': 'bogus', }
+
     def _invalid_chain(self, *args, **kwargs):
         self.disconnect(self.auto_reconnect, send_close=False)
         self._listed_server.invalid_chain(
-            host=self.address[0], port=self.address[1], ns=self.default_ns,
-            ssl=self.use_ssl, tls=self.use_tls
+            host=self.address[0], port=self.address[1], ns=self.default_ns, ssl=self.use_ssl,
+            tls=self.use_tls
         )
 
     def _invalid_cert(self, *args, **kwargs):
@@ -114,13 +116,12 @@ class StreamFeatureClient(BaseXMPP):
     def register_feature(self, name, handler,  restart=False, order=5000):
         """Register a stream feature handler.
 
-        :param name: The name of the stream feature.
+        :param    name: The name of the stream feature.
         :param handler: The function to execute if the feature is received.
-        :param restart: Indicates if feature processing should halt with
-                        this feature. Defaults to ``False``.
-        :param order: The relative ordering in which the feature should
-                      be negotiated. Lower values will be attempted
-                      earlier when available.
+        :param restart: Indicates if feature processing should halt with this feature. Defaults to
+                        ``False``.
+        :param   order: The relative ordering in which the feature should be negotiated. Lower
+                        values will be attempted earlier when available.
         """
         self._stream_feature_handlers[name] = (handler, restart)
         self._stream_feature_order.append((order, name))
@@ -146,8 +147,7 @@ class StreamFeatureClient(BaseXMPP):
                 log.error("Untested plugin: %s", node)
                 parsed[name] = {}
             elif name == 'compression':
-                methods = [n.text for n
-                           in node.findall('{%s}method' % ns)]
+                methods = [n.text for n in node.findall('{%s}method' % ns)]
                 parsed[name] = {'methods': methods, }
             elif name == 'c':  # Entity Capabilities (XEP-0115)
                 parsed[name] = {}
@@ -158,14 +158,12 @@ class StreamFeatureClient(BaseXMPP):
             elif name == 'dialback':
                 parsed['dialback'] = {}
             elif name == 'mechanisms':
-                mechs = [n.text for n
-                         in node.findall('{%s}mechanism' % ns)]
+                mechs = [n.text for n in node.findall('{%s}mechanism' % ns)]
                 parsed[name] = {'mechanisms': mechs, }
             elif name == 'session':  # not yet seen in the wild!
                 log.error("Untested plugin: %s", node)
                 parsed[name] = {}
             elif name == 'sm':  # not yet seen in the wild!
-                log.error("Untested plugin: %s", node)
                 parsed[name] = {}
             elif name == 'starttls':
                 required = node.find('{%s}required' % ns)
@@ -173,15 +171,17 @@ class StreamFeatureClient(BaseXMPP):
                     parsed[name] = {'required': False, }
                 else:
                     parsed[name] = {'required': True, }
-            elif name == 'rosterver':  # obsolete, seen on tigase.im
+            elif name == 'rosterver' or name == 'ver':
+                # obsolete, rosterver seen on tigase.im, ver seen on 1big.ru
                 parsed['ver'] = {}
             else:
-                log.warn('Unhandled feature: %s - %s' % (name, node))
+                log.warn('%s: %s: Unhandled feature: %s - %s', self.boundjid.bare, self.default_ns,
+                         name, node)
 
         unhandled = found_tags - set(parsed.keys())
         if unhandled:
-            log.warn('%s: Unknown stream features: %s',
-                     self.boundjid.bare, ', '.join(unhandled))
+            log.warn('%s: %s: Unknown stream features: %s', self.boundjid.bare, self.default_ns,
+                     ', '.join(unhandled))
 
         # beautify the dict a bit:
         if 'c' in parsed:
@@ -203,9 +203,8 @@ class StreamFeatureClient(BaseXMPP):
             if self._features is None:
                 self._features = self.parse_features(features)
                 self.callback(
-                    host=self.address[0], port=self.address[1],
-                    features=self._features, ssl=self.use_ssl,
-                    tls=self.use_tls)
+                    host=self.address[0], port=self.address[1], features=self._features,
+                    ssl=self.use_ssl, tls=self.use_tls)
 
             # copied from ClientXMPP._handle_stream_features():
             if 'starttls' in features['features']:

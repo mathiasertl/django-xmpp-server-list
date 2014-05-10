@@ -31,10 +31,10 @@ class ConfirmationKeyManager(models.Manager):
         return self.get_query_set().for_user(user=user)
 
     def valid(self):
-        return self.get_query_set().invalid()
+        return self.get_query_set().valid()
 
     def invalid(self):
-        return self.get_query_set().valid()
+        return self.get_query_set().invalid()
 
     def invalidate_outdated(self):
         return self.get_query_set().invalidate_outdated()

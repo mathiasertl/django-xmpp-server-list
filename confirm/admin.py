@@ -21,6 +21,24 @@ from models import UserConfirmationKey
 from models import UserPasswordResetKey
 from models import ServerConfirmationKey
 
-admin.site.register(UserConfirmationKey)
-admin.site.register(UserPasswordResetKey)
-admin.site.register(ServerConfirmationKey)
+
+class UserConfirmationKeyAdmin(admin.ModelAdmin):
+    list_display = ['subject', 'created', 'type']
+    list_filter = ['type']
+    ordering = ['created']
+
+
+class UserPasswordKeyAdmin(admin.ModelAdmin):
+    list_display = ['subject', 'created', 'type']
+    list_filter = ['type']
+    ordering = ['created']
+
+
+class ServerConfirmationKeyAdmin(admin.ModelAdmin):
+    list_display = ['subject', 'created', 'type']
+    list_filter = ['type']
+    ordering = ['created']
+
+admin.site.register(UserConfirmationKey, UserConfirmationKeyAdmin)
+admin.site.register(UserPasswordResetKey, UserPasswordKeyAdmin)
+admin.site.register(ServerConfirmationKey, ServerConfirmationKeyAdmin)

@@ -32,7 +32,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # some initial cleanup first:
         delta = datetime.today() - timedelta(days=14)
-        Server.objects.filter(last_seen__lt=delta).delete()
+        check_delta = datetime.today() - timedelta(days=2)
+        Server.objects.filter(
+            last_seen__lt=delta, last_checked__gt=check_delta).delete()
 
         if args:
             for domain in args:

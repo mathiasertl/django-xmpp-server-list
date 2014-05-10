@@ -145,6 +145,7 @@ INSTALLED_APPS = (
     # style
     'bootstrapform',
 
+    'core',
     'server',
     'account',
     'api',
@@ -228,7 +229,7 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
-        'xmpplist.server': {
+        'server': {
             'handlers': ['console'],
             'level': LOG_LEVEL,
         },

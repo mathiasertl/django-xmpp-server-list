@@ -63,9 +63,11 @@ class ConfirmationKeyQuerySet(QuerySet):
         return self.filter(created__lt=self.timestamp)
 
     def invalidate_outdated(self):
+        """Delete outdated confirmation keys."""
         return self.invalid().delete()
 
     def invalidate(self, subject):
+        """Delete all past confirmation keys for this user."""
         return self.filter(subject=subject).delete()
 
 

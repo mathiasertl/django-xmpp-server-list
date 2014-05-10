@@ -27,6 +27,7 @@ import pygeoip
 
 from django.db import models
 from django.conf import settings
+from django.utils.translation import ugettext as _
 
 from xmpp.clients import StreamFeatureClient
 
@@ -65,8 +66,11 @@ def timeout(seconds, client):
 class CertificateAuthority(models.Model):
     name = models.CharField(max_length=30, unique=True)
     website = models.URLField(unique=True)
-    certificate = models.FilePathField(path=settings.CERTIFICATES_PATH,
+    certificate = models.FilePathField(path='core/static/certs',
                                        null=True, blank=True)
+
+    class Meta:
+        verbose_name_plural = _('Certificate authorities')
 
     def __unicode__(self):
         return self.name
@@ -76,6 +80,9 @@ class ServerSoftware(models.Model):
     name = models.CharField(max_length=16)
     website = models.URLField()
     newest_version = models.CharField(max_length=8)
+
+    class Meta:
+        verbose_name_plural = _('Server software')
 
     def __unicode__(self):
         return self.name
@@ -89,6 +96,9 @@ class Features(models.Model):
     has_pep = models.BooleanField(default=False)
     has_proxy = models.BooleanField(default=False)
     has_webpresence = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name_plural = _('Features')
 
     def __unicode__(self):
         try:
@@ -142,9 +152,14 @@ class Server(models.Model):
     # basic information:
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='servers')
     added = models.DateField(auto_now_add=True)
-    last_seen = models.DateTimeField(null=True, blank=True)
     modified = models.DateTimeField(auto_now=True, auto_now_add=True)
     launched = models.DateField(help_text="When the server was launched.")
+
+    # When the server was last seen online:
+    last_seen = models.DateTimeField(null=True, blank=True)
+
+    # When the server was last successfully checked:
+    last_checked = models.DateTimeField(null=True, blank=True)
 
     # geolocation:
     city = models.CharField(
@@ -461,6 +476,10 @@ class Server(models.Model):
                 self.error('Could not connect to %s:%s', domain, port)
                 self._c2s_tls_verified = False
 
+        # set the last_checked field:
+        self.last_checked = datetime.now()
+        self.save()
+
         # return right away if no hosts where seen:
         if self.last_seen is None or self.last_seen < start:
             return
@@ -546,14 +565,12 @@ class Server(models.Model):
         typ = self.contact_type
 
         # Set contact_verified if it sthe same as your email or JID:
-        if typ == 'E' and self.user.email == self.contact \
-                and self.user.email_confirmed:
+        if typ == 'E' and self.user.email == self.contact and self.user.email_confirmed:
             self.contact_verified = True
-        elif typ == 'J' and self.user.jid == self.contact \
-                and self.user.jid_confirmed:
+        elif typ == 'J' and self.user.jid == self.contact and self.user.jid_confirmed:
             self.contact_verified = True
         elif typ in ['J', 'E']:
-            key = self.confirmations.create(subject=self)
+            key = self.confirmations.create(subject=self, type=self.contact_type)
             key.send()
 
     def save(self, *args, **kwargs):

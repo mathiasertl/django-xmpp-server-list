@@ -21,7 +21,18 @@ from sleekxmpp.xmlstream import register_stanza_plugin
 from sleekxmpp.xmlstream import ElementBase
 
 
-class SMStanza(ElementBase):
+class SMStanza2(ElementBase):
+    """
+    XEP-0198 <= 1.1 uses older version namespace.
+    """
+
+    name = 'sm'
+    namespace = 'urn:xmpp:sm:2'
+    interfaces = set()
+    plugin_attrib = 'sm'
+
+
+class SMStanza3(ElementBase):
     name = 'sm'
     namespace = 'urn:xmpp:sm:3'
     interfaces = set()
@@ -42,7 +53,8 @@ class feature_sm(BasePlugin):
             restart=False,
             order=self.config.get('order', 0))
 
-        register_stanza_plugin(StreamFeatures, SMStanza)
+        register_stanza_plugin(StreamFeatures, SMStanza2)
+        register_stanza_plugin(StreamFeatures, SMStanza3)
 
     def _handle_sm(self, features):
         pass
