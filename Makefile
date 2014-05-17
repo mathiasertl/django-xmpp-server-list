@@ -1,16 +1,17 @@
-HOSTCMD=ssh eris
-XMPPHOME=/usr/local/home/xmpplist/
-GITDIR=${XMPPHOME}/xmpplist
+HOSt=titan
+HOSTCMD=ssh ${HOST}
+XMPPHOME=/usr/local/home/xmpp-server-list/
+GITDIR=django-xmpp-server-list/
 
 MAXMIND=http://geolite.maxmind.com/download/geoip/database
 
 deploy:
 	git push origin master
-	${HOSTCMD} "cd ${GITDIR} && sudo git pull origin master"
-	${HOSTCMD} "cd ${GITDIR} && sudo bin/pip install -r requirements.txt"
-	${HOSTCMD} "cd ${GITDIR} && sudo bin/python manage.py syncdb --noinput"
-	${HOSTCMD} "cd ${GITDIR} && sudo bin/python manage.py migrate --no-initial-data"
-	${HOSTCMD} "cd ${GITDIR} && sudo bin/python manage.py collectstatic --noinput"
+	${HOSTCMD} "cd ${XMPPHOME}${GITDIR} && sudo git pull origin master"
+	${HOSTCMD} "cd ${XMPPHOME} && sudo bin/pip install -r ${GITDIR}requirements.txt"
+	${HOSTCMD} "cd ${XMPPHOME} && sudo bin/python ${GITDIR}manage.py syncdb --noinput"
+	${HOSTCMD} "cd ${XMPPHOME} && sudo bin/python ${GITDIR}manage.py migrate --no-initial-data"
+	${HOSTCMD} "cd ${XMPPHOME} && sudo bin/python ${GITDIR}manage.py collectstatic --noinput"
 	${HOSTCMD} sudo /etc/init.d/apache2 restart
 
 refresh-geoip:
