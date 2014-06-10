@@ -150,7 +150,7 @@ class ResendView(BaseDetailView):
 def ajax_moderate(request):
     if request.method == 'POST':
         server_id = request.POST['id']
-        server = Server.objects.get(id=server_id)
+        server = Server.objects.for_moderation().get(id=server_id)
         if request.POST['moderate'] == 'true':
             server.moderated = True
             server.contact_verified = True
