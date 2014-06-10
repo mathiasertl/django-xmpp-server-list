@@ -17,11 +17,19 @@
 
 from __future__ import unicode_literals
 
+
+class CONTACT_TYPES(object):
+    MUC = 'M'
+    JID = 'J'
+    EMAIL = 'E'
+    WEBSITE = 'W'
+
+
 CONTACT_TYPE_CHOICES = (
-    ('M', 'MUC'),
-    ('J', 'JID'),
-    ('E', 'e-mail'),
-    ('W', 'website'),
+    (CONTACT_TYPES.MUC, 'MUC'),
+    (CONTACT_TYPES.JID, 'JID'),
+    (CONTACT_TYPES.EMAIL, 'e-mail'),
+    (CONTACT_TYPES.WEBSITE, 'website'),
 )
 C2S_STREAM_FEATURES = {
     'auth',
