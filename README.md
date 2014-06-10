@@ -1,9 +1,20 @@
 This is a small [Django](https://www.djangoproject.com/) project to create the
-list of servers at https://list.jabber.at.
+list of servers at https://list.jabber.at. Since this project is free software,
+you are welcome to host your own list, if you like.
 
 It requires Python 2.7, Django and a WSGI server to run. As a normal Django
 project, it can use MySQL, PostgreSQL and others as a database backend and runs
 with any WSGI compatible webserver (apache, nginx, lighttpd, uWSGI, ...).
+
+Features
+========
+
+Primary feature is that server admins can submit their data mostly
+autonomously, formal aspects (e.g. SRV records, TLS, ...) are checked
+automatically. Admin users only have to verify contact details.
+
+On the todo list is a possibility to display XMPP features and limit the list
+to servers with particular features.
 
 Installation
 ============
