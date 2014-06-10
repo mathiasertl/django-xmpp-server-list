@@ -20,6 +20,8 @@ from __future__ import unicode_literals
 from django.db.models import Q
 from django.db.models.query import QuerySet
 
+from server.constants import CONTACT_TYPES
+
 
 class ServerQuerySet(QuerySet):
     def plain(self):
@@ -68,4 +70,5 @@ class ServerQuerySet(QuerySet):
         verified but the user has failed to confirm this.
         """
         return self.verified().filter(moderated=None).exclude(
-            (Q(contact_type='J') | Q(contact_type='E')) & Q(contact_verified=False))
+            (Q(contact_type=CONTACT_TYPES.JID) | Q(contact_type=CONTACT_TYPES.EMAIL))
+            & Q(contact_verified=False))
