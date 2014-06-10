@@ -49,3 +49,6 @@ class ServerManager(models.Manager):
 
     def moderated(self):
         return self.get_query_set().moderated()
+
+    def for_moderation(self):
+        return self.get_query_set().for_moderation()

@@ -59,3 +59,6 @@ class ServerQuerySet(QuerySet):
     def moderated(self):
         return self.filter(moderated=True, user__email_confirmed=True,
                            user__jid_confirmed=True)
+
+    def for_moderation(self):
+        return self.verified().filter(moderated=None)
