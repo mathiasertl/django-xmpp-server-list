@@ -61,4 +61,11 @@ class ServerQuerySet(QuerySet):
                            user__jid_confirmed=True)
 
     def for_moderation(self):
-        return self.verified().filter(moderated=None)
+        """List all servers suitable for moderation.
+
+        Lists servers that are unmoderated, have valid SRV records, a working SSL/TLS setup and are
+        not yet moderated. It also excludes servers where the contact should be automatically
+        verified but the user has failed to confirm this.
+        """
+        return self.verified().filter(moderated=None).exclude(
+            (Q(contact_type='J') | Q(contact_type='E')) & Q(contact_verified=False))
