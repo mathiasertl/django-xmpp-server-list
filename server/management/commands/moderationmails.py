@@ -40,7 +40,7 @@ class Command(BaseCommand):
         users = User.objects.filter(query | Q(is_superuser=True)).distinct()
         protocol, domain = get_siteinfo()
 
-        servers = Server.objects.filter(moderated=None)
+        servers = Server.objects.for_moderation()
         if not servers:
             return
 
