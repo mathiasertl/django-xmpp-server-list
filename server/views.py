@@ -51,7 +51,7 @@ class EditView(TemplateView):
 
 class ModerateView(TemplateView):
     template_name = 'server/moderate.html'
-    queryset = Server.objects.verified().filter(moderated=None)
+    queryset = Server.objects.for_moderation()
 
 
 class ReportView(DetailView):
