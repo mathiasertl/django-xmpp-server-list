@@ -40,7 +40,7 @@ moment, you only have to check if the homepage of the server and the given conta
     </tr>
     </thead>
     <tbody>
-{% for server in servers %}
+{% for server in object_list %}
     <tr id="server_{{server.id}}">
         <td>{% include "includes/server_homepage.html" %}</td>
         <td>

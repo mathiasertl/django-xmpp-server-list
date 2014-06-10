@@ -51,12 +51,7 @@ class EditView(TemplateView):
 
 class ModerateView(TemplateView):
     template_name = 'server/moderate.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(ModerateView, self).get_context_data(**kwargs)
-        context['servers'] = Server.objects.filter(moderated=None)
-
-        return context
+    queryset = Server.objects.verified().filter(moderated=None)
 
 
 class ReportView(DetailView):
