@@ -1,48 +1,37 @@
-= Dependencies =
+This is a small [Django](https://www.djangoproject.com/) project to create the
+list of servers at https://list.jabber.at.
 
-This Software uses GeoDjango[1] and thus requires a spacial database beyond
-what is usually required for Django. Use PostgreSQL for best results.
+It requires Python 2.7, Django and a WSGI server to run. As a normal Django
+project, it can use MySQL, PostgreSQL and others as a database backend and runs
+with any WSGI compatible webserver (apache, nginx, lighttpd, uWSGI, ...).
 
-Install dependencies, on Debian/Ubuntu:
+Installation
+============
 
-    root@host:~# apt-get install python-virtualenv postgresql \
-        binutils libproj-dev gdal-bin postgresql-9.1-postgis \
-        postgresql-server-dev-9.1 libpq-dev libxml2-dev libxslt-dev
-        python-all-dev
+Simply clone the repository, create a virtualenv and install the dependencies:
 
-[1] https://docs.djangoproject.com/en/dev/ref/contrib/gis/tutorial/
+```
+git clone https://github.com/mathiasertl/django-xmpp-server-list.git
+cd django-xmpp-server-list
+virtualenv .
+source bin/activate
+pip install -r requirements.txt
+```
 
-= Deployment/Installation =
+You also need to refresh the GeoIP database:
 
-You should always run this software as its own system user:
+```
+make refresh-geoip
+```
 
-    root@host:~# adduser --group --disabled-login \
-        --home=/usr/local/home/xmpplist --system xmpplist
-    root@host:~# sudo su xmpplist
+Deployment
+==========
 
-Clone the repository:
+This software is a normal Django app. Please refer to Django's documentation on
+deployment options.
 
-    xmpplist@host:~$ git clone https://git.fsinf.at/mati/xmpplist.git
+License
+=======
 
-In the cloned repository, deploy a virtualenv:
-
-    xmpplist@host:~/xmpplist# virtualenv .
-    xmpplist@host:~/xmpplist# source/bin/activate
-    (xmpplist)root@host:~/xmpplist# pip install -r requirements.txt
-
-
-
-= Database configuration =
-
-Database configuration depends on PostgreSQL and PostGIS versions installed.
-Please refer to the documentation:
-    
-    https://docs.djangoproject.com/en/dev/ref/contrib/gis/tutorial/
-
-When the database is configured, run:
-
-    (xmpplist)xmpplist@host:~/xmpplist# python manage.py syncdb
-    (xmpplist)xmpplist@host:~/xmpplist# python manage.py loaddata fixtures/world_data.json
-
-= Further reading =
-GeoDjango Tutorial: https://docs.djangoproject.com/en/dev/ref/contrib/gis/tutorial/
+This project is licensed as [GPLv3 or
+later](http://www.gnu.org/copyleft/gpl.html).
