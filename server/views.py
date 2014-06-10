@@ -49,7 +49,7 @@ class EditView(TemplateView):
         return context
 
 
-class ModerateView(TemplateView):
+class ModerateView(ListView):
     template_name = 'server/moderate.html'
     queryset = Server.objects.for_moderation()
 
