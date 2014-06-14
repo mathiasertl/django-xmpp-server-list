@@ -17,6 +17,7 @@
 
 from __future__ import unicode_literals, print_function
 
+import gzip
 import os
 
 from django.conf import settings
@@ -32,6 +33,11 @@ class Command(BaseCommand):
             os.makedirs(settings.GEOIP_CONFIG_ROOT)
 
         print("Downloading database... ", end='')
+        compressed = '%s.gz' % settings.GEOIP_CITY_PATH
         urlretrieve('http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz',
-                    settings.GEOIP_CITY_PATH)
+                    compressed)
         print("Done.")
+
+        with open(settings.GEOIP_CITY_PATH, 'wb') as _out, gzip.open(compressed, 'rb') as _in:
+            _out.write(_in.read())
+        os.remove(compressed)
