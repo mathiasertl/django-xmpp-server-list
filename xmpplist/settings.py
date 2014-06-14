@@ -182,6 +182,7 @@ USE_IP4 = True
 USE_IP6 = True
 GEOIP_CONFIG_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'geoip'))
 GEOIP_CITY_PATH = os.path.join(GEOIP_CONFIG_ROOT, 'GeoLiteCity.dat')
+GEOIP_CITY_V6_PATH = os.path.join(GEOIP_CONFIG_ROOT, 'GeoLiteCityv6.dat')
 CONFIRMATION_TIMEOUT = timedelta(hours=48)
 CERTIFICATES_PATH = 'static/certs'
 
