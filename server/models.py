@@ -307,7 +307,9 @@ class Server(models.Model):
             data = geoip.record_by_name(hostname)
             self.city = data['city']
             self.country = data['country_name']
-        except Exception:
+            log.debug("%s: Set location to %s/%s", self.domain, data['city'], data['country_name'])
+        except Exception as e:
+            log.error("%s: %s: %s", self.domain, type(e).__name__, e)
             self.city = ''
             self.countr = ''
 
