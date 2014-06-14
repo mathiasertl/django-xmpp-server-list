@@ -46,5 +46,5 @@ class Command(BaseCommand):
             for server in Server.objects.all().order_by('domain'):
                 server.verify()
 
-            time.sleep(2)
-            os._exit(0)
+        time.sleep(2)
+        os._exit(0)
