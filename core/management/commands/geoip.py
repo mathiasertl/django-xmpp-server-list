@@ -32,12 +32,22 @@ class Command(BaseCommand):
         if not os.path.exists(settings.GEOIP_CONFIG_ROOT):
             os.makedirs(settings.GEOIP_CONFIG_ROOT)
 
-        print("Downloading database... ", end='')
+        print("Downloading IPv4 database... ")
         compressed = '%s.gz' % settings.GEOIP_CITY_PATH
         urlretrieve('http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz',
                     compressed)
-        print("Done.")
 
         with open(settings.GEOIP_CITY_PATH, 'wb') as _out, gzip.open(compressed, 'rb') as _in:
             _out.write(_in.read())
         os.remove(compressed)
+
+        print("Downloading IPv6 database... ")
+        compressed = '%s.gz' % settings.GEOIP_CITY_V6_PATH
+        urlretrieve(
+            'http://geolite.maxmind.com/download/geoip/database/GeoLiteCityv6-beta/GeoLiteCityv6.dat.gz',
+            compressed)
+        with open(settings.GEOIP_CITY_V6_PATH, 'wb') as _out, gzip.open(compressed, 'rb') as _in:
+            _out.write(_in.read())
+        os.remove(compressed)
+
+        print("Done downloading GeoIP databases.")
