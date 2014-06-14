@@ -15,20 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with xmpplist.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 from django.conf import settings
-from django.contrib.auth.models import Permission
-from django.contrib.auth import get_user_model
-from django.core.mail import send_mail
 from django.core.management.base import BaseCommand
 from django.core.management import call_command
-from django.db.models import Q
-from django.template import Context
-from django.template import loader
-
-from server.models import Server
-from server.util import get_siteinfo
-
-User = get_user_model()
 
 
 class Command(BaseCommand):
@@ -41,3 +32,5 @@ class Command(BaseCommand):
         call_command('syncdb', noinput=True, migrate=True)
         if settings.STATIC_ROOT:
             call_command('collectstatic', interactive=False)
+
+        call_command('geoip')
