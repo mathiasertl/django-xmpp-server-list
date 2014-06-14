@@ -39,10 +39,10 @@ from server.dns import lookup
 from server.managers import ServerManager
 
 log = logging.getLogger(__name__)
-geoip = pygeoip.GeoIP(
-    os.path.join(settings.GEOIP_CONFIG_ROOT, 'GeoLiteCity.dat'),
-    pygeoip.MEMORY_CACHE
-)
+if os.path.exists(settings.GEOIP_CITY_PATH):
+    geoip = pygeoip.GeoIP(settings.GEOIP_CITY_PATH, pygeoip.MEMORY_CACHE)
+else:
+    geoip = None
 
 import signal
 from contextlib import contextmanager
@@ -299,6 +299,10 @@ class Server(models.Model):
             return '%s/%s' % (self.city, self.country)
 
     def set_location(self, hostname):
+        if geoip is None:
+            log.error("GeoIP database not found, run 'python manage.py geoip'")
+            return
+
         try:
             data = geoip.record_by_name(hostname)
             self.city = data['city']
