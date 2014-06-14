@@ -497,10 +497,10 @@ class Server(models.Model):
 
         # set the last_checked field:
         self.last_checked = datetime.now()
-        self.save()
 
         # return right away if no hosts where seen:
         if self.last_seen is None or self.last_seen < start:
+            self.save()
             return
 
         # verify legacy SSL connections
