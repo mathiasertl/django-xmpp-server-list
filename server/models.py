@@ -43,6 +43,10 @@ if os.path.exists(settings.GEOIP_CITY_PATH):
     geoip = pygeoip.GeoIP(settings.GEOIP_CITY_PATH, pygeoip.MEMORY_CACHE)
 else:
     geoip = None
+if os.path.exists(settings.GEOIP_CITY_V6_PATH):
+    geoip6 = pygeoip.GeoIP(settings.GEOIP_CITY_V6_PATH, pygeoip.MEMORY_CACHE)
+else:
+    geoip6 = None
 
 import signal
 from contextlib import contextmanager
@@ -299,12 +303,21 @@ class Server(models.Model):
             return '%s/%s' % (self.city, self.country)
 
     def set_location(self, hostname):
-        if geoip is None:
-            log.error("GeoIP database not found, run 'python manage.py geoip'")
+        ip = hostname[0]
+        is_ipv6 = ':' in ip
+
+        if geoip is None and not is_ipv6:
+            log.error("GeoIPv4 database not found, run 'python manage.py geoip'")
+            return
+        elif geoip6 is None and is_ipv6:
+            log.error("GeoIPv6 database not found, run 'python manage.py geoip'")
             return
 
         try:
-            data = geoip.record_by_name(hostname)
+            if is_ipv6:
+                data = geoip6.record_by_name(ip)
+            else:
+                data = geoip.record_by_name(ip)
             self.city = data['city']
             self.country = data['country_name']
             log.debug("%s: Set location to %s/%s", self.domain, data['city'], data['country_name'])
