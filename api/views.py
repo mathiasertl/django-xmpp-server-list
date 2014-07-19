@@ -61,13 +61,12 @@ class ApiView(View):
         # http://xmpp.org/services/services-full.xml formats already deprecated, i
         # hope :)
         # does fetching + serialization in one step
-        if request_format == 'services.xml' \
-                or request_format == 'services-full.xml':
+        if request_format == 'services.xml' or request_format == 'services-full.xml':
             root_element = etree.Element('query')
 
             if request_format == 'services-full.xml':
-                fields += ['software__name', 'contact', 'contact_type', 'website',
-                           'country', 'city', ]
+                fields += ['software__name', 'contact', 'contact_type', 'website', 'country',
+                           'city', ]
 
             contact_prefixes = {'M': 'xmpp:', 'J': 'xmpp:', 'E': 'mailto:'}
 
@@ -86,18 +85,20 @@ class ApiView(View):
                     if item['contact_type'] in contact_prefixes:
                         contact_prefix = contact_prefixes[item['contact_type']]
 
-                    etree.SubElement(item_element, 'primary-admin').text = contact_prefix + item['contact']
+                    admin = '%s%s' % (contact_prefix, item['contact'])
+                    etree.SubElement(item_element, 'primary-admin').text = admin
                     etree.SubElement(item_element, 'country').text = item['country']
                     etree.SubElement(item_element, 'city').text = item['city']
                     etree.SubElement(item_element, 'description').text = None
 
-            return HttpResponse(etree.tostring(root_element, pretty_print=True), mimetype='text/xml')
+            return HttpResponse(etree.tostring(root_element, pretty_print=True),
+                                mimetype='text/xml')
 
         # we now continue by parsing the fields parameter
         if 'fields' in request.GET:
             custom_fields = request.GET['fields'].split(',')
-            valid_fields = ['launched', 'country', 'city', 'website', 'ca',
-                            'software', 'software_version', 'contact']
+            valid_fields = ['launched', 'country', 'city', 'website', 'ca', 'software',
+                            'software_version', 'contact']
             if set(custom_fields) - set(valid_fields):
                 return HttpResponseForbidden("tried to retrieve forbidden fields.")
 
@@ -140,7 +141,8 @@ class ApiView(View):
         if request_format == 'json':
             return HttpResponse(json.dumps(values))
         else:
-            return HttpResponseBadRequest('unknown request format: try "services.xml", "services-full.xml" or "json"')
+            return HttpResponseBadRequest(
+                'unknown request format: try "services.xml",a "services-full.xml" or "json"')
 
 
 class HelpView(TemplateView):
