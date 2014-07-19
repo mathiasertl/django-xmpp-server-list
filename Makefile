@@ -1,4 +1,4 @@
-HOST=titan
+HOST=hyperion
 HOSTCMD=ssh ${HOST}
 XMPPHOME=/usr/local/home/xmpp-server-list/
 GITDIR=django-xmpp-server-list/
