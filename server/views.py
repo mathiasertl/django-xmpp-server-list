@@ -35,6 +35,7 @@ from server.models import Server
 class IndexView(ListView):
     queryset = Server.objects.moderated().verified().order_by('domain')
 
+
 class EditView(TemplateView):
     template_name = 'server/index.html'
 

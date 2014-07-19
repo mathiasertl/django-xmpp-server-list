@@ -482,8 +482,7 @@ class Server(models.Model):
             # Set to True, the cert_errback will set this to False:
             self.c2s_tls_verified = True
 
-            client = StreamFeatureClient(self,
-                callback=self._c2s_stream_feature_cb)
+            client = StreamFeatureClient(self, callback=self._c2s_stream_feature_cb)
             try:
                 with timeout(10, client):
                     client.connect(domain, port, reattempt=False)
@@ -507,8 +506,7 @@ class Server(models.Model):
                 # Set to True, the cert_errback will set this to False:
                 self.c2s_ssl_verified = True
 
-                client = StreamFeatureClient(self,
-                    callback=self._c2s_stream_feature_cb)
+                client = StreamFeatureClient(self, callback=self._c2s_stream_feature_cb)
 
                 try:
                     with timeout(10, client):
@@ -526,8 +524,8 @@ class Server(models.Model):
             # Set to True, the cert_errback will set this to False:
             self.s2s_tls_verified = True
 
-            client = StreamFeatureClient(self,
-                callback=self._s2s_stream_feature_cb, ns='jabber:server')
+            client = StreamFeatureClient(self, callback=self._s2s_stream_feature_cb,
+                                         ns='jabber:server')
             try:
                 with timeout(10, client):
                     client.connect(domain, port, reattempt=False)
