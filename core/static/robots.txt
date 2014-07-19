@@ -1,3 +1,4 @@
 User-agent: *
 Disallow: /api/
+Disallow: /user/
 Allow: /api/help/
