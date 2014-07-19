@@ -22,7 +22,7 @@ from lxml import etree
 from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
 from django.http import HttpResponseForbidden
-from django.shortcuts import render
+from django.views.generic.base import TemplateView
 
 from server.models import Server
 
@@ -141,5 +141,5 @@ def index(request):
         return HttpResponseBadRequest('unknown request format: try "services.xml", "services-full.xml" or "json"')
 
 
-def help(request):
-    return render(request, 'api/help.html')
+class HelpView(TemplateView):
+    template_name = 'api/help.html'

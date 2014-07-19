@@ -18,9 +18,10 @@
 from django.conf.urls import patterns
 from django.conf.urls import url
 
+from api.views import HelpView
 
 urlpatterns = patterns(
     'api.views',
     url(r'^$', 'index', name='api'),
-    url(r'^help/$', 'help', name='api_help'),
+    url(r'^help/$', HelpView.as_view(), name='api_help'),
 )
