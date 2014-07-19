@@ -23,122 +23,124 @@ from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
 from django.http import HttpResponseForbidden
 from django.views.generic.base import TemplateView
+from django.views.generic.base import View
 
 from server.models import Server
 
 
-def index(request):
-    # get request format
-    request_format = 'json'
-    if 'format' in request.GET:
-        request_format = request.GET['format']
+class ApiView(View):
+    def get(self, request, *args, **kwargs):
+        # get request format
+        request_format = 'json'
+        if 'format' in request.GET:
+            request_format = request.GET['format']
 
-    # initial query-set:
-    servers = Server.objects.verified().moderated()
+        # initial query-set:
+        servers = Server.objects.verified().moderated()
 
-    # filter by required features:
-    if 'features' in request.GET:
-        features = request.GET['features'].split(',')
-        if 'plain' in features:
-            servers = servers.plain()
-        if 'ssl' in features:
-            servers = servers.ssl()
-        if 'tls' in features:
-            servers = servers.tls()
-        if 'ipv6' in features:
-            servers = servers.filter(ipv6=True)
+        # filter by required features:
+        if 'features' in request.GET:
+            features = request.GET['features'].split(',')
+            if 'plain' in features:
+                servers = servers.plain()
+            if 'ssl' in features:
+                servers = servers.ssl()
+            if 'tls' in features:
+                servers = servers.tls()
+            if 'ipv6' in features:
+                servers = servers.filter(ipv6=True)
 
-    # filter by country
-    if 'country' in request.GET:
-        country = request.GET['country']
-        servers = servers.filter(country=country)
+        # filter by country
+        if 'country' in request.GET:
+            country = request.GET['country']
+            servers = servers.filter(country=country)
 
-    fields = ['domain']
+        fields = ['domain']
 
-    # http://xmpp.org/services/services.xml and
-    # http://xmpp.org/services/services-full.xml formats already deprecated, i
-    # hope :)
-    # does fetching + serialization in one step
-    if request_format == 'services.xml' \
-            or request_format == 'services-full.xml':
-        root_element = etree.Element('query')
-
-        if request_format == 'services-full.xml':
-            fields += ['software__name', 'contact', 'contact_type', 'website',
-                       'country', 'city', ]
-
-        contact_prefixes = {'M': 'xmpp:', 'J': 'xmpp:', 'E': 'mailto:'}
-
-        values = list(servers.values(*fields))
-
-        for item in values:
-            item_element = etree.SubElement(root_element, 'item')
-            item_element.set('jid', item['domain'])
+        # http://xmpp.org/services/services.xml and
+        # http://xmpp.org/services/services-full.xml formats already deprecated, i
+        # hope :)
+        # does fetching + serialization in one step
+        if request_format == 'services.xml' \
+                or request_format == 'services-full.xml':
+            root_element = etree.Element('query')
 
             if request_format == 'services-full.xml':
-                etree.SubElement(item_element, 'server-software').text = item['software__name']
-                etree.SubElement(item_element, 'domain').text = item['domain']
-                etree.SubElement(item_element, 'homepage').text = item['website']
+                fields += ['software__name', 'contact', 'contact_type', 'website',
+                           'country', 'city', ]
 
-                contact_prefix = ''
-                if item['contact_type'] in contact_prefixes:
-                    contact_prefix = contact_prefixes[item['contact_type']]
+            contact_prefixes = {'M': 'xmpp:', 'J': 'xmpp:', 'E': 'mailto:'}
 
-                etree.SubElement(item_element, 'primary-admin').text = contact_prefix + item['contact']
-                etree.SubElement(item_element, 'country').text = item['country']
-                etree.SubElement(item_element, 'city').text = item['city']
-                etree.SubElement(item_element, 'description').text = None
+            values = list(servers.values(*fields))
 
-        return HttpResponse(etree.tostring(root_element, pretty_print=True), mimetype='text/xml')
+            for item in values:
+                item_element = etree.SubElement(root_element, 'item')
+                item_element.set('jid', item['domain'])
 
-    # we now continue by parsing the fields parameter
-    if 'fields' in request.GET:
-        custom_fields = request.GET['fields'].split(',')
-        valid_fields = ['launched', 'country', 'city', 'website', 'ca',
-                        'software', 'software_version', 'contact']
-        if set(custom_fields) - set(valid_fields):
-            return HttpResponseForbidden("tried to retrieve forbidden fields.")
+                if request_format == 'services-full.xml':
+                    etree.SubElement(item_element, 'server-software').text = item['software__name']
+                    etree.SubElement(item_element, 'domain').text = item['domain']
+                    etree.SubElement(item_element, 'homepage').text = item['website']
 
-        if 'ca' in custom_fields:
-            custom_fields.remove('ca')
-            custom_fields.append('ca__name')
-        if 'software' in custom_fields:
-            custom_fields.remove('software')
-            custom_fields.append('software__name')
-        if 'contact' in custom_fields:
-            custom_fields.remove('contact')
-            custom_fields += ['contact', 'contact_type']
+                    contact_prefix = ''
+                    if item['contact_type'] in contact_prefixes:
+                        contact_prefix = contact_prefixes[item['contact_type']]
 
-        fields += custom_fields
+                    etree.SubElement(item_element, 'primary-admin').text = contact_prefix + item['contact']
+                    etree.SubElement(item_element, 'country').text = item['country']
+                    etree.SubElement(item_element, 'city').text = item['city']
+                    etree.SubElement(item_element, 'description').text = None
 
-    if len(fields) == 1:
-        values = list(servers.values_list(*fields, flat=True))
-    else:
-        tmp_values = list(servers.values(*fields))
-        values = {}
-        for value in tmp_values:
-            domain = value.pop('domain')
+            return HttpResponse(etree.tostring(root_element, pretty_print=True), mimetype='text/xml')
 
-            if 'ca__name' in value:
-                ca = value.pop('ca__name')
-                value['ca'] = ca
-            if 'software__name' in value:
-                software = value.pop('software__name')
-                value['software'] = software
-            if 'contact' in value:
-                contact = value.pop('contact')
-                contact_type = value.pop('contact_type')
-                value['contact'] = (contact, contact_type)
-            if 'launched' in value:
-                launched = value.pop('launched')
-                value['launched'] = launched.strftime('%Y-%m-%d')
+        # we now continue by parsing the fields parameter
+        if 'fields' in request.GET:
+            custom_fields = request.GET['fields'].split(',')
+            valid_fields = ['launched', 'country', 'city', 'website', 'ca',
+                            'software', 'software_version', 'contact']
+            if set(custom_fields) - set(valid_fields):
+                return HttpResponseForbidden("tried to retrieve forbidden fields.")
 
-            values[domain] = value
+            if 'ca' in custom_fields:
+                custom_fields.remove('ca')
+                custom_fields.append('ca__name')
+            if 'software' in custom_fields:
+                custom_fields.remove('software')
+                custom_fields.append('software__name')
+            if 'contact' in custom_fields:
+                custom_fields.remove('contact')
+                custom_fields += ['contact', 'contact_type']
 
-    if request_format == 'json':
-        return HttpResponse(json.dumps(values))
-    else:
-        return HttpResponseBadRequest('unknown request format: try "services.xml", "services-full.xml" or "json"')
+            fields += custom_fields
+
+        if len(fields) == 1:
+            values = list(servers.values_list(*fields, flat=True))
+        else:
+            tmp_values = list(servers.values(*fields))
+            values = {}
+            for value in tmp_values:
+                domain = value.pop('domain')
+
+                if 'ca__name' in value:
+                    ca = value.pop('ca__name')
+                    value['ca'] = ca
+                if 'software__name' in value:
+                    software = value.pop('software__name')
+                    value['software'] = software
+                if 'contact' in value:
+                    contact = value.pop('contact')
+                    contact_type = value.pop('contact_type')
+                    value['contact'] = (contact, contact_type)
+                if 'launched' in value:
+                    launched = value.pop('launched')
+                    value['launched'] = launched.strftime('%Y-%m-%d')
+
+                values[domain] = value
+
+        if request_format == 'json':
+            return HttpResponse(json.dumps(values))
+        else:
+            return HttpResponseBadRequest('unknown request format: try "services.xml", "services-full.xml" or "json"')
 
 
 class HelpView(TemplateView):
