@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# This file is part of django-xmpp-server-list (https://list.jabber.at).
+# This file is part of django-xmpp-server-list
+# (https://github.com/mathiasertl/django-xmpp-server-list)
 #
 # django-xmpp-server-list is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
