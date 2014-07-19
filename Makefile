@@ -17,5 +17,5 @@ deploy:
 
 refresh-geoip:
 	mkdir -p geoip
-	wget ${MAXMIND}/GeoLiteCity.dat.gz -o geoip/GeoLiteCity.dat.gz
+	wget ${MAXMIND}/GeoLiteCity.dat.gz -O geoip/GeoLiteCity.dat.gz
 	gunzip -f geoip/GeoLiteCity.dat.gz
