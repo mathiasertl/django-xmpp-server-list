@@ -12,7 +12,7 @@ deploy:
 	${HOSTCMD} "cd ${XMPPHOME} && sudo bin/python ${GITDIR}manage.py syncdb --noinput"
 	${HOSTCMD} "cd ${XMPPHOME} && sudo bin/python ${GITDIR}manage.py migrate --no-initial-data"
 	${HOSTCMD} "cd ${XMPPHOME} && sudo bin/python ${GITDIR}manage.py collectstatic --noinput"
-	${HOSTCMD} "cd ${XMPPHOME} && make -C ${GITDIR} refresh-geoip"
+	${HOSTCMD} "cd ${XMPPHOME} && sudo make -C ${GITDIR} refresh-geoip"
 	${HOSTCMD} sudo /etc/init.d/apache2 restart
 
 refresh-geoip:
