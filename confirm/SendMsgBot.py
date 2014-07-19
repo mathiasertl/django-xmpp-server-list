@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# This file is part of xmpplist (https://list.jabber.at).
+# This file is part of django-xmpp-server-list (https://list.jabber.at).
 #
-# xmpplist is free software: you can redistribute it and/or modify
+# django-xmpp-server-list is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
@@ -13,7 +13,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with xmpplist.  If not, see <http://www.gnu.org/licenses/>.
+# along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 Code retrieved from

@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 #
-# This file is part of xmpplist (https://list.jabber.at).
+# This file is part of django-xmpp-server-list
+# (https://github.com/mathiasertl/django-xmpp-server-list).
 #
-# xmpplist is free software: you can redistribute it and/or modify
+# django-xmpp-server-list is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
@@ -13,7 +14,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with xmpplist.  If not, see <http://www.gnu.org/licenses/>.
+# along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import with_statement
 
@@ -51,8 +52,10 @@ else:
 import signal
 from contextlib import contextmanager
 
+
 class TimeoutException(Exception):
     pass
+
 
 @contextmanager
 def timeout(seconds, client):
@@ -166,20 +169,18 @@ class Server(models.Model):
     last_checked = models.DateTimeField(null=True, blank=True)
 
     # geolocation:
-    city = models.CharField(
-        default='', null=True, blank=True, max_length=100,
-        help_text="City the server is located in.")
-    country = models.CharField(
-        default='', null=True, blank=True, max_length=100,
-        help_text="Country the server is located in.")
+    city = models.CharField(default='', null=True, blank=True, max_length=100,
+                            help_text="City the server is located in.")
+    country = models.CharField(default='', null=True, blank=True, max_length=100,
+                               help_text="Country the server is located in.")
 
     # information about the service:
-    domain = models.CharField(
-        unique=True, max_length=60,
-        help_text="The primary domain of your server.")
+    domain = models.CharField(unique=True, max_length=60,
+                              help_text="The primary domain of your server.")
     website = models.URLField(
-        blank=True, help_text="A homepage where one can find information on "
-        "your server. If left empty, the default is http://<domain>.")
+        blank=True,
+        help_text="A homepage where one can find information on your server. If left empty, the "
+        "default is http://<domain>.")
     ca = models.ForeignKey(
         CertificateAuthority, related_name='servers', verbose_name='CA',
         help_text="The Certificate Authority of the certificate used in "
@@ -261,7 +262,6 @@ class Server(models.Model):
             self.s2s_tls_verified = False
             self.ca.certificate = False
             self.c2s_starttls = False
-
 
     def verify_srv_client(self):
         """
@@ -387,15 +387,13 @@ class Server(models.Model):
         return new
 
     def _c2s_stream_feature_cb(self, host, port, features, ssl, tls):
-        log.debug('Stream Features: %s:%s: %s', host, port,
-                 sorted(features.keys()))
+        log.debug('Stream Features: %s:%s: %s', host, port, sorted(features.keys()))
         self._c2s_online.add((host, port))
         self.last_seen = datetime.now()  # we saw an online host
 
         features = self._merge_features(features, 'c2s', ssl)
 
-        self.c2s_starttls_required = features.get(
-            'starttls', {}).get('required', False)
+        self.c2s_starttls_required = features.get('starttls', {}).get('required', False)
         for key in C2S_STREAM_FEATURES:
             setattr(self, 'c2s_%s' % key, key in features)
             features.pop(key, None)
@@ -428,8 +426,7 @@ class Server(models.Model):
 
         features = self._merge_features(features, 's2s')
 
-        self.s2s_starttls_required = features.get(
-            'starttls', {}).get('required', False)
+        self.s2s_starttls_required = features.get('starttls', {}).get('required', False)
         for key in S2S_STREAM_FEATURES:
             setattr(self, 's2s_%s' % key, key in features)
             features.pop(key, None)

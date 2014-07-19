@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 #
-# This file is part of xmpplist (https://list.jabber.at).
+# This file is part of django-xmpp-server-list
+# (https://github.com/mathiasertl/django-xmpp-server-list).
 #
-# xmpplist is free software: you can redistribute it and/or modify
+# django-xmpp-server-list is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
@@ -13,7 +14,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with xmpplist.  If not, see <http://www.gnu.org/licenses/>.
+# along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import unicode_literals
 
@@ -45,7 +46,7 @@ class StreamFeatureClient(BaseXMPP):
     """A client to test c2s stream features.
 
     :param server: The server to connect to.
-    :type  server: :py:class:`~xmpplist.server.models.Server`
+    :type  server: :py:class:`~server.models.Server`
     :param callback: Callback to call with stream features.
     :param cert: Certificate
     """
@@ -55,7 +56,7 @@ class StreamFeatureClient(BaseXMPP):
         self._listed_server = server
 
         self.use_ipv6 = settings.USE_IP6
-        self.auto_reconnect=False
+        self.auto_reconnect = False
         self.callback = callback
         self.ca_certs = server.ca.certificate or None
 
