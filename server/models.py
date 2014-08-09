@@ -324,7 +324,7 @@ class Server(models.Model):
         except Exception as e:
             log.error("%s: %s: %s", self.domain, type(e).__name__, e)
             self.city = ''
-            self.countr = ''
+            self.country = ''
 
     def _merge_features(self, new, kind, ssl=False):
         attr = '_%s_stream_features' % kind
