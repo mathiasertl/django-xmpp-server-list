@@ -245,4 +245,8 @@ LOGGING = {
             'level': LOG_LEVEL,
         },
     },
+    'root': {
+        'handlers': ['console'],
+        'level': LOG_LEVEL,
+    }
 }
