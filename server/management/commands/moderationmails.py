@@ -32,8 +32,7 @@ User = get_user_model()
 
 
 class Command(BaseCommand):
-    args = '<poll_id poll_id ...>'
-    help = 'Closes the specified poll for voting'
+    help = 'Send an E-Mail to admins if a server needs moderation.'
 
     def handle(self, *args, **options):
         perm = Permission.objects.get(codename='moderate')
