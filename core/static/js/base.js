@@ -38,8 +38,6 @@ $(document).ready(function() {
 function share_buttons(elem) {
     // Generate a string containing the HTML to place in the element (for readability)
     var html = "<div id=\"fb-root\">\n";
-    html += "<div class=\"g-plusone\" data-size=\"small\" data-href=\"https://facebook.com/jabber.at\">\n";
-    html += "</div>\n";
     html += "<div class=\"fb-like\" data-href=\"https://facebook.com/jabber.at\" data-send=\"true\" data-layout=\"button_count\" data-width=\"100\" data-show-faces=\"false\" data-font=\"arial\">\n";
     html += "</div>\n";
 
