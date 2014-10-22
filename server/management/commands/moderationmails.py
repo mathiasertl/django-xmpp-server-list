@@ -26,7 +26,6 @@ from django.template import Context
 from django.template import loader
 
 from server.models import Server
-from server.util import get_siteinfo
 
 User = get_user_model()
 
@@ -38,7 +37,8 @@ class Command(BaseCommand):
         perm = Permission.objects.get(codename='moderate')
         query = Q(groups__permissions=perm) | Q(user_permissions=perm)
         users = User.objects.filter(query | Q(is_superuser=True)).distinct()
-        protocol, domain = get_siteinfo()
+        protocol = getattr(settings, 'DEFAULT_PROTOCOL', 'https')
+        domain = getattr(settings, 'DEFAULT_DOMAIN', 'list.jabber.at')
 
         servers = Server.objects.for_moderation()
         if not servers:
