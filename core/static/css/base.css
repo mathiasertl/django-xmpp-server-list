@@ -1,14 +1,14 @@
 body {
-	text-align: justify;
+    text-align: justify;
 }
 
 #your-servers {
-	font-size: smaller;
+    font-size: smaller;
 }
 
 #your-servers input, #your-servers select {
     font-size: smaller;
-	width: 10em;
+    width: 10em;
 }
 
 #social-buttons {
@@ -27,7 +27,7 @@ select.ca {
 }
 
 #profile-overview {
-	width: 60%;
+    width: 60%;
 }
 
 #profile-overview tr:first-child td, #profile-overview tr:first-child th {
@@ -35,7 +35,7 @@ select.ca {
 }
 
 #profile-overview th {
-	width: 10em;
+    width: 10em;
 }
 
 div.row.content {
@@ -66,7 +66,7 @@ footer .content {
 }
 
 h3 {
-	margin-top: 1em;
+    margin-top: 1em;
 }
 
 th.status, td.status {
@@ -82,12 +82,12 @@ td img {
 }
 
 .right {
-	text-align: right;
+    text-align: right;
 }
 
 .button-ok, .button-notok, .button-edit, .button-delete, .button-save, .button-cancel, .button-add, .button-resend {
-	margin: 0 2px;
-	cursor: pointer;
+    margin: 0 2px;
+    cursor: pointer;
 }
 
 .button-edit, .button-delete {
