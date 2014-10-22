@@ -44,8 +44,6 @@ class ApiView(View):
             features = request.GET['features'].split(',')
             if 'plain' in features:
                 servers = servers.plain()
-            if 'ssl' in features:
-                servers = servers.ssl()
             if 'tls' in features:
                 servers = servers.tls()
             if 'ipv6' in features:
