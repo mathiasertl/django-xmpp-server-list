@@ -568,7 +568,6 @@ class Server(models.Model):
         self.save()
 
     def handle_cert(self, pem_cert):
-        print('handle cert')
         fileobj = StringIO.StringIO()
         fileobj.write(pem_cert)
         fileobj.seek(0)
