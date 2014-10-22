@@ -111,9 +111,6 @@ class ServerForm(ModelForm):
         )
         widgets = {
             'contact_type': Select(attrs={'class': 'contact_type', }),
-            'ca': Select(attrs={'class': 'ca', }),
-            'ssl_port': TextInput(attrs={
-                'size': 4, 'maxlength': 5, 'class': 'ssl_port', }),
             'longitude': TextInput(attrs={'size': 4}),
             'latitude': TextInput(attrs={'size': 4}),
             'domain': TextInput(attrs={'size': 10}),
