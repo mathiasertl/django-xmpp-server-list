@@ -37,7 +37,7 @@ from server.constants import C2S_STREAM_FEATURES
 from server.constants import S2S_STREAM_FEATURES
 from server.dns import srv_lookup
 from server.dns import lookup
-from server.managers import ServerManager
+from server.querysets import ServerQuerySet
 
 log = logging.getLogger(__name__)
 if os.path.exists(settings.GEOIP_CITY_PATH):
@@ -154,7 +154,7 @@ class Server(models.Model):
         permissions = (
             ('moderate', 'can moderate servers'),
         )
-    objects = ServerManager()
+    objects = ServerQuerySet.as_manager()
 
     # basic information:
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='servers')
