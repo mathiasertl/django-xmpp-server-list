@@ -19,9 +19,6 @@
 <div class="tooltip" id="tooltip-website">
     {% blocktrans %}Website for your server, if different from http://&lt;domain&gt;{% endblocktrans %}
 </div>
-<div class="tooltip" id="tooltip-ssl_port">
-    {% blocktrans %}Optional: Port for legacy SSL connections, typically 5223.{% endblocktrans %}
-</div>
 <div class="tooltip" id="tooltip-launched">
     {% blocktrans %}When the service was launched.{% endblocktrans %}
 </div>
@@ -63,7 +60,7 @@
 <h2>{% trans "Requirements for being listed" %}</h2>
 <ul>
     <li>{% blocktrans %}<strong>Technical aspects:</strong> The most important aspects of your
-server configuration (SRV records, valid SSL certificate, ...) are
+server configuration (SRV records, valid TLS certificate, ...) are
 automatically checked every six hours. If your server ever fails any check,
 your server will not be listed until the problems are fixed.{% endblocktrans%}</li>
     <li>{% blocktrans%}<strong>Homepage:</strong> Your homepage has to include some details
