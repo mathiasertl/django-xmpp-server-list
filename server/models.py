@@ -76,7 +76,8 @@ def timeout(seconds, client):
 
 
 class CertificateAuthority(models.Model):
-    name = models.CharField(max_length=30, unique=True)
+    name = models.CharField(max_length=50, unique=True)
+    display_name = models.CharField(max_length=30, null=True, blank=True)
     website = models.URLField(unique=True)
     certificate = models.FilePathField(path='core/static/certs',
                                        null=True, blank=True)
@@ -187,7 +188,7 @@ class Server(models.Model):
         help_text="A homepage where one can find information on your server. If left empty, the "
         "default is http://<domain>.")
     ca = models.ForeignKey(
-        CertificateAuthority, related_name='servers', verbose_name='CA',
+        CertificateAuthority, related_name='servers', verbose_name='CA', blank=True, null=True,
         help_text="The Certificate Authority of the certificate used in "
         "SSL/TLS connections.")
     ssl_port = models.PositiveIntegerField(
