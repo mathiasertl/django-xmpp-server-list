@@ -77,7 +77,7 @@ def ajax(request):
             server.features = Features.objects.create()
             server.save()
 
-            server.do_contact_verification()
+            server.do_contact_verification(request)
             server.save()
 
             form = ServerForm(
@@ -124,7 +124,7 @@ def ajax_id(request, server_id):
             # We have special treatment if contact was JID or email:
             if form.contact_changed():
                 server.confirmations.all().delete()
-                server.do_contact_verification()
+                server.do_contact_verification(request)
 
             server.save()
 
@@ -143,7 +143,7 @@ class ResendView(BaseDetailView):
     def post(self, request, *args, **kwargs):
         self.kwargs['pk'] = self.request.POST['pk']
         server = self.get_object()
-        server.do_contact_verification()
+        server.do_contact_verification(request)
 
         return HttpResponse()
 

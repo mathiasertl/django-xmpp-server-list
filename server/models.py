@@ -38,6 +38,7 @@ from server.constants import S2S_STREAM_FEATURES
 from server.dns import srv_lookup
 from server.dns import lookup
 from server.querysets import ServerQuerySet
+from server.utils import get_siteinfo
 
 log = logging.getLogger(__name__)
 if os.path.exists(settings.GEOIP_CITY_PATH):
@@ -575,7 +576,7 @@ class Server(models.Model):
             return True
         return False
 
-    def do_contact_verification(self):
+    def do_contact_verification(self, request):
         typ = self.contact_type
 
         # Set contact_verified if it sthe same as your email or JID:
@@ -585,7 +586,8 @@ class Server(models.Model):
             self.contact_verified = True
         elif typ in ['J', 'E']:
             key = self.confirmations.create(subject=self, type=self.contact_type)
-            key.send()
+            protocol, domain = get_siteinfo(request)
+            key.send(protocol, domain)
 
     def save(self, *args, **kwargs):
         #TODO: We should somehow decide what 'verified' means.
