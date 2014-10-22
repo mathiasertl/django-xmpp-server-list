@@ -469,7 +469,7 @@ class Server(models.Model):
         self.logs.all().delete()
 
         # set some defaults:
-        self.c2s_ssl_verified = False
+        self.c2s_ssl_verified = True
         self.c2s_tls_verified = False
         self.s2s_tls_verified = False
 
@@ -506,22 +506,22 @@ class Server(models.Model):
             return
 
         # verify legacy SSL connections
-        if self.ssl_port:
-            for host in list(self._c2s_online):
-                log.debug('Verify c2s/ssl on %s:%s', host[0], self.ssl_port)
+        #if self.ssl_port:
+        #    for host in list(self._c2s_online):
+        #        log.debug('Verify c2s/ssl on %s:%s', host[0], self.ssl_port)
                 # Set to True, the cert_errback will set this to False:
-                self.c2s_ssl_verified = True
+        #        self.c2s_ssl_verified = True
 
-                client = StreamFeatureClient(self, callback=self._c2s_stream_feature_cb)
+        #       client = StreamFeatureClient(self, callback=self._c2s_stream_feature_cb)
 
-                try:
-                    with timeout(10, client):
-                        client.connect(host[0], self.ssl_port,
-                                       use_tls=False, use_ssl=True, reattempt=False)
-                        client.process(block=True)
-                except TimeoutException:
-                    self.error('Could not connect to %s:%s', host[0], port)
-                    self._c2s_ssl_verified = False
+        #        try:
+        #            with timeout(10, client):
+        #                client.connect(host[0], self.ssl_port,
+        #                               use_tls=False, use_ssl=True, reattempt=False)
+        #                client.process(block=True)
+        #        except TimeoutException:
+        #            self.error('Could not connect to %s:%s', host[0], port)
+        #            self._c2s_ssl_verified = False
 
         # verify s2s connections
         server_srv = self.verify_srv_server()
