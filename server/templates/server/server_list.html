@@ -1,10 +1,20 @@
 {% extends "base.html" %}
 {% load url from future %}
+{% load staticfiles %}
 
 {% block title %}List of public XMPP servers{% endblock title %}
 {% block pagetitle %}Public XMPP servers{% endblock %}
 
 {% block content %}
+
+<div class="social-buttons">
+    <div class="fblike">
+        <img src="{% static 'img/fblike.png' %}">
+    </div>
+</div> 
+<!--
+<img id="fblike" onclick='share_buttons("social-buttons"); return false;' src="{% static 'img/fblike.png' %}"> -->
+
 <p>
 This is a list of public
 <a href="http://en.wikipedia.org/wiki/Extensible_Messaging_and_Presence_Protocol">XMPP</a> servers,

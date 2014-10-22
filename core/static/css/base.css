@@ -11,7 +11,7 @@ body {
     width: 10em;
 }
 
-#social-buttons {
+.social-buttons {
     min-height: 22px;
 }
 
