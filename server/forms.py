@@ -107,8 +107,7 @@ class ServerForm(ModelForm):
     class Meta:
         model = Server
         fields = (
-            'domain', 'website', 'ssl_port', 'launched',
-            'contact_type', 'contact', 'contact_name',
+            'domain', 'website', 'launched', 'contact_type', 'contact', 'contact_name',
         )
         widgets = {
             'contact_type': Select(attrs={'class': 'contact_type', }),
