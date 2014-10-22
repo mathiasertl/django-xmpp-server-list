@@ -51,14 +51,14 @@ class StreamFeatureClient(BaseXMPP):
     :param cert: Certificate
     """
 
-    def __init__(self, server, callback, lang='en', ns='jabber:client'):
+    def __init__(self, server, callback, lang='en', ns='jabber:client', get_ca=False):
         super(StreamFeatureClient, self).__init__(server.domain, default_ns=ns)
         self._listed_server = server
 
         self.use_ipv6 = settings.USE_IP6
         self.auto_reconnect = False
         self.callback = callback
-        self.ca_certs = server.ca.certificate or None
+        self.ca_certs = '/etc/ssl/certs/ca-certificates.crt'  #server.ca.certificate or None
 
         # copied from ClientXMPP
         self.default_lang = lang
@@ -94,6 +94,8 @@ class StreamFeatureClient(BaseXMPP):
 
         self.add_event_handler('ssl_invalid_chain', self._invalid_chain)
         self.add_event_handler('ssl_invalid_cert', self._invalid_cert)
+        if get_ca:
+            self.add_event_handler('ssl_cert', self._handle_cert)
 
         # do not reparse features:
         self._features = None
@@ -220,3 +222,6 @@ class StreamFeatureClient(BaseXMPP):
         except Exception as e:
             log.error(e)
             raise
+
+    def _handle_cert(self, pem_cert):
+        self._listed_server.handle_cert(pem_cert)
