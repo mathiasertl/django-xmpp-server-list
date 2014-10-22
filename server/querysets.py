@@ -44,17 +44,17 @@ class ServerQuerySet(QuerySet):
     def ssl(self):
         """Return servers that allow SSL connections."""
         return self.filter(ssl_port__isnull=False).filter(
-            Q(c2s_ssl_verified=True) | Q(ca__certificate__isnull=True))
+            Q(c2s_ssl_verified=True) | Q(ca__isnull=True))
 
     def tls(self):
         """Return servers that allow TLS connections."""
         return self.filter(c2s_starttls=True).filter(
-            Q(c2s_tls_verified=True) | Q(ca__certificate__isnull=True))
+            Q(c2s_tls_verified=True) | Q(ca__isnull=True))
 
     def verified(self):
         qs = self.filter(
             c2s_srv_records=True, s2s_srv_records=True).filter(
-            Q(c2s_ssl_verified=True) | Q(ca__certificate__isnull=True),
+            Q(c2s_ssl_verified=True) | Q(ca__isnull=True),
         ).tls()
 
         return qs
