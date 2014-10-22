@@ -47,16 +47,12 @@ class ServerQuerySet(QuerySet):
             Q(c2s_tls_verified=True) | Q(ca__isnull=True))
 
     def verified(self):
-        qs = self.filter(
-            c2s_srv_records=True, s2s_srv_records=True).filter(
-            Q(c2s_ssl_verified=True) | Q(ca__isnull=True),
-        ).tls()
+        qs = self.filter(c2s_srv_records=True, s2s_srv_records=True).tls()
 
         return qs
 
     def moderated(self):
-        return self.filter(moderated=True, user__email_confirmed=True,
-                           user__jid_confirmed=True)
+        return self.filter(moderated=True, user__email_confirmed=True, user__jid_confirmed=True)
 
     def for_moderation(self):
         """List all servers suitable for moderation.

@@ -106,17 +106,14 @@ class StreamFeatureClient(BaseXMPP):
     def _invalid_chain(self, *args, **kwargs):
         log.info('Invalid certificate chain.')
         self.disconnect(self.auto_reconnect, send_close=False)
-        self._listed_server.invalid_chain(
-            host=self.address[0], port=self.address[1], ns=self.default_ns, ssl=self.use_ssl,
-            tls=self.use_tls
-        )
+        self._listed_server.invalid_chain(host=self.address[0], port=self.address[1],
+                                          ns=self.default_ns)
 
     def _invalid_cert(self, pem_cert):
         log.info('Invalid certificate.')
         self.disconnect(self.auto_reconnect, send_close=False)
-        self._listed_server.invalid_cert(
-            host=self.address[0], port=self.address[1], ns=self.default_ns,
-            ssl=self.use_ssl, tls=self.use_tls)
+        self._listed_server.invalid_cert(host=self.address[0], port=self.address[1],
+                                         ns=self.default_ns)
 
     def register_feature(self, name, handler,  restart=False, order=5000):
         """Register a stream feature handler.

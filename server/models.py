@@ -209,7 +209,6 @@ class Server(models.Model):
 
     # SSL/TLS verification
     c2s_tls_verified = models.BooleanField(default=False)
-    c2s_ssl_verified = models.BooleanField(default=False)
     s2s_tls_verified = models.BooleanField(default=False)
 
     # c2s stream features:
@@ -400,10 +399,8 @@ class Server(models.Model):
         if features:
             log.debug('%s: Unhandled features: %s', self.domain, features)
 
-    def _invalid_tls(self, host, port, ssl, tls, ns):
-        if ns == 'jabber:client' and ssl:  # c2s using SSL
-            self._c2s_ssl_verified = False
-        elif ns == 'jabber:client' and tls:  # c2s using TLS
+    def _invalid_tls(self, host, port, ns):
+        if ns == 'jabber:client':  # c2s connection
             self._c2s_tls_verified = False
         elif ns == 'jabber:server':  # s2s connection
             self._s2s_tls_verified = False
@@ -412,11 +409,11 @@ class Server(models.Model):
 
     def invalid_chain(self, host, port, ssl, tls, ns):
         self.error('Invalid certificate chain at %s:%s', host, port)
-        self._invalid_tls(host, port, ssl, tls, ns)
+        self._invalid_tls(host, port, ns)
 
     def invalid_cert(self, host, port, ssl, tls, ns):
         self.error('Invalid certificate at %s:%s', host, port)
-        self._invalid_tls(host, port, ssl, tls, ns)
+        self._invalid_tls(host, port, ns)
 
     def _s2s_stream_feature_cb(self, host, port, features, ssl, tls):
         log.debug('Stream Features: %s:%s: %s', host, port,
@@ -465,13 +462,11 @@ class Server(models.Model):
         self.logs.all().delete()
 
         # set some defaults:
-        self.c2s_ssl_verified = True
         self.c2s_tls_verified = False
         self.s2s_tls_verified = False
 
         start = datetime.now()
         self._c2s_tls_verified = True
-        self._c2s_ssl_verified = True
         self._s2s_tls_verified = True
 
         get_ca = True
@@ -533,11 +528,9 @@ class Server(models.Model):
         # If my CA has no certificates (the "other" ca), no certificates were
         # actually verified, so set them to false manually.
         if self.ca is None:
-            self.c2s_ssl_verified = False
             self.c2s_tls_verified = False
             self.s2s_tls_verified = False
         else:
-            self.c2s_ssl_verified = self._c2s_ssl_verified
             self.c2s_tls_verified = self._c2s_tls_verified
             self.s2s_tls_verified = self._s2s_tls_verified
 
