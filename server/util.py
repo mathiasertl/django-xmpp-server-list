@@ -16,16 +16,10 @@
 # You should have received a copy of the GNU General Public License
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf import settings
-from django.contrib.sites.models import Site
 
-
-def get_siteinfo():
-    site = Site.objects.get_current()
-
-    if settings.USE_HTTPS:
-        protocol = 'https'
+def get_siteinfo(request):
+    if request.is_secure:
+        return 'https', request.get_host()
     else:
+        return 'http', request.get_host()
         protocol = 'http'
-
-    return protocol, site.domain
