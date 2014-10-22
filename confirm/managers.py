@@ -25,25 +25,25 @@ from querysets import ServerConfirmationKeyQuerySet
 class ConfirmationKeyManager(models.Manager):
     use_for_related_fields = True
 
-    def get_query_set(self):
+    def get_queryset(self):
         return ConfirmationKeyQuerySet(self.model)
 
     def for_user(self, user):
-        return self.get_query_set().for_user(user=user)
+        return self.get_queryset().for_user(user=user)
 
     def valid(self):
-        return self.get_query_set().valid()
+        return self.get_queryset().valid()
 
     def invalid(self):
-        return self.get_query_set().invalid()
+        return self.get_queryset().invalid()
 
     def invalidate_outdated(self):
-        return self.get_query_set().invalidate_outdated()
+        return self.get_queryset().invalidate_outdated()
 
     def invalidate(self, subject):
-        return self.get_query_set().invalidate(subject=subject)
+        return self.get_queryset().invalidate(subject=subject)
 
 
 class ServerConfirmationKeyManager(ConfirmationKeyManager):
-    def get_query_set(self):
+    def get_queryset(self):
         return ServerConfirmationKeyQuerySet(self.model)

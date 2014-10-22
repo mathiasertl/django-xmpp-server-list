@@ -24,32 +24,32 @@ from server.querysets import ServerQuerySet
 
 
 class ServerManager(models.Manager):
-    def get_query_set(self):
+    def get_queryset(self):
         return ServerQuerySet(self.model)
 
     def plain(self):
-        return self.get_query_set().plain()
+        return self.get_queryset().plain()
 
     def c2s_secure(self):
-        return self.get_query_set().c2s_secure()
+        return self.get_queryset().c2s_secure()
 
     def s2s_secure(self):
-        return self.get_query_set().s2s_secure()
+        return self.get_queryset().s2s_secure()
 
     def secure(self):
-        return self.get_query_set().secure()
+        return self.get_queryset().secure()
 
     def ssl(self):
-        return self.get_query_set().ssl()
+        return self.get_queryset().ssl()
 
     def tls(self):
-        return self.get_query_set().tls()
+        return self.get_queryset().tls()
 
     def verified(self):
-        return self.get_query_set().verified()
+        return self.get_queryset().verified()
 
     def moderated(self):
-        return self.get_query_set().moderated()
+        return self.get_queryset().moderated()
 
     def for_moderation(self):
-        return self.get_query_set().for_moderation()
+        return self.get_queryset().for_moderation()
