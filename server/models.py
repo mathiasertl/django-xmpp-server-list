@@ -82,6 +82,9 @@ class CertificateAuthority(models.Model):
     certificate = models.FilePathField(path='core/static/certs',
                                        null=True, blank=True)
 
+    def get_display_name(self):
+        return self.display_name or self.name
+
     class Meta:
         verbose_name_plural = _('Certificate authorities')
 
