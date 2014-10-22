@@ -118,8 +118,6 @@ def ajax_id(request, server_id):
                 server.verified = None
             if moderate_properties & changed:
                 server.moderated = None
-            if set(['ca', 'ssl_port']) & changed:
-                server.verified = None
 
             # We have special treatment if contact was JID or email:
             if form.contact_changed():
