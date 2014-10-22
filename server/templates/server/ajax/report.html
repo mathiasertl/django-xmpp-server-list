@@ -58,7 +58,7 @@
 
 <h4 class="popover-title">{% trans "Encryption" %}</h4>
 <ul class="report">
-    {% if server.ca.certificate == None %}
+    {% if server.ca == None %}
         <li class="warn">
             {% blocktrans %}
             Your server uses no Certificate Authority known by this website, hence your certificate was not validated.
@@ -89,7 +89,7 @@
                 {% trans "C2S encryption not mandatory." %}
             </li>
         {% endif %}
-    {% elif server.ca.certificate != None %}
+    {% elif server.ca != None %}
         <li class="fail">{% trans "Your server does not support TLS on C2S connections." %}</li>
     {% endif %}
 
@@ -106,7 +106,7 @@
                 {% trans "S2S encryption not mandatory." %}
             </li>
         {% endif %}
-    {% elif server.ca.certificate != None %}
+    {% elif server.ca != None %}
         <li class="fail">{% trans "Your server does not support TLS on S2S connections." %}</li>
     {% endif %}
 </ul>
