@@ -253,10 +253,8 @@ class Server(models.Model):
     def verified(self):
         if self.last_seen is None:
             return None
-        return self.c2s_srv_records and self.s2s_srv_records \
-            and (self.c2s_tls_verified or self.ca.certificate is None) \
-            and (self.s2s_tls_verified or self.ca.certificate is None) \
-            and self.c2s_starttls
+        return self.c2s_srv_records and self.s2s_srv_records and self.c2s_tls_verified \
+            and self.s2s_tls_verified and self.c2s_starttls
 
     @verified.setter
     def verified(self, value):
@@ -264,9 +262,7 @@ class Server(models.Model):
             self.c2s_srv_records = False
             self.s2s_srv_records = False
             self.c2s_tls_verified = False
-            self.ca.certificate = False
             self.s2s_tls_verified = False
-            self.ca.certificate = False
             self.c2s_starttls = False
 
     def verify_srv_client(self):
@@ -557,7 +553,7 @@ class Server(models.Model):
 
         # If my CA has no certificates (the "other" ca), no certificates were
         # actually verified, so set them to false manually.
-        if not self.ca.certificate:
+        if self.ca is None:
             self.c2s_ssl_verified = False
             self.c2s_tls_verified = False
             self.s2s_tls_verified = False
