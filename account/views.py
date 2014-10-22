@@ -31,7 +31,7 @@ from account.forms import PreferencesForm
 from confirm.models import UserConfirmationKey
 from confirm.models import UserPasswordResetKey
 
-from server.utils import get_siteinfo
+from server.util import get_siteinfo
 
 
 @login_required

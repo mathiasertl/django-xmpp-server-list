@@ -38,7 +38,7 @@ from server.constants import S2S_STREAM_FEATURES
 from server.dns import srv_lookup
 from server.dns import lookup
 from server.querysets import ServerQuerySet
-from server.utils import get_siteinfo
+from server.util import get_siteinfo
 
 log = logging.getLogger(__name__)
 if os.path.exists(settings.GEOIP_CITY_PATH):
