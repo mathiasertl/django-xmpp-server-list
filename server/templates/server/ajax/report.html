@@ -75,15 +75,6 @@
                 {% blocktrans %}C2S certificate could not be verified.{% endblocktrans %}
             {% endif %}
         </li>
-        {% if server.ssl_port %}
-        <li class="{% if server.c2s_ssl_verified %}ok{% else %}fail{% endif %}">
-                {% if server.c2s_ssl_verified %}
-                    {% blocktrans %}C2S certificate verified via SSL.{% endblocktrans %}
-                {% else %}
-                    {% blocktrans %}C2S certificate could not be verified via SSL.{% endblocktrans %}
-                {% endif %}
-            </li>
-        {% endif %}
         {% if not server.c2s_starttls_required %}
             <li class="warn">
                 {% trans "C2S encryption not mandatory." %}
