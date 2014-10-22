@@ -5,7 +5,12 @@ GITDIR=django-xmpp-server-list/
 
 MAXMIND=http://geolite.maxmind.com/download/geoip/database
 
-deploy:
+deploy-code:
+	git push origin master
+	${HOSTCMD} "cd ${XMPPHOME}${GITDIR} && sudo git fetch"
+	${HOSTCMD} "cd ${XMPPHOME}${GITDIR} && sudo git pull origin master"
+
+deploy: deploy-code
 	git push origin master
 	${HOSTCMD} "cd ${XMPPHOME}${GITDIR} && sudo git fetch"
 	${HOSTCMD} "cd ${XMPPHOME}${GITDIR} && sudo git pull origin master"
