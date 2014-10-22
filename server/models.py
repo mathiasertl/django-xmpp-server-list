@@ -409,7 +409,7 @@ class Server(models.Model):
         else:
             log.error('Unknown namespace: %s', ns)
 
-    def invalid_chain(self, host, port, ssl, tls, ns):
+    def invalid_chain(self, host, port, ns):
         self.error('Invalid certificate chain at %s:%s', host, port)
         self._invalid_tls(host, port, ns)
 
