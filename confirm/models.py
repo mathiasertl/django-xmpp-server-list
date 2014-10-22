@@ -24,7 +24,6 @@ from django.core.mail import send_mail
 from django.db import models
 from django.template.loader import render_to_string
 
-from server.util import get_siteinfo
 from server.models import Server
 from SendMsgBot import SendMsgBot
 
@@ -65,9 +64,7 @@ class ConfirmationKey(models.Model):
         t.daemon = True
         t.start()
 
-    def send(self):
-        # build context
-        protocol, domain = get_siteinfo()
+    def send(self, protocol, domain):
         context = {'domain': domain, 'key': self, 'protocol': protocol}
         subject_format = {
             'addr_type': self.address_type,
