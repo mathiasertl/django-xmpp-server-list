@@ -35,10 +35,15 @@ always communicate with users on other servers. This list is kindly brought to y
         </td>
         <td>{{ server.location }}</td>
         <td>
-            {% if server.ca.name == 'other' %}
-                other
+            {% if server.ca %}
+                {% if server.ca.website %}
+                    <a href="{{ server.ca.website }}">{{ server.ca.get_display_name }}</a>
+                {% else %}
+                    {{ server.ca.website }}
+                    {{ server.ca.get_display_name }}
+                {% endif %}
             {% else %}
-                <a href="{{ server.ca.website }}">{{ server.ca.name }}</a>
+                Unknown
             {% endif %}
         </td>
         <td>{{ server.launched.year }}</td>
