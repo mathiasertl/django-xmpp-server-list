@@ -583,6 +583,7 @@ class Server(models.Model):
                 name = str(decoder.decode(value)[0])
 
                 self.ca = CertificateAuthority.objects.get_or_create(name=name)[0]
+                log.info('Valid certificate signed by %s', self.ca.get_display_name())
         except Exception as e:
             log.error('Could not parse CA: %s: %s', type(e).__name__, e)
             self.ca = None
