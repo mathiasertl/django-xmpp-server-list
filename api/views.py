@@ -93,7 +93,7 @@ class ApiView(View):
                     etree.SubElement(item_element, 'description').text = None
 
             return HttpResponse(etree.tostring(root_element, pretty_print=True),
-                                mimetype='text/xml')
+                                content_type='text/xml')
 
         # we now continue by parsing the fields parameter
         if 'fields' in request.GET:
