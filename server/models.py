@@ -272,6 +272,7 @@ class Server(models.Model):
         if hosts:
             self.c2s_srv_records = True
         else:
+            log.info('Server has no c2s SRV records.')
             self.c2s_srv_records = False
 
         return hosts
@@ -288,6 +289,7 @@ class Server(models.Model):
             self.s2s_srv_records = True
         else:
             self.s2s_srv_records = False
+            log.info('Server has no s2s SRV records.')
 
         return hosts
 
