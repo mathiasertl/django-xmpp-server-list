@@ -222,23 +222,26 @@ LOGGING = {
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
-            'propagate': True,
+            'propagate': False,
         },
         'server': {
             'handlers': ['console'],
             'level': LOG_LEVEL,
+            'propagate': False,
         },
         'sleekxmpp': {
             'handlers': ['console'],
             'level': 'CRITICAL',
+            'propagate': False,
         },
         'xmpp': {
             'handlers': ['console'],
             'level': LOG_LEVEL,
+            'propagate': False,
         },
     },
     'root': {
         'handlers': ['console'],
-        'level': LOG_LEVEL,
+        'level': 'INFO',
     }
 }
