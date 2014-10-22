@@ -565,6 +565,11 @@ class Server(models.Model):
 
         self.save()
 
+        if self.verified:
+            self.log.info('... verified %s', self.domain)
+        else:
+            self.log.info('... failed to verify %s', self.domain)
+
     def handle_cert(self, pem_cert):
         fileobj = StringIO.StringIO()
         fileobj.write(pem_cert)
@@ -583,7 +588,7 @@ class Server(models.Model):
                 name = str(decoder.decode(value)[0])
 
                 self.ca = CertificateAuthority.objects.get_or_create(name=name)[0]
-                log.info('Valid certificate signed by %s', self.ca.get_display_name())
+                log.debug('Valid certificate signed by %s', self.ca.get_display_name())
         except Exception as e:
             log.error('Could not parse CA: %s: %s', type(e).__name__, e)
             self.ca = None
