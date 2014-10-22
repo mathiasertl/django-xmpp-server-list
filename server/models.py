@@ -78,9 +78,7 @@ def timeout(seconds, client):
 class CertificateAuthority(models.Model):
     name = models.CharField(max_length=50, unique=True)
     display_name = models.CharField(max_length=30, null=True, blank=True)
-    website = models.URLField(unique=True)
-    certificate = models.FilePathField(path='core/static/certs',
-                                       null=True, blank=True)
+    website = models.URLField()
 
     def get_display_name(self):
         return self.display_name or self.name
