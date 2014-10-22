@@ -41,11 +41,6 @@ class ServerQuerySet(QuerySet):
         """Servers that only allow encrypted c2s/s2s connections."""
         return self.c2s_secure().s2s_secure()
 
-    def ssl(self):
-        """Return servers that allow SSL connections."""
-        return self.filter(ssl_port__isnull=False).filter(
-            Q(c2s_ssl_verified=True) | Q(ca__isnull=True))
-
     def tls(self):
         """Return servers that allow TLS connections."""
         return self.filter(c2s_starttls=True).filter(
