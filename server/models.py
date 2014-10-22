@@ -587,7 +587,7 @@ class Server(models.Model):
 
                 self.ca = CertificateAuthority.objects.get_or_create(name=name)[0]
         except Exception as e:
-            log.error('Could not parse CA: %s', e)
+            log.error('Could not parse CA: %s: %s', type(e).__name__, e)
             self.ca = None
 
     def get_website(self):
