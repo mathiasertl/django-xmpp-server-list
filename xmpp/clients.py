@@ -111,7 +111,7 @@ class StreamFeatureClient(BaseXMPP):
             tls=self.use_tls
         )
 
-    def _invalid_cert(self, *args, **kwargs):
+    def _invalid_cert(self, pem_cert):
         log.info('Invalid certificate.')
         self.disconnect(self.auto_reconnect, send_close=False)
         self._listed_server.invalid_cert(
