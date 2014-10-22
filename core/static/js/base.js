@@ -34,7 +34,8 @@ $(document).ready(function() {
 
 });
 
-// stolen from here: http://turkeyland.net/projects/two-click/
+// Generate a two-click like button.
+// Shamelessly stolen from here: http://turkeyland.net/projects/two-click/
 function share_buttons(elem) {
     // Generate a string containing the HTML to place in the element (for readability)
     var html = "<div id=\"fb-root\">\n";
