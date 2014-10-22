@@ -192,10 +192,6 @@ class Server(models.Model):
         CertificateAuthority, related_name='servers', verbose_name='CA', blank=True, null=True,
         help_text="The Certificate Authority of the certificate used in "
         "SSL/TLS connections.")
-    ssl_port = models.PositiveIntegerField(
-        default=5223, blank=True, null=True, verbose_name='SSL port',
-        help_text="The Port where your server allows SSL connections. Leave "
-        "empty if your server does not allow SSL connections.")
 
     # moderation:
     moderated = models.NullBooleanField(default=None)
