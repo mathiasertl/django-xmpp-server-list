@@ -39,7 +39,6 @@ always communicate with users on other servers. This list is kindly brought to y
                 {% if server.ca.website %}
                     <a href="{{ server.ca.website }}">{{ server.ca.get_display_name }}</a>
                 {% else %}
-                    {{ server.ca.website }}
                     {{ server.ca.get_display_name }}
                 {% endif %}
             {% else %}
