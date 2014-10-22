@@ -566,9 +566,9 @@ class Server(models.Model):
         self.save()
 
         if self.verified:
-            self.log.info('... verified %s', self.domain)
+            log.info('... verified %s', self.domain)
         else:
-            self.log.info('... failed to verify %s', self.domain)
+            log.info('... failed to verify %s', self.domain)
 
     def handle_cert(self, pem_cert):
         fileobj = StringIO.StringIO()
