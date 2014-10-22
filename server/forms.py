@@ -47,12 +47,6 @@ class ServerForm(ModelForm):
             return True
         return False
 
-    def clean_ssl_port(self):
-        ssl_port = self.cleaned_data['ssl_port']
-        if ssl_port > 65535:
-            raise ValidationError("Maximum port number is 65545.")
-        return ssl_port
-
     def clean_domain(self):
         try:
             domain = self.cleaned_data['domain']
