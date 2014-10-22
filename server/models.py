@@ -18,6 +18,7 @@
 
 from __future__ import with_statement
 
+import StringIO
 import copy
 import logging
 import os
@@ -29,6 +30,9 @@ import pygeoip
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext as _
+
+from pyasn1_modules import pem, rfc2459
+from pyasn1.codec.der import decoder
 
 from xmpp.clients import StreamFeatureClient
 
@@ -476,6 +480,8 @@ class Server(models.Model):
         self._c2s_ssl_verified = True
         self._s2s_tls_verified = True
 
+        get_ca = True
+
         # verify c2s-connections
         client_srv = self.verify_srv_client()
         for domain, port, prio in client_srv:
@@ -483,7 +489,8 @@ class Server(models.Model):
             # Set to True, the cert_errback will set this to False:
             self.c2s_tls_verified = True
 
-            client = StreamFeatureClient(self, callback=self._c2s_stream_feature_cb)
+            client = StreamFeatureClient(self, callback=self._c2s_stream_feature_cb, get_ca=get_ca)
+            get_ca = False
             try:
                 with timeout(10, client):
                     client.connect(domain, port, reattempt=False)
@@ -559,6 +566,29 @@ class Server(models.Model):
             self.s2s_tls_verified = self._s2s_tls_verified
 
         self.save()
+
+    def handle_cert(self, pem_cert):
+        print('handle cert')
+        fileobj = StringIO.StringIO()
+        fileobj.write(pem_cert)
+        fileobj.seek(0)
+
+        substrate = pem.readPemFromFile(fileobj)
+        cert = decoder.decode(substrate, asn1Spec=rfc2459.Certificate())[0]
+        try:
+            tbsCertificate = cert.getComponentByName('tbsCertificate')
+            issuer = tbsCertificate.getComponentByName('issuer')
+            rdns = issuer.getComponent()
+            for entry in rdns:
+                typ, value = entry[0]
+                if str(typ) != '2.5.4.3':
+                    continue
+                name = str(decoder.decode(value)[0])
+
+                self.ca = CertificateAuthority.objects.get_or_create(name=name)[0]
+        except Exception as e:
+            log.error('Could not parse CA: %s', e)
+            self.ca = None
 
     def get_website(self):
         if self.website:
