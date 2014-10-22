@@ -28,8 +28,8 @@ from server.util import get_siteinfo
 from server.models import Server
 from SendMsgBot import SendMsgBot
 
-from managers import ConfirmationKeyManager
-from managers import ServerConfirmationKeyManager
+from querysets import ConfirmationKeyQuerySet
+from querysets import ServerConfirmationKeyQuerySet
 
 CONFIRMATION_TYPE_CHOICES = (
     ('J', 'JID'),
@@ -42,7 +42,7 @@ class ConfirmationKey(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     type = models.CharField(max_length=1, choices=CONFIRMATION_TYPE_CHOICES)
 
-    objects = ConfirmationKeyManager()
+    objects = ConfirmationKeyQuerySet.as_manager()
 
     def __init__(self, *args, **kwargs):
         super(ConfirmationKey, self).__init__(*args, **kwargs)
@@ -162,7 +162,7 @@ class UserPasswordResetKey(ConfirmationKey, UserConfirmationMixin):
 
 class ServerConfirmationKey(ConfirmationKey):
     subject = models.ForeignKey(Server, related_name='confirmations')
-    objects = ServerConfirmationKeyManager()
+    objects = ServerConfirmationKeyQuerySet.as_manager()
 
     message_template = 'confirm/server_contact.txt'
     message_subject = 'Confirm contact details for %(serverdomain)s on '
