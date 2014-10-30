@@ -46,11 +46,11 @@ from server.util import get_siteinfo
 
 log = logging.getLogger(__name__)
 if os.path.exists(settings.GEOIP_CITY_PATH):
-    geoip = pygeoip.GeoIP(settings.GEOIP_CITY_PATH, pygeoip.MEMORY_CACHE)
+    geoip = pygeoip.GeoIP(settings.GEOIP_CITY_PATH, pygeoip.MMAP_CACHE)
 else:
     geoip = None
 if os.path.exists(settings.GEOIP_CITY_V6_PATH):
-    geoip6 = pygeoip.GeoIP(settings.GEOIP_CITY_V6_PATH, pygeoip.MEMORY_CACHE)
+    geoip6 = pygeoip.GeoIP(settings.GEOIP_CITY_V6_PATH, pygeoip.MMAP_CACHE)
 else:
     geoip6 = None
 
