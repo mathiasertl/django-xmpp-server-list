@@ -94,6 +94,7 @@ class StreamFeatureClient(BaseXMPP):
 
         self.add_event_handler('ssl_invalid_chain', self._invalid_chain)
         self.add_event_handler('ssl_invalid_cert', self._invalid_cert)
+        self.add_event_handler('socket_error', self._socket_error)
         if get_ca:
             self.add_event_handler('ssl_cert', self._handle_cert)
 
@@ -114,6 +115,9 @@ class StreamFeatureClient(BaseXMPP):
         self.disconnect(self.auto_reconnect, send_close=False)
         self._listed_server.invalid_cert(host=self.address[0], port=self.address[1],
                                          ns=self.default_ns)
+    def _socket_error(self, error):
+        self._listed_server.error("Could not connect to %s: %s",
+                                  self._listed_server.pprint_host(*self.address), error)
 
     def register_feature(self, name, handler,  restart=False, order=5000):
         """Register a stream feature handler.

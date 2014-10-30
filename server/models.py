@@ -387,6 +387,8 @@ class Server(models.Model):
         return new
 
     def _c2s_stream_feature_cb(self, host, port, features, ssl, tls):
+        self.info("Verified connectivity for %s" % (self.pprint_host(host, port)))
+
         log.debug('Stream Features: %s:%s: %s', host, port, sorted(features.keys()))
         self._c2s_online.add((host, port))
         self.last_seen = datetime.now()  # we saw an online host
@@ -409,17 +411,20 @@ class Server(models.Model):
         else:
             log.error('Unknown namespace: %s', ns)
 
+    def pprint_host(self, host, port):
+        host = '[%s]' % host if ':' in host else host
+        return '%s:%s' % (host, port)
+
     def invalid_chain(self, host, port, ns):
-        self.error('Invalid certificate chain at %s:%s', host, port)
+        self.error('Invalid certificate chain at %s', self.pprint_host(host, port))
         self._invalid_tls(host, port, ns)
 
     def invalid_cert(self, host, port, ssl, tls, ns):
-        self.error('Invalid certificate at %s:%s', host, port)
+        self.error('Invalid certificate at %s', self.pprint_host(host, port))
         self._invalid_tls(host, port, ns)
 
     def _s2s_stream_feature_cb(self, host, port, features, ssl, tls):
-        log.debug('Stream Features: %s:%s: %s', host, port,
-                  sorted(features.keys()))
+        log.debug('Stream Features: %s: %s', self.pprint_host(host, port), sorted(features.keys()))
         self._s2s_online.add((host, port))
 
         features = self._merge_features(features, 's2s')
@@ -437,6 +442,9 @@ class Server(models.Model):
             self.logs.create(message=message % args, level=level)
         except Exception as e:
             log.error("Could not format message %s: %s", message, e)
+
+    def info(self, message, *args):
+        self._log(message, logging.INFO, *args)
 
     def warn(self, message, *args):
         self._log(message, logging.WARNING, *args)
