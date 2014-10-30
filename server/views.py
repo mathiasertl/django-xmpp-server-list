@@ -80,12 +80,9 @@ def ajax(request):
             server.do_contact_verification(request)
             server.save()
 
-            form = ServerForm(
-                instance=server, prefix=server.id)
-            return render(request, 'ajax/server_table_row.html',
-                          {'form': form})
-        return render(request, 'ajax/server_table_row.html',
-                      {'form': form}, status=400)
+            form = ServerForm(instance=server, prefix=server.id)
+            return render(request, 'ajax/server_table_row.html', {'form': form})
+        return render(request, 'ajax/server_table_row.html', {'form': form}, status=400)
     return HttpResponseForbidden("No humans allowed.")
 
 
@@ -102,8 +99,7 @@ def ajax_id(request, server_id):
         form = ServerForm(request.POST, instance=server, prefix=server.id)
         if form.is_valid():
             if server.user != request.user:
-                return HttpResponseForbidden(
-                    "Thou shal only edit your own server!")
+                return HttpResponseForbidden("Thou shal only edit your own server!")
             server = form.save()
 
             changed = set(form.changed_data)
@@ -117,7 +113,12 @@ def ajax_id(request, server_id):
                 server.moderated = None
                 server.verified = None
             if moderate_properties & changed:
-                server.moderated = None
+                typ = form.cleaned_data['contact_type']
+                contact = form.cleaned_data['contact']
+                if 'website' not in changed and server.autoconfirmed(typ, contact):
+                    pass
+                else:
+                    server.moderated = None
 
             # We have special treatment if contact was JID or email:
             if form.contact_changed():
