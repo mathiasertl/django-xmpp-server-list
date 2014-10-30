@@ -135,7 +135,7 @@
 <h4 class="popover-title">{% trans "Log entries" %}</h4>
 <ul class="report">
     {% for entry in entries %}
-    <li class="{% if entry.error %}fail{% elif entry.warning%}warn{%endif%}">
+    <li class="{% if entry.error %}fail{% elif entry.warning%}warn{% elif entry.info %}ok{%endif%}">
         {{ entry.message }}
         </li>
     {% endfor %}
