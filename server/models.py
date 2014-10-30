@@ -590,13 +590,17 @@ class Server(models.Model):
             return True
         return False
 
+    def autoconfirmed(self, typ, address):
+        if typ == 'E' and self.user.email == address and self.user.email_confirmed:
+            return True
+        elif typ == 'J' and self.user.jid == address and self.user.jid_confirmed:
+            return True
+
     def do_contact_verification(self, request):
         typ = self.contact_type
 
         # Set contact_verified if it sthe same as your email or JID:
-        if typ == 'E' and self.user.email == self.contact and self.user.email_confirmed:
-            self.contact_verified = True
-        elif typ == 'J' and self.user.jid == self.contact and self.user.jid_confirmed:
+        if self.autoconfirmed(typ, self.contact):
             self.contact_verified = True
         elif typ in ['J', 'E']:
             key = self.confirmations.create(subject=self, type=self.contact_type)
