@@ -321,7 +321,7 @@ class Server(models.Model):
             # at least cities are latin1 encoded (e.g. inbox.im, located in Montréal)
             self.city = data['city'].decode('latin1')
             self.country = data['country_name']
-            log.debug("%s: Set location to %s/%s", self.domain, data['city'], data['country_name'])
+            log.debug("%s: Set location to %s/%s", self.domain, self.city, self.country)
         except Exception as e:
             log.error("%s: %s: %s", self.domain, type(e).__name__, e)
             self.city = ''
