@@ -318,7 +318,8 @@ class Server(models.Model):
                 data = geoip6.record_by_name(ip)
             else:
                 data = geoip.record_by_name(ip)
-            self.city = data['city']
+            # at least cities are latin1 encoded (e.g. inbox.im, located in Montréal)
+            self.city = data['city'].decode('latin1')
             self.country = data['country_name']
             log.debug("%s: Set location to %s/%s", self.domain, data['city'], data['country_name'])
         except Exception as e:
