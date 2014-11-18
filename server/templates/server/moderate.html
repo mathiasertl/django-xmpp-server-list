@@ -10,14 +10,14 @@ $(document).ready(function() {
     $("table").on("click", ".button-ok", function() {
         row = $(this).parent().parent();
         id = row.attr('id').split("_")[1];
-        $.post("{% url "server_ajax_moderate" %}", {id: id, moderate: true, csrfmiddlewaretoken: "{{ csrf_token }}"}, function(data) {
+        $.post("{% url "server_moderate" %}", {id: id, moderate: true, csrfmiddlewaretoken: "{{ csrf_token }}"}, function(data) {
             row.hide(500);
         });
     });
     $("table").on("click", ".button-notok", function() {
         row = $(this).parent().parent();
         id = row.attr('id').split("_")[1];
-        $.post("{% url "server_ajax_moderate" %}", {id: id, moderate: false, csrfmiddlewaretoken: "{{ csrf_token }}"}, function(data) {
+        $.post("{% url "server_moderate" %}", {id: id, moderate: false, csrfmiddlewaretoken: "{{ csrf_token }}"}, function(data) {
             row.hide(500);
         });
     });
