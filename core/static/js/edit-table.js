@@ -58,6 +58,9 @@ $(document).ready(function() {
         resend_service_notification($(this).parent().parent());
     });
     
+    /**
+     * Delete a server.
+     */
     $("table").on("click", ".button-delete", function() {
         var self = $(this);
         url = self.attr('data-url');
@@ -74,6 +77,9 @@ $(document).ready(function() {
         })
     });
     
+    /**
+     * Submit an edited server.
+     */
     $("table").on("click", ".button-save", function() {
         cell = $(this).parent();
         row = cell.parent()
@@ -92,10 +98,16 @@ $(document).ready(function() {
         }
     });
     
+    /**
+     * Cancel editing a server.
+     */
     $("table").on("click", ".button-cancel", function() {
         edit_service($(this).parent());
     });
     
+    /**
+     * Add a new server.
+     */
     $("table").on("click", ".button-add", function() {
         row = $(this).parent().parent();
         form_fields = row.find('input,select').add(get_csrftoken());
