@@ -46,15 +46,7 @@
 {% for form in forms %}
     {% include "includes/server_table_row.html" %}
 {% endfor %}
-    <tr class="new-server">
-        <td></td>
-        {% for field in new_server_form %}
-            <td class="tooltip-field" data-tip="{{field.name}}">{{ field }}</td>
-        {% endfor %}
-        <td class="right">
-            <img class="button-add" src="{{ STATIC_URL }}img/add.png" alt="add new server" title="add new server" />
-        </td>
-    </tr>
+    {% include "server/includes/new_server_row.html" %}
     </tbody>
 </table>
 <h2>{% trans "Requirements for being listed" %}</h2>
