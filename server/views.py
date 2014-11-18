@@ -128,6 +128,7 @@ class AjaxServerUpdateView(MyServerFormMixin, UpdateView):
         if form.contact_changed():
             server.confirmations.all().delete()
             server.do_contact_verification(self.request)
+        server.save()
         return self.render_to_response(self.get_context_data(form=form))
 
 
