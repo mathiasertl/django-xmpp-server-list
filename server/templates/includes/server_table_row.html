@@ -1,7 +1,6 @@
 {% load fieldvalue i18n %}
-{% load url from future %}
 
-<tr id="server_{{ form.instance.id }}" data-server="{{ form.instance.id }}">
+<tr id="server_{{ form.instance.id }}" data-server="{{ form.instance.id }}" data-update-url="{% url "server_update" form.instance.id %}">
     <td class="status popover-field" data-url="{% url "server_report" pk=form.instance.id %}" 
             title="{% blocktrans with domain=form.instance.domain %}Status of {{ domain }}{% endblocktrans %}">
         {% if form.instance.id %}
