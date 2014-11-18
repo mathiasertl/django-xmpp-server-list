@@ -43,6 +43,9 @@ $(document).ready(function() {
         row = $(this).parent().parent().parent();
         if (!row.hasClass('changed')) {
             row.addClass('changed');
+
+            // display save button if anything was changed
+            row.find('.button-save').show();
         }
     });
     
