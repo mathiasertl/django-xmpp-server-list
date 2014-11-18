@@ -32,6 +32,8 @@ def fieldvalue(field):
         val = field.value()
         if val.__class__ == unicode:
             return val
+        elif val is None:
+            return ''
         return field.value().strftime('%Y-%m-%d')
     else:
         return field.value()
