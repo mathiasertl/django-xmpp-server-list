@@ -33,7 +33,7 @@ urlpatterns = patterns(
     'server.views',
     url(r'^$', login_required(EditView.as_view()), name='server'),
     url(r'^moderate/$', permission_required('server.moderate')(ModerateView.as_view()),
-        name='server_moderate'),
+        name='server_moderation'),
 
     url(r'^ajax/$', 'ajax', name='server_create'),
     url(r'^ajax/delete/(?P<pk>\w+)/$', AjaxServerDeleteView.as_view(), name='server_delete'),
