@@ -81,7 +81,7 @@ class ReportView(MyServerMixin, DetailView):
 class AjaxServerCreateView(LoginRequiredMixin, CreateView):
     form_class = ServerForm
     http_method_names = ('post', )
-    template_name = 'ajax/server_table_row.html'
+    template_name = 'server/ajax/new_server.html'
 
     def form_valid(self, form):
         server = form.save(commit=False)
@@ -92,7 +92,7 @@ class AjaxServerCreateView(LoginRequiredMixin, CreateView):
         server.do_contact_verification(self.request)
         server.save()
         context = self.get_context_data(form=form)
-        context['created'] = True
+        context['new_server_form'] = ServerForm()
         return self.render_to_response(context)
 
 
