@@ -86,12 +86,13 @@ $(document).ready(function() {
         form_fields = row.find('input,select').add(get_csrftoken());
         
         if (row.hasClass('changed')) {
-            $.post(get_service_url(row), form_fields.serialize(), function(data) {
+            $.post(row.attr('data-update-url'), form_fields.serialize(), function(data) {
                 new_row = $(data);
                 
                 row.replaceWith(new_row);
                 set_datepicker(new_row);
                 register_popover();
+                register_tooltips();
             })
         } else {
             edit_service(cell);
