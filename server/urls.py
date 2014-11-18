@@ -32,15 +32,13 @@ from server.views import AjaxServerDeleteView
 urlpatterns = patterns(
     'server.views',
     url(r'^$', login_required(EditView.as_view()), name='server'),
-    url(r'^moderate/$', permission_required('server.moderate')(
-        ModerateView.as_view()), name='server_moderate'),
-    url(r'^(?P<pk>\w+)/report/$', login_required(ReportView.as_view()),
-        name='server_report'),
+    url(r'^moderate/$', permission_required('server.moderate')(ModerateView.as_view()),
+        name='server_moderate'),
+    url(r'^(?P<pk>\w+)/report/$', login_required(ReportView.as_view()), name='server_report'),
 
     url(r'^ajax/$', 'ajax', name='servers_ajax'),
     url(r'^ajax/moderate/$', 'ajax_moderate', name='server_ajax_moderate'),
-    url(r'^ajax/resend/$', login_required(ResendView.as_view()),
-        name='server_ajax_resend'),
+    url(r'^ajax/resend/$', login_required(ResendView.as_view()), name='server_ajax_resend'),
     url(r'^ajax/delete/(?P<pk>\w+)/$', AjaxServerDeleteView.as_view()),
     url(r'^ajax/update/(?P<pk>\w+)/$', AjaxServerUpdateView.as_view()),
 )

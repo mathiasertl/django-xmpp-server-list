@@ -137,6 +137,7 @@ class AjaxServerDeleteView(MyServerMixin, DeleteView):
     http_method_names = ('delete', )
 
     def delete(self, request, *args, **kwargs):
+        """Omit success_url etc."""
         self.get_object().delete()
         return HttpResponse('')
 
