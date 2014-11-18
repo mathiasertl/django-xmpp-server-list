@@ -31,7 +31,7 @@
 
             {% if form.instance.automatic_verification %}
             <img class="button-resend" src="{{ STATIC_URL }}img/reload.png" alt="resend confirmation" title="resend confirmation"
-                {% if form.errors %}style="display: inline;" {% endif %} />
+            {% if form.errors %}style="display: inline;" {% endif %} data-url="{% url "server_resend" form.instance.id %}"/>
             {% endif %}
         {% else %}
             <img class="button-add"    src="{{ STATIC_URL }}img/add.png"

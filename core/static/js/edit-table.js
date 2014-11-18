@@ -20,11 +20,6 @@ function edit_service(cell) {
 }
 
 function resend_service_notification(row) {
-    data = {
-        pk: get_service_id(row),
-        csrfmiddlewaretoken: csrftoken,
-    }
-    $.post(resend_url, data, function(data) {});
 }
 
 function set_datepicker(row) {
@@ -54,7 +49,10 @@ $(document).ready(function() {
     });
 
     $("table").on("click", ".button-resend", function() {
-        resend_service_notification($(this).parent().parent());
+        data = {
+            csrfmiddlewaretoken: csrftoken,
+        }
+        $.post($(this).attr('data-url'), data, function(data) {});
     });
     
     /**

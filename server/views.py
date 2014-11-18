@@ -144,12 +144,11 @@ class AjaxServerDeleteView(MyServerMixin, DeleteView):
         return HttpResponse()
 
 
-class ResendView(MyServerMixin, SingleObjectMixin, View):
+class AjaxServerResendView(MyServerMixin, SingleObjectMixin, View):
     queryset = Server.objects.filter(contact_verified=False)
     http_method_names = ['post', ]
 
     def post(self, request, *args, **kwargs):
-        self.kwargs['pk'] = self.request.POST['pk']
         server = self.get_object()
         server.do_contact_verification(request)
         return HttpResponse()

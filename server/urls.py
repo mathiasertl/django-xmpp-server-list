@@ -24,7 +24,7 @@ from django.conf.urls import url
 from server.views import EditView
 from server.views import ModerateView
 from server.views import ReportView
-from server.views import ResendView
+from server.views import AjaxServerResendView
 from server.views import AjaxServerCreateView
 from server.views import AjaxServerDeleteView
 from server.views import AjaxServerUpdateView
@@ -40,6 +40,6 @@ urlpatterns = patterns(
     url(r'^ajax/delete/(?P<pk>\w+)/$', AjaxServerDeleteView.as_view(), name='server_delete'),
     url(r'^ajax/moderate/$', 'ajax_moderate', name='server_moderate'),
     url(r'^ajax/report/(?P<pk>\w+)$', ReportView.as_view(), name='server_report'),
-    url(r'^ajax/resend/$', login_required(ResendView.as_view()), name='server_resend'),
+    url(r'^ajax/resend/(?P<pk>\w+)$', AjaxServerResendView.as_view(), name='server_resend'),
     url(r'^ajax/update/(?P<pk>\w+)/$', AjaxServerUpdateView.as_view(), name='server_update'),
 )
