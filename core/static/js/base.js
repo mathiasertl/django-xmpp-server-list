@@ -17,8 +17,7 @@ var register_popover = function() {
         placement: 'bottom',
     });
 }
-$(document).ready(function() {
-    console.log('ready');
+var register_tooltips = function(){
     $('.tooltip-field').tooltip({
         title: function() {
             var tip = $(this).attr('data-tip');
@@ -29,7 +28,11 @@ $(document).ready(function() {
         container: 'body',
         html: true,
     });
-    
+}
+
+$(document).ready(function() {
+    console.log('ready');
+    register_tooltips();
     register_popover();
 
     $('.fblike').on('click', function(event) {
