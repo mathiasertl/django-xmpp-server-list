@@ -140,19 +140,6 @@ class AjaxServerDeleteView(MyServerMixin, DeleteView):
         self.get_object().delete()
         return HttpResponse('')
 
-@login_required
-def ajax_id(request, server_id):
-    server = Server.objects.get(id=server_id)
-    if request.method == 'DELETE':
-        if server.user != request.user:
-            return HttpResponseForbidden(
-                "Thou shal only delete your own server!")
-
-        server.delete()
-    else:
-        return HttpResponseForbidden('ok.')
-    return HttpResponse('ok.')
-
 
 class ResendView(BaseDetailView):
     queryset = Server.objects.filter(contact_verified=False)

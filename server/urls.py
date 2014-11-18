@@ -41,7 +41,6 @@ urlpatterns = patterns(
     url(r'^ajax/moderate/$', 'ajax_moderate', name='server_ajax_moderate'),
     url(r'^ajax/resend/$', login_required(ResendView.as_view()),
         name='server_ajax_resend'),
-    url(r'^ajax/(?P<server_id>\w+)/$', 'ajax_id', name='servers_ajax_id'),
     url(r'^ajax/delete/(?P<pk>\w+)/$', AjaxServerDeleteView.as_view()),
     url(r'^ajax/update/(?P<pk>\w+)/$', AjaxServerUpdateView.as_view()),
 )
