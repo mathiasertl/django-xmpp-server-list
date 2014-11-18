@@ -23,7 +23,7 @@
             <img class="button-edit"   src="{{ STATIC_URL }}img/edit.png" alt="edit" title="edit"
                 {% if form.errors %}style="display: none;" {% endif %} />
             <img class="button-delete" src="{{ STATIC_URL }}img/delete.png" alt="delete" title="delete"
-                 {% if form.errors %}style="display: none;" {% endif %} />
+            {% if form.errors %}style="display: none;" {% endif %} data-url="{% url "server_delete" form.instance.id %}" />
             <img class="button-save"   src="{{ STATIC_URL }}img/save.png" alt="save" title="save"
                  {% if form.errors %}style="display: inline;" {% endif %} />
             <img class="button-cancel" src="{{ STATIC_URL }}img/cancel.png" alt="cancel" title="cancel"
