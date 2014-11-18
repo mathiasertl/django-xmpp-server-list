@@ -25,8 +25,9 @@ from server.views import EditView
 from server.views import ModerateView
 from server.views import ReportView
 from server.views import ResendView
-from server.views import AjaxServerUpdateView
+from server.views import AjaxServerCreateView
 from server.views import AjaxServerDeleteView
+from server.views import AjaxServerUpdateView
 
 
 urlpatterns = patterns(
@@ -35,7 +36,7 @@ urlpatterns = patterns(
     url(r'^moderate/$', permission_required('server.moderate')(ModerateView.as_view()),
         name='server_moderation'),
 
-    url(r'^ajax/$', 'ajax', name='server_create'),
+    url(r'^ajax/$', AjaxServerCreateView.as_view(), name='server_create'),
     url(r'^ajax/delete/(?P<pk>\w+)/$', AjaxServerDeleteView.as_view(), name='server_delete'),
     url(r'^ajax/moderate/$', 'ajax_moderate', name='server_moderate'),
     url(r'^ajax/report/(?P<pk>\w+)$', ReportView.as_view(), name='server_report'),

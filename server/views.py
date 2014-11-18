@@ -16,13 +16,12 @@
 # You should have received a copy of the GNU General Public License
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden
-from django.shortcuts import render
 from django.views.generic import TemplateView
+from django.views.generic.edit import CreateView
 from django.views.generic.edit import DeleteView
 from django.views.generic.edit import UpdateView
 from django.views.generic.detail import BaseDetailView
@@ -79,22 +78,20 @@ class ReportView(MyServerMixin, DetailView):
     template_name = 'server/ajax/report.html'
 
 
-@login_required
-def ajax(request):
-    if request.method == 'POST':
-        form = ServerForm(request.POST)
-        if form.is_valid():
-            server = form.save(commit=False)
-            server.user = request.user
-            server.features = Features.objects.create()
-            server.save()
-            server.do_contact_verification(request)
-            server.save()
+class AjaxServerCreateView(LoginRequiredMixin, CreateView):
+    form_class = ServerForm
+    http_method_names = ('post', )
+    template_name = 'ajax/server_table_row.html'
 
-            form = ServerForm(instance=server, prefix=server.id)
-            return render(request, 'ajax/server_table_row.html', {'form': form})
-        return render(request, 'ajax/server_table_row.html', {'form': form}, status=400)
-    return HttpResponseForbidden("No humans allowed.")
+    def form_valid(self, form):
+        server = form.save(commit=False)
+        server.user = self.request.user
+        server.features = Features.objects.create()
+        server.save()  # TODO: required? (maybe for a valid pk?)
+
+        server.do_contact_verification(self.request)
+        server.save()
+        return self.render_to_response(self.get_context_data(form=form))
 
 
 class AjaxServerUpdateView(MyServerFormMixin, UpdateView):
