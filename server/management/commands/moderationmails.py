@@ -50,7 +50,7 @@ class Command(BaseCommand):
             settings.SITENAME, len(servers)
         )
 
-        t = loader.get_template('mail/moderationmail.html')
+        t = loader.get_template('server/mail/moderationmail.html')
         for user in users:
             c = Context({
                 'servers': servers,
