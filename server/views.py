@@ -111,6 +111,7 @@ def ajax_id(request, server_id):
             }
             if 'domain' in changed:
                 server.moderated = None
+                server.moderators_notified = False
                 server.verified = None
             if moderate_properties & changed:
                 typ = form.cleaned_data['contact_type']
@@ -119,6 +120,7 @@ def ajax_id(request, server_id):
                     pass
                 else:
                     server.moderated = None
+                    server.moderators_notified = False
 
             # We have special treatment if contact was JID or email:
             if form.contact_changed():
@@ -127,8 +129,7 @@ def ajax_id(request, server_id):
 
             server.save()
 
-            form = ServerForm(
-                instance=server, prefix=server.id)
+            form = ServerForm(instance=server, prefix=server.id)
 
         return render(request, 'ajax/server_table_row.html', {'form': form})
 
