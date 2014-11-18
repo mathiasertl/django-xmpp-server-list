@@ -91,7 +91,9 @@ class AjaxServerCreateView(LoginRequiredMixin, CreateView):
 
         server.do_contact_verification(self.request)
         server.save()
-        return self.render_to_response(self.get_context_data(form=form))
+        context = self.get_context_data(form=form)
+        context['created'] = True
+        return self.render_to_response(context)
 
 
 class AjaxServerUpdateView(MyServerFormMixin, UpdateView):
