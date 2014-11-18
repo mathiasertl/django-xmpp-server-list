@@ -35,6 +35,21 @@ from server.models import Features
 from server.models import Server
 
 
+class MyServerMixin(LoginRequiredMixin):
+    """Makes sure that a ModelView is only called with servers the user owns."""
+    def get_object(self):
+        server = super(MyServerMixin, self).get_object()
+        if server.user != self.request.user:
+            raise PermissionDenied
+        return server
+
+
+class MyServerFormMixin(MyServerMixin):
+    """Set the form prefix to the servers id."""
+    def get_prefix(self):
+        return self.object.id
+
+
 class IndexView(ListView):
     queryset = Server.objects.moderated().verified().order_by('domain')
 
@@ -88,20 +103,11 @@ def ajax(request):
     return HttpResponseForbidden("No humans allowed.")
 
 
-class AjaxServerUpdateView(LoginRequiredMixin, UpdateView):
+class AjaxServerUpdateView(MyServerFormMixin, UpdateView):
     model = Server
     form_class = ServerForm
     http_method_names = ('post', )
     template_name = 'ajax/server_table_row.html'
-
-    def get_object(self):
-        server = super(AjaxServerUpdateView, self).get_object()
-        if server.user != self.request.user:
-            raise PermissionDenied
-        return server
-
-    def get_prefix(self):
-        return self.object.id
 
     def form_valid(self, form):
         server = self.object
