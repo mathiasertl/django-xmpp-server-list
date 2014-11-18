@@ -18,15 +18,18 @@
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden
 from django.http import Http404
 from django.shortcuts import render
 from django.views.generic import TemplateView
+from django.views.generic.edit import UpdateView
 from django.views.generic.detail import BaseDetailView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
+from core.views import LoginRequiredMixin
 from server.forms import ServerForm
 from server.models import Features
 from server.models import Server
@@ -85,8 +88,48 @@ def ajax(request):
     return HttpResponseForbidden("No humans allowed.")
 
 
-class AjaxServerUpdateView(ModelFormView):
-    http_method_names = ['post', 'delete', ]
+class AjaxServerUpdateView(LoginRequiredMixin, UpdateView):
+    model = Server
+    form_class = ServerForm
+    http_method_names = ('post', )
+    template_name = 'ajax/server_table_row.html'
+
+    def get_object(self):
+        server = super(AjaxServerUpdateView, self).get_object()
+        if server.user != self.request.user:
+            raise PermissionDenied
+        return server
+
+    def get_prefix(self):
+        return self.object.id
+
+    def form_valid(self, form):
+        server = self.object
+        changed = set(form.changed_data)
+        moderate_properties = {
+            'contact',
+            'contact_name',
+            'contact_type',
+            'website',
+        }
+        if 'domain' in changed:
+            server.moderated = None
+            server.moderators_notified = False
+            server.verified = None
+        if moderate_properties & changed:
+            typ = form.cleaned_data['contact_type']
+            contact = form.cleaned_data['contact']
+            if 'website' not in changed and server.autoconfirmed(typ, contact):
+                pass
+            else:
+                server.moderated = None
+                server.moderators_notified = False
+
+        # We have special treatment if contact was JID or email:
+        if form.contact_changed():
+            server.confirmations.all().delete()
+            server.do_contact_verification(self.request)
+        return self.render_to_response(self.get_context_data(form=form))
 
 
 @login_required
@@ -98,44 +141,8 @@ def ajax_id(request, server_id):
                 "Thou shal only delete your own server!")
 
         server.delete()
-    elif request.method == 'POST':
-        form = ServerForm(request.POST, instance=server, prefix=server.id)
-        if form.is_valid():
-            if server.user != request.user:
-                return HttpResponseForbidden("Thou shal only edit your own server!")
-            server = form.save()
-
-            changed = set(form.changed_data)
-            moderate_properties = {
-                'contact',
-                'contact_name',
-                'contact_type',
-                'website',
-            }
-            if 'domain' in changed:
-                server.moderated = None
-                server.moderators_notified = False
-                server.verified = None
-            if moderate_properties & changed:
-                typ = form.cleaned_data['contact_type']
-                contact = form.cleaned_data['contact']
-                if 'website' not in changed and server.autoconfirmed(typ, contact):
-                    pass
-                else:
-                    server.moderated = None
-                    server.moderators_notified = False
-
-            # We have special treatment if contact was JID or email:
-            if form.contact_changed():
-                server.confirmations.all().delete()
-                server.do_contact_verification(request)
-
-            server.save()
-
-            form = ServerForm(instance=server, prefix=server.id)
-
-        return render(request, 'ajax/server_table_row.html', {'form': form})
-
+    else:
+        return HttpResponseForbidden('ok.')
     return HttpResponse('ok.')
 
 
