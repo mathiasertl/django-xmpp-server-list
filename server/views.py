@@ -21,11 +21,13 @@ from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden
 from django.views.generic import TemplateView
+from django.views.generic.base import View
 from django.views.generic.edit import CreateView
 from django.views.generic.edit import DeleteView
 from django.views.generic.edit import UpdateView
 from django.views.generic.detail import BaseDetailView
 from django.views.generic.detail import DetailView
+from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.list import ListView
 
 from core.views import LoginRequiredMixin
@@ -142,7 +144,7 @@ class AjaxServerDeleteView(MyServerMixin, DeleteView):
         return HttpResponse()
 
 
-class ResendView(BaseDetailView):
+class ResendView(MyServerMixin, SingleObjectMixin, View):
     queryset = Server.objects.filter(contact_verified=False)
     http_method_names = ['post', ]
 
@@ -150,7 +152,6 @@ class ResendView(BaseDetailView):
         self.kwargs['pk'] = self.request.POST['pk']
         server = self.get_object()
         server.do_contact_verification(request)
-
         return HttpResponse()
 
 
