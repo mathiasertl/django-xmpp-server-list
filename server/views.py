@@ -76,7 +76,6 @@ def ajax(request):
             server.user = request.user
             server.features = Features.objects.create()
             server.save()
-
             server.do_contact_verification(request)
             server.save()
 
@@ -84,6 +83,10 @@ def ajax(request):
             return render(request, 'ajax/server_table_row.html', {'form': form})
         return render(request, 'ajax/server_table_row.html', {'form': form}, status=400)
     return HttpResponseForbidden("No humans allowed.")
+
+
+class AjaxServerUpdateView(ModelFormView):
+    http_method_names = ['post', 'delete', ]
 
 
 @login_required
