@@ -21,9 +21,9 @@ from django.contrib.auth.decorators import permission_required
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden
-from django.http import Http404
 from django.shortcuts import render
 from django.views.generic import TemplateView
+from django.views.generic.edit import DeleteView
 from django.views.generic.edit import UpdateView
 from django.views.generic.detail import BaseDetailView
 from django.views.generic.detail import DetailView
@@ -131,6 +131,14 @@ class AjaxServerUpdateView(MyServerFormMixin, UpdateView):
             server.do_contact_verification(self.request)
         return self.render_to_response(self.get_context_data(form=form))
 
+
+class AjaxServerDeleteView(MyServerMixin, DeleteView):
+    model = Server
+    http_method_names = ('delete', )
+
+    def delete(self, request, *args, **kwargs):
+        self.get_object().delete()
+        return HttpResponse('')
 
 @login_required
 def ajax_id(request, server_id):
