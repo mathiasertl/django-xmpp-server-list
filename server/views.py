@@ -121,10 +121,12 @@ class AjaxServerUpdateView(MyServerFormMixin, UpdateView):
             typ = form.cleaned_data['contact_type']
             contact = form.cleaned_data['contact']
             if 'website' not in changed and server.autoconfirmed(typ, contact):
+                print('autoconfirmed!')
                 pass
             else:
                 server.moderated = None
                 server.moderators_notified = False
+                server.contact_verified = False
 
         # We have special treatment if contact was JID or email:
         if form.contact_changed():
