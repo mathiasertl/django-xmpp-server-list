@@ -21,7 +21,6 @@ var register_tooltips = function(){
     $('.tooltip-field').tooltip({
         title: function() {
             var tip = $(this).attr('data-tip');
-            console.log('#tooltip-' + tip);
             return $('body').find('#tooltip-' + tip).html();
         },
         placement: 'bottom',
@@ -31,13 +30,27 @@ var register_tooltips = function(){
 }
 
 $(document).ready(function() {
-    console.log('ready');
     register_tooltips();
     register_popover();
 
     $('.fblike').on('click', function(event) {
         fblike_button();
     });
+
+    $(".button-ok").on("click", function() {
+        url = $(this).parent().attr('data-url');
+        row = $(this).parent().parent();
+        $.post(url, {moderate: true, csrfmiddlewaretoken: csrftoken}, function(data) {
+            row.hide(500);
+        });
+    });
+    $(".button-notok").on("click", function() {
+        url = $(this).parent().attr('data-url');
+        row = $(this).parent().parent();
+        $.post(url, {moderate: false, csrfmiddlewaretoken: csrftoken}, function(data) {
+            row.hide(500);
+        });
+    })
 });
 
 // Generate a two-click like button.

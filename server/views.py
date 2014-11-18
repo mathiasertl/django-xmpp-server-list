@@ -20,12 +20,12 @@ from django.contrib.auth.decorators import permission_required
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden
+from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 from django.views.generic.base import View
 from django.views.generic.edit import CreateView
 from django.views.generic.edit import DeleteView
 from django.views.generic.edit import UpdateView
-from django.views.generic.detail import BaseDetailView
 from django.views.generic.detail import DetailView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.list import ListView
@@ -156,11 +156,13 @@ class AjaxServerResendView(MyServerMixin, SingleObjectMixin, View):
         return HttpResponse()
 
 
-@permission_required('server.moderate')
-def ajax_moderate(request):
-    if request.method == 'POST':
-        server_id = request.POST['id']
-        server = Server.objects.for_moderation().get(id=server_id)
+class AjaxServerModerateView(LoginRequiredMixin, SingleObjectMixin, View):
+    queryset = Server.objects.for_moderation()
+    http_method_names = ('post', )
+
+    @method_decorator(permission_required('server.moderate'))
+    def post(self, request, *args, **kwargs):
+        server = self.get_object()
         if request.POST['moderate'] == 'true':
             server.moderated = True
             server.contact_verified = True
@@ -168,5 +170,3 @@ def ajax_moderate(request):
             server.moderated = False
         server.save()
         return HttpResponse()
-    else:
-        return HttpResponseForbidden('Sorry, only POST')
