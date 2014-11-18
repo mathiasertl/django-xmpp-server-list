@@ -34,11 +34,11 @@ urlpatterns = patterns(
     url(r'^$', login_required(EditView.as_view()), name='server'),
     url(r'^moderate/$', permission_required('server.moderate')(ModerateView.as_view()),
         name='server_moderate'),
-    url(r'^(?P<pk>\w+)/report/$', login_required(ReportView.as_view()), name='server_report'),
 
     url(r'^ajax/$', 'ajax', name='server_create'),
-    url(r'^ajax/moderate/$', 'ajax_moderate', name='server_moderate'),
-    url(r'^ajax/resend/$', login_required(ResendView.as_view()), name='server_resend'),
     url(r'^ajax/delete/(?P<pk>\w+)/$', AjaxServerDeleteView.as_view(), name='server_delete'),
+    url(r'^ajax/moderate/$', 'ajax_moderate', name='server_moderate'),
+    url(r'^ajax/report/(?P<pk>\w+)$', ReportView.as_view(), name='server_report'),
+    url(r'^ajax/resend/$', login_required(ResendView.as_view()), name='server_resend'),
     url(r'^ajax/update/(?P<pk>\w+)/$', AjaxServerUpdateView.as_view(), name='server_update'),
 )
