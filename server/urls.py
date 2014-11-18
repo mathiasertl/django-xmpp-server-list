@@ -38,7 +38,7 @@ urlpatterns = patterns(
 
     url(r'^ajax/$', 'ajax', name='server_create'),
     url(r'^ajax/moderate/$', 'ajax_moderate', name='server_ajax_moderate'),
-    url(r'^ajax/resend/$', login_required(ResendView.as_view()), name='server_ajax_resend'),
+    url(r'^ajax/resend/$', login_required(ResendView.as_view()), name='server_resend'),
     url(r'^ajax/delete/(?P<pk>\w+)/$', AjaxServerDeleteView.as_view(), name='server_delete'),
     url(r'^ajax/update/(?P<pk>\w+)/$', AjaxServerUpdateView.as_view(), name='server_update'),
 )
