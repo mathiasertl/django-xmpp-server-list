@@ -14,10 +14,6 @@ function get_service_id(row) {
     return row.attr('data-server');
 }
 
-function get_service_url(row) {
-    return service_url + get_service_id(row) + '/';
-}
-
 function edit_service(cell) {
     switch_buttons(cell);
     switch_values(cell.parent());
