@@ -97,29 +97,18 @@ $(document).ready(function() {
     });
     
     $("table").on("click", ".button-add", function() {
-        cell = $(this).parent();
-        row = cell.parent()
-        console.log(get_csrftoken());
+        row = $(this).parent().parent();
         form_fields = row.find('input,select').add(get_csrftoken());
-        console.log(form_fields.serialize());
     
-        $.post(service_url, form_fields.serialize(), function(data) {        
+        $.post(row.attr('data-url'), form_fields.serialize(), function(data) {
             new_row = $(data);
-            row.before(new_row); // append new row above
-            set_datepicker(new_row); // set datepicker
-            register_popover();
-            
-            row.find("input").val(''); // clear input values of this row
-            row.find(".fielderrors").html('');
-        }).fail(function(data) {
-            new_row = $(data.responseText);
-            
             row.replaceWith(new_row);
-            // set datepicker manually because we do not have an id here
             new_row.find('#id_launched').datepicker({
                 dateFormat: "yy-mm-dd", maxDate: "+0D", showButtonPanel: true
             });
-            new_row.find("a[rel]").overlay(overlay_params);
+
+            register_tooltips();
+            register_popover();
         })
     });
     
