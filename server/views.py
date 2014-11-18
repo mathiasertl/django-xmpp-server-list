@@ -139,7 +139,7 @@ class AjaxServerDeleteView(MyServerMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         """Omit success_url etc."""
         self.get_object().delete()
-        return HttpResponse('')
+        return HttpResponse()
 
 
 class ResendView(BaseDetailView):
@@ -165,6 +165,6 @@ def ajax_moderate(request):
         else:
             server.moderated = False
         server.save()
-        return HttpResponse('ok')
+        return HttpResponse()
     else:
         return HttpResponseForbidden('Sorry, only POST')
