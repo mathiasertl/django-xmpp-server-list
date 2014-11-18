@@ -100,7 +100,7 @@ class AjaxServerUpdateView(MyServerFormMixin, UpdateView):
     model = Server
     form_class = ServerForm
     http_method_names = ('post', )
-    template_name = 'ajax/server_table_row.html'
+    template_name = 'server/ajax/server_table_row.html'
 
     def form_valid(self, form):
         server = self.object
