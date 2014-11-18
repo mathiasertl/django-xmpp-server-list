@@ -74,15 +74,9 @@ class ModerateView(ListView):
     queryset = Server.objects.for_moderation()
 
 
-class ReportView(DetailView):
+class ReportView(MyServerMixin, DetailView):
     queryset = Server.objects.all()
     template_name = 'server/ajax/report.html'
-
-    def get_object(self, queryset=None):
-        obj = super(ReportView, self).get_object(queryset=queryset)
-        if obj.user != self.request.user:
-            raise Http404
-        return obj
 
 
 @login_required
