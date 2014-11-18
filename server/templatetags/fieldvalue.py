@@ -18,8 +18,10 @@
 
 from django import template
 from django.forms.fields import DateField
+from django.utils import six
 
 register = template.Library()
+
 
 @register.filter
 def fieldvalue(field):
@@ -28,9 +30,9 @@ def fieldvalue(field):
             if k == field.value():
                 return v
         return 'key not found'
-    elif type(field.field) == DateField:
+    elif isinstance(field.field, DateField):
         val = field.value()
-        if val.__class__ == unicode:
+        if isinstance(val, six.string_types):
             return val
         elif val is None:
             return ''
