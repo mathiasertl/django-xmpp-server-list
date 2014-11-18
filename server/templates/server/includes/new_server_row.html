@@ -1,0 +1,9 @@
+<tr class="new-server">
+    <td></td>
+    {% for field in new_server_form %}
+        <td class="tooltip-field" data-tip="{{field.name}}">{{ field }}</td>
+    {% endfor %}
+    <td class="right">
+        <img class="button-add" src="{{ STATIC_URL }}img/add.png" alt="add new server" title="add new server" />
+    </td>
+</tr>
