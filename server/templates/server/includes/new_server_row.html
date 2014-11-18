@@ -1,4 +1,4 @@
-<tr class="new-server">
+<tr class="new-server" data-url="{% url "server_create" %}">
     <td></td>
     {% for field in new_server_form %}
         <td class="tooltip-field" data-tip="{{field.name}}">{{ field }}</td>
