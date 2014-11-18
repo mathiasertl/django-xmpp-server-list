@@ -44,7 +44,7 @@ moment, you only have to check if the homepage of the server and the given conta
     <tr id="server_{{server.id}}">
         <td>{% include "includes/server_homepage.html" %}</td>
         <td>
-            {% include "includes/server_contact.html" %}
+            {% include "server/includes/server_contact.html" %}
             {% if server.contact_verified %}(verified){% endif %}
         </td>
         <td class="right">
