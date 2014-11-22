@@ -168,6 +168,6 @@ class AjaxServerModerateView(LoginRequiredMixin, SingleObjectMixin, View):
             server.contact_verified = True
         else:
             server.moderated = False
-            server.moderation_message = request.POST['moderation_message']
+            server.moderation_message = request.POST['message']
         server.save()
         return HttpResponse()
