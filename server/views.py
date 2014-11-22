@@ -165,8 +165,10 @@ class AjaxServerModerateView(LoginRequiredMixin, SingleObjectMixin, View):
         server = self.get_object()
         if request.POST['moderate'] == 'true':
             server.moderated = True
+            server.moderation_message = ''
             server.contact_verified = True
         else:
             server.moderated = False
+            server.moderation_message = request.POST['moderation_message']
         server.save()
         return HttpResponse()
