@@ -44,7 +44,6 @@ class Command(BaseCommand):
         servers = servers.filter(moderators_notified=False)
         if not servers.exists():
             return
-        servers.update(moderators_notified=True)
 
         subject = '[%s] %s servers awaiting moderation' % (
             settings.SITENAME, len(servers)
@@ -64,3 +63,5 @@ class Command(BaseCommand):
 
             send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, [user.email],
                       fail_silently=False)
+
+        servers.update(moderators_notified=True)
