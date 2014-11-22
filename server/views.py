@@ -155,17 +155,19 @@ class AjaxServerResendView(MyServerMixin, SingleObjectMixin, View):
         return HttpResponse()
 
 
-class AjaxServerResubmitView(MyServerMixin, SingleObjectMixin, View):
-    queryset = Server.objects.filter(contact_verified=False)
-    http_method_names = ['post', ]
+class AjaxServerResubmitView(MyServerFormMixin, UpdateView):
+    model = Server
+    form_class = ServerForm
+    http_method_names = ('post', )
+    template_name = 'server/ajax/server_table_row.html'
 
-    def post(self, request, *args, **kwargs):
-        server = self.get_object()
+    def form_valid(self, form):
+        server = form.save(commit=False)
         server.moderated = None
-        server.moderation_message = None
+        server.moderation_message = ''
         server.moderators_notified = False
         server.save()
-        return HttpResponse()
+        return self.render_to_response(self.get_context_data(form=form))
 
 
 class AjaxServerModerateView(LoginRequiredMixin, SingleObjectMixin, View):
