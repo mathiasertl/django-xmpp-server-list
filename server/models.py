@@ -196,6 +196,7 @@ class Server(models.Model):
     # moderation:
     moderated = models.NullBooleanField(default=None)
     moderators_notified = models.BooleanField(default=False)
+    moderation_message = models.TextField(default='')
     features = models.OneToOneField(Features, related_name='server')
 
     # queried information
