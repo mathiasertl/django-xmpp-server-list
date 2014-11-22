@@ -94,10 +94,7 @@ td img {
     display: inline;
 }
 
-.button-save {
-    display: none;
-}
-.button-cancel {
+.button-save, .button-cancel, .button-resubmit {
     display: none;
 }
 
