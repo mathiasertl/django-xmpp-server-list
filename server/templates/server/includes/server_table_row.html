@@ -19,8 +19,9 @@
     {% endfor %}
     <td class="right">
         {% if form.instance.id %}
-            <img class="button-resubmit"   src="{{ STATIC_URL }}img/save.png" alt="resubmit" title="resubmit"
-                 {% if form.instance.moderated == False %}style="display: inline;" {% endif %} />
+            <img class="button-resubmit"  src="{{ STATIC_URL }}img/save.png" alt="resubmit" title="resubmit"
+                data-url="{% url "server_resubmit" form.instance.id %}"
+                 {% if form.instance.moderated == False %}style="display: inline;"{% endif %} />
             <img class="button-edit"   src="{{ STATIC_URL }}img/edit.png" alt="edit" title="edit"
                 {% if form.errors %}style="display: none;" {% endif %} />
             <img class="button-delete" src="{{ STATIC_URL }}img/delete.png" alt="delete" title="delete"
