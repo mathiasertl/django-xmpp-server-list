@@ -155,6 +155,19 @@ class AjaxServerResendView(MyServerMixin, SingleObjectMixin, View):
         return HttpResponse()
 
 
+class AjaxServerResubmitView(MyServerMixin, SingleObjectMixin, View):
+    queryset = Server.objects.filter(contact_verified=False)
+    http_method_names = ['post', ]
+
+    def post(self, request, *args, **kwargs):
+        server = self.get_object()
+        server.moderated = None
+        server.moderation_message = None
+        server.moderators_notified = False
+        server.save()
+        return HttpResponse()
+
+
 class AjaxServerModerateView(LoginRequiredMixin, SingleObjectMixin, View):
     queryset = Server.objects.for_moderation()
     http_method_names = ('post', )

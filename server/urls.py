@@ -28,6 +28,7 @@ from server.views import AjaxServerResendView
 from server.views import AjaxServerCreateView
 from server.views import AjaxServerDeleteView
 from server.views import AjaxServerModerateView
+from server.views import AjaxServerResubmitView
 from server.views import AjaxServerUpdateView
 
 
@@ -42,5 +43,6 @@ urlpatterns = patterns(
     url(r'^ajax/moderate/(?P<pk>\w+)/$', AjaxServerModerateView.as_view(), name='server_moderate'),
     url(r'^ajax/report/(?P<pk>\w+)$', ReportView.as_view(), name='server_report'),
     url(r'^ajax/resend/(?P<pk>\w+)$', AjaxServerResendView.as_view(), name='server_resend'),
+    url(r'^ajax/resubmit/(?P<pk>\w+)$', AjaxServerResubmitView.as_view(), name='server_resubmit'),
     url(r'^ajax/update/(?P<pk>\w+)/$', AjaxServerUpdateView.as_view(), name='server_update'),
 )
