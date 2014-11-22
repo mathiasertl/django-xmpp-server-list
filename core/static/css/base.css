@@ -85,7 +85,7 @@ td img {
     text-align: right;
 }
 
-.button-ok, .button-notok, .button-edit, .button-delete, .button-save, .button-cancel, .button-add, .button-resend {
+.button-ok, .button-notok, .button-edit, .button-delete, .button-save, .button-cancel, .button-add, .button-resend, .button-resubmit {
     margin: 0 2px;
     cursor: pointer;
 }
