@@ -42,7 +42,7 @@ class Command(BaseCommand):
 
         servers = Server.objects.for_moderation()
         servers = servers.filter(moderators_notified=False)
-        if servers.exists():
+        if not servers.exists():
             return
         servers.update(moderators_notified=True)
 
