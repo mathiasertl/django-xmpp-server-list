@@ -86,7 +86,6 @@ $(document).ready(function() {
         if (row.hasClass('changed')) {
             $.post(row.attr('data-update-url'), form_fields.serialize(), function(data) {
                 new_row = $(data);
-                
                 row.replaceWith(new_row);
                 set_datepicker(new_row);
                 register_popover();
@@ -95,6 +94,29 @@ $(document).ready(function() {
         } else {
             edit_service(cell);
         }
+    });
+
+    /**
+     * Resubmit a moderated server.
+     */
+    $('.button-resubmit').on('click', function() {
+        var self = $(this);
+        cell = $(this).parent();
+        row = cell.parent()
+
+        submit_data = row.find(':input').serializeArray();
+        submit_data[submit_data.length] = {
+            name: 'csrfmiddlewaretoken',
+            value: csrftoken,
+        };
+
+        $.post(self.data('url'), submit_data, function(data) {
+            new_row = $(data);
+            row.replaceWith(new_row);
+            set_datepicker(new_row);
+            register_popover();
+            register_tooltips();
+        });
     });
     
     /**
