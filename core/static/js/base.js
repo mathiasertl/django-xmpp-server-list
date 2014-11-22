@@ -44,13 +44,31 @@ $(document).ready(function() {
             row.hide(500);
         });
     });
-    $(".button-notok").on("click", function() {
-        url = $(this).parent().attr('data-url');
-        row = $(this).parent().parent();
-        $.post(url, {moderate: false, csrfmiddlewaretoken: csrftoken}, function(data) {
+    $("#moderationModal").on("show.bs.modal", function(event) {
+        var button = $(event.relatedTarget);
+        url = button.parent().data('url');
+        row = button.parent().parent();
+        
+        // Set initial modal state:
+        var modal = $(this);
+        modal.data('url', url);
+        modal.find('textarea').val('');
+    })
+
+    $('#moderationModal #deny-moderation').on('click', function(event) {
+        var modal = $('#moderationModal');
+        var url = modal.data('url');
+        var message = $('#moderationModal #denial-message').val();
+        modal.modal('hide');
+
+        $.post(url, {
+            moderate: false,
+            csrfmiddlewaretoken: csrftoken,
+            message: message,
+        }, function(data) {
             row.hide(500);
         });
-    })
+    });
 });
 
 // Generate a two-click like button.

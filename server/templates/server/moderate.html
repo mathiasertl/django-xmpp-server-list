@@ -27,10 +27,27 @@ moment, you only have to check if the homepage of the server and the given conta
         </td>
         <td class="right" data-url="{% url "server_moderate" server.id %}">
             <img class="button-ok" src="{{ STATIC_URL }}img/save.png" alt="Ok." title="Ok." />
-            <img class="button-notok" src="{{ STATIC_URL }}img/cancel.png" alt="NOT ok." title="NOT ok." />
+            <img class="button-notok" data-toggle="modal" data-target="#moderationModal" src="{{ STATIC_URL }}img/cancel.png" alt="NOT ok." title="NOT ok." />
         </td>
     </tr>
 {% endfor %}
     </tbody>
 </table>
+
+<div class="modal fade" id="moderationModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        header
+      </div>
+      <div class="modal-body">
+        <textarea id="denial-message"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button id="deny-moderation-chancel" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button id="deny-moderation" type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
