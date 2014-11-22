@@ -93,6 +93,9 @@ $(document).ready(function() {
             })
         } else {
             edit_service(cell);
+            if (cell.hasClass('resubmittable')) {
+                cell.find('.button-resubmit').show();
+            }
         }
     });
 
