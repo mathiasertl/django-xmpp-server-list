@@ -41,7 +41,7 @@ class Command(BaseCommand):
         domain = getattr(settings, 'DEFAULT_DOMAIN', 'list.jabber.at')
 
         servers = Server.objects.for_moderation()
-        servers = servers.filter(moderators_notified=False)
+        servers = list(servers.filter(moderators_notified=False))
         if not servers:
             return
         servers.update(moderators_notified=True)
