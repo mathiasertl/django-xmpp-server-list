@@ -2,6 +2,7 @@ function switch_buttons(cell) {
     cell.find('.button-edit').toggle();
     cell.find('.button-delete').toggle();
     cell.find('.button-save').toggle();
+    cell.find('.button-resubmit').hide();
     cell.find('.button-cancel').toggle();
 }
 
