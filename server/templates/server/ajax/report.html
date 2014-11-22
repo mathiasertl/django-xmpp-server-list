@@ -18,6 +18,10 @@
             Contact details and/or homepage have been rejected. Please make
             sure you have a usable homepage and contact details.
         {% endblocktrans %}
+        {% if server.moderation_message %}
+        <br />
+        {% blocktrans with message=server.moderation_message%}A moderator noted: <strong>{{ message }}</strong>{% endblocktrans %}
+        {% endif %}
         </li>
         {% endif %}
 
