@@ -144,3 +144,7 @@ ul.report li.warn {
 ul.report li.fail {
     background-image: url(/static/img/delete.png);
 }
+
+#denial-message {
+    width: 100%;
+}
