@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
+from threading import Thread
+
 from django.contrib.auth.decorators import permission_required
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
@@ -92,6 +94,11 @@ class AjaxServerCreateView(LoginRequiredMixin, CreateView):
 
         server.do_contact_verification(self.request)
         server.save()
+
+        # start verification in a separate thread:
+        t = Thread(target=server.verify)
+        t.start()
+
         context = self.get_context_data(form=form)
         context['new_server_form'] = ServerForm()
         return self.render_to_response(context)
