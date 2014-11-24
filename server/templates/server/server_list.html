@@ -40,26 +40,24 @@ always communicate with users on other servers. This list is kindly brought to y
     <tbody>
 {% for server in object_list %}
 <tr id="server-{{server.id}}" class="server-row" data-content='bootstrap-{{server.id}}'>
-        <td>{% include "server/includes/server_homepage.html" %}
-
-        </td>
-        <td>{{ server.location }}</td>
-        <td>
-            {% if server.ca %}
-                {% if server.ca.website %}
-                    <a href="{{ server.ca.website }}">{{ server.ca.get_display_name }}</a>
-                {% else %}
-                    {{ server.ca.get_display_name }}
-                {% endif %}
-            {% else %}
-                Unknown
-            {% endif %}
-        </td>
-        <td>{{ server.launched.year }}</td>
-        <!--<td><a href="{{ server.software.website }}">{{ server.software.name }} {{ server.software_version }}</a></td>-->
-        <td>{% include "server/includes/server_contact.html" %}
-        </td>
-    </tr>
+    <td>{% include "server/includes/server_homepage.html" %}</td>
+    <td>{{ server.location }}</td>
+    <td>
+    {% if server.ca %}
+        {% if server.ca.website %}
+            <a href="{{ server.ca.website }}">{{ server.ca.get_display_name }}</a>
+        {% else %}
+            {{ server.ca.get_display_name }}
+        {% endif %}
+    {% else %}
+        Unknown
+    {% endif %}
+    </td>
+    <td>{{ server.launched.year }}</td>
+    <!--<td><a href="{{ server.software.website }}">{{ server.software.name }} {{ server.software_version }}</a></td>-->
+    <td>{% include "server/includes/server_contact.html" %}
+    </td>
+</tr>
 {% endfor %}
     </tbody>
 </table>
