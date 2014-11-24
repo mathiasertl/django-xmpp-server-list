@@ -187,7 +187,7 @@ class Server(models.Model):
     website = models.URLField(
         blank=True,
         help_text="A homepage where one can find information on your server. If left empty, the "
-        "default is http://<domain>.")
+        "default is https://<domain>.")
     ca = models.ForeignKey(
         CertificateAuthority, related_name='servers', verbose_name='CA', blank=True, null=True,
         help_text="The Certificate Authority of the certificate used in "
