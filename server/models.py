@@ -587,7 +587,7 @@ class Server(models.Model):
         if self.website:
             return self.website
         else:
-            return 'http://%s' % self.domain
+            return 'https://%s' % self.domain
 
     def get_contact_text(self):
         if self.contact_name:
