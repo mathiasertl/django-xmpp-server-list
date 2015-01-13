@@ -321,6 +321,11 @@ class Server(models.Model):
             else:
                 data = geoip.record_by_name(ip)
 
+            if data is None:  # data is None in some obscure cases.
+                self.city = ''
+                self.country = ''
+                return
+
             self.country = data['country_name']
 
             # at least cities are latin1 encoded (e.g. inbox.im, located in Montréal)
