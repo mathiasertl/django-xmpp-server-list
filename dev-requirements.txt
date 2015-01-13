@@ -1,1 +1,2 @@
 ipython==2.3.1
+pip-tools==0.3.5
