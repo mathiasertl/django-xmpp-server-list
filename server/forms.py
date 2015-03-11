@@ -101,13 +101,13 @@ class ServerForm(ModelForm):
     class Meta:
         model = Server
         fields = (
-            'domain', 'website', 'launched', 'contact_type', 'contact', 'contact_name',
+            'domain', 'registration_url', 'policy_url', 'website', 'launched', 'contact_type', 'contact', 'contact_name',
         )
         widgets = {
             'contact_type': Select(attrs={'class': 'contact_type', }),
-            'longitude': TextInput(attrs={'size': 4}),
-            'latitude': TextInput(attrs={'size': 4}),
             'domain': TextInput(attrs={'size': 10}),
+            'registration_url': TextInput(attrs={'size': 16}),
+            'policy_url': TextInput(attrs={'size': 16}),
             'website': TextInput(attrs={'size': 16}),
             'launched': DateInput(attrs={
                 'size': 8, 'class': 'datepicker'}, format='%Y-%m-%d'),
