@@ -1,5 +1,10 @@
 {% load i18n %}
 <h4 class="popover-title">{% trans "Summary" %}</h4>
+{% if not server.last_checked %}
+<ul class="report">
+{% trans "Your server will be checked with the next six hours." %}
+</ul>
+{% else %}
 <ul class="report">
     {% if server.verified %}
         <li class="ok">{% trans "Technical aspects have been automatically verified. See below for any additional notes." %}</li>
@@ -146,3 +151,4 @@
 </ul>
 {% endif %}
 {% endwith %}
+{% endif %}
