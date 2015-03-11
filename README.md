@@ -1,3 +1,6 @@
+[![Flattr this git
+repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=mathiasertl&url=https://jabber.at)
+
 This is a small [Django](https://www.djangoproject.com/) project to create the
 list of servers at https://list.jabber.at. Since this project is free software,
 you are welcome to host your own list, if you like.

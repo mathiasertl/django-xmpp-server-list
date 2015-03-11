@@ -18,7 +18,6 @@ deploy: deploy-code
 	${HOSTCMD} "cd ${XMPPHOME} && sudo bin/python ${GITDIR}manage.py migrate"
 	${HOSTCMD} "cd ${XMPPHOME} && sudo bin/python ${GITDIR}manage.py collectstatic --noinput"
 	${HOSTCMD} "cd ${XMPPHOME} && sudo bin/python ${GITDIR}manage.py geoip"
-	${HOSTCMD} sudo /etc/init.d/apache2 restart
 
 refresh-geoip:
 	python manage.py geoip
