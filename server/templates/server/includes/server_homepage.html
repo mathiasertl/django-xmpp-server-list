@@ -1,1 +1,11 @@
+{% load i18n %}
+
 <a href="{{ server.get_website }}">{{ server.domain }}</a>
+{% if server.registration_url %}
+(<a href="{{ server.registration_url }}">{% trans "registration" %}</a>
+    {% if server.policy_url %}
+    , <a href="{{ server.policy_url }}">{% trans "policy" %}</a>)
+    {% else %}){% endif %}
+{% elif server.policy_url %}
+(<a href="{{ server.policy_url }}">{% trans "policy" %}</a>)
+{% endif %}
