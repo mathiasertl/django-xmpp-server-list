@@ -30,6 +30,7 @@ from confirm.models import ServerConfirmationKey
 class ConfirmationView(RedirectView, SingleObjectMixin):
     # from SingleObjectMixin
     pk_url_kwarg = 'key'
+    permanent = True
 
     def get_object(self, queryset=None):
         if queryset is None:
