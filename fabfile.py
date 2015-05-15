@@ -30,7 +30,7 @@ class DeployTask(Task):
             group='xmpp-server-list'):
         local('git push origin master')
         ssh = lambda cmd: local('ssh %s sudo sg %s -c \'"cd %s && %s"\'' % (host, group, dir, cmd))
-        manage = lambda cmd: ssh('../bin/python manage.py ' % cmd)
+        manage = lambda cmd: ssh('../bin/python manage.py %s' % cmd)
         local('ssh %s sudo chgrp -R %s %s' % (host, group, dir))
         ssh("git fetch")
         ssh("git pull origin master")
