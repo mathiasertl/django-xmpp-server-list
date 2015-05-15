@@ -25,7 +25,9 @@ from models import ServerSoftware
 
 
 class ServerAdmin(admin.ModelAdmin):
-    list_display = ('verified', 'moderated', 'domain', )
+    list_display = ('verified', 'moderated', 'domain', 'user', )
+    list_display_links = ('domain', 'user', )
+    search_fields = ('domain', )
 
     class Media:
         css = {
