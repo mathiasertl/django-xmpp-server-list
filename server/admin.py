@@ -24,7 +24,19 @@ from models import Server
 from models import ServerSoftware
 
 
-admin.site.register(Server)
+class ServerAdmin(admin.ModelAdmin):
+    list_display = ('verified', 'moderated', 'domain', )
+
+    class Media:
+        css = {
+            'all': ('admin/server.css', ),
+        }
+
+    def verified(self, obj):
+        return obj.verified
+    verified.boolean = True
+
+admin.site.register(Server, ServerAdmin)
 admin.site.register(ServerSoftware)
 admin.site.register(Features)
 admin.site.register(CertificateAuthority)
