@@ -13,3 +13,4 @@ mystatic
 /share/
 /xmpplist.sqlite3
 /geoip
+/fab.conf
