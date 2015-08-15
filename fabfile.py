@@ -21,24 +21,39 @@ from __future__ import unicode_literals
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
+from six.moves import configparser
+
 from fabric.api import local
 from fabric.tasks import Task
 
+config = configparser.ConfigParser({
+    'remote': 'origin',
+    'branch': 'master',
+    'uwsgi-emperor': 'xmpp-server-list',
+})
+config.read('fab.conf')
+
 
 class DeployTask(Task):
-    def run(self, host='hyperion', dir='/usr/local/home/xmpp-server-list/django-xmpp-server-list/',
-            group='xmpp-server-list'):
-        local('git push origin master')
-        ssh = lambda cmd: local('ssh %s sudo sg %s -c \'"cd %s && %s"\'' % (host, group, dir, cmd))
+    def run(self, section='DEFAULT'):
+        host = config.get(section, 'host')
+        remote = config.get(section, 'remote')
+        branch = config.get(section, 'branch')
+        group = config.get(section, 'group')
+        path = config.get(section, 'path')
+        uwsgi_emperor = config.get(section, 'uwsgi-emperor')
+
+        local('git push %s %s' % (remote, branch))
+        ssh = lambda cmd: local('ssh %s sudo sg %s -c \'"cd %s && %s"\'' % (host, group, path, cmd))
         manage = lambda cmd: ssh('../bin/python manage.py %s' % cmd)
-        local('ssh %s sudo chgrp -R %s %s' % (host, group, dir))
+        local('ssh %s sudo chgrp -R %s %s' % (host, group, path))
         ssh("git fetch")
         ssh("git pull origin master")
         ssh("../bin/pip install -r requirements.txt")
         manage('migrate')
         manage('collectstatic --noinput')
         manage('geoip')
-        ssh("touch /etc/uwsgi-emperor/vassals/xmpp-server-list.ini")
+        ssh("touch /etc/uwsgi-emperor/vassals/%s.ini" % uwsgi_emperor)
 
 
 deploy = DeployTask()
