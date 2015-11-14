@@ -61,7 +61,7 @@ class CreationForm(UserCreationForm):
             UserModel._default_manager.get(username=username)
         except UserModel.DoesNotExist:
             return username
-        raise forms.ValidationError(self.error_messages['duplicate_username'])
+        raise forms.ValidationError(_('Username already exists.'))
 
 
     class Meta:
