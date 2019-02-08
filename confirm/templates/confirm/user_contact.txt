@@ -1,4 +1,4 @@
-{% load url from future %}Dear {{ key.user.username }},
+Dear {{ key.user.username }},
 
 You have attempted to create an account or change your {{ key.address_type }} at
 {{ protocol }}://{{ domain }}.
