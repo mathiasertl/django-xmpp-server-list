@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls import patterns
 from django.conf.urls import url
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
@@ -31,8 +30,10 @@ from server.views import EditView
 from server.views import ModerateView
 from server.views import ReportView
 
-urlpatterns = patterns(
-    'server.views',
+# TODO: use path instead of url
+# TODO: use namespace instead of name prefix
+# TODO: move decorators to class
+urlpatterns = [
     url(r'^$', login_required(EditView.as_view()), name='server'),
     url(r'^moderate/$', permission_required('server.moderate')(ModerateView.as_view()),
         name='server_moderation'),
@@ -44,4 +45,4 @@ urlpatterns = patterns(
     url(r'^ajax/resend/(?P<pk>\w+)$', AjaxServerResendView.as_view(), name='server_resend'),
     url(r'^ajax/resubmit/(?P<pk>\w+)$', AjaxServerResubmitView.as_view(), name='server_resubmit'),
     url(r'^ajax/update/(?P<pk>\w+)/$', AjaxServerUpdateView.as_view(), name='server_update'),
-)
+]

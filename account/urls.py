@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of django-xmpp-server-list
 # (https://github.com/mathiasertl/django-xmpp-server-list)
 #
@@ -16,38 +14,30 @@
 # You should have received a copy of the GNU General Public License
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls import patterns
 from django.conf.urls import url
+from django.contrib.auth import views as auth_views
 
-from forms import AuthenticationFormSub
-from forms import SetPasswordForm
-from views import ResetPassword
+from . import views
+from .forms import AuthenticationFormSub
+from .forms import SetPasswordForm
 
-urlpatterns = patterns(
-    'account.views',
-    url(r'^$', 'index', name='account'),
-    url(r'^create/$', 'create', name='account_create'),
-    url(r'^edit/$', 'edit', name='account_edit'),
-    url(r'^reset_password/$', ResetPassword.as_view(),
-        name='account_reset_password'),
-    url(r'^reset_password/done/$', 'reset_password_ok',
-        name='account_reset_password_ok'),
-    url(r'^resend_confirmation/$', 'resend_confirmation',
-        name='account_resend_confirmation'),
-)
-urlpatterns += patterns(
-    '',
-    url(r'^login/', 'django.contrib.auth.views.login',
-        {'template_name': 'account/login.html',
-         'authentication_form': AuthenticationFormSub,
-         }, name='login'),
-    url(r'^logout/', 'django.contrib.auth.views.logout',
-        {'template_name': 'logout.html'}),
-    url(r'^password/', 'django.contrib.auth.views.password_change',
-        {'template_name': 'account/set_password.html',
-         'post_change_redirect': '/user',
-         'password_change_form': SetPasswordForm,
-         },
-        name='account_set_password'
-        )
-)
+# TODO: use path instead of url
+# TODO: use namespace instead of account_ prefix in name
+urlpatterns = [
+    url(r'^$', views.index, name='account'),
+    url(r'^create/$', views.create, name='account_create'),
+    url(r'^edit/$', views.edit, name='account_edit'),
+    url(r'^reset_password/$', views.ResetPassword.as_view(), name='account_reset_password'),
+    url(r'^reset_password/done/$', views.reset_password_ok, name='account_reset_password_ok'),
+    url(r'^resend_confirmation/$', views.resend_confirmation, name='account_resend_confirmation'),
+    url(r'^login/', auth_views.LoginView.as_view(
+        template_name='account/login.html',  # TODO: use the default
+        authentication_form=AuthenticationFormSub,  # TODO: necessary?
+    ), name='login'),
+    url(r'^logout/', auth_views.LogoutView.as_view(template_name='logout.html')),  # TODO: use default
+    url(r'^password/', auth_views.PasswordChangeView.as_view(
+        template_name='account/set_password.html',  # TODO: use default
+        #post_change_redirect='/user',  # TODO?
+        form_class=SetPasswordForm  # TODO: use default?
+    ), name='account_set_password')
+]

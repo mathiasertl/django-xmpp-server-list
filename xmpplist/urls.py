@@ -18,7 +18,6 @@
 
 from django.conf import settings
 from django.conf.urls import include
-from django.conf.urls import patterns
 from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
@@ -27,16 +26,15 @@ from server.views import IndexView
 
 admin.autodiscover()
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(r'^$', IndexView.as_view(), name='home'),
     url(r'^user/', include('account.urls')),
     url(r'^server/', include('server.urls')),
     url(r'^api/', include('api.urls')),
     url(r'^confirm/', include('confirm.urls')),
 
-    url(r'^admin/', include(admin.site.urls)),
-)
+    url(r'^admin/', admin.site.urls),
+]
 
 if settings.DEBUG:
     urlpatterns += staticfiles_urlpatterns()

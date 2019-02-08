@@ -15,8 +15,8 @@
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib.auth import login
-from django.core.urlresolvers import reverse
 from django.http import Http404
+from django.urls import reverse
 from django.views.generic.base import RedirectView
 from django.views.generic.detail import SingleObjectMixin
 
