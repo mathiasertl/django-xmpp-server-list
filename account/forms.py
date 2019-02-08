@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of django-xmpp-server-list
 # (https://github.com/mathiasertl/django-xmpp-server-list)
 #
@@ -32,24 +30,22 @@ _textwidget = forms.TextInput(attrs=_fieldattrs)
 _passwidget = forms.PasswordInput(attrs=_fieldattrs)
 _mailwidget = forms.TextInput(attrs=_emailattrs)
 
+
 class CreationForm(UserCreationForm):
     email = forms.EmailField(
         max_length=30, widget=_mailwidget,
         help_text=_(
             'Required, a confirmation email will be sent to this address.')
     )
-    username = forms.RegexField(label=_("Username"), max_length=30,
-        regex=r'^[\w.@+-]+$', widget=_textwidget,
-        help_text=_("Required. 30 characters or fewer. Letters, digits and "
-                      "@/./+/-/_ only."),
+    username = forms.RegexField(
+        label=_("Username"), max_length=30, regex=r'^[\w.@+-]+$', widget=_textwidget,
+        help_text=_("Required. 30 characters or fewer. Letters, digits and @/./+/-/_ only."),
         error_messages={
-            'invalid': _("This value may contain only letters, numbers and "
-                         "@/./+/-/_ characters.")})
-    password1 = forms.CharField(label=_("Password"),
-                                widget=_passwidget)
-    password2 = forms.CharField(label=_("Confirm"),
-        widget=_passwidget,
-        help_text=_("Enter the same password as above, for verification."))
+            'invalid': _("This value may contain only letters, numbers and @/./+/-/_ characters.")
+        })
+    password1 = forms.CharField(label=_("Password"), widget=_passwidget)
+    password2 = forms.CharField(label=_("Confirm"), widget=_passwidget,
+                                help_text=_("Enter the same password as above, for verification."))
 
     def clean_username(self):
         """Override to make the form compatible with custom user models."""
@@ -62,7 +58,6 @@ class CreationForm(UserCreationForm):
         except UserModel.DoesNotExist:
             return username
         raise forms.ValidationError(_('Username already exists.'))
-
 
     class Meta:
         model = UserModel
@@ -84,6 +79,7 @@ class PreferencesForm(forms.ModelForm):
             'email': _mailwidget,
             'jid': _textwidget,
         }
+
 
 class AuthenticationFormSub(AuthenticationForm):
     username = forms.CharField(max_length=254, widget=_textwidget)

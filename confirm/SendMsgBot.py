@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-#
-# This file is part of django-xmpp-server-list
 # (https://github.com/mathiasertl/django-xmpp-server-list)
 #
 # django-xmpp-server-list is free software: you can redistribute it and/or modify it under the
@@ -14,15 +11,10 @@
 # You should have received a copy of the GNU General Public License along with
 # django-xmpp-server-list. If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Code retrieved from
-    getting_started/sendlogout.html
-from the official SleekXMPP docs
-"""
-
-import sys
-reload(sys)
-sys.setdefaultencoding('utf8')
+#
+#Code retrieved from
+#    getting_started/sendlogout.html
+#from the official SleekXMPP docs
 
 import sleekxmpp
 

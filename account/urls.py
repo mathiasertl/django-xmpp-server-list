@@ -40,7 +40,7 @@ urlpatterns += patterns(
     url(r'^login/', 'django.contrib.auth.views.login',
         {'template_name': 'account/login.html',
          'authentication_form': AuthenticationFormSub,
-        }, name='login'),
+         }, name='login'),
     url(r'^logout/', 'django.contrib.auth.views.logout',
         {'template_name': 'logout.html'}),
     url(r'^password/', 'django.contrib.auth.views.password_change',

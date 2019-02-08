@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of django-xmpp-server-list
 # (https://github.com/mathiasertl/django-xmpp-server-list)
 #
@@ -54,7 +52,7 @@ class ServerForm(ModelForm):
             if not self.verify_domain(domain):
                 raise ValidationError(
                     'Domain must be a simple domain, i.e. "example.com"')
-        except:
+        except Exception:
             raise ValidationError("Could not parse domain.")
         return domain
 
@@ -101,7 +99,8 @@ class ServerForm(ModelForm):
     class Meta:
         model = Server
         fields = (
-            'domain', 'registration_url', 'policy_url', 'website', 'launched', 'contact_type', 'contact', 'contact_name',
+            'domain', 'registration_url', 'policy_url', 'website', 'launched', 'contact_type', 'contact',
+            'contact_name',
         )
         widgets = {
             'contact_type': Select(attrs={'class': 'contact_type', }),

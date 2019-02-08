@@ -38,6 +38,7 @@ class ServerAdmin(admin.ModelAdmin):
         return obj.verified
     verified.boolean = True
 
+
 admin.site.register(Server, ServerAdmin)
 admin.site.register(ServerSoftware)
 admin.site.register(Features)

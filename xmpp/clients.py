@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of django-xmpp-server-list
 # (https://github.com/mathiasertl/django-xmpp-server-list).
 #
@@ -15,8 +13,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
-
-from __future__ import unicode_literals
 
 import logging
 import re
@@ -58,7 +54,7 @@ class StreamFeatureClient(BaseXMPP):
         self.use_ipv6 = settings.USE_IP6
         self.auto_reconnect = False
         self.callback = callback
-        self.ca_certs = '/etc/ssl/certs/ca-certificates.crt'  #server.ca.certificate or None
+        self.ca_certs = '/etc/ssl/certs/ca-certificates.crt'
 
         # copied from ClientXMPP
         self.default_lang = lang
@@ -115,11 +111,12 @@ class StreamFeatureClient(BaseXMPP):
         self.disconnect(self.auto_reconnect, send_close=False)
         self._listed_server.invalid_cert(host=self.address[0], port=self.address[1],
                                          ns=self.default_ns)
+
     def _socket_error(self, error):
         self._listed_server.error("Could not connect to %s: %s",
                                   self._listed_server.pprint_host(*self.address), error)
 
-    def register_feature(self, name, handler,  restart=False, order=5000):
+    def register_feature(self, name, handler, restart=False, order=5000):
         """Register a stream feature handler.
 
         :param    name: The name of the stream feature.

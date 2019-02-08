@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of django-xmpp-server-list
 # (https://github.com/mathiasertl/django-xmpp-server-list)
 #
@@ -22,4 +20,3 @@ def get_siteinfo(request):
         return 'https', request.get_host()
     else:
         return 'http', request.get_host()
-        protocol = 'http'

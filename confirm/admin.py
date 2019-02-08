@@ -40,6 +40,7 @@ class ServerConfirmationKeyAdmin(admin.ModelAdmin):
     list_filter = ['type']
     ordering = ['created']
 
+
 admin.site.register(UserConfirmationKey, UserConfirmationKeyAdmin)
 admin.site.register(UserPasswordResetKey, UserPasswordKeyAdmin)
 admin.site.register(ServerConfirmationKey, ServerConfirmationKeyAdmin)

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of django-xmpp-server-list
 # (https://github.com/mathiasertl/django-xmpp-server-list)
 #
@@ -16,8 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals, absolute_import
-
 import dns.resolver
 
 from django.conf import settings
@@ -33,7 +29,7 @@ def srv_lookup(domain, service, proto='tcp'):
         resolver = dns.resolver.Resolver()
         resolver.lifetime = 3.0
         answers = resolver.query(record, 'SRV')
-    except:
+    except Exception:
         return []
     hosts = []
     for answer in answers:
@@ -54,12 +50,12 @@ def lookup(host, ipv4=True, ipv6=True):
     if ipv4 and settings.USE_IP4:
         try:
             hosts += [a.address for a in resolver.query(host, 'A')]
-        except:
+        except Exception:
             pass
 
     if ipv6 and settings.USE_IP6:
         try:
             hosts += [a.address for a in resolver.query(host, 'AAAA')]
-        except:
+        except Exception:
             pass
     return hosts

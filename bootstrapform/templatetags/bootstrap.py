@@ -4,11 +4,13 @@ from django import template
 
 register = template.Library()
 
+
 @register.filter
 def bootstrap(form):
     template = get_template("bootstrapform/form.html")
     context = Context({'form': form})
     return template.render(context)
+
 
 @register.filter
 def is_checkbox(field):

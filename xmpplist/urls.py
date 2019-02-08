@@ -21,14 +21,14 @@ from django.conf.urls import include
 from django.conf.urls import patterns
 from django.conf.urls import url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-
-# Uncomment the next two lines to enable the admin:
 from django.contrib import admin
-admin.autodiscover()
 
 from server.views import IndexView
 
-urlpatterns = patterns('',
+admin.autodiscover()
+
+urlpatterns = patterns(
+    '',
     url(r'^$', IndexView.as_view(), name='home'),
     url(r'^user/', include('account.urls')),
     url(r'^server/', include('server.urls')),

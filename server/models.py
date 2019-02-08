@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of django-xmpp-server-list
 # (https://github.com/mathiasertl/django-xmpp-server-list).
 #
@@ -16,13 +14,12 @@
 # You should have received a copy of the GNU General Public License
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import with_statement
-
 import StringIO
 import copy
 import logging
 import os
-
+import signal
+from contextlib import contextmanager
 from datetime import datetime
 
 import pygeoip
@@ -53,9 +50,6 @@ if os.path.exists(settings.GEOIP_CITY_V6_PATH):
     geoip6 = pygeoip.GeoIP(settings.GEOIP_CITY_V6_PATH, pygeoip.MMAP_CACHE)
 else:
     geoip6 = None
-
-import signal
-from contextlib import contextmanager
 
 
 class TimeoutException(Exception):
@@ -117,7 +111,7 @@ class Features(models.Model):
     def __unicode__(self):
         try:
             domain = self.server.domain
-        except:
+        except Exception:
             domain = 'INVALID SERVER!'
 
         return 'Features for %s' % (domain)
@@ -476,7 +470,7 @@ class Server(models.Model):
                     self.ipv6 = False
                     if settings.USE_IP6:
                         self.warn('%s has no IPv6 record.', host)
-        except:
+        except Exception:
             self.ipv6 = False
 
     def verify(self):

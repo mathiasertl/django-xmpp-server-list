@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of django-xmpp-server-list
 # (https://github.com/mathiasertl/django-xmpp-server-list)
 #
@@ -15,7 +13,3 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
-
-from django.db import models
-
-# Create your models here.

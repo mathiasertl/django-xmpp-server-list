@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of django-xmpp-server-list
 # (https://github.com/mathiasertl/django-xmpp-server-list).
 #
@@ -35,7 +33,7 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        #'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        #'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3'
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'xmpplist.sqlite3',                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
@@ -102,7 +100,6 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 # Make this unique, and don't share it with anybody.
@@ -168,7 +165,7 @@ LOGIN_REDIRECT_URL = '/user/'
 AUTH_USER_MODEL = 'account.LocalUser'
 DEFAULT_FROM_EMAIL = 'test@example.com'
 
-INTERNAL_IPS=('127.0.0.1')
+INTERNAL_IPS = ('127.0.0.1')
 USE_HTTPS = False
 
 USE_IP4 = True
@@ -180,7 +177,7 @@ CONFIRMATION_TIMEOUT = timedelta(hours=48)
 CERTIFICATES_PATH = 'static/certs'
 
 try:
-    from localsettings import *
+    from localsettings import *  # NOQA
 except ImportError:
     pass
 
@@ -204,7 +201,7 @@ LOGGING = {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse',
         },
-     },
+    },
     'handlers': {
         'mail_admins': {
             'level': LOG_LEVEL,

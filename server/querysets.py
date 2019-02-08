@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of django-xmpp-server-list
 # (https://github.com/mathiasertl/django-xmpp-server-list)
 #
@@ -15,8 +13,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
-
-from __future__ import unicode_literals
 
 from django.db.models import Q
 from django.db.models.query import QuerySet
@@ -61,6 +57,5 @@ class ServerQuerySet(QuerySet):
         not yet moderated. It also excludes servers where the contact should be automatically
         verified but the user has failed to confirm this.
         """
-        return self.verified().filter(moderated=None).exclude(
-            (Q(contact_type=CONTACT_TYPES.JID) | Q(contact_type=CONTACT_TYPES.EMAIL))
-            & Q(contact_verified=False))
+        query = Q(contact_type=CONTACT_TYPES.JID) | Q(contact_type=CONTACT_TYPES.EMAIL)
+        return self.verified().filter(moderated=None).exclude(query & Q(contact_verified=False))
