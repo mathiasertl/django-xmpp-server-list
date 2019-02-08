@@ -21,11 +21,13 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.db import models
 from django.template.loader import render_to_string
+from django.urls import reverse
 
-from querysets import ConfirmationKeyQuerySet
-from querysets import ServerConfirmationKeyQuerySet
-from SendMsgBot import SendMsgBot
 from server.models import Server
+
+from .querysets import ConfirmationKeyQuerySet
+from .querysets import ServerConfirmationKeyQuerySet
+from .SendMsgBot import SendMsgBot
 
 CONFIRMATION_TYPE_CHOICES = (
     ('J', 'JID'),
@@ -113,7 +115,7 @@ class UserConfirmationMixin(object):
 
 
 class UserConfirmationKey(ConfirmationKey, UserConfirmationMixin):
-    subject = models.ForeignKey(settings.AUTH_USER_MODEL,
+    subject = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                 related_name='confirmations')
 
     message_template = 'confirm/user_contact.txt'
@@ -126,13 +128,12 @@ class UserConfirmationKey(ConfirmationKey, UserConfirmationMixin):
             self.subject.jid_confirmed = True
         self.subject.save()
 
-    @models.permalink
     def get_absolute_url(self):
-        return ('confirm_user_contact', (), {'key': self.key})
+        return reverse('confirm_user_contact', (), {'key': self.key})
 
 
 class UserPasswordResetKey(ConfirmationKey, UserConfirmationMixin):
-    subject = models.ForeignKey(settings.AUTH_USER_MODEL,
+    subject = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                 related_name='password_resets')
 
     message_template = 'confirm/user_password_reset.txt'
@@ -149,13 +150,12 @@ class UserPasswordResetKey(ConfirmationKey, UserConfirmationMixin):
     def confirm(self):
         pass
 
-    @models.permalink
     def get_absolute_url(self):
-        return ('reset_user_password', (), {'key': self.key})
+        return reverse('reset_user_password', (), {'key': self.key})
 
 
 class ServerConfirmationKey(ConfirmationKey):
-    subject = models.ForeignKey(Server, related_name='confirmations')
+    subject = models.ForeignKey(Server, on_delete=models.CASCADE, related_name='confirmations')
     objects = ServerConfirmationKeyQuerySet.as_manager()
 
     message_template = 'confirm/server_contact.txt'
@@ -185,6 +185,5 @@ class ServerConfirmationKey(ConfirmationKey):
     def user(self):
         return self.subject.user
 
-    @models.permalink
     def get_absolute_url(self):
-        return ('confirm_server', (), {'key': self.key})
+        return reverse('confirm_server', (), {'key': self.key})

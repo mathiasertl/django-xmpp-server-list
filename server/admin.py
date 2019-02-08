@@ -18,10 +18,10 @@
 
 from django.contrib import admin
 
-from models import CertificateAuthority
-from models import Features
-from models import Server
-from models import ServerSoftware
+from .models import CertificateAuthority
+from .models import Features
+from .models import Server
+from .models import ServerSoftware
 
 
 class ServerAdmin(admin.ModelAdmin):
