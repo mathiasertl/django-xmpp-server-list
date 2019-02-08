@@ -5,6 +5,7 @@ xmpplist.sqlite
 *.swo
 media
 mystatic
+/.tox/
 /bin/
 /build/
 /lib/
