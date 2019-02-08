@@ -6,7 +6,7 @@
 {% block pagetitle %}Create a new user{% endblock %}
 
 {% block content %}
-<form class="form-horizontal" role="form"  action="{% url "account_create" %}" method="post">{% csrf_token %}
+<form class="form-horizontal" role="form"  action="{% url "account:create" %}" method="post">{% csrf_token %}
     {{ user_form|bootstrap }}
 </form>
 {% endblock %}

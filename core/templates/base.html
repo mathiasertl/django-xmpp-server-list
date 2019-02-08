@@ -56,7 +56,7 @@
                     <li><a href="{% url "account" %}">profile</a></li>
                     <li><a href="{% url "django.contrib.auth.views.logout" %}?next={{ request.path }}">logout</a></li>
                 {% else %}
-                    <li><a href="{% url "django.contrib.auth.views.login" %}?next={{ request.path }}">login</a></li>
+                    <li><a href="{% url 'account:login' %}?next={{ request.path }}">login</a></li>
                 {% endif %}
             </ul>
         </div>
