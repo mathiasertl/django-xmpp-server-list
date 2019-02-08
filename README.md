@@ -1,11 +1,8 @@
-[![Flattr this git
-repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=mathiasertl&url=https://jabber.at)
-
 This is a small [Django](https://www.djangoproject.com/) project to create the
 list of servers at https://list.jabber.at. Since this project is free software,
 you are welcome to host your own list, if you like.
 
-It requires Python 2.7, Django and a WSGI server to run. As a normal Django
+It requires Python 3.5+, Django and a WSGI server to run. As a normal Django
 project, it can use MySQL, PostgreSQL and others as a database backend and runs
 with any WSGI compatible webserver (apache, nginx, lighttpd, uWSGI, ...).
 
