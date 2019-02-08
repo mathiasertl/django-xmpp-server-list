@@ -20,8 +20,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('key', models.CharField(unique=True, max_length=128)),
                 ('created', models.DateTimeField(auto_now_add=True)),
-                ('type', models.CharField(max_length=1, choices=[(b'J', b'JID'), (b'E', b'e-mail')])),
-                ('subject', models.ForeignKey(related_name=b'confirmations', to='server.Server')),
+                ('type', models.CharField(max_length=1, choices=[('J', 'JID'), ('E', 'e-mail')])),
+                ('subject', models.ForeignKey(related_name='confirmations', to='server.Server', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -34,8 +34,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('key', models.CharField(unique=True, max_length=128)),
                 ('created', models.DateTimeField(auto_now_add=True)),
-                ('type', models.CharField(max_length=1, choices=[(b'J', b'JID'), (b'E', b'e-mail')])),
-                ('subject', models.ForeignKey(related_name=b'confirmations', to=settings.AUTH_USER_MODEL)),
+                ('type', models.CharField(max_length=1, choices=[('J', 'JID'), ('E', 'e-mail')])),
+                ('subject', models.ForeignKey(related_name='confirmations', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -48,8 +48,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('key', models.CharField(unique=True, max_length=128)),
                 ('created', models.DateTimeField(auto_now_add=True)),
-                ('type', models.CharField(max_length=1, choices=[(b'J', b'JID'), (b'E', b'e-mail')])),
-                ('subject', models.ForeignKey(related_name=b'password_resets', to=settings.AUTH_USER_MODEL)),
+                ('type', models.CharField(max_length=1, choices=[('J', 'JID'), ('E', 'e-mail')])),
+                ('subject', models.ForeignKey(related_name='password_resets', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,

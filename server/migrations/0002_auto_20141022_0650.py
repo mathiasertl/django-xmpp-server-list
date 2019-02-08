@@ -25,6 +25,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='server',
             name='ca',
-            field=models.ForeignKey(related_name=b'servers', blank=True, to='server.CertificateAuthority', help_text=b'The Certificate Authority of the certificate used in SSL/TLS connections.', null=True, verbose_name=b'CA'),
+            field=models.ForeignKey(related_name='servers', blank=True, to='server.CertificateAuthority', help_text=b'The Certificate Authority of the certificate used in SSL/TLS connections.', null=True, verbose_name=b'CA', on_delete=models.CASCADE),
         ),
     ]

@@ -90,8 +90,8 @@ class Migration(migrations.Migration):
                 ('contact_type', models.CharField(default=b'J', help_text=b'What type your contact details are. This setting will affect how the contact details are rendered on the front page. If you choose a JID or an e-mail address, you will receive an automated confirmation message.', max_length=1, choices=[('M', 'MUC'), ('J', 'JID'), ('E', 'e-mail'), ('W', 'website')])),
                 ('contact_name', models.CharField(help_text=b'If you want to display a custom link-text for your contact details, give it here.', max_length=60, blank=True)),
                 ('contact_verified', models.BooleanField(default=False)),
-                ('ca', models.ForeignKey(related_name=b'servers', verbose_name=b'CA', to='server.CertificateAuthority', help_text=b'The Certificate Authority of the certificate used in SSL/TLS connections.')),
-                ('features', models.OneToOneField(related_name=b'server', to='server.Features')),
+                ('ca', models.ForeignKey(related_name='servers', verbose_name=b'CA', to='server.CertificateAuthority', help_text=b'The Certificate Authority of the certificate used in SSL/TLS connections.', on_delete=models.PROTECT)),
+                ('features', models.OneToOneField(related_name='server', to='server.Features', on_delete=models.CASCADE)),
             ],
             options={
                 'permissions': (('moderate', 'can moderate servers'),),
@@ -114,19 +114,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='server',
             name='software',
-            field=models.ForeignKey(related_name=b'servers', blank=True, to='server.ServerSoftware', null=True),
+            field=models.ForeignKey(related_name='servers', blank=True, to='server.ServerSoftware', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='server',
             name='user',
-            field=models.ForeignKey(related_name=b'servers', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='servers', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='logentry',
             name='server',
-            field=models.ForeignKey(related_name=b'logs', to='server.Server'),
+            field=models.ForeignKey(related_name='logs', to='server.Server', on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]
