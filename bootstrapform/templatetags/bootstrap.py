@@ -1,5 +1,4 @@
 from django import template
-from django.template import Context
 from django.template.loader import get_template
 
 register = template.Library()
@@ -8,8 +7,7 @@ register = template.Library()
 @register.filter
 def bootstrap(form):
     template = get_template("bootstrapform/form.html")
-    context = Context({'form': form})
-    return template.render(context)
+    return template.render({'form': form})
 
 
 @register.filter
