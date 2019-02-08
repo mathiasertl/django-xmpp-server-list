@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of django-xmpp-server-list
 # (https://github.com/mathiasertl/django-xmpp-server-list)
 #
@@ -16,12 +14,10 @@
 # You should have received a copy of the GNU General Public License
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
-
 from sleekxmpp.plugins import BasePlugin
 from sleekxmpp.stanza import StreamFeatures
-from sleekxmpp.xmlstream import register_stanza_plugin
 from sleekxmpp.xmlstream import ElementBase
+from sleekxmpp.xmlstream import register_stanza_plugin
 
 
 class CapsStanza(ElementBase):

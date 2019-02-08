@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of django-xmpp-server-list
 # (https://github.com/mathiasertl/django-xmpp-server-list)
 #
@@ -24,11 +22,10 @@ from django.core.mail import send_mail
 from django.db import models
 from django.template.loader import render_to_string
 
-from server.models import Server
-from SendMsgBot import SendMsgBot
-
 from querysets import ConfirmationKeyQuerySet
 from querysets import ServerConfirmationKeyQuerySet
+from SendMsgBot import SendMsgBot
+from server.models import Server
 
 CONFIRMATION_TYPE_CHOICES = (
     ('J', 'JID'),

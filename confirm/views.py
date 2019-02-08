@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of django-xmpp-server-list
 # (https://github.com/mathiasertl/django-xmpp-server-list)
 #
@@ -22,9 +20,9 @@ from django.http import Http404
 from django.views.generic.base import RedirectView
 from django.views.generic.detail import SingleObjectMixin
 
+from confirm.models import ServerConfirmationKey
 from confirm.models import UserConfirmationKey
 from confirm.models import UserPasswordResetKey
-from confirm.models import ServerConfirmationKey
 
 
 class ConfirmationView(RedirectView, SingleObjectMixin):

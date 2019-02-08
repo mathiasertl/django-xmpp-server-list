@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of django-xmpp-server-list
 # (https://github.com/mathiasertl/django-xmpp-server-list).
 #
@@ -17,11 +15,11 @@
 import logging
 import os
 import time
-
 from datetime import datetime
 from datetime import timedelta
 
 from django.core.management.base import BaseCommand
+
 from server.models import Server
 
 log = logging.getLogger(__name__)

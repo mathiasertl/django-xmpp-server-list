@@ -18,9 +18,9 @@
 
 from django.contrib import admin
 
+from models import ServerConfirmationKey
 from models import UserConfirmationKey
 from models import UserPasswordResetKey
-from models import ServerConfirmationKey
 
 
 class UserConfirmationKeyAdmin(admin.ModelAdmin):

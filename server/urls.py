@@ -16,21 +16,20 @@
 # You should have received a copy of the GNU General Public License
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.decorators import permission_required
 from django.conf.urls import patterns
 from django.conf.urls import url
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import permission_required
 
-from server.views import EditView
-from server.views import ModerateView
-from server.views import ReportView
-from server.views import AjaxServerResendView
 from server.views import AjaxServerCreateView
 from server.views import AjaxServerDeleteView
 from server.views import AjaxServerModerateView
+from server.views import AjaxServerResendView
 from server.views import AjaxServerResubmitView
 from server.views import AjaxServerUpdateView
-
+from server.views import EditView
+from server.views import ModerateView
+from server.views import ReportView
 
 urlpatterns = patterns(
     'server.views',

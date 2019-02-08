@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of django-xmpp-server-list
 # (https://github.com/mathiasertl/django-xmpp-server-list)
 #
@@ -27,10 +25,8 @@ from django.views.generic import FormView
 from account.forms import CreationForm
 from account.forms import PasswordResetForm
 from account.forms import PreferencesForm
-
 from confirm.models import UserConfirmationKey
 from confirm.models import UserPasswordResetKey
-
 from server.util import get_siteinfo
 
 

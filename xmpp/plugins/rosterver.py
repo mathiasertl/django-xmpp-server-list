@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of django-xmpp-server-list
 # (https://github.com/mathiasertl/django-xmpp-server-list)
 #
@@ -18,8 +16,8 @@
 
 from sleekxmpp.plugins import BasePlugin
 from sleekxmpp.stanza import StreamFeatures
-from sleekxmpp.xmlstream import register_stanza_plugin
 from sleekxmpp.xmlstream import ElementBase
+from sleekxmpp.xmlstream import register_stanza_plugin
 
 
 class RosterVerStanza(ElementBase):

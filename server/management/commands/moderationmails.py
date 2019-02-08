@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of django-xmpp-server-list
 # (https://github.com/mathiasertl/django-xmpp-server-list).
 #
@@ -17,8 +15,8 @@
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf import settings
-from django.contrib.auth.models import Permission
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
 from django.core.mail import send_mail
 from django.core.management.base import BaseCommand
 from django.db.models import Q

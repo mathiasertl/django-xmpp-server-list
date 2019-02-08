@@ -14,32 +14,31 @@
 # You should have received a copy of the GNU General Public License
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
-import StringIO
 import copy
 import logging
 import os
 import signal
+import StringIO
 from contextlib import contextmanager
 from datetime import datetime
 
 import pygeoip
+from pyasn1.codec.der import decoder
+from pyasn1_modules import pem
+from pyasn1_modules import rfc2459
 
-from django.db import models
 from django.conf import settings
+from django.db import models
 from django.utils.translation import ugettext as _
 
-from pyasn1_modules import pem, rfc2459
-from pyasn1.codec.der import decoder
-
-from xmpp.clients import StreamFeatureClient
-
-from server.constants import CONTACT_TYPE_CHOICES
 from server.constants import C2S_STREAM_FEATURES
+from server.constants import CONTACT_TYPE_CHOICES
 from server.constants import S2S_STREAM_FEATURES
-from server.dns import srv_lookup
 from server.dns import lookup
+from server.dns import srv_lookup
 from server.querysets import ServerQuerySet
 from server.util import get_siteinfo
+from xmpp.clients import StreamFeatureClient
 
 log = logging.getLogger(__name__)
 if os.path.exists(settings.GEOIP_CITY_PATH):

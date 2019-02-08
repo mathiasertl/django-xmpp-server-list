@@ -16,14 +16,13 @@
 # You should have received a copy of the GNU General Public License
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf import settings
-from django.db.models.query import QuerySet
-
-from datetime import datetime
-
 import hashlib
 import random
 import time
+from datetime import datetime
+
+from django.conf import settings
+from django.db.models.query import QuerySet
 
 
 class ConfirmationKeyQuerySet(QuerySet):

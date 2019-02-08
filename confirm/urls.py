@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # This file is part of django-xmpp-server-list
 # (https://github.com/mathiasertl/django-xmpp-server-list)
 #
@@ -21,10 +19,9 @@ from django.conf.urls import patterns
 from django.conf.urls import url
 from django.contrib.auth.decorators import login_required
 
-from confirm.views import UserConfirmationView
-from confirm.views import ResetUserPasswordView
 from confirm.views import ConfirmServerContactView
-
+from confirm.views import ResetUserPasswordView
+from confirm.views import UserConfirmationView
 
 urlpatterns = patterns(
     'confirm.views',

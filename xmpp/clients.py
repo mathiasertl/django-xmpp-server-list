@@ -17,12 +17,12 @@
 import logging
 import re
 
-from django.conf import settings
-
-from sleekxmpp.stanza import StreamFeatures
 from sleekxmpp.basexmpp import BaseXMPP
+from sleekxmpp.stanza import StreamFeatures
 from sleekxmpp.xmlstream.handler import Callback
 from sleekxmpp.xmlstream.matcher import MatchXPath
+
+from django.conf import settings
 
 from xmpp.plugins import amp
 from xmpp.plugins import auth

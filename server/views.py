@@ -24,11 +24,11 @@ from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 from django.views.generic.base import View
+from django.views.generic.detail import DetailView
+from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import CreateView
 from django.views.generic.edit import DeleteView
 from django.views.generic.edit import UpdateView
-from django.views.generic.detail import DetailView
-from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.list import ListView
 
 from core.views import LoginRequiredMixin
