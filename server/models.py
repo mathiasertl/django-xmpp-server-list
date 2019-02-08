@@ -18,9 +18,9 @@ import copy
 import logging
 import os
 import signal
-import StringIO
 from contextlib import contextmanager
 from datetime import datetime
+from io import StringIO
 
 import pygeoip
 from pyasn1.codec.der import decoder
@@ -124,7 +124,7 @@ class LogEntry(models.Model):
         (logging.INFO, logging.getLevelName(logging.INFO)),
         (logging.DEBUG, logging.getLevelName(logging.DEBUG)),
     )
-    server = models.ForeignKey('Server', related_name='logs')
+    server = models.ForeignKey('Server', on_delete=models.CASCADE, related_name='logs')
     level = models.PositiveSmallIntegerField(choices=CONDITIONS)
     message = models.TextField()
 
@@ -157,7 +157,7 @@ class Server(models.Model):
     objects = ServerQuerySet.as_manager()
 
     # basic information:
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='servers')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='servers')
     added = models.DateField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     launched = models.DateField(help_text="When the server was launched.")
@@ -184,18 +184,18 @@ class Server(models.Model):
     policy_url = models.URLField(blank=True, null=True)
     registration_url = models.URLField(blank=True, null=True)
     ca = models.ForeignKey(
-        CertificateAuthority, related_name='servers', verbose_name='CA', blank=True, null=True,
-        help_text="The Certificate Authority of the certificate used in "
-        "SSL/TLS connections.")
+        CertificateAuthority, on_delete=models.PROTECT,
+        related_name='servers', verbose_name='CA', blank=True, null=True,
+        help_text="The Certificate Authority of the certificate used in SSL/TLS connections.")
 
     # moderation:
     moderated = models.NullBooleanField(default=None)
     moderators_notified = models.BooleanField(default=False)
     moderation_message = models.TextField(default='')
-    features = models.OneToOneField(Features, related_name='server')
+    features = models.OneToOneField(Features, on_delete=models.CASCADE, related_name='server')
 
     # queried information
-    software = models.ForeignKey(ServerSoftware, related_name='servers',
+    software = models.ForeignKey(ServerSoftware, on_delete=models.CASCADE, related_name='servers',
                                  null=True, blank=True)
     software_version = models.CharField(max_length=30, blank=True)
 
@@ -561,7 +561,7 @@ class Server(models.Model):
             log.info('... failed to verify %s', self.domain)
 
     def handle_cert(self, pem_cert):
-        fileobj = StringIO.StringIO()
+        fileobj = StringIO()
         fileobj.write(pem_cert)
         fileobj.seek(0)
 
