@@ -16,11 +16,9 @@
 
 from threading import Thread
 
-from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
-from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 from django.views.generic.base import View
 from django.views.generic.detail import DetailView
@@ -177,11 +175,11 @@ class AjaxServerResubmitView(MyServerFormMixin, UpdateView):
         return self.render_to_response(self.get_context_data(form=form))
 
 
-class AjaxServerModerateView(LoginRequiredMixin, SingleObjectMixin, View):
+class AjaxServerModerateView(PermissionRequiredMixin, SingleObjectMixin, View):
     queryset = Server.objects.for_moderation()
+    permission_required = 'server.moderate'
     http_method_names = ('post', )
 
-    @method_decorator(permission_required('server.moderate'))
     def post(self, request, *args, **kwargs):
         server = self.get_object()
         if request.POST['moderate'] == 'true':
