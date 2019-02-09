@@ -13,18 +13,15 @@
     </script>
     
     {% if debug %}
-    <script type="text/javascript" src="{% static 'js/lib/jquery-1.7.1.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/lib/jquery-3.3.1.js' %}"></script>
     {% else %}
-    <script type="text/javascript" src="{% static 'js/lib/jquery-1.7.1.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/lib/jquery-3.3.1.min.js' %}"></script>
     {% endif %}
-    <script type="text/javascript" src="{% static 'js/lib/js/jquery-ui-1.8.16.custom.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/lib/jquery.tools.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/base.js' %}"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
     {% block javascript %}{% endblock %}
 
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'css/lib/jquery-ui/jquery-ui-1.8.16.custom.css' %}" />
     <link rel="stylesheet" href="{% static 'css/base.css' %}"/>
     {% block css %}{% endblock %}
 </head>
