@@ -51,7 +51,7 @@ def create(request):
             user.backend = 'django.contrib.auth.backends.ModelBackend'
             login(request, user)
 
-            return redirect('account:index')
+            return redirect('account:indexfoo')
     else:
         form = CreationForm(prefix='user')
 
