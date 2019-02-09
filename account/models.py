@@ -24,7 +24,7 @@ class LocalUser(AbstractUser):
         _('email address'), unique=True,
         help_text=_('Required, a confirmation message will be sent to this address.'))
     jid = models.CharField(
-        max_length=128, unique=True,
+        _('JID'), max_length=128, unique=True,
         help_text=_('Required, a confirmation message will be sent to this address.'))
 
     email_confirmed = models.BooleanField(default=False)
