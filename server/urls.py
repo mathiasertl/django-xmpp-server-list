@@ -29,10 +29,11 @@ from server.views import ModerateView
 from server.views import ReportView
 
 # TODO: use path instead of url
-# TODO: use namespace instead of name prefix
 # TODO: move decorators to class
+app_name = 'servers'
+
 urlpatterns = [
-    url(r'^$', login_required(EditView.as_view()), name='server'),
+    url(r'^$', login_required(EditView.as_view()), name='edit'),
     url(r'^moderate/$', permission_required('server.moderate')(ModerateView.as_view()),
         name='server_moderation'),
 
