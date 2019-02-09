@@ -16,12 +16,16 @@
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class LocalUser(AbstractUser):
+    email = models.EmailField(
+        _('email address'), unique=True,
+        help_text=_('Required, a confirmation message will be sent to this address.'))
     jid = models.CharField(
-        max_length=128,
-        help_text="Required, a confirmation message will be sent to this address.")
+        max_length=128, unique=True,
+        help_text=_('Required, a confirmation message will be sent to this address.'))
 
     email_confirmed = models.BooleanField(default=False)
     jid_confirmed = models.BooleanField(default=False)
