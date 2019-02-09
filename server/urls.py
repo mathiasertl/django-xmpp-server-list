@@ -14,9 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls import url
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.decorators import permission_required
+from django.urls import path
 
 from server.views import AjaxServerCreateView
 from server.views import AjaxServerDeleteView
@@ -28,20 +26,17 @@ from server.views import EditView
 from server.views import ModerateView
 from server.views import ReportView
 
-# TODO: use path instead of url
-# TODO: move decorators to class
 app_name = 'servers'
 
 urlpatterns = [
-    url(r'^$', login_required(EditView.as_view()), name='edit'),
-    url(r'^moderate/$', permission_required('server.moderate')(ModerateView.as_view()),
-        name='server_moderation'),
+    path('', EditView.as_view(), name='edit'),
+    path('moderate/', ModerateView.as_view(), name='moderate'),
 
-    url(r'^ajax/$', AjaxServerCreateView.as_view(), name='server_create'),
-    url(r'^ajax/delete/(?P<pk>\w+)/$', AjaxServerDeleteView.as_view(), name='server_delete'),
-    url(r'^ajax/moderate/(?P<pk>\w+)/$', AjaxServerModerateView.as_view(), name='server_moderate'),
-    url(r'^ajax/report/(?P<pk>\w+)$', ReportView.as_view(), name='server_report'),
-    url(r'^ajax/resend/(?P<pk>\w+)$', AjaxServerResendView.as_view(), name='server_resend'),
-    url(r'^ajax/resubmit/(?P<pk>\w+)$', AjaxServerResubmitView.as_view(), name='server_resubmit'),
-    url(r'^ajax/update/(?P<pk>\w+)/$', AjaxServerUpdateView.as_view(), name='server_update'),
+    path('ajax/', AjaxServerCreateView.as_view(), name='create'),
+    path('ajax/delete/<int:pk>/', AjaxServerDeleteView.as_view(), name='delete'),
+    path('ajax/approve/<int:pk>/', AjaxServerModerateView.as_view(), name='approve'),
+    path('ajax/report/<int:pk>/', ReportView.as_view(), name='report'),
+    path('ajax/resend/<int:pk>/', AjaxServerResendView.as_view(), name='resend'),
+    path('ajax/resubmit/<int:pk>/', AjaxServerResubmitView.as_view(), name='resubmit'),
+    path('ajax/update/<int:pk>/', AjaxServerUpdateView.as_view(), name='update'),
 ]

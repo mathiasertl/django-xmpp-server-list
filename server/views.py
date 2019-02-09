@@ -17,6 +17,7 @@
 from threading import Thread
 
 from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.utils.decorators import method_decorator
@@ -54,7 +55,7 @@ class IndexView(ListView):
     queryset = Server.objects.moderated().verified().order_by('domain')
 
 
-class EditView(TemplateView):
+class EditView(LoginRequiredMixin, TemplateView):
     template_name = 'server/index.html'
 
     def get_context_data(self, **kwargs):
@@ -69,7 +70,8 @@ class EditView(TemplateView):
         return context
 
 
-class ModerateView(ListView):
+class ModerateView(PermissionRequiredMixin, ListView):
+    permission_required = 'server.moderate'
     template_name = 'server/moderate.html'
     queryset = Server.objects.for_moderation()
 
