@@ -94,6 +94,7 @@ class ResetPassword(FormView):
     success_url = reverse_lazy('account:reset_password_ok')
 
     def dispatch(self, request, *args, **kwargs):
+        # TODO: view is unused but this trick should be used in django view
         if request.user.is_authenticated:
             return redirect('account:set_password')
 
@@ -104,10 +105,6 @@ class ResetPassword(FormView):
         key.send(*get_siteinfo(self.request))
 
         return super(ResetPassword, self).form_valid(form)
-
-
-def reset_password_ok(request):
-    return render(request, 'account/reset_password_ok.html')
 
 
 @login_required
