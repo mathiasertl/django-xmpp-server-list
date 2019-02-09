@@ -22,7 +22,7 @@ from datetime import timedelta
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -103,16 +103,17 @@ STATICFILES_FINDERS = [
 ]
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'r_%-8h+pb_$tk01*m*0t(5-e1_to4$z#&fd0*85d@$o$0ee630'
+SECRET_KEY = ''
 
-MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-)
+]
 
 ROOT_URLCONF = 'xmpplist.urls'
 
@@ -176,7 +177,7 @@ CONFIRMATION_TIMEOUT = timedelta(hours=48)
 CERTIFICATES_PATH = 'static/certs'
 
 try:
-    from localsettings import *  # NOQA
+    from .localsettings import *  # NOQA
 except ImportError:
     pass
 
