@@ -3,8 +3,6 @@
 {% spaceless %}<head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-
 	<title>{% block title %}XMPP server list{% endblock %}</title>
 	{% if debug %}
 	<link rel="stylesheet" href="{% static 'lib/bootstrap-4.2.1/css/bootstrap.css' %}">
@@ -18,45 +16,37 @@
 	<link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
 	<link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}"/>
 
-</head>{% endspaceless %}
+</head>
 <body>
-<div class="container">
-    <nav class="navbar navbar-default" role="navigation">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                <span class="sr-only">{% trans "Toggle navigation" %}</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-        </div>
+<nav class="navbar navbar-expand-lg navbar-light bg-light mt-0"><div class="container">
+	<a class="navbar-brand" href="{% url 'home' %}">{% trans "XMPP servers" %}</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+		<ul class="navbar-nav mr-auto">
+			{% if user.is_authenticated %}
+			<li class="nav-item">{# TODO: we do not detect where we are yet #}
+				<a class="nav-link" href="{% url "servers:edit" %}">{% trans "My servers" %}</a>
+			</li>
+			{% endif %}
+		</ul>
+	</div>
 
-        <div class="collapse navbar-collapse navbar-ex1-collapse">
-            <ul class="nav navbar-nav">
-                <li>
-                    <a href="{% url "home" %}">{% trans "Home" %}</a>
-                </li>
-                {% if user.is_authenticated %}
-                    <li ><a href="{% url "server" %}">
-                        {% trans "My servers" %}</a></li>   
-                {% endif %}
-                {% if perms.server.moderate %}
-                    <li>
-                        <a href="{% url "server_moderation" %}">{% trans "Moderate" %}</a>
-                    </li>
-                {% endif %}
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-                {% if user.is_authenticated %}
-                    <li><a href="{% url "account" %}">profile</a></li>
-                    <li><a href="{% url "django.contrib.auth.views.logout" %}?next={{ request.path }}">logout</a></li>
-                {% else %}
-                    <li><a href="{% url 'account:login' %}?next={{ request.path }}">login</a></li>
-                {% endif %}
-            </ul>
-        </div>
-    </nav>
+	<ul class="navbar-nav mr-auto">
+		{% if user.is_authenticated %}
+			<li class="nav-item">{# TODO: we do not detect where we are yet #}
+				<a class="nav-link" href="{% url 'account:logout' %}">{% trans "Logout" %}</a>
+			</li>
+		{% else %}
+			<li class="nav-item">{# TODO: we do not detect where we are yet #}
+				<a class="nav-link" href="{% url 'account:login' %}?next={{ request.path }}">{% trans "Login" %}</a>
+			</li>
+		{% endif %}
+	</ul>
+</div></nav>{% endspaceless %}
 
+<main role="main" class="container">
     <div class="row content">
         <div class="col-md-12">
             <h1 id="pagetitle">{% block pagetitle %}{% endblock %}</h1>
@@ -104,7 +94,7 @@
             {% endblock %}
         </div>
     </div>
-</div>{% spaceless %}
+</main>{% spaceless %}
 	{% if debug %}
 	<script type="text/javascript" src="{% static 'js/lib/jquery-3.3.1.js' %}"></script>
 	<script type="text/javascript" src="{% static 'lib/bootstrap-4.2.1/js/bootstrap.js' %}"></script>
