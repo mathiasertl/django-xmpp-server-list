@@ -5,8 +5,8 @@
 
 {% block content %}
 <p>
-    You may want to <a href="{% url "account_edit" %}">edit your profile</a> or
-    <a href="{% url "account_set_password" %}">set your password</a>.
+    You may want to <a href="{% url 'account:edit' %}">edit your profile</a> or
+    <a href="{% url 'account:set_password' %}">set your password</a>.
 </p>
 <table id="profile-overview">
     <tr><th>Username:</th><td>{{ user.username }}</td></tr>

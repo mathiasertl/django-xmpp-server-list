@@ -14,7 +14,7 @@ servers will not show up on the public list until you confirm your
 email address.
 </p>
 
-<form class="form-horizontal" role="form" action="{% url "account_edit" %}" method="post">{% csrf_token %}
+<form class="form-horizontal" role="form" action="{% url 'account:edit' %}" method="post">{% csrf_token %}
     {{ user_form|bootstrap }}
 </form>
 {% endblock %}
