@@ -175,6 +175,7 @@ GEOIP_CITY_PATH = os.path.join(GEOIP_CONFIG_ROOT, 'GeoLiteCity.dat')
 GEOIP_CITY_V6_PATH = os.path.join(GEOIP_CONFIG_ROOT, 'GeoLiteCityv6.dat')
 CONFIRMATION_TIMEOUT = timedelta(hours=48)
 CERTIFICATES_PATH = 'static/certs'
+LOGOUT_REDIRECT_URL = 'home'  # only used when next queryparam is not set
 
 try:
     from .localsettings import *  # NOQA

@@ -44,6 +44,7 @@
           <a class="nav-link" href="{% url 'account:edit' %}">{% trans "Account" %}</a>
         </li>
         <li class="nav-item">{# TODO: we do not detect where we are yet #}
+          {# NOTE: don't pass "next" here b/c  LOGOUT_REDIRECT_URL is the only meaningful anon page #}
           <a class="nav-link" href="{% url 'account:logout' %}">{% trans "Logout" %}</a>
         </li>
       {% else %}
