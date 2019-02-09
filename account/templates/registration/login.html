@@ -22,10 +22,6 @@
     <small><a href="{% url 'account:reset_password' %}">{% trans "Forgot password?" %}</small>
   </div>
 </div>
-<div class="form-group row">
-  <div class="offset-sm-2 col-sm-10">
-    <button type="submit" class="btn btn-primary">Login</button>
-  </div>
-</div>
-</form>
+{% bootstrap_submit _("Login") %}
+<div class="form-group row"</form>
 {% endblock %}
