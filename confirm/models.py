@@ -151,7 +151,7 @@ class UserPasswordResetKey(ConfirmationKey, UserConfirmationMixin):
         pass
 
     def get_absolute_url(self):
-        return reverse('reset_user_password', (), {'key': self.key})
+        return reverse('confirm:reset_user_password', kwargs={'key': self.key})
 
 
 class ServerConfirmationKey(ConfirmationKey):

@@ -21,8 +21,7 @@ from django.db import models
 class LocalUser(AbstractUser):
     jid = models.CharField(
         max_length=128,
-        help_text="Required, a confirmation message will be sent to this "
-        "address.")
+        help_text="Required, a confirmation message will be sent to this address.")
 
     email_confirmed = models.BooleanField(default=False)
     jid_confirmed = models.BooleanField(default=False)

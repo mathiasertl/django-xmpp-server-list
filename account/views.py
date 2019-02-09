@@ -19,7 +19,7 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.shortcuts import render
-from django.urls import reverse
+from django.urls import reverse_lazy
 from django.views.generic import FormView
 
 from account.forms import CreationForm
@@ -91,15 +91,13 @@ def edit(request):
 class ResetPassword(FormView):
     template_name = 'account/reset_password.html'
     form_class = PasswordResetForm
+    success_url = reverse_lazy('account:reset_password_ok')
 
-    def get_success_url(self):
-        return reverse('account_reset_password_ok')
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('account:set_password')
 
-    def post(self, request, *args, **kwargs):
-        if request.user.is_authenticated():
-            return redirect('account_set_password')
-
-        return super(ResetPassword, self).post(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         key = UserPasswordResetKey.objects.create(subject=form.user)
