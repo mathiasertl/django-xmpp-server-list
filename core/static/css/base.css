@@ -11,10 +11,6 @@ body {
     width: 10em;
 }
 
-.social-buttons {
-    min-height: 26px;
-}
-
 select.contact_type {
     width: 7em !important;
 }
