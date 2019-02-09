@@ -16,7 +16,6 @@
 
 from django import forms
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import ugettext_lazy as _
@@ -79,12 +78,6 @@ class PreferencesForm(forms.ModelForm):
             'email': _mailwidget,
             'jid': _textwidget,
         }
-
-
-class AuthenticationFormSub(AuthenticationForm):
-    username = forms.CharField(max_length=254, widget=_textwidget)
-    password = forms.CharField(label=_("Password"),
-                               widget=_passwidget)
 
 
 class SetPasswordForm(SetPasswordForm):

@@ -18,7 +18,6 @@ from django.contrib.auth import views as auth_views
 from django.urls import path
 
 from . import views
-from .forms import AuthenticationFormSub
 from .forms import SetPasswordForm
 
 app_name = 'account'
@@ -30,9 +29,7 @@ urlpatterns = [
     path('reset_password/', views.ResetPassword.as_view(), name='reset_password'),
     path('reset_password/done/', views.reset_password_ok, name='reset_password_ok'),
     path('resend_confirmation/', views.resend_confirmation, name='resend_confirmation'),
-    path('login/', auth_views.LoginView.as_view(
-        authentication_form=AuthenticationFormSub,
-    ), name='login'),
+    path('login/', auth_views.LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('password/', auth_views.PasswordChangeView.as_view(
         #post_change_redirect='/user',  # TODO?

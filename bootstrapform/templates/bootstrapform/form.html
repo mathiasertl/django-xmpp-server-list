@@ -7,47 +7,16 @@
 {% endfor %}
 
 {% for field in form.visible_fields %}
-    <div class="form-group clearfix{% if field.errors %} error{% endif %}">
-        {% if field|is_checkbox %}
-        <!-- todo: still boostrap 2.3 -->
-            <ul class="inputs-list">
-                <li>
-                    <div class="input">
-                        <label>
-                            {{ field }} <span>{{ field.label }}</span>
-                        </label>
-
-                        {% for error in field.errors %}
-                            <span class="help-inline">{{ error }}</span>
-                        {% endfor %}
-
-                        {% if field.help_text %}
-                        <span class="help-block">
-                            {{ field.help_text }}
-                        </span>
-                        {% endif %}
-                    </div>
-                </li>
-            </ul>
-        {% else %}
-            <label class="col-lg-2 control-label" for="{{ field.html_name }}">{{field.label }}</label>
-            <div class="col-lg-3">
-                {{ field }}
-                {{ field.errors }}
-                {% if field.help_text %}
-                <span class="help-block">
-                    {{ field.help_text }}
-                </span>
-                {% endif %}
-            </div>
-
-
-        {% endif %}
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label" for="{{ field.html_name }}">{{field.label }}</label>
+    <div class="col-sm-10">
+      {% bootstrap_field field %}
+      {% if field.help_text or field.errors %}
+      <small id="help-{{ field.id }}" class="form-text text-muted">
+        {{ field.errors }}
+        {{ field.help_text }}
+      </small>
+      {% endif %}
     </div>
+  </div>
 {% endfor %}
-<div class="form-group">
-    <div class="col-lg-offset-2 col-lg-2">
-        <button class="btn btn-default" type="submit">{% trans "Submit" %}</button>
-        <button class="btn" type="reset">{% trans "Cancel" %}</button>
-    </div>
-</div>

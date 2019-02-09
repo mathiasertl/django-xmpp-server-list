@@ -18,12 +18,14 @@ You must login to add and manage your public servers.
 </ul>
 
 
-<form class="form-horizontal" role="form" method="post" action="{% url 'account:login' %}">
-
-{% csrf_token %}
+<form method="post" action="{% url 'account:login' %}">{% csrf_token %}
 {{form|bootstrap}}
-
 <input type="hidden" name="next" value="{{ next }}" />
+<div class="form-group row">
+  <div class="offset-sm-2 col-sm-10">
+    <button type="submit" class="btn btn-primary">Login</button>
+  </div>
+</div>
 </form>
 {% endif %}
 {% endblock %}
