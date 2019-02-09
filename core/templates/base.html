@@ -30,6 +30,12 @@
 				<a class="nav-link" href="{% url "servers:edit" %}">{% trans "My servers" %}</a>
 			</li>
 			{% endif %}
+
+      {% if perms.server.moderate %}
+      <li class="nav-item">{# TODO: we do not detect where we are yet #}
+        <a class="nav-link" href="{% url "servers:moderate" %}">{% trans "Moderate" %}</a>
+      </li>
+      {% endif %}
 		</ul>
 	</div>
 
