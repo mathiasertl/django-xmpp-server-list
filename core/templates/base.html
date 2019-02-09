@@ -1,37 +1,24 @@
 {% load i18n static %}<!DOCTYPE html>
 <html lang="en">
-<head>
-    <title>{% block title %}XMPP server list{% endblock %}</title>
-    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
-    <link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}"/>
+{% spaceless %}<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <script type="text/javascript">
-        var csrftoken = "{{ csrf_token }}";
-        var csrfinput = "{% csrf_token %}";
-    </script>
-    
-    {% if debug %}
-    <script type="text/javascript" src="{% static 'js/lib/jquery-3.3.1.js' %}"></script>
-    <script type="text/javascript" src="{% static 'lib/bootstrap-4.2.1/js/bootstrap.js' %}"></script>
-    {% else %}
-    <script type="text/javascript" src="{% static 'js/lib/jquery-3.3.1.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'lib/bootstrap-4.2.1/js/bootstrap.min.js' %}"></script>
-    {% endif %}
-    {% if debug %}
-    <script type="text/javascript" src="{% static 'lib/bootstrap-4.2.1/css/bootstrap.css' %}"></script>
-    {% else %}
-    <script type="text/javascript" src="{% static 'lib/bootstrap-4.2.1/css/bootstrap.min.css' %}"></script>
-    {% endif %}
+	<title>{% block title %}XMPP server list{% endblock %}</title>
+	{% if debug %}
+	<link rel="stylesheet" href="{% static 'lib/bootstrap-4.2.1/css/bootstrap.css' %}">
+	{% else %}
+	<link rel="stylesheet" href="{% static 'lib/bootstrap-4.2.1/css/bootstrap.min.css' %}">
+	{% endif %}
 
-    <script type="text/javascript" src="{% static 'js/base.js' %}"></script>
-    {% block javascript %}{% endblock %}
+	<link rel="stylesheet" href="{% static 'css/base.css' %}"/>
+	{% block css %}{% endblock %}
 
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'css/base.css' %}"/>
-    {% block css %}{% endblock %}
-</head>
+	<link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+	<link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}"/>
+
+</head>{% endspaceless %}
 <body>
 <div class="container">
     <nav class="navbar navbar-default" role="navigation">
@@ -117,6 +104,15 @@
             {% endblock %}
         </div>
     </div>
-</div><!-- container end -->
+</div>{% spaceless %}
+	{% if debug %}
+	<script type="text/javascript" src="{% static 'js/lib/jquery-3.3.1.js' %}"></script>
+	<script type="text/javascript" src="{% static 'lib/bootstrap-4.2.1/js/bootstrap.js' %}"></script>
+	{% else %}
+	<script type="text/javascript" src="{% static 'js/lib/jquery-3.3.1.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'lib/bootstrap-4.2.1/js/bootstrap.min.js' %}"></script>
+	{% endif %}
+	<script type="text/javascript" src="{% static 'js/base.js' %}"></script>
+	{% block javascript %}{% endblock %}{% endspaceless %}
 </body>
 </html>
