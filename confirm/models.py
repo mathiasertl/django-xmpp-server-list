@@ -129,7 +129,7 @@ class UserConfirmationKey(ConfirmationKey, UserConfirmationMixin):
         self.subject.save()
 
     def get_absolute_url(self):
-        return reverse('confirm_user_contact', (), {'key': self.key})
+        return reverse('confirm:user_contact', kwargs={'key': self.key})
 
 
 class UserPasswordResetKey(ConfirmationKey, UserConfirmationMixin):
@@ -186,4 +186,4 @@ class ServerConfirmationKey(ConfirmationKey):
         return self.subject.user
 
     def get_absolute_url(self):
-        return reverse('confirm_server', (), {'key': self.key})
+        return reverse('confirm:server', kwargs={'key': self.key})

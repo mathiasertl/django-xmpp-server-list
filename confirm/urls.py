@@ -14,21 +14,18 @@
 # You should have received a copy of the GNU General Public License
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
-
-from django.conf.urls import url
+from django.urls import path
 from django.contrib.auth.decorators import login_required
 
 from confirm.views import ConfirmServerContactView
 from confirm.views import ResetUserPasswordView
 from confirm.views import UserConfirmationView
 
-# TODO: use path instead of url
-# TODO: use namespace instead of prefix
+app_name = 'confirm'
+
+# TODO: use base64 as path converter
 urlpatterns = [
-    url(r'^user/contact/(?P<key>\w+)/$', UserConfirmationView.as_view(),
-        name='confirm_user_contact'),
-    url(r'^user/password/(?P<key>\w+)/$', ResetUserPasswordView.as_view(),
-        name='reset_user_password'),
-    url(r'^server/(?P<key>\w+)/$', login_required(ConfirmServerContactView.as_view()),
-        name='confirm_server'),
+    path('user/contact/<str:key>/', UserConfirmationView.as_view(), name='user_contact'),
+    path('user/password/<str:key>/', ResetUserPasswordView.as_view(), name='reset_user_password'),
+    path('server/<str:key>/', login_required(ConfirmServerContactView.as_view()), name='server'),
 ]

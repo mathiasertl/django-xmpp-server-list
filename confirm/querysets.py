@@ -32,7 +32,7 @@ class ConfirmationKeyQuerySet(QuerySet):
     def key(self):
         rand = random.random()
         secret = '%s-%s-%s' % (settings.SECRET_KEY, time.time(), rand)
-        return hashlib.sha1(secret).hexdigest()
+        return hashlib.sha256(secret.encode('utf-8')).hexdigest()
 
     def for_user(self, user):
         if user.is_authenticated():
