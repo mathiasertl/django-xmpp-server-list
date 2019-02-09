@@ -62,7 +62,7 @@
             <h1 id="pagetitle">{% block pagetitle %}{% endblock %}</h1>
             {% block danger %}
             {% if user.is_authenticated and not user.email_confirmed %}
-                <div class="alert alert-danger">
+                <div class="alert alert-danger" role="alert">
                     Your E-Mail address has not yet been confirmed. You should have received a confirmation message
                     containing the link needed to confirm it. If you haven't received such a message,
                     you can <a href="{% url 'account:resend_confirmation' %}">resend it</a>. If
@@ -70,7 +70,7 @@
                 </div>
             {% endif %}
             {% if user.is_authenticated and not user.jid_confirmed %}
-                <div class="alert alert-danger">
+                <div class="alert alert-danger" role="alert">
                     Your JID has not yet been confirmed. You should have received a confirmation message
                     containing the link needed to confirm it. If you haven't received such a message,
                     you can <a href="{% url 'account:resend_confirmation' %}">resend it</a>. If
