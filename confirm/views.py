@@ -23,7 +23,6 @@ from django.views.generic.detail import SingleObjectMixin
 
 from confirm.models import ServerConfirmationKey
 from confirm.models import UserConfirmationKey
-from confirm.models import UserPasswordResetKey
 
 
 class ConfirmationView(RedirectView, SingleObjectMixin):
@@ -67,11 +66,6 @@ class ConfirmationView(RedirectView, SingleObjectMixin):
 class UserConfirmationView(ConfirmationView):
     model = UserConfirmationKey
     url = 'account'
-
-
-class ResetUserPasswordView(ConfirmationView):
-    model = UserPasswordResetKey
-    url = 'account_set_password'
 
 
 class ConfirmServerContactView(LoginRequiredMixin, ConfirmationView):

@@ -18,16 +18,9 @@ from django.contrib import admin
 
 from .models import ServerConfirmationKey
 from .models import UserConfirmationKey
-from .models import UserPasswordResetKey
 
 
 class UserConfirmationKeyAdmin(admin.ModelAdmin):
-    list_display = ['subject', 'created', 'type']
-    list_filter = ['type']
-    ordering = ['created']
-
-
-class UserPasswordKeyAdmin(admin.ModelAdmin):
     list_display = ['subject', 'created', 'type']
     list_filter = ['type']
     ordering = ['created']
@@ -40,5 +33,4 @@ class ServerConfirmationKeyAdmin(admin.ModelAdmin):
 
 
 admin.site.register(UserConfirmationKey, UserConfirmationKeyAdmin)
-admin.site.register(UserPasswordResetKey, UserPasswordKeyAdmin)
 admin.site.register(ServerConfirmationKey, ServerConfirmationKeyAdmin)

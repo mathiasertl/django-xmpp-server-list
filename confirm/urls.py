@@ -17,7 +17,6 @@
 from django.urls import path
 
 from confirm.views import ConfirmServerContactView
-from confirm.views import ResetUserPasswordView
 from confirm.views import UserConfirmationView
 
 app_name = 'confirm'
@@ -25,6 +24,5 @@ app_name = 'confirm'
 # TODO: use base64 as path converter
 urlpatterns = [
     path('user/contact/<str:key>/', UserConfirmationView.as_view(), name='user_contact'),
-    path('user/password/<str:key>/', ResetUserPasswordView.as_view(), name='reset_user_password'),
     path('server/<str:key>/', ConfirmServerContactView.as_view(), name='server'),
 ]

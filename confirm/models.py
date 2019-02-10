@@ -132,28 +132,6 @@ class UserConfirmationKey(ConfirmationKey, UserConfirmationMixin):
         return reverse('confirm:user_contact', kwargs={'key': self.key})
 
 
-class UserPasswordResetKey(ConfirmationKey, UserConfirmationMixin):
-    subject = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
-                                related_name='password_resets')
-
-    message_template = 'confirm/user_password_reset.txt'
-    message_subject = 'Reset your password on %(protocol)s://%(domain)s'
-
-    def __init__(self, *args, **kwargs):
-        super(UserPasswordResetKey, self).__init__(*args, **kwargs)
-        if 'type' not in kwargs:
-            if self.subject.email_confirmed:
-                self.type = 'E'
-            else:
-                self.type = 'J'
-
-    def confirm(self):
-        pass
-
-    def get_absolute_url(self):
-        return reverse('confirm:reset_user_password', kwargs={'key': self.key})
-
-
 class ServerConfirmationKey(ConfirmationKey):
     subject = models.ForeignKey(Server, on_delete=models.CASCADE, related_name='confirmations')
     objects = ServerConfirmationKeyQuerySet.as_manager()
