@@ -9,6 +9,9 @@ TEMPLATE_DIRS = (
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = '/tmp/xmpplist' # change this to a proper location
 
+# Use XMPP backend
+DEFAULT_XMPP_BACKEND = 'xmpp.backends.SleekBackend'
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.

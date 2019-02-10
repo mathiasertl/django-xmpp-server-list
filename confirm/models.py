@@ -24,10 +24,10 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 
 from server.models import Server
+from xmpp.clients import SendMsgBot
 
 from .querysets import ConfirmationKeyQuerySet
 from .querysets import ServerConfirmationKeyQuerySet
-from .SendMsgBot import SendMsgBot
 
 CONFIRMATION_TYPE_CHOICES = (
     ('J', 'JID'),
