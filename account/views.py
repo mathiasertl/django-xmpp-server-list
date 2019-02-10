@@ -109,7 +109,7 @@ class PasswordResetView(AnonymousRequiredMixin, auth_views.PasswordResetView):
 
 class PasswordResetDoneView(AnonymousRequiredMixin, auth_views.PasswordResetDoneView):
     authenticated_url = reverse_lazy('account:index')
-    template_name = 'account/password_change_done.html'
+    template_name = 'account/password_reset_done.html'
 
 
 class PasswordResetConfirmView(AnonymousRequiredMixin, auth_views.PasswordResetConfirmView):
