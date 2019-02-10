@@ -24,7 +24,7 @@ app_name = 'account'
 urlpatterns = [
     path('', views.index, name='index'),
     path('create/', views.create, name='create'),
-    path('edit/', views.edit, name='edit'),
+    path('edit/', views.UpdateUserView.as_view(), name='edit'),
     path('resend_confirmation/', views.resend_confirmation, name='resend_confirmation'),
     path('login/', auth_views.LoginView.as_view(redirect_authenticated_user=True), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),

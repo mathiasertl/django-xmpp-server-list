@@ -19,10 +19,12 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
+from django.views.generic.edit import UpdateView
 
 from confirm.models import UserConfirmationKey
 from core.views import AnonymousRequiredMixin
@@ -31,7 +33,6 @@ from server.util import get_siteinfo
 from .forms import CreationForm
 from .forms import PasswordChangeForm
 from .forms import PasswordResetForm
-from .forms import PreferencesForm
 
 
 @login_required
@@ -62,34 +63,33 @@ def create(request):
     return render(request, 'account/create.html', {'user_form': form, })
 
 
-@login_required
-def edit(request):
-    if request.method == 'POST':
-        form = PreferencesForm(request.POST, instance=request.user)
+class UpdateUserView(LoginRequiredMixin, UpdateView):
+    fields = ['email', 'jid']
+    success_url = reverse_lazy('account:index')
 
-        if form.is_valid():
-            user = form.save()
+    def get_object(self, queryset=None):
+        return self.request.user
 
-            if 'email' in form.changed_data:
-                user.email_confirmed = False
-                user.save()
-                UserConfirmationKey.objects.filter(
-                    subject=user, type='E').delete()
-                key = UserConfirmationKey.objects.create(subject=user, type='E')
-                key.send(*get_siteinfo(request))
-            if 'jid' in form.changed_data:
-                user.jid_confirmed = False
-                user.save()
-                UserConfirmationKey.objects.filter(
-                    subject=user, type='J').delete()
-                key = UserConfirmationKey.objects.create(subject=user, type='J')
-                key.send(*get_siteinfo(request))
+    def form_valid(self, form):
+        # set *_confirmed properties before calling super() so they are saved to the database
+        if 'email' in form.changed_data:
+            form.instance.email_confirmed = False
+        if 'jid' in form.changed_data:
+            form.instance.jid_confirmed = False
 
-            return redirect('account')
-    else:
-        form = PreferencesForm(instance=request.user)
+        response = super().form_valid(form)
 
-    return render(request, 'account/edit.html', {'user_form': form, })
+        # TODO: this still uses the same template as when a user is created
+        if 'email' in form.changed_data:
+            UserConfirmationKey.objects.filter(subject=form.instance, type='E').delete()
+            key = UserConfirmationKey.objects.create(subject=form.instance, type='E')
+            key.send(*get_siteinfo(self.request))
+        if 'jid' in form.changed_data:
+            UserConfirmationKey.objects.filter(subject=form.instance, type='J').delete()
+            key = UserConfirmationKey.objects.create(subject=form.instance, type='J')
+            key.send(*get_siteinfo(self.request))
+
+        return response
 
 
 @login_required

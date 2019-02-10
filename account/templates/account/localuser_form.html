@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load bootstrap i18n %}
+
+{% block title %}Edit profile{% endblock %}
+{% block pagetitle %}Edit your profile{% endblock %}
+
+{% block danger %}{% endblock %}
+
+{% block content %}
+<p>{% trans "Use this form to update your contact information." %}</p>
+
+<div class="alert alert-warning">
+  {% blocktrans %}If you change your email address or JID, you'll have to confirm them again.
+Your servers will not show up in the list until you have confirmed them.{% endblocktrans %}
+</div>
+
+<form method="post">{% csrf_token %}
+    {{ form|bootstrap }}
+    {% bootstrap_submit _("Update") %}
+</form>
+{% endblock %}

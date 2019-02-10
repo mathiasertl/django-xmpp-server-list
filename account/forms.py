@@ -70,19 +70,6 @@ class CreationForm(UserCreationForm):
         }
 
 
-class PreferencesForm(forms.ModelForm):
-    class Meta:
-        model = UserModel
-        fields = ('first_name', 'last_name', 'email', 'jid')
-
-        widgets = {
-            'first_name': _textwidget,
-            'last_name': _textwidget,
-            'email': _mailwidget,
-            'jid': _textwidget,
-        }
-
-
 class PasswordChangeForm(auth_forms.PasswordChangeForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
