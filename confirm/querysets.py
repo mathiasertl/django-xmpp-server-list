@@ -35,7 +35,7 @@ class ConfirmationKeyQuerySet(QuerySet):
         return hashlib.sha256(secret.encode('utf-8')).hexdigest()
 
     def for_user(self, user):
-        if user.is_authenticated():
+        if user.is_authenticated:
             return self.filter(subject=user)
         return self
 
