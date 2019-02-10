@@ -53,17 +53,14 @@ class IndexView(ListView):
 
 
 class MyServerListView(MyServerMixin, ListView):
-    template_name = 'server/my_server_list.html'
+    template_name_suffix = '_list_user'
 
 
 class ServerCreateView(LoginRequiredMixin, CreateView):
     model = Server
     form_class = ServerForm
     queryset = Server.objects.all()
-
-    def form_invalid(self, form):
-        print('invalid')
-        return super().form_invalid(form)
+    template_name_suffix = '_create'
 
     def form_valid(self, form):
         form.instance.user = self.request.user
@@ -72,6 +69,7 @@ class ServerCreateView(LoginRequiredMixin, CreateView):
 
 class ServerUpdateView(MyServerMixin, UpdateView):
     form_class = ServerForm
+    template_name_suffix = '_update'
 
 
 class ServerDetailView(DetailView):

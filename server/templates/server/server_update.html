@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load i18n bootstrap %}
+
+{% block title %}{% blocktrans with domain=object.domain %}{{ domain }} - edit{% endblocktrans %}{% endblock %}
+{% block pagetitle %}{% blocktrans with domain=object.domain %}Edit {{ domain }}{% endblocktrans %}{% endblock %}
+
+{% block content %}
+<p>{% blocktrans with domain=object.domain %}Update information for {{ domain }}.{% endblocktrans %}</p>
+<div class="alert alert-info mb-4">
+  <i class="fas fa-info mr-1"></i>
+  {% trans "If you update the contact information, it will have to be verified again." %}
+</div>
+<form method="post">{% csrf_token %}
+  {{ form|bootstrap }}
+  {% bootstrap_submit _("Update") %}
+</form>
+{% endblock %}
