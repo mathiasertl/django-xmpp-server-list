@@ -14,9 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
-import logging
-import threading
-
 from django.conf import settings
 from django.core.mail import send_mail
 from django.db import models
@@ -24,7 +21,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 
 from server.models import Server
-from xmpp.clients import SendMsgBot
+from xmpp.backends import default_xmpp_backend
 
 from .querysets import ConfirmationKeyQuerySet
 from .querysets import ServerConfirmationKeyQuerySet
@@ -49,19 +46,8 @@ class ConfirmationKey(models.Model):
         frm = settings.DEFAULT_FROM_EMAIL
         send_mail(subject, message, frm, [to], fail_silently=True)
 
-    def send_jid(self, to, subject, message):
-        creds = settings.XMPP['default']
-        logging.basicConfig()
-
-        def send_msg(frm, pwd, to, msg):
-            xmpp = SendMsgBot(frm, pwd, to, msg)
-            if xmpp.connect():
-                xmpp.process(wait=True)
-
-        targs = (creds['jid'], creds['password'], to, message, )
-        t = threading.Thread(target=send_msg, args=targs)
-        t.daemon = True
-        t.start()
+    def send_jid(self, to, message):
+        default_xmpp_backend.send_chat_message(to, message)
 
     def send(self, protocol, domain):
         context = {'domain': domain, 'key': self, 'protocol': protocol}
@@ -81,7 +67,7 @@ class ConfirmationKey(models.Model):
         if self.type == 'E':
             self.send_mail(self.recipient, subject, message)
         elif self.type == 'J':
-            self.send_jid(self.recipient, subject, message)
+            self.send_jid(self.recipient, message)
         else:
             raise RuntimeError("Confirmation messages can only be sent to JIDs or email addresses")
 
