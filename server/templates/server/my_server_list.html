@@ -31,23 +31,38 @@
     {% blocktrans %}Optional: A different text for the contact link.{% endblocktrans %}
 </div>
 
-<table class="table" id="your-servers">
-    <thead>
+{% if object_list %}
+<table class="table table-hover table-sm">
+  <thead>
     <tr>
-        <th class="status">Status</th>
-        {% for field in new_server_form %}
-            <th class="tooltip-field" data-tip="{{field.name}}">{{ field.label }}</th>
-        {% endfor %}
-        <th></th>
+      <th>{% trans "domain" %}</th>
+      <th>{% trans "verified" %}</th>
+      <th>{% trans "moderated" %}</th>
     </tr>
-    </thead>
-    <tbody>
-{% for form in forms %}
-    {% include "server/includes/server_table_row.html" %}
-{% endfor %}
-    {% include "server/includes/new_server_row.html" %}
-    </tbody>
+  </thead><tbody>
+  {% for server in object_list %}
+  <tr>
+    <td>{{ server.domain }}</td>
+    <td>{% if server.verified %}}<i class="fas fa-check text-success mr-1"></i>
+        {% else %}<i class="fas fa-exclamation-circle text-warning mr-1"></i>{% endif %}
+    </td>
+    <td>{% if server.moderated %}}<i class="fas fa-check text-success mr-1"></i>
+        {% else %}<i class="fas fa-exclamation-circle text-warning mr-1"></i>{% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
 </table>
+{% else %}
+  <div class="alert alert-info">
+    <i class="fas fa-info mr-1"></i>
+    {% trans "No servers yet added to your list." %}
+  </div>
+{% endif %}
+<p>
+<a href="{% url 'servers:add' %}">{% trans "... add a new server" %}</a>
+</p>
+
 <h2>{% trans "Requirements for being listed" %}</h2>
 <ul>
     <li>{% blocktrans %}<strong>Technical aspects:</strong> The most important aspects of your

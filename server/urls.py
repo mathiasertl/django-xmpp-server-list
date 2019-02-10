@@ -22,14 +22,18 @@ from server.views import AjaxServerModerateView
 from server.views import AjaxServerResendView
 from server.views import AjaxServerResubmitView
 from server.views import AjaxServerUpdateView
-from server.views import EditView
+from server.views import MyServerListView
 from server.views import ModerateView
 from server.views import ReportView
+from server.views import ServerCreateView
+from server.views import ServerUpdateView
 
 app_name = 'servers'
 
 urlpatterns = [
-    path('', EditView.as_view(), name='edit'),
+    path('', MyServerListView.as_view(), name='list'),
+    path('add/', ServerCreateView.as_view(), name='add'),
+    path('edit/<int:pk>/', ServerUpdateView.as_view(), name='edit'),
     path('moderate/', ModerateView.as_view(), name='moderate'),
 
     path('ajax/', AjaxServerCreateView.as_view(), name='create'),

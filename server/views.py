@@ -18,9 +18,7 @@ from threading import Thread
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
-from django.views.generic import TemplateView
 from django.views.generic.base import View
 from django.views.generic.detail import DetailView
 from django.views.generic.detail import SingleObjectMixin
@@ -36,11 +34,12 @@ from server.models import Server
 
 class MyServerMixin(LoginRequiredMixin):
     """Makes sure that a ModelView is only called with servers the user owns."""
-    def get_object(self):
-        server = super(MyServerMixin, self).get_object()
-        if server.user != self.request.user:
-            raise PermissionDenied
-        return server
+
+    queryset = Server.objects.order_by('domain')
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.filter(user=self.request.user)
 
 
 class MyServerFormMixin(MyServerMixin):
@@ -53,19 +52,17 @@ class IndexView(ListView):
     queryset = Server.objects.moderated().verified().order_by('domain')
 
 
-class EditView(LoginRequiredMixin, TemplateView):
-    template_name = 'server/index.html'
+class MyServerListView(MyServerMixin, ListView):
+    template_name = 'server/my_server_list.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(EditView, self).get_context_data(**kwargs)
 
-        servers = self.request.user.servers.all()
-        forms = [ServerForm(instance=s, prefix=s.id) for s in servers]
+class ServerCreateView(LoginRequiredMixin, CreateView):
+    model = Server
+    form_class = ServerForm
 
-        context['new_server_form'] = ServerForm()
-        context['forms'] = forms
 
-        return context
+class ServerUpdateView(MyServerMixin, UpdateView):
+    form_class = ServerForm
 
 
 class ModerateView(PermissionRequiredMixin, ListView):

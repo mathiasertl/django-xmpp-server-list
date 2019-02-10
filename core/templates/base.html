@@ -27,7 +27,7 @@
     <ul class="navbar-nav mr-auto">
       {% if user.is_authenticated %}
       <li class="nav-item">{# TODO: we do not detect where we are yet #}
-        <a class="nav-link" href="{% url "servers:edit" %}">{% trans "My servers" %}</a>
+        <a class="nav-link" href="{% url "servers:list" %}">{% trans "My servers" %}</a>
       </li>
       {% endif %}
 
