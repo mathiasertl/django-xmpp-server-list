@@ -20,8 +20,8 @@ from django.core import validators
 from django.forms import ModelForm
 from django.forms.forms import ValidationError
 
-from .models import Server
 from .models import Features
+from .models import Server
 
 
 class BaseServerForm(ModelForm):

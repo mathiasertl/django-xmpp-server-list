@@ -14,8 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import login
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
 from django.urls import reverse
 from django.views.generic.base import RedirectView

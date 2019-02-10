@@ -15,8 +15,8 @@
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
 from django import forms
-from django.contrib.auth import get_user_model
 from django.contrib.auth import forms as auth_forms
+from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.template import loader
 from django.utils.translation import ugettext_lazy as _
