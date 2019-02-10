@@ -64,6 +64,7 @@
             {% block danger %}
             {% if user.is_authenticated and not user.email_confirmed %}
                 <div class="alert alert-danger" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i>
                     Your E-Mail address has not yet been confirmed. You should have received a confirmation message
                     containing the link needed to confirm it. If you haven't received such a message,
                     you can <a href="{% url 'account:resend_confirmation' %}">resend it</a>. If
@@ -72,6 +73,7 @@
             {% endif %}
             {% if user.is_authenticated and not user.jid_confirmed %}
                 <div class="alert alert-danger" role="alert">
+                  <i class="fas fa-exclamation-triangle"></i>
                     Your JID has not yet been confirmed. You should have received a confirmation message
                     containing the link needed to confirm it. If you haven't received such a message,
                     you can <a href="{% url 'account:resend_confirmation' %}">resend it</a>. If
@@ -117,6 +119,8 @@
   <script type="text/javascript" src="{% static 'js/lib/jquery-3.3.1.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'lib/bootstrap-4.2.1/js/bootstrap.min.js' %}"></script>
   {% endif %}
+  <script defer src="{% static 'lib/fontawesome/solid.js' %}"></script>
+  <script defer src="{% static 'lib/fontawesome/fontawesome.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/base.js' %}"></script>
   {% block javascript %}{% endblock %}{% endspaceless %}
 </body>
