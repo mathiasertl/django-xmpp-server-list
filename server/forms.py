@@ -19,15 +19,16 @@ from urllib.parse import urlparse
 from django.core import validators
 from django.forms import ModelForm
 from django.forms.forms import ValidationError
-from django.forms.widgets import DateInput
-from django.forms.widgets import Select
-from django.forms.widgets import TextInput
 
 from .models import Server
 from .models import Features
 
 
-class ServerForm(ModelForm):
+class BaseServerForm(ModelForm):
+    pass
+
+
+class CreateServerForm(BaseServerForm):
     def verify_domain(self, value):
         """
         verify a domain (we need this in multiple places)
@@ -39,12 +40,6 @@ class ServerForm(ModelForm):
                 parsed.port:
             return False
         return True
-
-    def contact_changed(self):
-        changed = self.changed_data
-        if 'contact' in changed or 'contact_type' in changed:
-            return True
-        return False
 
     def clean_domain(self):
         try:
@@ -89,13 +84,10 @@ class ServerForm(ModelForm):
         return contact
 
     def save(self, commit=True):
-        server = super(ServerForm, self).save(commit=False)
+        server = super().save(commit=False)
         server.features = Features.objects.create()
-        if self.contact_changed():
-            server.contact_verified = False
-        if commit:
+        if commit is True:
             server.save()
-
         return server
 
     class Meta:
@@ -104,12 +96,28 @@ class ServerForm(ModelForm):
             'domain', 'registration_url', 'policy_url', 'website', 'launched', 'contact_type', 'contact',
             'contact_name',
         )
-        widgets = {
-            'contact_type': Select(attrs={'class': 'contact_type', }),
-            'domain': TextInput(attrs={'size': 10}),
-            'registration_url': TextInput(attrs={'size': 16}),
-            'policy_url': TextInput(attrs={'size': 16}),
-            'website': TextInput(attrs={'size': 16}),
-            'launched': DateInput(attrs={
-                'size': 8, 'class': 'datepicker'}, format='%Y-%m-%d'),
-        }
+
+
+class UpdateServerForm(BaseServerForm):
+    class Meta:
+        model = Server
+        fields = (
+            'registration_url', 'policy_url', 'website', 'launched', 'contact_type', 'contact',
+            'contact_name',
+        )
+
+    def contact_changed(self):
+        changed = self.changed_data
+        if 'contact' in changed or 'contact_type' in changed:
+            return True
+        return False
+
+    def save(self, commit=True):
+        server = super().save(commit=False)
+
+        if self.contact_changed():
+            server.contact_verified = False
+
+        if commit is True:
+            server.save()
+        return server

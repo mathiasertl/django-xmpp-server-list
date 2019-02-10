@@ -16,12 +16,9 @@
 
 from django.urls import path
 
-from server.views import AjaxServerCreateView
 from server.views import AjaxServerDeleteView
 from server.views import AjaxServerModerateView
 from server.views import AjaxServerResendView
-from server.views import AjaxServerResubmitView
-from server.views import AjaxServerUpdateView
 from server.views import MyServerListView
 from server.views import ModerateView
 from server.views import ReportView
@@ -38,11 +35,8 @@ urlpatterns = [
     path('<int:pk>/', ServerDetailView.as_view(), name='view'),
     path('moderate/', ModerateView.as_view(), name='moderate'),
 
-    path('ajax/', AjaxServerCreateView.as_view(), name='create'),
     path('ajax/delete/<int:pk>/', AjaxServerDeleteView.as_view(), name='delete'),
     path('ajax/approve/<int:pk>/', AjaxServerModerateView.as_view(), name='approve'),
     path('ajax/report/<int:pk>/', ReportView.as_view(), name='report'),
     path('ajax/resend/<int:pk>/', AjaxServerResendView.as_view(), name='resend'),
-    path('ajax/resubmit/<int:pk>/', AjaxServerResubmitView.as_view(), name='resubmit'),
-    path('ajax/update/<int:pk>/', AjaxServerUpdateView.as_view(), name='update'),
 ]

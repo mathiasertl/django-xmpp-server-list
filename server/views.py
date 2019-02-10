@@ -14,8 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
-from threading import Thread
-
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponse
@@ -27,8 +25,8 @@ from django.views.generic.edit import DeleteView
 from django.views.generic.edit import UpdateView
 from django.views.generic.list import ListView
 
-from server.forms import ServerForm
-from server.models import Features
+from server.forms import CreateServerForm
+from server.forms import UpdateServerForm
 from server.models import Server
 
 
@@ -58,7 +56,7 @@ class MyServerListView(MyServerMixin, ListView):
 
 class ServerCreateView(LoginRequiredMixin, CreateView):
     model = Server
-    form_class = ServerForm
+    form_class = CreateServerForm
     queryset = Server.objects.all()
     template_name_suffix = '_create'
 
@@ -68,7 +66,7 @@ class ServerCreateView(LoginRequiredMixin, CreateView):
 
 
 class ServerUpdateView(MyServerMixin, UpdateView):
-    form_class = ServerForm
+    form_class = UpdateServerForm
     template_name_suffix = '_update'
 
 
@@ -85,67 +83,6 @@ class ModerateView(PermissionRequiredMixin, ListView):
 class ReportView(MyServerMixin, DetailView):
     queryset = Server.objects.all()
     template_name = 'server/ajax/report.html'
-
-
-class AjaxServerCreateView(LoginRequiredMixin, CreateView):
-    form_class = ServerForm
-    http_method_names = ('post', )
-    template_name = 'server/ajax/new_server.html'
-
-    def form_valid(self, form):
-        server = form.save(commit=False)
-        server.user = self.request.user
-        server.features = Features.objects.create()
-        server.save()  # TODO: required? (maybe for a valid pk?)
-
-        server.do_contact_verification(self.request)
-        server.save()
-
-        # start verification in a separate thread:
-        t = Thread(target=server.verify)
-        t.start()
-
-        context = self.get_context_data(form=form)
-        context['new_server_form'] = ServerForm()
-        return self.render_to_response(context)
-
-
-class AjaxServerUpdateView(MyServerFormMixin, UpdateView):
-    model = Server
-    form_class = ServerForm
-    http_method_names = ('post', )
-    template_name = 'server/ajax/server_table_row.html'
-
-    def form_valid(self, form):
-        server = self.object
-        changed = set(form.changed_data)
-        moderate_properties = {
-            'contact',
-            'contact_name',
-            'contact_type',
-            'website',
-        }
-        if 'domain' in changed:
-            server.moderated = None
-            server.moderators_notified = False
-            server.verified = None
-        if moderate_properties & changed:
-            typ = form.cleaned_data['contact_type']
-            contact = form.cleaned_data['contact']
-            if 'website' not in changed and server.autoconfirmed(typ, contact):
-                print('autoconfirmed!')
-                pass
-            else:
-                server.moderated = None
-                server.moderators_notified = False
-                server.contact_verified = False
-
-        # We have special treatment if contact was JID or email:
-        if form.contact_changed():
-            server.confirmations.all().delete()
-            server.do_contact_verification(self.request)
-        server.save()
-        return self.render_to_response(self.get_context_data(form=form))
 
 
 class AjaxServerDeleteView(MyServerMixin, DeleteView):
@@ -166,21 +103,6 @@ class AjaxServerResendView(MyServerMixin, SingleObjectMixin, View):
         server = self.get_object()
         server.do_contact_verification(request)
         return HttpResponse()
-
-
-class AjaxServerResubmitView(MyServerFormMixin, UpdateView):
-    model = Server
-    form_class = ServerForm
-    http_method_names = ('post', )
-    template_name = 'server/ajax/server_table_row.html'
-
-    def form_valid(self, form):
-        server = form.save(commit=False)
-        server.moderated = None
-        server.moderation_message = ''
-        server.moderators_notified = False
-        server.save()
-        return self.render_to_response(self.get_context_data(form=form))
 
 
 class AjaxServerModerateView(PermissionRequiredMixin, SingleObjectMixin, View):
