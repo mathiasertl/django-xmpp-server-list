@@ -104,7 +104,7 @@ def resend_confirmation(request):
 class PasswordResetView(AnonymousRequiredMixin, auth_views.PasswordResetView):
     authenticated_url = reverse_lazy('account:index')
     form_class = PasswordResetForm
-    template_name = 'account/password_change_form.html'
+    template_name = 'account/password_reset_form.html'
 
 
 class PasswordResetDoneView(AnonymousRequiredMixin, auth_views.PasswordResetDoneView):
