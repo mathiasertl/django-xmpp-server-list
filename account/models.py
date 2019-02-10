@@ -15,6 +15,7 @@
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import BaseUserManager
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -22,7 +23,7 @@ from .querysets import UserQuerySet
 
 
 class LocalUser(AbstractUser):
-    objects = UserQuerySet.as_manager()
+    objects = BaseUserManager.from_queryset(UserQuerySet)
 
     email = models.EmailField(
         _('email address'), unique=True,
