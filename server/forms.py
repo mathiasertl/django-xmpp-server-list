@@ -93,7 +93,7 @@ class CreateServerForm(BaseServerForm):
     class Meta:
         model = Server
         fields = (
-            'domain', 'registration_url', 'policy_url', 'website', 'launched', 'contact_type', 'contact',
+            'domain', 'website', 'registration_url', 'policy_url', 'launched', 'contact_type', 'contact',
             'contact_name',
         )
 
@@ -102,7 +102,7 @@ class UpdateServerForm(BaseServerForm):
     class Meta:
         model = Server
         fields = (
-            'registration_url', 'policy_url', 'website', 'launched', 'contact_type', 'contact',
+            'website', 'registration_url', 'policy_url', 'launched', 'contact_type', 'contact',
             'contact_name',
         )
 
