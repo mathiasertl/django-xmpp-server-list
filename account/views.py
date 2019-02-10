@@ -24,6 +24,7 @@ from django.shortcuts import redirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
+from django.views.generic import TemplateView
 from django.views.generic.edit import UpdateView
 
 from confirm.models import UserConfirmationKey
@@ -35,9 +36,8 @@ from .forms import PasswordChangeForm
 from .forms import PasswordResetForm
 
 
-@login_required
-def index(request):
-    return render(request, 'account/index.html')
+class IndexView(LoginRequiredMixin, TemplateView):
+    template_name = 'account/index.html'
 
 
 def create(request):

@@ -22,7 +22,7 @@ from . import views
 app_name = 'account'
 
 urlpatterns = [
-    path('', views.index, name='index'),
+    path('', views.IndexView.as_view(), name='index'),
     path('create/', views.create, name='create'),
     path('edit/', views.UpdateUserView.as_view(), name='edit'),
     path('resend_confirmation/', views.resend_confirmation, name='resend_confirmation'),
