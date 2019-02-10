@@ -46,11 +46,11 @@
       <a href="{{ server.get_absolute_url }}">{{ server.domain }}</a>
       (<a href="{% url 'servers:edit' pk=server.pk %}">{% trans "edit" %}</a>)
     </td>
-    <td>{% if server.verified %}}<i class="fas fa-check text-success mr-1"></i>
-        {% else %}<i class="fas fa-exclamation-circle text-warning mr-1"></i>{% endif %}
+    <td>{% if server.verified %}<i class="fas fa-check text-success mr-1"></i>
+        {% else %}<i class="fas fa-times text-danger mr-1"></i>{% endif %}
     </td>
-    <td>{% if server.moderated %}}<i class="fas fa-check text-success mr-1"></i>
-        {% else %}<i class="fas fa-exclamation-circle text-warning mr-1"></i>{% endif %}
+    <td>{% if server.moderated %}<i class="fas fa-check text-success mr-1"></i>
+        {% else %}<i class="fas fa-times text-danger mr-1"></i>{% endif %}
     </td>
   </tr>
   {% endfor %}

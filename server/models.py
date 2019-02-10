@@ -555,6 +555,7 @@ class Server(models.Model):
         # If my CA has no certificates (the "other" ca), no certificates were
         # actually verified, so set them to false manually.
         if self.ca is None:
+            print('self.ca is None!')
             self.c2s_tls_verified = False
             self.s2s_tls_verified = False
         else:
@@ -569,6 +570,8 @@ class Server(models.Model):
             log.info('... failed to verify %s', self.domain)
 
     def handle_cert(self, pem_cert):
+        self.ca = CertificateAuthority.objects.get_or_create(name='foo')[0]
+        return
         fileobj = StringIO()
         fileobj.write(pem_cert)
         fileobj.seek(0)
@@ -581,13 +584,14 @@ class Server(models.Model):
             rdns = issuer.getComponent()
             for entry in rdns:
                 typ, value = entry[0]
+                name = str(decoder.decode(value)[0])
                 if str(typ) != '2.5.4.3':
                     continue
-                name = str(decoder.decode(value)[0])
 
                 self.ca = CertificateAuthority.objects.get_or_create(name=name)[0]
                 log.debug('Valid certificate signed by %s', self.ca.get_display_name())
         except Exception as e:
+            print(e)
             log.error('Could not parse CA: %s: %s', type(e).__name__, e)
             self.ca = None
 
