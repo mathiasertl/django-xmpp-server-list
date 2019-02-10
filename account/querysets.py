@@ -14,22 +14,11 @@
 # You should have received a copy of the GNU General Public License
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.contrib.auth.models import AbstractUser
-from django.db import models
-from django.utils.translation import gettext_lazy as _
-
-from .querysets import UserQuerySet
+from django.db.models import Q
+from django.db.models.query import QuerySet
 
 
-class LocalUser(AbstractUser):
-    objects = UserQuerySet.as_manager()
-
-    email = models.EmailField(
-        _('email address'), unique=True,
-        help_text=_('Required, a confirmation message will be sent to this address.'))
-    jid = models.CharField(
-        _('JID'), max_length=128, unique=True,
-        help_text=_('Required, a confirmation message will be sent to this address.'))
-
-    email_confirmed = models.BooleanField(default=False)
-    jid_confirmed = models.BooleanField(default=False)
+class UserQuerySet(QuerySet):
+    def jid_or_email(self, value):
+        email_key = '%s__iexact' % self.model.get_email_field_name()
+        return self.filter(Q(**{email_key: value}) | Q(jid=value))  # NOTE: JIDs are case-sensitive
