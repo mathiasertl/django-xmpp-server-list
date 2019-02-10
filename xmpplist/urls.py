@@ -27,11 +27,13 @@ admin.autodiscover()
 urlpatterns = [
     url(r'^$', IndexView.as_view(), name='home'),
     url(r'^user/', include('account.urls')),
+    url(r'^user/', include('account.auth_urls')),
     url(r'^server/', include('server.urls')),
     url(r'^api/', include('api.urls')),
     url(r'^confirm/', include('confirm.urls')),
 
     url(r'^admin/', admin.site.urls),
+
 ]
 
 if settings.DEBUG:
