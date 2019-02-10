@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
-import textwrap
+import sys
 
 from django.conf import settings
 from django.utils.functional import LazyObject
@@ -42,10 +42,17 @@ class SleekBackend(XMPPBackend):
 
 
 class ConsoleBackend(XMPPBackend):
+    def __init__(self, *args, **kwargs):
+        self.stream = kwargs.pop('stream', sys.stdout)
+
     def send_chat_message(self, to, message):
-        print('Sending XMPP message:')
-        print('# To: %s' % to)
-        print(textwrap.indent(message, '# '))
+        print('Sending XMPP message to %s:' % to)
+        self.stream.write('-' * 79)
+        self.stream.write('\n')
+        self.stream.write(message)
+        self.stream.write('\n')
+        self.stream.write('-' * 79)
+        self.stream.write('\n')
 
 
 class DefaultXMPPBackend(LazyObject):
