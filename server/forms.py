@@ -24,11 +24,7 @@ from .models import Features
 from .models import Server
 
 
-class BaseServerForm(ModelForm):
-    pass
-
-
-class CreateServerForm(BaseServerForm):
+class CreateServerForm(ModelForm):
     def verify_domain(self, value):
         """
         verify a domain (we need this in multiple places)
@@ -98,7 +94,7 @@ class CreateServerForm(BaseServerForm):
         )
 
 
-class UpdateServerForm(BaseServerForm):
+class UpdateServerForm(ModelForm):
     class Meta:
         model = Server
         fields = (
