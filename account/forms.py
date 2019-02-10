@@ -17,7 +17,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth import forms as auth_forms
-from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.forms import UserCreationForm
 from django.template import loader
 from django.utils.translation import ugettext_lazy as _
@@ -84,10 +83,10 @@ class PreferencesForm(forms.ModelForm):
         }
 
 
-class SetPasswordForm(SetPasswordForm):
-    new_password1 = forms.CharField(label=_("New password"),
-                                    widget=_passwidget)
-    new_password2 = forms.CharField(label=_("Confirm"), widget=_passwidget)
+class PasswordChangeForm(auth_forms.PasswordChangeForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['new_password2'].label = _('Confirm')  # Shorten text to improve wrapping of label
 
 
 class PasswordResetForm(auth_forms.PasswordResetForm):

@@ -15,18 +15,21 @@
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
+from django.utils.translation import gettext as _
 
 from confirm.models import UserConfirmationKey
 from core.views import AnonymousRequiredMixin
 from server.util import get_siteinfo
 
 from .forms import CreationForm
+from .forms import PasswordChangeForm
 from .forms import PasswordResetForm
 from .forms import PreferencesForm
 
@@ -99,6 +102,17 @@ def resend_confirmation(request):
         key.send(*get_siteinfo(request))
     return render(request, 'account/resend_confirmation.html',
                   {'jid': settings.XMPP['default']['jid']})
+
+
+class PasswordChangeView(auth_views.PasswordChangeView):
+    form_class = PasswordChangeForm
+    success_url = reverse_lazy('account:index')
+    template_name = 'account/password_change_form.html'
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, _('Password was successfully updated.'))
+        return response
 
 
 class PasswordResetView(AnonymousRequiredMixin, auth_views.PasswordResetView):

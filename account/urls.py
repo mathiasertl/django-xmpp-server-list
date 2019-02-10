@@ -18,7 +18,6 @@ from django.contrib.auth import views as auth_views
 from django.urls import path
 
 from . import views
-from .forms import SetPasswordForm
 
 app_name = 'account'
 
@@ -29,8 +28,4 @@ urlpatterns = [
     path('resend_confirmation/', views.resend_confirmation, name='resend_confirmation'),
     path('login/', auth_views.LoginView.as_view(redirect_authenticated_user=True), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('password/', auth_views.PasswordChangeView.as_view(
-        #post_change_redirect='/user',  # TODO?
-        form_class=SetPasswordForm
-    ), name='set_password'),
 ]
