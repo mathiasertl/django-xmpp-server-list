@@ -178,12 +178,16 @@ class Server(models.Model):
     # information about the service:
     domain = models.CharField(unique=True, max_length=60,
                               help_text="The primary domain of your server.")
-    website = models.URLField(
-        blank=True,
-        help_text="A homepage where one can find information on your server. If left empty, the "
-        "default is https://<domain>.")
-    policy_url = models.URLField(blank=True, null=True)
-    registration_url = models.URLField(blank=True, null=True)
+    website = models.URLField(blank=True, help_text=_(
+        "Homepage with information about your server. If left empty, the default is https://<domain>."))
+    policy_url = models.URLField(
+        blank=True, verbose_name=_('Policy URL'),
+        help_text=_('A URL describing any terms and conditions for using your server.')
+    )
+    registration_url = models.URLField(
+        blank=True, verbose_name=_('Registration URL'),
+        help_text=_('A URL where users can create an account on your server.')
+    )
     ca = models.ForeignKey(
         CertificateAuthority, on_delete=models.PROTECT,
         related_name='servers', verbose_name='CA', blank=True, null=True,
