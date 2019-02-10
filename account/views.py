@@ -16,17 +16,16 @@
 
 from django.conf import settings
 from django.contrib.auth import login
+from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import FormView
 
 from account.forms import CreationForm
-from account.forms import PasswordResetForm
 from account.forms import PreferencesForm
 from confirm.models import UserConfirmationKey
-from confirm.models import UserPasswordResetKey
+from core.views import AnonymousRequiredMixin
 from server.util import get_siteinfo
 
 
@@ -88,25 +87,6 @@ def edit(request):
     return render(request, 'account/edit.html', {'user_form': form, })
 
 
-class ResetPassword(FormView):
-    template_name = 'account/reset_password.html'
-    form_class = PasswordResetForm
-    success_url = reverse_lazy('account:reset_password_ok')
-
-    def dispatch(self, request, *args, **kwargs):
-        # TODO: view is unused but this trick should be used in django view
-        if request.user.is_authenticated:
-            return redirect('account:set_password')
-
-        return super().dispatch(request, *args, **kwargs)
-
-    def form_valid(self, form):
-        key = UserPasswordResetKey.objects.create(subject=form.user)
-        key.send(*get_siteinfo(self.request))
-
-        return super(ResetPassword, self).form_valid(form)
-
-
 @login_required
 def resend_confirmation(request):
     if not request.user.email_confirmed:
@@ -117,3 +97,23 @@ def resend_confirmation(request):
         key.send(*get_siteinfo(request))
     return render(request, 'account/resend_confirmation.html',
                   {'jid': settings.XMPP['default']['jid']})
+
+
+class PasswordResetView(AnonymousRequiredMixin, auth_views.PasswordResetView):
+    authenticated_url = reverse_lazy('account:index')
+    template_name = 'account/password_change_form.html'
+
+
+class PasswordResetDoneView(AnonymousRequiredMixin, auth_views.PasswordResetDoneView):
+    authenticated_url = reverse_lazy('account:index')
+    template_name = 'account/password_change_done.html'
+
+
+class PasswordResetConfirmView(AnonymousRequiredMixin, auth_views.PasswordResetConfirmView):
+    authenticated_url = reverse_lazy('account:index')
+    template_name = 'account/password_reset_confirm.html'
+
+
+class PasswordResetCompleteView(AnonymousRequiredMixin, auth_views.PasswordResetCompleteView):
+    authenticated_url = reverse_lazy('account:index')
+    template_name = 'account/password_reset_complete.html'
