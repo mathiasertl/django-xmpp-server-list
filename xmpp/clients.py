@@ -43,7 +43,7 @@ class SendMsgBot(ClientXMPP):
     """A basic SleekXMPP bot that will log in, send a message, and then log out."""
 
     def __init__(self, jid, password, recipient, message):
-        super().__init__(self, jid, password)
+        super().__init__(jid, password)
 
         # The message we wish to send, and the JID that will receive it
         self.recipient = recipient
