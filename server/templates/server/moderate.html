@@ -24,7 +24,7 @@ moment, you only have to check if the homepage of the server and the given conta
             {% include "server/includes/server_contact.html" %}
             {% if server.contact_verified %}(verified){% endif %}
         </td>
-        <td class="right" data-url="{% url "server_moderate" server.id %}">
+        <td class="right" data-url="{% url "servers:approve" server.id %}">
             <img class="button-ok" src="{{ STATIC_URL }}img/save.png" alt="Ok." title="Ok." />
             <img class="button-notok" data-toggle="modal" data-target="#moderationModal" src="{{ STATIC_URL }}img/cancel.png" alt="NOT ok." title="NOT ok." />
         </td>
