@@ -16,9 +16,13 @@
 
 from django import forms
 from django.contrib.auth import get_user_model
+from django.contrib.auth import forms as auth_forms
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.forms import UserCreationForm
+from django.template import loader
 from django.utils.translation import ugettext_lazy as _
+
+from xmpp.backends import default_xmpp_backend
 
 UserModel = get_user_model()
 
@@ -86,20 +90,28 @@ class SetPasswordForm(SetPasswordForm):
     new_password2 = forms.CharField(label=_("Confirm"), widget=_passwidget)
 
 
-class PasswordResetForm(forms.Form):
-    username = forms.CharField(max_length=30, required=True, widget=_textwidget)
+class PasswordResetForm(auth_forms.PasswordResetForm):
+    """Override the default form class to also send XMPP messages to JIDs."""
 
-    def clean(self):
-        data = self.cleaned_data
+    email = forms.EmailField(label=_("JID or email"), max_length=254)
 
-        if data['username']:
-            try:
-                self.user = UserModel.objects.get(username=data['username'])
-            except UserModel.DoesNotExist:
-                raise forms.ValidationError(
-                    "No user with that username exists.")
-        else:
-            raise forms.ValidationError(
-                "Please give at least one of the fields.")
+    def get_users(self, email):
+        """Override parent class so we also match the JID of users."""
 
-        return data
+        active_users = UserModel.objects.jid_or_email(email).filter(is_active=True)
+        return (u for u in active_users if u.has_usable_password())
+
+    def send_mail(self, subject_template_name, email_template_name,
+                  context, from_email, to_email, html_email_template_name=None):
+        """Override so we can also send a message via XMPP.
+
+        Note that we do not override the save() method, where we could generate an independent token,
+        but this would create a lot of additional code. Here we can just render the same message again.
+        """
+
+        super().send_mail(subject_template_name, email_template_name,
+                          context, from_email, to_email, html_email_template_name)
+
+        xmpp_template_name = 'account/password_reset_xmpp.txt'
+        message = loader.render_to_string(xmpp_template_name, context).strip()
+        default_xmpp_backend.send_chat_message(context['user'], message)

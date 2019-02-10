@@ -22,11 +22,13 @@ from django.shortcuts import redirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
 
-from account.forms import CreationForm
-from account.forms import PreferencesForm
 from confirm.models import UserConfirmationKey
 from core.views import AnonymousRequiredMixin
 from server.util import get_siteinfo
+
+from .forms import CreationForm
+from .forms import PasswordResetForm
+from .forms import PreferencesForm
 
 
 @login_required
@@ -101,6 +103,7 @@ def resend_confirmation(request):
 
 class PasswordResetView(AnonymousRequiredMixin, auth_views.PasswordResetView):
     authenticated_url = reverse_lazy('account:index')
+    form_class = PasswordResetForm
     template_name = 'account/password_change_form.html'
 
 
