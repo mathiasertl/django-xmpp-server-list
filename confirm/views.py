@@ -44,12 +44,12 @@ class ConfirmationView(RedirectView, SingleObjectMixin):
         # get confirmation key:
         key = self.get_object(queryset=queryset.valid())
 
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             key.user.backend = 'django.contrib.auth.backends.ModelBackend'
             login(self.request, key.user)
 
         # log user in if not authenticated so far:
-        if not self.request.user.is_authenticated():
+        if not self.request.user.is_authenticated:
             key.user.backend = 'django.contrib.auth.backends.ModelBackend'
             login(self.request, key.user)
 
@@ -65,7 +65,7 @@ class ConfirmationView(RedirectView, SingleObjectMixin):
 
 class UserConfirmationView(ConfirmationView):
     model = UserConfirmationKey
-    url = 'account'
+    url = 'account:index'
 
 
 class ConfirmServerContactView(LoginRequiredMixin, ConfirmationView):
