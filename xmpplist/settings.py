@@ -19,6 +19,8 @@
 import os
 from datetime import timedelta
 
+from django.contrib.messages import constants as messages
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -177,6 +179,11 @@ GEOIP_CITY_V6_PATH = os.path.join(GEOIP_CONFIG_ROOT, 'GeoLiteCityv6.dat')
 CONFIRMATION_TIMEOUT = timedelta(hours=48)
 CERTIFICATES_PATH = 'static/certs'
 LOGOUT_REDIRECT_URL = 'home'  # only used when next queryparam is not set
+
+# Message tags updated to match bootstrap alert classes
+MESSAGE_TAGS = {
+    messages.ERROR: 'danger',
+}
 
 try:
     from .localsettings import *  # NOQA
