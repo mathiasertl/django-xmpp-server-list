@@ -26,6 +26,7 @@ from server.views import MyServerListView
 from server.views import ModerateView
 from server.views import ReportView
 from server.views import ServerCreateView
+from server.views import ServerDetailView
 from server.views import ServerUpdateView
 
 app_name = 'servers'
@@ -34,6 +35,7 @@ urlpatterns = [
     path('', MyServerListView.as_view(), name='list'),
     path('add/', ServerCreateView.as_view(), name='add'),
     path('edit/<int:pk>/', ServerUpdateView.as_view(), name='edit'),
+    path('<int:pk>/', ServerDetailView.as_view(), name='view'),
     path('moderate/', ModerateView.as_view(), name='moderate'),
 
     path('ajax/', AjaxServerCreateView.as_view(), name='create'),

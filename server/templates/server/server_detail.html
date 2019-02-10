@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load i18n bootstrap %}
+
+{% block login %}{% endblock %}
+{% block title %}{% blocktrans with domain=object.domain %}{{ domain }} - details{% endblocktrans %}{% endblock %}
+{% block pagetitle %}{% blocktrans with domain=object.domain %}Details for {{ domain }}{% endblocktrans %}{% endblock %}
+
+{% block content %}
+{{ object.domain }}
+{% endblock %}

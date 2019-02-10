@@ -59,10 +59,23 @@ class MyServerListView(MyServerMixin, ListView):
 class ServerCreateView(LoginRequiredMixin, CreateView):
     model = Server
     form_class = ServerForm
+    queryset = Server.objects.all()
+
+    def form_invalid(self, form):
+        print('invalid')
+        return super().form_invalid(form)
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 
 
 class ServerUpdateView(MyServerMixin, UpdateView):
     form_class = ServerForm
+
+
+class ServerDetailView(DetailView):
+    queryset = Server.objects.all()
 
 
 class ModerateView(PermissionRequiredMixin, ListView):

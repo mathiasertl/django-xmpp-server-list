@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load i18n bootstrap %}
+
+{% block login %}{% endblock %}
+{% block title %}{% trans "Add server" %}{% endblock %}
+{% block pagetitle %}{% trans "Add a new server" %}{% endblock %}
+
+{% block content %}
+<form method="post">{% csrf_token %}
+  {{ form|bootstrap }}
+  {% bootstrap_submit _("Create") %}
+</form>
+{% endblock %}

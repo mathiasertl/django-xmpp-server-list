@@ -23,7 +23,8 @@ from django.forms.widgets import DateInput
 from django.forms.widgets import Select
 from django.forms.widgets import TextInput
 
-from server.models import Server
+from .models import Server
+from .models import Features
 
 
 class ServerForm(ModelForm):
@@ -89,6 +90,7 @@ class ServerForm(ModelForm):
 
     def save(self, commit=True):
         server = super(ServerForm, self).save(commit=False)
+        server.features = Features.objects.create()
         if self.contact_changed():
             server.contact_verified = False
         if commit:

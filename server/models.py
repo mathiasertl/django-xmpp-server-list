@@ -29,6 +29,7 @@ from pyasn1_modules import rfc2459
 
 from django.conf import settings
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import ugettext as _
 
 from server.constants import C2S_STREAM_FEATURES
@@ -241,6 +242,9 @@ class Server(models.Model):
 
     def __unicode__(self):
         return self.domain
+
+    def get_absolute_url(self):
+        return reverse('servers:view', kwargs={'pk': self.pk})
 
     @property
     def verified(self):
