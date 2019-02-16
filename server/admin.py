@@ -16,10 +16,16 @@
 
 from django.contrib import admin
 
+from .models import Certificate
 from .models import CertificateAuthority
 from .models import Features
 from .models import Server
 from .models import ServerSoftware
+
+
+@admin.register(Certificate)
+class CertificateAdmin(admin.ModelAdmin):
+    list_display = ['serial', 'server', 'ca', 'valid', 'last_seen']
 
 
 class ServerAdmin(admin.ModelAdmin):

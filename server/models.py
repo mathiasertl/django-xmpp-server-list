@@ -23,15 +23,17 @@ from datetime import datetime
 from io import StringIO
 
 import pygeoip
-from pyasn1.codec.der import decoder
-from pyasn1_modules import pem
-from pyasn1_modules import rfc2459
+from cryptography import x509
+from cryptography.hazmat.backends import default_backend
 
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.translation import ugettext as _
 
+from core.models import BaseModel
+from core.utils import int_to_hex
 from server.constants import C2S_STREAM_FEATURES
 from server.constants import CONTACT_TYPE_CHOICES
 from server.constants import S2S_STREAM_FEATURES
@@ -82,6 +84,26 @@ class CertificateAuthority(models.Model):
 
     def __unicode__(self):
         return self.name
+
+
+class Certificate(BaseModel):
+    ca = models.ForeignKey(CertificateAuthority, on_delete=models.PROTECT, related_name='certificates')
+    server = models.ForeignKey('server.Server', on_delete=models.CASCADE, related_name='certificates')
+
+    # NOTE: Highly unlikely, it's possible for 2 certs to have the same serial (e.g. from different CAs)
+    serial = models.CharField(max_length=64, help_text=_('The serial of the certificate.'))
+    pem = models.TextField(unique=True, help_text=_('The full certificate as PEM.'))
+
+    valid_from = models.DateTimeField(help_text=_('When this certificate was issued.'))
+    valid_until = models.DateTimeField(help_text=_('When this certificate expires.'))
+
+    first_seen = models.DateTimeField(help_text=_('When we first saw this certificate'))
+    last_seen = models.DateTimeField(help_text=_('When we last saw this certificate'))
+
+    @property
+    def valid(self):
+        now = timezone.now()
+        return self.valid_from <= now and self.valid_until >= now
 
 
 class ServerSoftware(models.Model):
@@ -187,6 +209,11 @@ class Server(models.Model):
     registration_url = models.URLField(
         blank=True, verbose_name=_('Registration URL'),
         help_text=_('A URL where users can create an account on your server.')
+    )
+    cert = models.ForeignKey(
+        Certificate, on_delete=models.PROTECT, null=True, verbose_name=_('Current certificate'),
+        related_name='+',  # no backwards relation
+        help_text=_('The current certificate used by this server.')
     )
     ca = models.ForeignKey(
         CertificateAuthority, on_delete=models.PROTECT,
@@ -569,8 +596,29 @@ class Server(models.Model):
         else:
             log.info('... failed to verify %s', self.domain)
 
-    def handle_cert(self, pem_cert):
+    def handle_cert(self, pem):
         self.ca = CertificateAuthority.objects.get_or_create(name='foo')[0]
+
+        now = timezone.now()
+        x509_cert = x509.load_pem_x509_certificate(pem.encode('utf-8'), default_backend())
+        try:
+            cert, created = Certificate.objects.get_or_create(pem=pem, defaults={
+                'ca': self.ca,  # TODO
+                'first_seen': now,
+                'last_seen': now,
+                'serial': int_to_hex(x509_cert.serial_number),
+                'server': self,
+                'valid_from': x509_cert.not_valid_before,
+                'valid_until': x509_cert.not_valid_after,
+            })
+        except Exception as e:
+            log.exception(e)
+
+        if not created:  # update information
+            cert.last_seen = now
+            cert.save()
+
+
         return
         fileobj = StringIO()
         fileobj.write(pem_cert)
