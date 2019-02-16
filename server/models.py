@@ -20,7 +20,6 @@ import os
 import signal
 from contextlib import contextmanager
 from datetime import datetime
-from io import StringIO
 
 import pygeoip
 from cryptography import x509
@@ -82,7 +81,7 @@ class CertificateAuthority(models.Model):
     class Meta:
         verbose_name_plural = _('Certificate authorities')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -100,6 +99,9 @@ class Certificate(BaseModel):
     first_seen = models.DateTimeField(help_text=_('When we first saw this certificate'))
     last_seen = models.DateTimeField(help_text=_('When we last saw this certificate'))
 
+    def __str__(self):
+        return self.serial
+
     @property
     def valid(self):
         now = timezone.now()
@@ -114,7 +116,7 @@ class ServerSoftware(models.Model):
     class Meta:
         verbose_name_plural = _('Server software')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -130,7 +132,7 @@ class Features(models.Model):
     class Meta:
         verbose_name_plural = _('Features')
 
-    def __unicode__(self):
+    def __str__(self):
         try:
             domain = self.server.domain
         except Exception:
@@ -271,7 +273,7 @@ class Server(models.Model):
         "details, give it here.")
     contact_verified = models.BooleanField(default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.domain
 
     def get_absolute_url(self):
@@ -617,31 +619,6 @@ class Server(models.Model):
         if not created:  # update information
             cert.last_seen = now
             cert.save()
-
-
-        return
-        fileobj = StringIO()
-        fileobj.write(pem_cert)
-        fileobj.seek(0)
-
-        substrate = pem.readPemFromFile(fileobj)
-        cert = decoder.decode(substrate, asn1Spec=rfc2459.Certificate())[0]
-        try:
-            tbsCertificate = cert.getComponentByName('tbsCertificate')
-            issuer = tbsCertificate.getComponentByName('issuer')
-            rdns = issuer.getComponent()
-            for entry in rdns:
-                typ, value = entry[0]
-                name = str(decoder.decode(value)[0])
-                if str(typ) != '2.5.4.3':
-                    continue
-
-                self.ca = CertificateAuthority.objects.get_or_create(name=name)[0]
-                log.debug('Valid certificate signed by %s', self.ca.get_display_name())
-        except Exception as e:
-            print(e)
-            log.error('Could not parse CA: %s: %s', type(e).__name__, e)
-            self.ca = None
 
     def get_website(self):
         if self.website:
