@@ -14,14 +14,14 @@
 # You should have received a copy of the GNU General Public License
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls import url
+from django.urls import path
 
 from api.views import ApiView
 from api.views import HelpView
 
-# TODO: use path instead of url
-# TODO: remove prefix
+app_name = 'api'
+
 urlpatterns = [
-    url(r'^$', ApiView.as_view(), name='api'),
-    url(r'^help/$', HelpView.as_view(), name='api_help'),
+    path('', ApiView.as_view(), name='servers'),
+    path('help/', HelpView.as_view(), name='help'),
 ]
