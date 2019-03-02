@@ -10,38 +10,38 @@ moment, you only have to check if the homepage of the server and the given conta
 </p>
 
 <table class="table table-hover table-sm moderate-servers">
-    <thead>
+  <thead>
     <tr>
-        <th>Server</th>
-        <th>Contact</th>
-        <th>{% trans "Approve" %}</th>
-        <th>{% trans "Reject" %}</th>
-        <th>{% csrf_token %}</th>
+      <th>Server</th>
+      <th>Contact</th>
+      <th>{% trans "Approve" %}</th>
+      <th>{% trans "Reject" %}</th>
+      <th>{% csrf_token %}</th>
     </tr>
-    </thead>
-    <tbody>
-{% for server in object_list %}
+  </thead>
+  <tbody>
+  {% for server in object_list %}
     <tr id="server_{{server.id}}">
-        <td class="align-middle">{% include "server/includes/server_homepage.html" %}</td>
-        <td class="align-middle">
-            {% include "server/includes/server_contact.html" %}
-            {% if server.contact_verified %}(<i class="fas fa-check text-success mr-1"></i> verified){% endif %}
-        </td>
-        <td>
-          <button type="button" class="btn btn-success btn-sm">{% trans "Approve" %}</button>
-        </td>
-        <td>
-          <button type="button" class="btn btn-danger btn-sm">{% trans "Reject" %}</button>
-        </td>
-        {% comment %}
-        <td class="right" data-url="{% url "servers:approve" server.id %}">
-          {# TODO we need a modal here for rejecting a server send a message back to the user #}
-          {# <img class="button-notok" data-toggle="modal" data-target="#moderationModal" src="{{ STATIC_URL }}img/cancel.png" alt="NOT ok." title="NOT ok." /> #}
-        </td>
-        {% endcomment %}
+      <td class="align-middle">{% include "server/includes/server_homepage.html" %}</td>
+      <td class="align-middle">
+          {% include "server/includes/server_contact.html" %}
+          {% if server.contact_verified %}(<i class="fas fa-check text-success mr-1"></i> verified){% endif %}
+      </td>
+      <td>
+        <button type="button" class="btn btn-success btn-sm">{% trans "Approve" %}</button>
+      </td>
+      <td>
+        <button type="button" class="btn btn-danger btn-sm">{% trans "Reject" %}</button>
+      </td>
+      {% comment %}
+      <td class="right" data-url="{% url "servers:approve" server.id %}">
+        {# TODO we need a modal here for rejecting a server send a message back to the user #}
+        {# <img class="button-notok" data-toggle="modal" data-target="#moderationModal" src="{{ STATIC_URL }}img/cancel.png" alt="NOT ok." title="NOT ok." /> #}
+      </td>
+      {% endcomment %}
     </tr>
 {% endfor %}
-    </tbody>
+  </tbody>
 </table>
 
 <div class="modal" id="moderationModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
