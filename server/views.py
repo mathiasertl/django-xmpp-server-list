@@ -21,7 +21,6 @@ from django.views.generic.base import View
 from django.views.generic.detail import DetailView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import CreateView
-from django.views.generic.edit import DeleteView
 from django.views.generic.edit import UpdateView
 from django.views.generic.list import ListView
 
@@ -33,17 +32,11 @@ from server.models import Server
 class MyServerMixin(LoginRequiredMixin):
     """Makes sure that a ModelView is only called with servers the user owns."""
 
-    queryset = Server.objects.order_by('domain')
+    queryset = Server.objects.all()
 
     def get_queryset(self):
         qs = super().get_queryset()
         return qs.filter(user=self.request.user)
-
-
-class MyServerFormMixin(MyServerMixin):
-    """Set the form prefix to the servers id."""
-    def get_prefix(self):
-        return self.object.id
 
 
 class IndexView(ListView):
@@ -51,12 +44,13 @@ class IndexView(ListView):
 
 
 class MyServerListView(MyServerMixin, ListView):
+    queryset = Server.objects.order_by('domain')
     template_name_suffix = '_list_user'
 
 
 class ServerCreateView(LoginRequiredMixin, CreateView):
-    model = Server
     form_class = CreateServerForm
+    model = Server
     queryset = Server.objects.all()
     template_name_suffix = '_create'
 
@@ -76,39 +70,14 @@ class ServerDetailView(DetailView):
 
 class ModerateView(PermissionRequiredMixin, ListView):
     permission_required = 'server.moderate'
+    queryset = Server.objects.order_by('domain').for_moderation()
     template_name = 'server/server_list_moderate.html'
-    queryset = Server.objects.for_moderation()
-
-
-class ReportView(MyServerMixin, DetailView):
-    queryset = Server.objects.all()
-    template_name = 'server/ajax/report.html'
-
-
-class AjaxServerDeleteView(MyServerMixin, DeleteView):
-    model = Server
-    http_method_names = ('delete', )
-
-    def delete(self, request, *args, **kwargs):
-        """Omit success_url etc."""
-        self.get_object().delete()
-        return HttpResponse()
-
-
-class AjaxServerResendView(MyServerMixin, SingleObjectMixin, View):
-    queryset = Server.objects.filter(contact_verified=False)
-    http_method_names = ['post', ]
-
-    def post(self, request, *args, **kwargs):
-        server = self.get_object()
-        server.do_contact_verification(request)
-        return HttpResponse()
 
 
 class AjaxServerModerateView(PermissionRequiredMixin, SingleObjectMixin, View):
-    queryset = Server.objects.for_moderation()
-    permission_required = 'server.moderate'
     http_method_names = ('post', )
+    permission_required = 'server.moderate'
+    queryset = Server.objects.for_moderation()
 
     def post(self, request, *args, **kwargs):
         server = self.get_object()

@@ -7,30 +7,6 @@ div.row.content {
     padding-bottom: 10px;
 }
 
-ul.report {
-    list-style-type: none;
-    padding: 0px;
-    margin: 0px;
-    padding-bottom: 5px;
-    padding-left: 5px;
-}
-
-ul.report li {
-    background-repeat: no-repeat;
-    background-position: 0px 4px; 
-    padding-left: 20px; 
-}
-
-ul.report li.ok {
-    background-image: url(/static/img/save.png);
-}
-ul.report li.warn {
-    background-image: url(/static/img/alert.png);
-}
-ul.report li.fail {
-    background-image: url(/static/img/delete.png);
-}
-
 /**
  * Footer
  */
