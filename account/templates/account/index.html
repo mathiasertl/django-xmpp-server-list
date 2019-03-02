@@ -10,9 +10,11 @@
     <a href="{% url 'password_change' %}">set your password</a>.
 </p>
 <table id="profile-overview">
-  <tr><th>{% trans "Username:" %}</th><td>{{ user.username }}</td></tr>
   <tr>
-    <th>{% trans "Email address:" %}</th>
+    <th class="pr-4">{% trans "Username:" %}</th>
+    <td>{{ user.username }}</td></tr>
+  <tr>
+    <th class="pr-4">{% trans "Email address:" %}</th>
     <td>
       {% if user.email_confirmed %}<i class="fas fa-check text-success mr-1"></i>
       {% else %}<i class="fas fa-exclamation-circle text-warning mr1"></i>{% endif %}
@@ -20,7 +22,7 @@
     </td>
     </tr>
   <tr>
-    <th>{% trans "JID:" %}</th>
+    <th class="pr-4">{% trans "JID:" %}</th>
     <td>
       {% if user.jid_confirmed %}<i class="fas fa-check text-success mr-1"></i>
       {% else %}<i class="fas fa-exclamation-circle text-warning mr-1"></i>

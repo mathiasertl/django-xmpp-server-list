@@ -3,11 +3,6 @@ body {
     padding-top: 4rem;
 }
 
-/* profile view */
-#profile-overview th {
-    width: 10em;
-}
-
 div.row.content {
     padding-bottom: 10px;
 }
