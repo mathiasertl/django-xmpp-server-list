@@ -36,6 +36,7 @@
   <thead>
     <tr>
       <th>{% trans "domain" %}</th>
+      <th></th>
       <th>{% trans "verified" %}</th>
       <th>{% trans "moderated" %}</th>
     </tr>
@@ -46,6 +47,7 @@
       <a href="{{ server.get_absolute_url }}">{{ server.domain }}</a>
       (<a href="{% url 'server:edit' pk=server.pk %}">{% trans "edit" %}</a>)
     </td>
+    <td><a href="{% url 'server:status' pk=server.pk %}">{% trans "Status" %}</a></td>
     <td>{% if server.verified %}<i class="fas fa-check text-success mr-1"></i>
         {% else %}<i class="fas fa-times text-danger mr-1"></i>{% endif %}
     </td>

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block login %}{% endblock %}
+{% block title %}{% blocktrans with domain=object.domain %}{{ domain }} - status{% endblocktrans %}{% endblock %}
+{% block pagetitle %}{% blocktrans with domain=object.domain %}Status for {{ domain }}{% endblocktrans %}{% endblock %}
+
+{% block content %}
+<h3>{% trans "Contact information" %}</h3>
+<p>{% blocktrans %}
+We require that your users have a means of contacting you for support. To have your server displayed on the
+front page, both contact information for your account and for your server have to be verified.
+{% endblocktrans %}</p>
+
+<table class="table table-sm">
+  <tbody>
+    <tr{% if not request.user.email_confirmed %} class="table-danger"{% endif %}>
+      <th>{% trans "Account email" %}</th>
+      <td>{{ request.user.email }}</td>
+      <td>
+        {% if request.user.email_confirmed %}
+        <i class="fas fa-check text-success mr-1"></i> {% trans "Verified" %}
+        {% else %}
+        <i class="fas fa-times text-danger mr-1"></i> {% trans "Unverified" %}
+        {% endif %}
+      </td>
+      <td><a href="{% url 'account:edit' %}">{% trans "change" %}</a></td>
+    </tr>
+    <tr{% if not request.user.jid_confirmed %} class="table-danger"{% endif %}>
+      <th>{% trans "Account JID" %}</th>
+      <td>{{ request.user.jid  }}</td>
+      <td>
+        {% if request.user.jid_confirmed %}
+        <i class="fas fa-check text-success mr-1"></i> {% trans "Verified" %}
+        {% else %}
+        <i class="fas fa-times text-danger mr-1"></i> {% trans "Unverified" %}
+        {% endif %}
+      </td>
+      <td><a href="{% url 'account:edit' %}">{% trans "change" %}</a></td>
+    </tr>
+    <tr{% if not object.contact_verified %} class="table-danger"{% endif %}>
+      <th>{% trans "Server contact" %}</th>
+      <td>{{ object.contact }} ({{ object.get_contact_type_display }})</td>
+      <td>
+        {% if object.contact_verified %}
+        <i class="fas fa-check text-success mr-1"></i> {% trans "Verified" %}
+        {% else %}
+        <i class="fas fa-times text-danger mr-1"></i> {% trans "Unverified" %}
+        {% endif %}
+      </td>
+      <td><a href="{% url 'server:edit' pk=object.pk %}">{% trans "change" %}</a></td>
+    </tr>
+  </tbody>
+</table>
+{% endblock %}

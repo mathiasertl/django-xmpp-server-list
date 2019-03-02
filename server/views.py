@@ -68,6 +68,11 @@ class ServerDetailView(DetailView):
     queryset = Server.objects.all()
 
 
+class ServerStatusView(MyServerMixin, DetailView):
+    queryset = Server.objects.all()
+    template_name_suffix = '_status'
+
+
 class ModerateView(PermissionRequiredMixin, ListView):
     permission_required = 'server.moderate'
     queryset = Server.objects.order_by('domain').for_moderation()
