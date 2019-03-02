@@ -35,7 +35,8 @@ moment, you only have to check if the homepage of the server and the given conta
         <button type="button" class="btn btn-success btn-sm btn-approve">{% trans "Approve" %}</button>
       </td>
       <td>
-        <button type="button" class="btn btn-danger btn-sm btn-reject">{% trans "Reject" %}</button>
+        <button type="button" class="btn btn-danger btn-sm btn-reject" 
+                data-toggle="modal" data-target="#reject-modal">{% trans "Reject" %}</button>
       </td>
       {% comment %}
       <td class="right" data-url="{% url "servers:approve" server.id %}">
@@ -48,20 +49,24 @@ moment, you only have to check if the homepage of the server and the given conta
   </tbody>
 </table>
 
-<div class="modal" id="moderationModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+{# modal for denying moderation #}
+<div class="modal fade" id="reject-modal" tabindex="-1" role="dialog" aria-labelledby="reject-label"
+                                                                      aria-hidden="true">
+  <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        Moderate server
+        <h5 class="modal-title" id="reject-label">{% trans "Reject server" %}</h5>
       </div>
       <div class="modal-body">
-        <textarea id="denial-message"></textarea>
+        <p>{% trans "Any reason for rejecting this server:" %}</p>
+        <textarea id="reject-message" class="form-control" rows="3"></textarea>
       </div>
       <div class="modal-footer">
-        <button id="deny-moderation-chancel" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button id="deny-moderation" type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans "Cancel" %}</button>
+        <button type="button" class="btn btn-primary btn-reject-modal">{% trans "Reject" %}</button>
       </div>
     </div>
   </div>
 </div>
+
 {% endblock %}
