@@ -6,5 +6,7 @@
 {% block pagetitle %}{% blocktrans with domain=object.domain %}Details for {{ domain }}{% endblocktrans %}{% endblock %}
 
 {% block content %}
-{{ object.domain }}
+{% if object.user == request.user %}
+   Viewing own server
+{% endif %}
 {% endblock %}
