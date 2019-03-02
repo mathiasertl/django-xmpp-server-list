@@ -76,7 +76,7 @@ class ServerDetailView(DetailView):
 
 class ModerateView(PermissionRequiredMixin, ListView):
     permission_required = 'server.moderate'
-    template_name = 'server/moderate.html'
+    template_name = 'server/server_list_moderate.html'
     queryset = Server.objects.for_moderation()
 
 
