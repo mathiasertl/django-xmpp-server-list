@@ -3,116 +3,13 @@ body {
     padding-top: 4rem;
 }
 
-#your-servers {
-    font-size: smaller;
-}
-
-#your-servers input, #your-servers select {
-    font-size: smaller;
-    width: 10em;
-}
-
-select.contact_type {
-    width: 7em !important;
-}
-
-input.datepicker {
-    width: 7em !important;
-}
-select.ca {
-    width: 8em !important;
-}
-
-#profile-overview {
-    width: 60%;
-}
-
-#profile-overview tr:first-child td, #profile-overview tr:first-child th {
-    border-color: white;
-}
-
+/* profile view */
 #profile-overview th {
     width: 10em;
 }
 
 div.row.content {
     padding-bottom: 10px;
-}
-
-footer {
-    background-color: #f8f8f8;
-    padding-top: 10px;
-    padding-left: 10px;
-}
-
-footer .content {
-   background-repeat: no-repeat;
-   background-position: 0 0;
-   background-image: url('../img/logo.png');
-   min-height: 64px;
-   
-   color: #777;
-}
-
-.footer .content p {
-   margin-left: 56px;
-}
-
-.navbar {
-    margin-top: 8px;
-}
-
-h3 {
-    margin-top: 1em;
-}
-
-th.status, td.status {
-    text-align: center;
-}
-td.status {
-    cursor:pointer;
-}
-
-td img {
-    display: inline;
-    vertical-align: middle;
-}
-
-.right {
-    text-align: right;
-}
-
-.button-ok, .button-notok, .button-edit, .button-delete, .button-save, .button-cancel, .button-add, .button-resend, .button-resubmit {
-    margin: 0 2px;
-    cursor: pointer;
-}
-
-.button-edit, .button-delete {
-    display: inline;
-}
-
-.button-save, .button-cancel, .button-resubmit {
-    display: none;
-}
-
-.value-edit {
-    display: none;
-}
-
-.ui-widget {
-    font-size: smaller;
-}
-
-.errorlist {
-    font-size: small;
-    color: red;
-    padding-left: 20px;
-    margin-top: 5px;
-    margin-bottom: 0px;
-}
-
-.popover {
-    max-width: 500px;
 }
 
 ul.report {
@@ -139,6 +36,24 @@ ul.report li.fail {
     background-image: url(/static/img/delete.png);
 }
 
-#denial-message {
-    width: 100%;
+/**
+ * Footer
+ */
+footer {
+    background-color: #f8f8f8;
+    padding-top: 10px;
+    padding-left: 10px;
+}
+
+footer .content {
+   background-repeat: no-repeat;
+   background-position: 0 0;
+   background-image: url('../img/logo.png');
+   min-height: 64px;
+   
+   color: #777;
+}
+
+footer .content p {
+   margin-left: 56px;
 }
