@@ -147,12 +147,4 @@ $(document).ready(function() {
             register_popover();
         })
     });
-    
-    // datepicker:
-    $('tr[id^="server"]').each(function(index, row){
-        set_datepicker($(row));
-    });
-    $('#id_launched').datepicker({
-        dateFormat: "yy-mm-dd", maxDate: "+1D", showButtonPanel: true, changeYear: true
-    });
 });
