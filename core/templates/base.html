@@ -27,13 +27,13 @@
     <ul class="navbar-nav mr-auto">
       {% if user.is_authenticated %}
       <li class="nav-item">{# TODO: we do not detect where we are yet #}
-        <a class="nav-link" href="{% url "servers:list" %}">{% trans "My servers" %}</a>
+        <a class="nav-link" href="{% url "server:list" %}">{% trans "My servers" %}</a>
       </li>
       {% endif %}
 
       {% if perms.server.moderate %}
       <li class="nav-item">{# TODO: we do not detect where we are yet #}
-        <a class="nav-link" href="{% url "servers:moderate" %}">{% trans "Moderate" %}</a>
+        <a class="nav-link" href="{% url "server:moderate" %}">{% trans "Moderate" %}</a>
       </li>
       {% endif %}
     </ul>

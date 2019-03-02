@@ -277,7 +277,7 @@ class Server(models.Model):
         return self.domain
 
     def get_absolute_url(self):
-        return reverse('servers:view', kwargs={'pk': self.pk})
+        return reverse('server:view', kwargs={'pk': self.pk})
 
     @property
     def verified(self):

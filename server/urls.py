@@ -26,7 +26,7 @@ from server.views import ServerCreateView
 from server.views import ServerDetailView
 from server.views import ServerUpdateView
 
-app_name = 'servers'
+app_name = 'server'
 
 urlpatterns = [
     path('', MyServerListView.as_view(), name='list'),

@@ -44,7 +44,7 @@
   <tr>
     <td>
       <a href="{{ server.get_absolute_url }}">{{ server.domain }}</a>
-      (<a href="{% url 'servers:edit' pk=server.pk %}">{% trans "edit" %}</a>)
+      (<a href="{% url 'server:edit' pk=server.pk %}">{% trans "edit" %}</a>)
     </td>
     <td>{% if server.verified %}<i class="fas fa-check text-success mr-1"></i>
         {% else %}<i class="fas fa-times text-danger mr-1"></i>{% endif %}
@@ -63,7 +63,7 @@
   </div>
 {% endif %}
 <p>
-<a href="{% url 'servers:add' %}">{% trans "... add a new server" %}</a>
+<a href="{% url 'server:add' %}">{% trans "... add a new server" %}</a>
 </p>
 
 <h2>{% trans "Requirements for being listed" %}</h2>

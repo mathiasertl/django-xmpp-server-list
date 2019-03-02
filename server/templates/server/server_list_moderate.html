@@ -25,7 +25,7 @@ moment, you only have to check if the homepage of the server and the given conta
   </thead>
   <tbody>
   {% for server in object_list %}
-    <tr id="server_{{server.id}}" data-url="{% url "servers:approve" server.id %}">
+    <tr id="server_{{server.id}}" data-url="{% url "server:approve" server.id %}">
       <td class="align-middle">{% include "server/includes/server_homepage.html" %}</td>
       <td class="align-middle">
           {% include "server/includes/server_contact.html" %}
@@ -38,12 +38,6 @@ moment, you only have to check if the homepage of the server and the given conta
         <button type="button" class="btn btn-danger btn-sm btn-reject" 
                 data-toggle="modal" data-target="#reject-modal">{% trans "Reject" %}</button>
       </td>
-      {% comment %}
-      <td class="right" data-url="{% url "servers:approve" server.id %}">
-        {# TODO we need a modal here for rejecting a server send a message back to the user #}
-        {# <img class="button-notok" data-toggle="modal" data-target="#moderationModal" src="{{ STATIC_URL }}img/cancel.png" alt="NOT ok." title="NOT ok." /> #}
-      </td>
-      {% endcomment %}
     </tr>
 {% endfor %}
   </tbody>
