@@ -1,3 +1,5 @@
+/*
+ * Currently unused
 var register_popover = function() {
     $('.popover-field').popover({
         html: true,
@@ -28,11 +30,13 @@ var register_tooltips = function(){
         html: true,
     });
 }
+*/
 
 $(document).ready(function() {
-    register_tooltips();
-    register_popover();
+    //register_tooltips();
+    //register_popover();
 
+    /* Currently unused
     $(".button-ok").on("click", function() {
         url = $(this).parent().attr('data-url');
         row = $(this).parent().parent();
@@ -40,6 +44,7 @@ $(document).ready(function() {
             row.hide(500);
         });
     });
+    */
     $("#moderationModal").on("show.bs.modal", function(event) {
         var button = $(event.relatedTarget);
         url = button.parent().data('url');
