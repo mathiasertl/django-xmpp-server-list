@@ -15,6 +15,7 @@
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib import admin
+from django.utils.translation import ugettext_lazy as _
 
 from .models import Certificate
 from .models import CertificateAuthority
@@ -29,8 +30,21 @@ class CertificateAdmin(admin.ModelAdmin):
 
 
 class ServerAdmin(admin.ModelAdmin):
+    fieldsets = [
+        (None, {
+            'fields': ['domain', ('added', 'modified', ),
+                       ('last_checked', 'last_seen', )],
+        }),
+        (_('Homepage'), {
+            'fields': ['website', ('registration_url', 'policy_url', ), ],
+        }),
+        (_('Contact'), {
+            'fields': ['contact_type', ('contact', 'contact_name', ), 'contact_verified'],
+        }),
+    ]
     list_display = ('verified', 'moderated', 'domain', 'user', )
     list_display_links = ('domain', 'user', )
+    readonly_fields = ['added', 'modified', 'last_checked', 'last_seen', ]
     search_fields = ('domain', )
 
     class Media:
