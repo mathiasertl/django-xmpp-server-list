@@ -1,70 +1,68 @@
 {% extends "base.html" %}
-{% load staticfiles %}
+{% load i18n %}
 
-{% block title %}List of public XMPP servers{% endblock title %}
-{% block pagetitle %}Public XMPP servers{% endblock %}
+{% block title %}{% trans "XMPP servers" %}{% endblock title %}
+{% block pagetitle %}{% trans "Public XMPP servers" %}{% endblock %}
 
 {% block content %}
 
-<p>
-This is a list of public
-<a href="http://en.wikipedia.org/wiki/Extensible_Messaging_and_Presence_Protocol">XMPP</a> servers,
-free for everyone to use. XMPP is a open, free and decentralized instant messaging network.</p>
+<p>{% blocktrans %}This is a list of public
+<a href="http://en.wikipedia.org/wiki/Extensible_Messaging_and_Presence_Protocol">XMPP</a>
+servers, free for everyone to use. XMPP is a open, free and decentralized
+instant messaging network.{% endblocktrans %}</p>
 
-<p>Due to its decentralized nature, there are thousands of XMPP servers available, from which to
-choose from. You may choose any of the listed servers or a different server altogether, you can
-always communicate with users on other servers. This list is kindly brought to you by
+<p>{% blocktrans %}Due to its decentralized nature, there are thousands of XMPP servers available
+from which to choose from. You may choose any of the listed servers or a
+different server altogether, you can always communicate with users on other
+servers. This list is kindly brought to you by 
 <a href="https://jabber.at">jabber.at</a>, which is run by the
-<a href="https://fsinf.at">Fachschaft Informatik</a>.</p>
+<a href="https://fsinf.at">Fachschaft Informatik</a>.{% endblocktrans %}
+</p>
 
-<table class="table table-condensed">
-    <thead>
+<table class="table table-sm">
+  <thead>
     <tr>
-        <th>Server</th>
-        <th>Country</th>
-        <th>CA</th>
-        <th>Deployed</th>
-        <!--<th>Software</th>-->
-        <th>Contact</th>
+      <th>{% trans "Server" %}</th>
+      <th>{% trans "Country" %}</th>
+      <th>{% trans "CA" %}</th>
+      <th>{% trans "Deployed" %}</th>
+      <th>{% trans "Contact" %}</th>
     </tr>
-    </thead>
-    <tbody>
+  </thead>
+  <tbody>
 {% for server in object_list %}
-<tr id="server-{{server.id}}" class="server-row" data-content='bootstrap-{{server.id}}'>
-    <td>{% include "server/includes/server_homepage.html" %}</td>
-    <td>{{ server.location }}</td>
-    <td>
+<tr id="server-{{server.id}}">
+  <td>{% include "server/includes/server_homepage.html" %}</td>
+  <td>{{ server.location }}</td>
+  <td>
     {% if server.ca %}
-        {% if server.ca.website %}
-            <a href="{{ server.ca.website }}">{{ server.ca.get_display_name }}</a>
-        {% else %}
-            {{ server.ca.get_display_name }}
-        {% endif %}
+      {% if server.ca.website %}
+        <a href="{{ server.ca.website }}">{{ server.ca.get_display_name }}</a>
+      {% else %}
+        {{ server.ca.get_display_name }}
+      {% endif %}
     {% else %}
-        Unknown
+      {% trans "Unknown" %}
     {% endif %}
-    </td>
-    <td>{{ server.launched.year }}</td>
-    <!--<td><a href="{{ server.software.website }}">{{ server.software.name }} {{ server.software_version }}</a></td>-->
-    <td>{% include "server/includes/server_contact.html" %}
-    </td>
+  </td>
+  <td>{{ server.launched.year }}</td>
+  <td>{% include "server/includes/server_contact.html" %}</td>
 </tr>
 {% endfor %}
     </tbody>
 </table>
 
 {% if not user.is_authenticated %}
-<p>
-    You can simply <a href="{% url "account:create" %}">create an account</a> and
-    <a href="{% url "account:login" %}?next={{ request.path }}">login</a> to add
-    your own servers to this list.
-</p>
-
+{% url 'account:create' as create_url %}
+{% url 'account:login' as login_url %}
+<p>{% blocktrans with path=request.path%}
+To add your own server to the list, simply <a href="{{ create_url }}">create an account</a>
+or <a href="{{ login_url }}?next={{ path }}">login</a>.{% endblocktrans %}</p>
 {% endif %}
 
-<p>
-    There also is an <a href="{% url "api" %}">API</a> for reading servers from this list.
-    <a href="{% url "api_help" %}">Some documentation</a> is available for it.
-</p>
-
+{% url 'api' as api_url %}
+{% url 'api_help' as api_help_url %}
+<p>{% blocktrans %}There also is an <a href="{{ api_url }}">API</a> for reading servers froma
+this list.  <a href="{{ api_help_url }}">Some documentation</a> is available
+for it.{% endblocktrans %}</p>
 {% endblock content %}
