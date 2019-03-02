@@ -13,6 +13,7 @@ $(document).ready(function() {
         });
     });
 
+    /* Set server_moderate_row when modal is shown so we can access it later */
     $('#reject-modal').on('show.bs.modal', function(e) {
         var button = $(e.relatedTarget);
         server_moderate_row = button.parents('tr');
