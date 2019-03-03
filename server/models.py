@@ -187,35 +187,14 @@ class LogEntry(models.Model):
 
 
 class Server(models.Model):
-    class Meta:
-        permissions = (
-            ('moderate', 'can moderate servers'),
-        )
-    objects = ServerQuerySet.as_manager()
-
-    # basic information:
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='servers')
-    added = models.DateField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
+    #####################
+    # Basic information #
+    #####################
+    domain = models.CharField(unique=True, max_length=60,
+                              help_text="The primary domain of your server.")
     launched = models.PositiveSmallIntegerField(
         validators=[launch_year_validator], default=launch_year_default,
         help_text='Year this server was launched.')
-
-    # When the server was last seen online:
-    last_seen = models.DateTimeField(null=True, blank=True)
-
-    # When the server was last successfully checked:
-    last_checked = models.DateTimeField(null=True, blank=True)
-
-    # geolocation:
-    city = models.CharField(default='', null=True, blank=True, max_length=100,
-                            help_text="City the server is located in.")
-    country = models.CharField(default='', null=True, blank=True, max_length=100,
-                               help_text="Country the server is located in.")
-
-    # information about the service:
-    domain = models.CharField(unique=True, max_length=60,
-                              help_text="The primary domain of your server.")
     website = models.URLField(blank=True, help_text=_(
         "Homepage with information about your server. If left empty, the default is https://<domain>."))
     policy_url = models.URLField(
@@ -226,6 +205,38 @@ class Server(models.Model):
         blank=True, verbose_name=_('Registration URL'),
         help_text=_('A URL where users can create an account on your server.')
     )
+
+    ###########
+    # Contact #
+    ###########
+    contact = models.CharField(
+        max_length=60, help_text="The address where the server-admins can be reached.")
+    contact_type = models.CharField(
+        max_length=1, choices=CONTACT_TYPE_CHOICES, default='J',
+        help_text="What type your contact details are. This setting will affect how the contact details are "
+        "rendered on the front page. If you choose a JID or an e-mail address, you will receive an "
+        "automated confirmation message.")
+    contact_name = models.CharField(
+        max_length=60, blank=True,
+        help_text="If you want to display a custom link-text for your contact details, give it here.")
+    contact_verified = models.BooleanField(default=False, help_text=_('If contact information is verified.'))
+
+    ###############
+    # Maintenance #
+    ###############
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='servers')
+    added = models.DateField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    last_seen = models.DateTimeField(null=True, blank=True)  # last seen online
+    last_checked = models.DateTimeField(null=True, blank=True)  # last check completed (None == never checked)
+
+    # geolocation:
+    city = models.CharField(default='', null=True, blank=True, max_length=100,
+                            help_text="City the server is located in.")
+    country = models.CharField(default='', null=True, blank=True, max_length=100,
+                               help_text="Country the server is located in.")
+
+    # information about the service:
     cert = models.ForeignKey(
         Certificate, on_delete=models.PROTECT, null=True, verbose_name=_('Current certificate'),
         related_name='+',  # no backwards relation
@@ -272,20 +283,12 @@ class Server(models.Model):
     s2s_caps = models.BooleanField(default=False)
     s2s_dialback = models.BooleanField(default=False)
 
-    contact = models.CharField(
-        max_length=60,
-        help_text="The address where the server-admins can be reached.")
-    contact_type = models.CharField(
-        max_length=1, choices=CONTACT_TYPE_CHOICES, default='J',
-        help_text="What type your contact details are. This setting will "
-        "affect how the contact details are rendered on the front page. If "
-        "you choose a JID or an e-mail address, you will receive an automated "
-        "confirmation message.")
-    contact_name = models.CharField(
-        max_length=60, blank=True,
-        help_text="If you want to display a custom link-text for your contact "
-        "details, give it here.")
-    contact_verified = models.BooleanField(default=False)
+    objects = ServerQuerySet.as_manager()
+
+    class Meta:
+        permissions = (
+            ('moderate', 'can moderate servers'),
+        )
 
     def __str__(self):
         return self.domain
@@ -293,98 +296,30 @@ class Server(models.Model):
     def get_absolute_url(self):
         return reverse('server:view', kwargs={'pk': self.pk})
 
-    @property
-    def verified(self):
-        if self.last_seen is None:
-            return None
-        return self.c2s_srv_records and self.s2s_srv_records and self.c2s_tls_verified \
-            and self.s2s_tls_verified and self.c2s_starttls
+    def _c2s_stream_feature_cb(self, host, port, features, ssl, tls):
+        self.info("Verified connectivity for %s" % (self.pprint_host(host, port)))
 
-    @verified.setter
-    def verified(self, value):
-        if not value:
-            self.c2s_srv_records = False
-            self.s2s_srv_records = False
-            self.c2s_tls_verified = False
-            self.s2s_tls_verified = False
-            self.c2s_starttls = False
+        log.debug('Stream Features: %s:%s: %s', host, port, sorted(features.keys()))
+        self._c2s_online.add((host, port))
+        self.last_seen = datetime.now()  # we saw an online host
 
-    def verify_srv_client(self):
-        """
-        Verify xmpp-client SRV records.
+        features = self._merge_features(features, 'c2s', ssl)
 
-        This test succeeds if the 'xmpp-client' SRV record has one or more
-        entries.
-        """
-        hosts = srv_lookup(self.domain, 'xmpp-client')
-        if hosts:
-            self.c2s_srv_records = True
+        self.c2s_starttls_required = features.get('starttls', {}).get('required', False)
+        for key in C2S_STREAM_FEATURES:
+            setattr(self, 'c2s_%s' % key, key in features)
+            features.pop(key, None)
+
+        if features:
+            log.debug('%s: Unhandled features: %s', self.domain, features)
+
+    def _invalid_tls(self, host, port, ns):
+        if ns == 'jabber:client':  # c2s connection
+            self._c2s_tls_verified = False
+        elif ns == 'jabber:server':  # s2s connection
+            self._s2s_tls_verified = False
         else:
-            log.info('Server has no c2s SRV records.')
-            self.c2s_srv_records = False
-
-        return hosts
-
-    def verify_srv_server(self):
-        """
-        Verify xmpp-server SRV records.
-
-        This test succeeds if the 'xmpp-server' SRV record has one or more
-        entries.
-        """
-        hosts = srv_lookup(self.domain, 'xmpp-server')
-        if hosts:
-            self.s2s_srv_records = True
-        else:
-            self.s2s_srv_records = False
-            log.info('Server has no s2s SRV records.')
-
-        return hosts
-
-    @property
-    def location(self):
-        if not self.city and not self.country:
-            return 'Unknown'
-        elif self.country:
-            return self.country
-        else:
-            return '%s/%s' % (self.city, self.country)
-
-    def set_location(self, hostname):
-        ip = hostname[0]
-        is_ipv6 = ':' in ip
-
-        if geoip is None and not is_ipv6:
-            log.error("GeoIPv4 database not found, run 'python manage.py geoip'")
-            return
-        elif geoip6 is None and is_ipv6:
-            log.error("GeoIPv6 database not found, run 'python manage.py geoip'")
-            return
-
-        try:
-            if is_ipv6:
-                data = geoip6.record_by_name(ip)
-            else:
-                data = geoip.record_by_name(ip)
-
-            if data is None:  # data is None in some obscure cases.
-                self.city = ''
-                self.country = ''
-                return
-
-            self.country = data['country_name']
-
-            # at least cities are latin1 encoded (e.g. inbox.im, located in Montréal)
-            if data.get('city'):
-                self.city = data['city'].decode('latin1')
-                log.debug("%s: Set location to %s/%s", self.domain, self.city, self.country)
-            else:
-                self.city = ''
-                log.debug("%s: Set location to %s", self.domain, self.country)
-        except Exception as e:
-            log.error("%s: %s: %s", self.domain, type(e).__name__, e)
-            self.city = ''
-            self.country = ''
+            log.error('Unknown namespace: %s', ns)
 
     def _merge_features(self, new, kind, ssl=False):
         attr = '_%s_stream_features' % kind
@@ -446,82 +381,141 @@ class Server(models.Model):
         setattr(self, attr, copy.deepcopy(new))
         return new
 
-    def _c2s_stream_feature_cb(self, host, port, features, ssl, tls):
-        self.info("Verified connectivity for %s" % (self.pprint_host(host, port)))
+    def autoconfirmed(self, typ, address):
+        if typ == 'E' and self.user.email == address and self.user.email_confirmed:
+            return True
+        elif typ == 'J' and self.user.jid == address and self.user.jid_confirmed:
+            return True
 
-        log.debug('Stream Features: %s:%s: %s', host, port, sorted(features.keys()))
-        self._c2s_online.add((host, port))
-        self.last_seen = datetime.now()  # we saw an online host
+    def automatic_verification(self):
+        if self.contact_type in ['J', 'E'] and not self.contact_verified:
+            return True
+        return False
 
-        features = self._merge_features(features, 'c2s', ssl)
+    @property
+    def contact_ok(self):
+        """True if the contact information for this server is ok
 
-        self.c2s_starttls_required = features.get('starttls', {}).get('required', False)
-        for key in C2S_STREAM_FEATURES:
-            setattr(self, 'c2s_%s' % key, key in features)
-            features.pop(key, None)
+        This is true if the servers contact is verified *and* the user has verified contact information.
+        """
+        return self.contact_verified and self.user.email_confirmed and self.user.jid_confirmed
 
-        if features:
-            log.debug('%s: Unhandled features: %s', self.domain, features)
+    def do_contact_verification(self, request):
+        typ = self.contact_type
 
-    def _invalid_tls(self, host, port, ns):
-        if ns == 'jabber:client':  # c2s connection
-            self._c2s_tls_verified = False
-        elif ns == 'jabber:server':  # s2s connection
-            self._s2s_tls_verified = False
+        # Set contact_verified if it sthe same as your email or JID:
+        if self.autoconfirmed(typ, self.contact):
+            self.contact_verified = True
+        elif typ in ['J', 'E']:
+            key = self.confirmations.create(subject=self, type=self.contact_type)
+            protocol, domain = get_siteinfo(request)
+            key.send(protocol, domain)
+
+    def get_contact_text(self):
+        if self.contact_name:
+            return self.contact_name
+        return self.contact
+
+    def get_website(self):
+        if self.website:
+            return self.website
         else:
-            log.error('Unknown namespace: %s', ns)
+            return 'https://%s' % self.domain
 
-    def pprint_host(self, host, port):
-        host = '[%s]' % host if ':' in host else host
-        return '%s:%s' % (host, port)
+    def handle_cert(self, pem):
+        self.ca = CertificateAuthority.objects.get_or_create(name='foo')[0]
 
-    def invalid_chain(self, host, port, ns):
-        self.error('Invalid certificate chain at %s', self.pprint_host(host, port))
-        self._invalid_tls(host, port, ns)
+        now = timezone.now()
+        x509_cert = x509.load_pem_x509_certificate(pem.encode('utf-8'), default_backend())
+        try:
+            cert, created = Certificate.objects.get_or_create(pem=pem, defaults={
+                'ca': self.ca,  # TODO
+                'first_seen': now,
+                'last_seen': now,
+                'serial': int_to_hex(x509_cert.serial_number),
+                'server': self,
+                'valid_from': x509_cert.not_valid_before,
+                'valid_until': x509_cert.not_valid_after,
+            })
+        except Exception as e:
+            log.exception(e)
+
+        if not created:  # update information
+            cert.last_seen = now
+            cert.save()
 
     def invalid_cert(self, host, port, ssl, tls, ns):
         self.error('Invalid certificate at %s', self.pprint_host(host, port))
         self._invalid_tls(host, port, ns)
 
-    def _s2s_stream_feature_cb(self, host, port, features, ssl, tls):
-        log.debug('Stream Features: %s: %s', self.pprint_host(host, port), sorted(features.keys()))
-        self._s2s_online.add((host, port))
+    def invalid_chain(self, host, port, ns):
+        self.error('Invalid certificate chain at %s', self.pprint_host(host, port))
+        self._invalid_tls(host, port, ns)
 
-        features = self._merge_features(features, 's2s')
+    @property
+    def location(self):
+        if not self.city and not self.country:
+            return 'Unknown'
+        elif self.country:
+            return self.country
+        else:
+            return '%s/%s' % (self.city, self.country)
 
-        self.s2s_starttls_required = features.get('starttls', {}).get('required', False)
-        for key in S2S_STREAM_FEATURES:
-            setattr(self, 's2s_%s' % key, key in features)
-            features.pop(key, None)
+    def pprint_host(self, host, port):
+        host = '[%s]' % host if ':' in host else host
+        return '%s:%s' % (host, port)
 
-        if features:
-            log.debug('%s: Unhandled features: %s', self.domain, features)
+    def set_location(self, hostname):
+        ip = hostname[0]
+        is_ipv6 = ':' in ip
 
-    def _log(self, message, level, *args):
+        if geoip is None and not is_ipv6:
+            log.error("GeoIPv4 database not found, run 'python manage.py geoip'")
+            return
+        elif geoip6 is None and is_ipv6:
+            log.error("GeoIPv6 database not found, run 'python manage.py geoip'")
+            return
+
         try:
-            self.logs.create(message=message % args, level=level)
+            if is_ipv6:
+                data = geoip6.record_by_name(ip)
+            else:
+                data = geoip.record_by_name(ip)
+
+            if data is None:  # data is None in some obscure cases.
+                self.city = ''
+                self.country = ''
+                return
+
+            self.country = data['country_name']
+
+            # at least cities are latin1 encoded (e.g. inbox.im, located in Montréal)
+            if data.get('city'):
+                self.city = data['city'].decode('latin1')
+                log.debug("%s: Set location to %s/%s", self.domain, self.city, self.country)
+            else:
+                self.city = ''
+                log.debug("%s: Set location to %s", self.domain, self.country)
         except Exception as e:
-            log.error("Could not format message %s: %s", message, e)
+            log.error("%s: %s: %s", self.domain, type(e).__name__, e)
+            self.city = ''
+            self.country = ''
 
-    def info(self, message, *args):
-        self._log(message, logging.INFO, *args)
+    @property
+    def verified(self):
+        if self.last_seen is None:
+            return None
+        return self.c2s_srv_records and self.s2s_srv_records and self.c2s_tls_verified \
+            and self.s2s_tls_verified and self.c2s_starttls
 
-    def warn(self, message, *args):
-        self._log(message, logging.WARNING, *args)
-
-    def error(self, message, *args):
-        self._log(message, logging.ERROR, *args)
-
-    def verify_ipv6(self, hosts):
-        self.ipv6 = True
-        try:
-            for host in set(hosts):
-                if not lookup(host, ipv4=False):
-                    self.ipv6 = False
-                    if settings.USE_IP6:
-                        self.warn('%s has no IPv6 record.', host)
-        except Exception:
-            self.ipv6 = False
+    @verified.setter
+    def verified(self, value):
+        if not value:
+            self.c2s_srv_records = False
+            self.s2s_srv_records = False
+            self.c2s_tls_verified = False
+            self.s2s_tls_verified = False
+            self.c2s_starttls = False
 
     def verify(self):
         log.debug('Verify %s', self.domain)
@@ -612,65 +606,77 @@ class Server(models.Model):
         else:
             log.info('... failed to verify %s', self.domain)
 
-    def handle_cert(self, pem):
-        self.ca = CertificateAuthority.objects.get_or_create(name='foo')[0]
-
-        now = timezone.now()
-        x509_cert = x509.load_pem_x509_certificate(pem.encode('utf-8'), default_backend())
+    def verify_ipv6(self, hosts):
+        self.ipv6 = True
         try:
-            cert, created = Certificate.objects.get_or_create(pem=pem, defaults={
-                'ca': self.ca,  # TODO
-                'first_seen': now,
-                'last_seen': now,
-                'serial': int_to_hex(x509_cert.serial_number),
-                'server': self,
-                'valid_from': x509_cert.not_valid_before,
-                'valid_until': x509_cert.not_valid_after,
-            })
-        except Exception as e:
-            log.exception(e)
+            for host in set(hosts):
+                if not lookup(host, ipv4=False):
+                    self.ipv6 = False
+                    if settings.USE_IP6:
+                        self.warn('%s has no IPv6 record.', host)
+        except Exception:
+            self.ipv6 = False
 
-        if not created:  # update information
-            cert.last_seen = now
-            cert.save()
-
-    def get_website(self):
-        if self.website:
-            return self.website
-        else:
-            return 'https://%s' % self.domain
-
-    def get_contact_text(self):
-        if self.contact_name:
-            return self.contact_name
-        return self.contact
-
-    def automatic_verification(self):
-        if self.contact_type in ['J', 'E'] and not self.contact_verified:
-            return True
-        return False
-
-    def autoconfirmed(self, typ, address):
-        if typ == 'E' and self.user.email == address and self.user.email_confirmed:
-            return True
-        elif typ == 'J' and self.user.jid == address and self.user.jid_confirmed:
-            return True
-
-    def do_contact_verification(self, request):
-        typ = self.contact_type
-
-        # Set contact_verified if it sthe same as your email or JID:
-        if self.autoconfirmed(typ, self.contact):
-            self.contact_verified = True
-        elif typ in ['J', 'E']:
-            key = self.confirmations.create(subject=self, type=self.contact_type)
-            protocol, domain = get_siteinfo(request)
-            key.send(protocol, domain)
-
-    @property
-    def contact_ok(self):
-        """True if the contact information for this server is ok
-
-        This is true if the servers contact is verified *and* the user has verified contact information.
+    def verify_srv_client(self):
         """
-        return self.contact_verified and self.user.email_confirmed and self.user.jid_confirmed
+        Verify xmpp-client SRV records.
+
+        This test succeeds if the 'xmpp-client' SRV record has one or more
+        entries.
+        """
+        hosts = srv_lookup(self.domain, 'xmpp-client')
+        if hosts:
+            self.c2s_srv_records = True
+        else:
+            log.info('Server has no c2s SRV records.')
+            self.c2s_srv_records = False
+
+        return hosts
+
+    def verify_srv_server(self):
+        """
+        Verify xmpp-server SRV records.
+
+        This test succeeds if the 'xmpp-server' SRV record has one or more
+        entries.
+        """
+        hosts = srv_lookup(self.domain, 'xmpp-server')
+        if hosts:
+            self.s2s_srv_records = True
+        else:
+            self.s2s_srv_records = False
+            log.info('Server has no s2s SRV records.')
+
+        return hosts
+
+    def _s2s_stream_feature_cb(self, host, port, features, ssl, tls):
+        log.debug('Stream Features: %s: %s', self.pprint_host(host, port), sorted(features.keys()))
+        self._s2s_online.add((host, port))
+
+        features = self._merge_features(features, 's2s')
+
+        self.s2s_starttls_required = features.get('starttls', {}).get('required', False)
+        for key in S2S_STREAM_FEATURES:
+            setattr(self, 's2s_%s' % key, key in features)
+            features.pop(key, None)
+
+        if features:
+            log.debug('%s: Unhandled features: %s', self.domain, features)
+
+    ###########
+    # Logging #
+    ###########
+    def _log(self, message, level, *args):
+        try:
+            self.logs.create(message=message % args, level=level)
+        except Exception as e:
+            log.error("Could not format message %s: %s", message, e)
+
+    def error(self, message, *args):
+        self._log(message, logging.ERROR, *args)
+
+    def info(self, message, *args):
+        self._log(message, logging.INFO, *args)
+
+    def warn(self, message, *args):
+        self._log(message, logging.WARNING, *args)
