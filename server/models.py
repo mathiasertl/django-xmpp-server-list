@@ -653,6 +653,10 @@ class Server(models.Model):
             protocol, domain = get_siteinfo(request)
             key.send(protocol, domain)
 
-    def save(self, *args, **kwargs):
-        #TODO: We should somehow decide what 'verified' means.
-        return super(Server, self).save(*args, **kwargs)
+    @property
+    def contact_ok(self):
+        """True if the contact information for this server is ok
+
+        This is true if the servers contact is verified *and* the user has verified contact information.
+        """
+        return self.contact_verified and self.user.email_confirmed and self.user.jid_confirmed
