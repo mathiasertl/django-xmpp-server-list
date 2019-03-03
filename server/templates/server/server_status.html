@@ -6,6 +6,63 @@
 {% block pagetitle %}{% blocktrans with domain=object.domain %}Status for {{ domain }}{% endblocktrans %}{% endblock %}
 
 {% block content %}
+<h3>{% trans "Technical aspects" %}</h3>
+<p>{% blocktrans %}
+We test some technical aspects of your server to make sure that users have
+good experience when using your server.
+</p>{% endblocktrans %}
+{% if not object.last_checked %}
+<div class="alert alert-info" role="alert">
+  <h5>{% trans "Technical aspects are not yet verified" %}</h5>
+  {% trans "Verifying your server is automatic, but takes a little time. Please be patient." %}
+</div>
+{% else %}
+<table class="table table-sm">
+  <tbody>
+    <tr{% if object.c2s_srv_records %} class="table-tanger"{% endif %}>
+      <td>{% trans "c2s SRV records" %}</td>
+      <td>
+        {% if object.c2s_srv_records %}
+        <i class="fas fa-check text-success mr-1"></i> {% trans "Verified" %}
+        {% else %}
+        <i class="fas fa-times text-danger mr-1"></i> {% trans "Unverified" %}
+        {% endif %}
+      </td>
+    </tr>
+    <tr{% if object.s2s_srv_records %} class="table-tanger"{% endif %}>
+      <td>{% trans "s2s SRV records" %}</td>
+      <td>
+        {% if object.c2s_srv_records %}
+        <i class="fas fa-check text-success mr-1"></i> {% trans "Verified" %}
+        {% else %}
+        <i class="fas fa-times text-danger mr-1"></i> {% trans "Unverified" %}
+        {% endif %}
+      </td>
+    </tr>
+    <tr{% if object.c2s_tls_verified %} class="table-tanger"{% endif %}>
+      <td>{% trans "c2s TLS connection" %}</td>
+      <td>
+        {% if object.c2s_srv_records %}
+        <i class="fas fa-check text-success mr-1"></i> {% trans "Verified" %}
+        {% else %}
+        <i class="fas fa-times text-danger mr-1"></i> {% trans "Unverified" %}
+        {% endif %}
+      </td>
+    </tr>
+    <tr{% if object.s2s_tls_records %} class="table-tanger"{% endif %}>
+      <td>{% trans "s2s TLS connection" %}</td>
+      <td>
+        {% if object.c2s_srv_records %}
+        <i class="fas fa-check text-success mr-1"></i> {% trans "Verified" %}
+        {% else %}
+        <i class="fas fa-times text-danger mr-1"></i> {% trans "Unverified" %}
+        {% endif %}
+      </td>
+    </tr>
+  </tbody>
+</table>
+{% endif %}
+
 <h3>{% trans "Contact information" %}</h3>
 <p>{% blocktrans %}
 We require that your users have a means of contacting you for support. To have your server displayed on the

@@ -20,8 +20,7 @@
   {% for server in object_list %}
   <tr>
     <td>
-      <a href="{{ server.get_absolute_url }}">{{ server.domain }}</a>
-      (<a href="{% url 'server:edit' pk=server.pk %}">{% trans "edit" %}</a>)
+      <a href="{% url 'server:edit' pk=server.pk %}">{{ server.domain }}</a>
     </td>
     <td><a href="{% url 'server:status' pk=server.pk %}">{% trans "Status" %}</a></td>
     <td>{% if server.verified %}<i class="fas fa-check text-success mr-1"></i> {% trans "verified" %}
