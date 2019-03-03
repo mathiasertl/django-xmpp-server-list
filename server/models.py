@@ -26,6 +26,7 @@ from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -55,6 +56,17 @@ else:
 
 class TimeoutException(Exception):
     pass
+
+
+def launch_year_validator(value):
+    if value < 2001:
+        raise ValidationError(_('Launch year may not be prior to 2001.'))
+    if value > timezone.now().year:
+        raise ValidationError(_('Launch year may not be in the future.'))
+
+
+def launch_year_default():
+    return timezone.now().year
 
 
 @contextmanager
@@ -185,7 +197,9 @@ class Server(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='servers')
     added = models.DateField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
-    launched = models.DateField(help_text="When the server was launched.")
+    launched = models.PositiveSmallIntegerField(
+        validators=[launch_year_validator], default=launch_year_default,
+        help_text='Year this server was launched.')
 
     # When the server was last seen online:
     last_seen = models.DateTimeField(null=True, blank=True)

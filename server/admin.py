@@ -32,7 +32,7 @@ class CertificateAdmin(admin.ModelAdmin):
 class ServerAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {
-            'fields': ['domain', ('added', 'modified', ),
+            'fields': [('domain', 'launched'), ('added', 'modified', ),
                        ('last_checked', 'last_seen', )],
         }),
         (_('Homepage'), {

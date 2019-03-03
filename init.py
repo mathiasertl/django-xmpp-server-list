@@ -66,7 +66,7 @@ jabberd2 = ServerSoftware.objects.create(name='jabberd2', website='http://codex.
                                          newest_version='2.2.14')
 
 # common objects:
-today = datetime.date.today()
+today = datetime.date.today().year
 
 Server.objects.create(user=u, ca=startssl, software=ejabberd,
     launched=today,
