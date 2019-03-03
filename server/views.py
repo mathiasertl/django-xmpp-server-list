@@ -64,10 +64,6 @@ class ServerUpdateView(MyServerMixin, UpdateView):
     template_name_suffix = '_update'
 
 
-class ServerDetailView(DetailView):
-    queryset = Server.objects.all()
-
-
 class ServerStatusView(MyServerMixin, DetailView):
     queryset = Server.objects.all()
     template_name_suffix = '_status'
