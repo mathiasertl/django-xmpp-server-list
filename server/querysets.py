@@ -14,8 +14,11 @@
 # You should have received a copy of the GNU General Public License
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
+from datetime import timedelta
+
 from django.db.models import Q
 from django.db.models.query import QuerySet
+from django.utils import timezone
 
 from server.constants import CONTACT_TYPE_EMAIL
 from server.constants import CONTACT_TYPE_JID
@@ -66,3 +69,7 @@ class ServerQuerySet(QuerySet):
 
     def email(self, email):
         return self.filter(contact_type=CONTACT_TYPE_EMAIL, contact=email)
+
+    def dead(self):
+        since = timezone.now() - timedelta(days=14)
+        return self.filter(last_seen__lt=since)
