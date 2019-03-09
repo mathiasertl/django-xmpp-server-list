@@ -87,14 +87,14 @@ class CertificateAuthority(models.Model):
     display_name = models.CharField(max_length=30, null=True, blank=True)
     website = models.URLField(null=True, blank=True)
 
-    def get_display_name(self):
-        return self.display_name or self.name
-
     class Meta:
         verbose_name_plural = _('Certificate authorities')
 
     def __str__(self):
         return self.name
+
+    def get_display_name(self):
+        return self.display_name or self.name
 
 
 class Certificate(BaseModel):
