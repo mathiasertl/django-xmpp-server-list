@@ -35,7 +35,10 @@ from django.utils.translation import ugettext as _
 from core.models import BaseModel
 from core.utils import int_to_hex
 from server.constants import C2S_STREAM_FEATURES
-from server.constants import CONTACT_TYPE_CHOICES
+from server.constants import CONTACT_TYPE_EMAIL
+from server.constants import CONTACT_TYPE_JID
+from server.constants import CONTACT_TYPE_MUC
+from server.constants import CONTACT_TYPE_WEBSITE
 from server.constants import S2S_STREAM_FEATURES
 from server.dns import lookup
 from server.dns import srv_lookup
@@ -187,6 +190,16 @@ class LogEntry(models.Model):
 
 
 class Server(models.Model):
+    CONTACT_TYPE_EMAIL = CONTACT_TYPE_EMAIL
+    CONTACT_TYPE_JID = CONTACT_TYPE_JID
+    CONTACT_TYPE_MUC = CONTACT_TYPE_MUC
+    CONTACT_TYPE_WEBSITE = CONTACT_TYPE_WEBSITE
+    CONTACT_TYPE_CHOICES = (
+        (CONTACT_TYPE_MUC, 'MUC'),
+        (CONTACT_TYPE_JID, 'JID'),
+        (CONTACT_TYPE_EMAIL, 'e-mail'),
+        (CONTACT_TYPE_WEBSITE, 'website'),
+    )
     #####################
     # Basic information #
     #####################

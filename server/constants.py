@@ -14,20 +14,13 @@
 # You should have received a copy of the GNU General Public License
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
+# Define constants here and not in .models.Server to be able to use them in other apps
+CONTACT_TYPE_MUC = 'M'
+CONTACT_TYPE_JID = 'J'
+CONTACT_TYPE_EMAIL = 'E'
+CONTACT_TYPE_WEBSITE = 'W'
 
-class CONTACT_TYPES(object):
-    MUC = 'M'
-    JID = 'J'
-    EMAIL = 'E'
-    WEBSITE = 'W'
 
-
-CONTACT_TYPE_CHOICES = (
-    (CONTACT_TYPES.MUC, 'MUC'),
-    (CONTACT_TYPES.JID, 'JID'),
-    (CONTACT_TYPES.EMAIL, 'e-mail'),
-    (CONTACT_TYPES.WEBSITE, 'website'),
-)
 C2S_STREAM_FEATURES = {
     'auth',
     'caps',

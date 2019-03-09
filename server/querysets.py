@@ -17,7 +17,8 @@
 from django.db.models import Q
 from django.db.models.query import QuerySet
 
-from server.constants import CONTACT_TYPES
+from server.constants import CONTACT_TYPE_EMAIL
+from server.constants import CONTACT_TYPE_JID
 
 
 class ServerQuerySet(QuerySet):
@@ -57,5 +58,5 @@ class ServerQuerySet(QuerySet):
         not yet moderated. It also excludes servers where the contact should be automatically
         verified but the user has failed to confirm this.
         """
-        query = Q(contact_type=CONTACT_TYPES.JID) | Q(contact_type=CONTACT_TYPES.EMAIL)
+        query = Q(contact_type=CONTACT_TYPE_JID) | Q(contact_type=CONTACT_TYPE_EMAIL)
         return self.verified().filter(moderated=None).exclude(query & Q(contact_verified=False))
