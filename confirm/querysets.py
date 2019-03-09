@@ -64,9 +64,9 @@ class ConfirmationKeyQuerySet(QuerySet):
         """Delete outdated confirmation keys."""
         return self.invalid().delete()
 
-    def invalidate(self, subject):
+    def invalidate(self, subject, typ):
         """Delete all past confirmation keys for this user."""
-        return self.filter(subject=subject).delete()
+        return self.filter(subject=subject, type=typ).delete()
 
 
 class ServerConfirmationKeyQuerySet(ConfirmationKeyQuerySet):
