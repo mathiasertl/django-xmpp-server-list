@@ -16,7 +16,7 @@
 
 
 def get_siteinfo(request):
-    if request.is_secure:
+    if request.is_secure():
         return 'https', request.get_host()
     else:
         return 'http', request.get_host()
