@@ -2,10 +2,10 @@ Django==2.1.5
 celery==4.2.1
 cryptography==2.5
 dnspython==1.16.0
+geoip2==2.9.0
 lxml==4.3.0
 pyasn1-modules==0.2.4
 pyasn1==0.4.5
-pygeoip==0.3.2
 requests==2.21.0
 six==1.12.0
 sleekxmpp==1.3.3

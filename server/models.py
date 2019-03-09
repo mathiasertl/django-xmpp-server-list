@@ -21,7 +21,8 @@ import signal
 from contextlib import contextmanager
 from datetime import datetime
 
-import pygeoip
+import geoip2.database
+import geoip2.errors
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 
@@ -47,14 +48,6 @@ from server.util import get_siteinfo
 from xmpp.clients import StreamFeatureClient
 
 log = logging.getLogger(__name__)
-if os.path.exists(settings.GEOIP_CITY_PATH):
-    geoip = pygeoip.GeoIP(settings.GEOIP_CITY_PATH, pygeoip.MMAP_CACHE)
-else:
-    geoip = None
-if os.path.exists(settings.GEOIP_CITY_V6_PATH):
-    geoip6 = pygeoip.GeoIP(settings.GEOIP_CITY_V6_PATH, pygeoip.MMAP_CACHE)
-else:
-    geoip6 = None
 
 
 class TimeoutException(Exception):
@@ -480,39 +473,16 @@ class Server(models.Model):
 
     def set_location(self, hostname):
         ip = hostname[0]
-        is_ipv6 = ':' in ip
 
-        if geoip is None and not is_ipv6:
-            log.error("GeoIPv4 database not found, run 'python manage.py geoip'")
-            return
-        elif geoip6 is None and is_ipv6:
-            log.error("GeoIPv6 database not found, run 'python manage.py geoip'")
+        if not os.path.exists(settings.GEOIP_COUNTRY_DB):
+            log.error('%s: File not found, refresh GeoIP databases!')
             return
 
         try:
-            if is_ipv6:
-                data = geoip6.record_by_name(ip)
-            else:
-                data = geoip.record_by_name(ip)
-
-            if data is None:  # data is None in some obscure cases.
-                self.city = ''
-                self.country = ''
-                return
-
-            self.country = data['country_name']
-
-            # at least cities are latin1 encoded (e.g. inbox.im, located in Montréal)
-            if data.get('city'):
-                self.city = data['city'].decode('latin1')
-                log.debug("%s: Set location to %s/%s", self.domain, self.city, self.country)
-            else:
-                self.city = ''
-                log.debug("%s: Set location to %s", self.domain, self.country)
-        except Exception as e:
-            log.error("%s: %s: %s", self.domain, type(e).__name__, e)
-            self.city = ''
-            self.country = ''
+            reader = geoip2.database.Reader(settings.GEOIP_COUNTRY_DB)
+            self.country = reader.country(ip).country.name
+        except geoip2.errors.GeoIP2Error as e:
+            log.exception(e)
 
     @property
     def verified(self):
