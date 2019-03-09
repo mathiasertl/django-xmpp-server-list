@@ -26,16 +26,18 @@ from xmpp.backends import default_xmpp_backend
 from .querysets import ConfirmationKeyQuerySet
 from .querysets import ServerConfirmationKeyQuerySet
 
-CONFIRMATION_TYPE_CHOICES = (
-    ('J', 'JID'),
-    ('E', 'e-mail'),
-)
-
 
 class ConfirmationKey(models.Model):
+    TYPE_JID = 'J'
+    TYPE_EMAIL = 'E'
+    TYPE_CHOICES = (
+        (TYPE_JID, 'JID'),
+        (TYPE_EMAIL, 'e-mail'),
+    )
+
     key = models.CharField(max_length=128, unique=True)
     created = models.DateTimeField(auto_now_add=True)
-    type = models.CharField(max_length=1, choices=CONFIRMATION_TYPE_CHOICES)
+    type = models.CharField(max_length=1, choices=TYPE_CHOICES)
 
     objects = ConfirmationKeyQuerySet.as_manager()
 
