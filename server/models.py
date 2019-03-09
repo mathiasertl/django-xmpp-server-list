@@ -237,8 +237,6 @@ class Server(models.Model):
     last_checked = models.DateTimeField(null=True, blank=True)  # last check completed (None == never checked)
 
     # geolocation:
-    city = models.CharField(default='', null=True, blank=True, max_length=100,
-                            help_text="City the server is located in.")
     country = models.CharField(default='', null=True, blank=True, max_length=100,
                                help_text="Country the server is located in.")
 
@@ -460,12 +458,7 @@ class Server(models.Model):
 
     @property
     def location(self):
-        if not self.city and not self.country:
-            return 'Unknown'
-        elif self.country:
-            return self.country
-        else:
-            return '%s/%s' % (self.city, self.country)
+        return self.country or _('Unknown')
 
     def pprint_host(self, host, port):
         host = '[%s]' % host if ':' in host else host
@@ -566,7 +559,6 @@ class Server(models.Model):
         elif client_srv:  # get location
             self.set_location(client_srv[0][0])
         else:  # no way to query location - reset!
-            self.city = ''
             self.country = ''
 
         # check IPv6 DNS records:
