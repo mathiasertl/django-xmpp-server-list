@@ -218,7 +218,7 @@ class Server(models.Model):
     contact = models.CharField(
         max_length=60, help_text="The address where the server-admins can be reached.")
     contact_type = models.CharField(
-        max_length=1, choices=CONTACT_TYPE_CHOICES, default='J',
+        max_length=1, choices=CONTACT_TYPE_CHOICES, default=CONTACT_TYPE_JID,
         help_text="What type your contact details are. This setting will affect how the contact details are "
         "rendered on the front page. If you choose a JID or an e-mail address, you will receive an "
         "automated confirmation message.")
@@ -386,13 +386,13 @@ class Server(models.Model):
         return new
 
     def autoconfirmed(self, typ, address):
-        if typ == 'E' and self.user.email == address and self.user.email_confirmed:
+        if typ == CONTACT_TYPE_EMAIL and self.user.email == address and self.user.email_confirmed:
             return True
-        elif typ == 'J' and self.user.jid == address and self.user.jid_confirmed:
+        elif typ == CONTACT_TYPE_JID and self.user.jid == address and self.user.jid_confirmed:
             return True
 
     def automatic_verification(self):
-        if self.contact_type in ['J', 'E'] and not self.contact_verified:
+        if self.contact_type in [CONTACT_TYPE_JID, CONTACT_TYPE_EMAIL] and not self.contact_verified:
             return True
         return False
 
@@ -410,7 +410,7 @@ class Server(models.Model):
         # Set contact_verified if it sthe same as your email or JID:
         if self.autoconfirmed(typ, self.contact):
             self.contact_verified = True
-        elif typ in ['J', 'E']:
+        elif typ in [CONTACT_TYPE_JID, CONTACT_TYPE_EMAIL]:
             key = self.confirmations.create(subject=self, type=self.contact_type)
             protocol, domain = get_siteinfo(request)
             key.send(protocol, domain)
