@@ -23,7 +23,7 @@ from .querysets import UserQuerySet
 
 
 class LocalUser(AbstractUser):
-    objects = BaseUserManager.from_queryset(UserQuerySet)
+    objects = BaseUserManager.from_queryset(UserQuerySet)()
 
     email = models.EmailField(
         _('email address'), unique=True,
