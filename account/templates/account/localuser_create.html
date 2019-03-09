@@ -7,7 +7,7 @@
 
 {% block content %}
 <form class="form-horizontal" role="form"  action="{% url "account:create" %}" method="post">{% csrf_token %}
-    {{ user_form|bootstrap }}
+    {{ form|bootstrap }}
     {% bootstrap_submit _("Create") %}
 </form>
 {% endblock %}

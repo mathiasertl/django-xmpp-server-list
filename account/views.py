@@ -16,51 +16,53 @@
 
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 from django.contrib.auth import login
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
+from django.views.generic.edit import CreateView
 from django.views.generic.edit import UpdateView
 
 from confirm.models import UserConfirmationKey
 from core.views import AnonymousRequiredMixin
 from server.util import get_siteinfo
 
-from .forms import CreationForm
+from .forms import UserCreationForm
 from .forms import PasswordChangeForm
 from .forms import PasswordResetForm
+
+UserModel = get_user_model()
 
 
 class IndexView(LoginRequiredMixin, TemplateView):
     template_name = 'account/index.html'
 
 
-def create(request):
-    if request.method == 'POST':
-        form = CreationForm(request.POST, prefix='user')
-        if form.is_valid():
-            # create user
-            user = form.save()
+class CreateUserView(AnonymousRequiredMixin, CreateView):
+    form_class = UserCreationForm
+    model = UserModel
+    success_url = reverse_lazy('account:index')
+    template_name_suffix = '_create'
 
-            # create confirmations:
-            ekey = UserConfirmationKey.objects.create(subject=user, type='E')
-            ekey.send(*get_siteinfo(request))
-            jkey = UserConfirmationKey.objects.create(subject=user, type='J')
-            jkey.send(*get_siteinfo(request))
+    def form_valid(self, form):
+        resp = super().form_valid(form)
 
-            user.backend = 'django.contrib.auth.backends.ModelBackend'
-            login(request, user)
+        # create confirmations:
+        ekey = UserConfirmationKey.objects.create(subject=self.object, type='E')
+        ekey.send(*get_siteinfo(self.request))
+        jkey = UserConfirmationKey.objects.create(subject=self.object, type='J')
+        jkey.send(*get_siteinfo(self.request))
 
-            return redirect('account:indexfoo')
-    else:
-        form = CreationForm(prefix='user')
+        # Finally, log the user in
+        self.object.backend = 'django.contrib.auth.backends.ModelBackend'
+        login(self.request, self.object)
 
-    return render(request, 'account/create.html', {'user_form': form, })
+        return resp
 
 
 class UpdateUserView(LoginRequiredMixin, UpdateView):
