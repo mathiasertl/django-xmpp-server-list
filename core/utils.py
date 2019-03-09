@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
+import binascii
 import logging
 import os
 import shutil
@@ -46,6 +47,15 @@ def int_to_hex(i):
     """
     s = hex(i)[2:].upper()
     return add_colons(s)
+
+
+def bytes_to_hex(b):
+    """Convert a bytes array to hex.
+
+    >>> bytes_to_hex(b'test')
+    '74:65:73:74'
+    """
+    return add_colons(binascii.hexlify(b).upper().decode('utf-8'))
 
 
 def refresh_geoip_database():

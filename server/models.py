@@ -24,6 +24,8 @@ from datetime import datetime
 import geoip2.database
 import geoip2.errors
 from cryptography import x509
+from cryptography.x509.oid import ExtensionOID
+from cryptography.x509.oid import NameOID
 from cryptography.hazmat.backends import default_backend
 
 from django.conf import settings
@@ -35,6 +37,7 @@ from django.utils.translation import ugettext as _
 
 from core.models import BaseModel
 from core.utils import int_to_hex
+from core.utils import bytes_to_hex
 from server.constants import C2S_STREAM_FEATURES
 from server.constants import CONTACT_TYPE_EMAIL
 from server.constants import CONTACT_TYPE_JID
@@ -82,6 +85,7 @@ class CertificateAuthority(models.Model):
     name = models.CharField(max_length=50, unique=True)
     display_name = models.CharField(max_length=30, null=True, blank=True)
     website = models.URLField(null=True, blank=True)
+    serial = models.CharField(max_length=64, help_text=_('The serial of the certificate.'))
 
     class Meta:
         verbose_name_plural = _('Certificate authorities')
@@ -95,7 +99,6 @@ class CertificateAuthority(models.Model):
 
 class Certificate(BaseModel):
     ca = models.ForeignKey(CertificateAuthority, on_delete=models.PROTECT, related_name='certificates')
-    server = models.ForeignKey('server.Server', on_delete=models.CASCADE, related_name='certificates')
 
     # NOTE: Highly unlikely, it's possible for 2 certs to have the same serial (e.g. from different CAs)
     serial = models.CharField(max_length=64, help_text=_('The serial of the certificate.'))
@@ -109,6 +112,10 @@ class Certificate(BaseModel):
 
     def __str__(self):
         return self.serial
+
+    @property
+    def server(self):
+        raise Exception('used!?')
 
     @property
     def valid(self):
@@ -427,22 +434,39 @@ class Server(models.Model):
             return 'https://%s' % self.domain
 
     def handle_cert(self, pem):
-        self.ca = CertificateAuthority.objects.get_or_create(name='foo')[0]
-
         now = timezone.now()
         x509_cert = x509.load_pem_x509_certificate(pem.encode('utf-8'), default_backend())
+
+        issuer_cn = x509_cert.issuer
+        try:
+            issuer_serial = x509_cert.extensions.get_extension_for_oid(ExtensionOID.AUTHORITY_KEY_IDENTIFIER)
+        except x509.ExtensionNotFound:
+            log.error('Cannot get AuthorityKeyIdentifier extension.')
+            return
+
+        try:
+            ca_serial = bytes_to_hex(issuer_serial.value.key_identifier)
+            ca_name = issuer_cn.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value
+        except Exception as e:
+            log.exception(e)
+
+        self.ca = CertificateAuthority.objects.get_or_create(serial=ca_serial, defaults={
+            'name': ca_name,
+            'display_name': ca_name,
+        })[0]
+
         try:
             cert, created = Certificate.objects.get_or_create(pem=pem, defaults={
-                'ca': self.ca,  # TODO
+                'ca': self.ca,
                 'first_seen': now,
                 'last_seen': now,
                 'serial': int_to_hex(x509_cert.serial_number),
-                'server': self,
                 'valid_from': x509_cert.not_valid_before,
                 'valid_until': x509_cert.not_valid_after,
             })
         except Exception as e:
             log.exception(e)
+            return
 
         if not created:  # update information
             cert.last_seen = now

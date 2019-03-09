@@ -26,7 +26,7 @@ from .models import ServerSoftware
 
 @admin.register(Certificate)
 class CertificateAdmin(admin.ModelAdmin):
-    list_display = ['serial', 'server', 'ca', 'valid', 'last_seen']
+    list_display = ['serial', 'ca', 'valid', 'last_seen']
 
 
 class ServerAdmin(admin.ModelAdmin):
