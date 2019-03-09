@@ -47,7 +47,6 @@ from server.constants import S2S_STREAM_FEATURES
 from server.dns import lookup
 from server.dns import srv_lookup
 from server.querysets import ServerQuerySet
-from server.util import get_siteinfo
 from xmpp.clients import StreamFeatureClient
 
 log = logging.getLogger(__name__)
@@ -419,8 +418,7 @@ class Server(models.Model):
             self.contact_verified = True
         elif typ in [CONTACT_TYPE_JID, CONTACT_TYPE_EMAIL]:
             key = self.confirmations.create(subject=self, type=self.contact_type)
-            protocol, domain = get_siteinfo(request)
-            key.send(protocol, domain)
+            key.send('https' if request.is_secure() else 'http', request.get_host())
 
     def get_contact_text(self):
         if self.contact_name:
