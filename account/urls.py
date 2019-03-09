@@ -25,7 +25,7 @@ urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
     path('create/', views.CreateUserView.as_view(), name='create'),
     path('edit/', views.UpdateUserView.as_view(), name='edit'),
-    path('resend_confirmation/', views.resend_confirmation, name='resend_confirmation'),
+    path('resend_confirmation/', views.ResendConfirmationView.as_view(), name='resend_confirmation'),
     path('login/', auth_views.LoginView.as_view(redirect_authenticated_user=True), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 ]

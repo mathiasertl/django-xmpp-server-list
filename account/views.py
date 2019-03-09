@@ -19,9 +19,7 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth import login
 from django.contrib.auth import views as auth_views
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
@@ -39,11 +37,21 @@ from .tasks import send_jid_confirmation
 UserModel = get_user_model()
 
 
+class SendConfirmationMixin:
+    def send_email_confirmation(self, user):
+        user = self.request.user
+        send_email_confirmation.delay(user.pk, self.request.get_host(), is_secure=self.request.is_secure())
+
+    def send_jid_confirmation(self, user):
+        user = self.request.user
+        send_jid_confirmation.delay(user.pk, self.request.get_host(), is_secure=self.request.is_secure())
+
+
 class IndexView(LoginRequiredMixin, TemplateView):
     template_name = 'account/index.html'
 
 
-class CreateUserView(AnonymousRequiredMixin, CreateView):
+class CreateUserView(AnonymousRequiredMixin, SendConfirmationMixin, CreateView):
     form_class = UserCreationForm
     model = UserModel
     success_url = reverse_lazy('account:index')
@@ -53,10 +61,8 @@ class CreateUserView(AnonymousRequiredMixin, CreateView):
         response = super().form_valid(form)
 
         # create confirmations:
-        send_email_confirmation.delay(self.object.pk, self.request.get_host(),
-                                      is_secure=self.request.is_secure())
-        send_jid_confirmation.delay(self.object.pk, self.request.get_host(),
-                                    is_secure=self.request.is_secure())
+        self.send_email_confirmation(form.instance)
+        self.send_jid_confirmation(form.instance)
 
         # Finally, log the user in
         self.object.backend = 'django.contrib.auth.backends.ModelBackend'
@@ -65,7 +71,7 @@ class CreateUserView(AnonymousRequiredMixin, CreateView):
         return response
 
 
-class UpdateUserView(LoginRequiredMixin, UpdateView):
+class UpdateUserView(LoginRequiredMixin, SendConfirmationMixin, UpdateView):
     fields = ['email', 'jid']
     success_url = reverse_lazy('account:index')
 
@@ -81,25 +87,30 @@ class UpdateUserView(LoginRequiredMixin, UpdateView):
 
         response = super().form_valid(form)
 
+        # We pass self.request.user to make sure in another way that the user only updates himself
         if 'email' in form.changed_data:
-            send_email_confirmation.delay(form.instance.pk, self.request.get_host(),
-                                          is_secure=self.request.is_secure())
+            self.send_email_confirmation(self.request.user)
         if 'jid' in form.changed_data:
-            send_jid_confirmation.delay(form.instance.pk, self.request.get_host(),
-                                        is_secure=self.request.is_secure())
+            self.send_jid_confirmation(self.request.user)
 
         return response
 
 
-@login_required
-def resend_confirmation(request):
-    if not request.user.email_confirmed:
-        send_email_confirmation.delay(request.user.pk, request.get_host(), is_secure=request.is_secure())
-    if not request.user.jid_confirmed:
-        send_jid_confirmation.delay(request.user.pk, request.get_host(), is_secure=request.is_secure())
+class ResendConfirmationView(LoginRequiredMixin, SendConfirmationMixin, TemplateView):
+    template_name = 'account/resend_confirmation.html'
 
-    return render(request, 'account/resend_confirmation.html',
-                  {'jid': settings.XMPP['default']['jid']})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['jid'] = settings.XMPP['default']['jid']
+        return context
+
+    def get(self, request):
+        if not request.user.email_confirmed:
+            self.send_email_confirmation(request.user)
+        if not request.user.jid_confirmed:
+            self.send_jid_confirmation(request.user)
+
+        return super().get(request)
 
 
 class PasswordChangeView(auth_views.PasswordChangeView):
