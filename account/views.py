@@ -28,13 +28,13 @@ from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView
 from django.views.generic.edit import UpdateView
 
-from confirm.models import UserConfirmationKey
 from core.views import AnonymousRequiredMixin
-from server.util import get_siteinfo
 
 from .forms import UserCreationForm
 from .forms import PasswordChangeForm
 from .forms import PasswordResetForm
+from .tasks import send_email_confirmation
+from .tasks import send_jid_confirmation
 
 UserModel = get_user_model()
 
@@ -50,19 +50,19 @@ class CreateUserView(AnonymousRequiredMixin, CreateView):
     template_name_suffix = '_create'
 
     def form_valid(self, form):
-        resp = super().form_valid(form)
+        response = super().form_valid(form)
 
         # create confirmations:
-        ekey = UserConfirmationKey.objects.create(subject=self.object, type='E')
-        ekey.send(*get_siteinfo(self.request))
-        jkey = UserConfirmationKey.objects.create(subject=self.object, type='J')
-        jkey.send(*get_siteinfo(self.request))
+        send_email_confirmation.delay(self.object.pk, self.request.get_host(),
+                                      is_secure=self.request.is_secure())
+        send_jid_confirmation.delay(self.object.pk, self.request.get_host(),
+                                    is_secure=self.request.is_secure())
 
         # Finally, log the user in
         self.object.backend = 'django.contrib.auth.backends.ModelBackend'
         login(self.request, self.object)
 
-        return resp
+        return response
 
 
 class UpdateUserView(LoginRequiredMixin, UpdateView):
@@ -81,15 +81,12 @@ class UpdateUserView(LoginRequiredMixin, UpdateView):
 
         response = super().form_valid(form)
 
-        # TODO: this still uses the same template as when a user is created
         if 'email' in form.changed_data:
-            UserConfirmationKey.objects.filter(subject=form.instance, type='E').delete()
-            key = UserConfirmationKey.objects.create(subject=form.instance, type='E')
-            key.send(*get_siteinfo(self.request))
+            send_email_confirmation.delay(form.instance.pk, self.request.get_host(),
+                                          is_secure=self.request.is_secure())
         if 'jid' in form.changed_data:
-            UserConfirmationKey.objects.filter(subject=form.instance, type='J').delete()
-            key = UserConfirmationKey.objects.create(subject=form.instance, type='J')
-            key.send(*get_siteinfo(self.request))
+            send_jid_confirmation.delay(form.instance.pk, self.request.get_host(),
+                                        is_secure=self.request.is_secure())
 
         return response
 
@@ -97,11 +94,10 @@ class UpdateUserView(LoginRequiredMixin, UpdateView):
 @login_required
 def resend_confirmation(request):
     if not request.user.email_confirmed:
-        key = UserConfirmationKey.objects.create(subject=request.user, type='E')
-        key.send(*get_siteinfo(request))
+        send_email_confirmation.delay(request.user.pk, request.get_host(), is_secure=request.is_secure())
     if not request.user.jid_confirmed:
-        key = UserConfirmationKey.objects.create(subject=request.user, type='J')
-        key.send(*get_siteinfo(request))
+        send_jid_confirmation.delay(request.user.pk, request.get_host(), is_secure=request.is_secure())
+
     return render(request, 'account/resend_confirmation.html',
                   {'jid': settings.XMPP['default']['jid']})
 
