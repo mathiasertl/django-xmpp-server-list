@@ -66,9 +66,9 @@ class ConfirmationKey(models.Model):
         message = render_to_string(self.message_template, context)
 
         # send message
-        if self.type == 'E':
+        if self.type == ConfirmationKey.TYPE_EMAIL:
             self.send_mail(self.recipient, subject, message)
-        elif self.type == 'J':
+        elif self.type == ConfirmationKey.TYPE_JID:
             self.send_jid(self.recipient, message)
         else:
             raise RuntimeError("Confirmation messages can only be sent to JIDs or email addresses")
@@ -78,9 +78,9 @@ class ConfirmationKey(models.Model):
 
     @property
     def address_type(self):
-        if self.type == 'E':
+        if self.type == ConfirmationKey.TYPE_EMAIL:
             return 'email address'
-        elif self.type == 'J':
+        elif self.type == ConfirmationKey.TYPE_JID:
             return 'JID'
         else:
             return 'UNKNOWN'
@@ -96,9 +96,9 @@ class UserConfirmationMixin(object):
 
     @property
     def recipient(self):
-        if self.type == 'E':
+        if self.type == ConfirmationKey.TYPE_EMAIL:
             return self.subject.email
-        elif self.type == 'J':
+        elif self.type == ConfirmationKey.TYPE_JID:
             return self.subject.jid
 
 
@@ -110,9 +110,9 @@ class UserConfirmationKey(ConfirmationKey, UserConfirmationMixin):
     message_subject = 'Confirm your %(addr_type)s on %(protocol)s://%(domain)s'
 
     def confirm(self):
-        if self.type == 'E':
+        if self.type == ConfirmationKey.TYPE_EMAIL:
             self.subject.email_confirmed = True
-        elif self.type == 'J':
+        elif self.type == ConfirmationKey.TYPE_JID:
             self.subject.jid_confirmed = True
         self.subject.save()
 
