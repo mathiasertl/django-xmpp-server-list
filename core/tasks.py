@@ -14,13 +14,11 @@
 # You should have received a copy of the GNU General Public License
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.core.management.base import BaseCommand
+from celery import shared_task
 
-from core.utils import refresh_geoip_database
+from .utils import refresh_geoip_database as _refresh_geoip_database
 
 
-class Command(BaseCommand):
-    help = 'Refresh GeoIP database.'
-
-    def handle(self, *args, **options):
-        refresh_geoip_database()
+@shared_task
+def refresh_geoip_database():
+    _refresh_geoip_database()
