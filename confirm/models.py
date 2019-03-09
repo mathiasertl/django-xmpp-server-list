@@ -112,8 +112,11 @@ class UserConfirmationKey(ConfirmationKey, UserConfirmationMixin):
     def confirm(self):
         if self.type == ConfirmationKey.TYPE_EMAIL:
             self.subject.email_confirmed = True
+            self.subject.servers.email(self.subject.email).update(contact_verified=True)
         elif self.type == ConfirmationKey.TYPE_JID:
             self.subject.jid_confirmed = True
+            self.subject.servers.jid(self.subject.jid).update(contact_verified=True)
+
         self.subject.save()
 
     def get_absolute_url(self):

@@ -60,3 +60,9 @@ class ServerQuerySet(QuerySet):
         """
         query = Q(contact_type=CONTACT_TYPE_JID) | Q(contact_type=CONTACT_TYPE_EMAIL)
         return self.verified().filter(moderated=None).exclude(query & Q(contact_verified=False))
+
+    def jid(self, jid):
+        return self.filter(contact_type=CONTACT_TYPE_JID, contact=jid)
+
+    def email(self, email):
+        return self.filter(contact_type=CONTACT_TYPE_EMAIL, contact=email)
