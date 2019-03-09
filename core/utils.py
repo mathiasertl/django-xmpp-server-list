@@ -14,12 +14,15 @@
 # You should have received a copy of the GNU General Public License
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
-import gzip
 import logging
 import os
+import shutil
+import tarfile
+import tempfile
+
+import requests
 
 from django.conf import settings
-from django.utils.six.moves.urllib.request import urlretrieve
 
 log = logging.getLogger(__name__)
 
@@ -49,22 +52,21 @@ def refresh_geoip_database():
     if not os.path.exists(settings.GEOIP_CONFIG_ROOT):
         os.makedirs(settings.GEOIP_CONFIG_ROOT)
 
-    log.info("Downloading IPv4 database... ")
-    compressed = '%s.gz' % settings.GEOIP_CITY_PATH
-    urlretrieve('http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz',
-                compressed)
+    log.info("Downloading MaxMind GeoIP database...")
+    url = 'https://geolite.maxmind.com/download/geoip/database/GeoLite2-Country.tar.gz'
 
-    with open(settings.GEOIP_CITY_PATH, 'wb') as _out, gzip.open(compressed, 'rb') as _in:
-        _out.write(_in.read())
-    os.remove(compressed)
+    with requests.get(url, stream=True) as r, tempfile.NamedTemporaryFile() as tmp:
+        r.raw.decode_content = True  # decode gzip/deflate compression of response
+        shutil.copyfileobj(r.raw, tmp)
 
-    log.info("Downloading IPv6 database... ")
-    compressed = '%s.gz' % settings.GEOIP_CITY_V6_PATH
-    urlretrieve(
-        'http://geolite.maxmind.com/download/geoip/database/GeoLiteCityv6-beta/GeoLiteCityv6.dat.gz',
-        compressed)
-    with open(settings.GEOIP_CITY_V6_PATH, 'wb') as _out, gzip.open(compressed, 'rb') as _in:
-        _out.write(_in.read())
-    os.remove(compressed)
+        tmp.seek(0)
 
-    log.info("Done downloading GeoIP databases.")
+        with tarfile.open(fileobj=tmp, mode="r:gz") as tar:
+            members = [m for m in tar.getmembers() if m.isfile() and os.path.splitext(m.name)[1] == '.mmdb']
+
+            # remove any directory prefix
+            for member in members:
+                member.name = os.path.basename(member.name)
+            log.info('Extracting %s to %s', ', '.join([m.name for m in members]), settings.GEOIP_CONFIG_ROOT)
+
+            tar.extractall(settings.GEOIP_CONFIG_ROOT, members)
