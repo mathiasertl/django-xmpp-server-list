@@ -307,7 +307,7 @@ class Server(models.Model):
         return self.domain
 
     def get_absolute_url(self):
-        return reverse('server:view', kwargs={'pk': self.pk})
+        return reverse('server:status', kwargs={'pk': self.pk})
 
     def _c2s_stream_feature_cb(self, host, port, features, ssl, tls):
         self.info("Verified connectivity for %s" % (self.pprint_host(host, port)))
