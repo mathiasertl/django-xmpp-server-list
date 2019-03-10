@@ -19,6 +19,8 @@
 import os
 from datetime import timedelta
 
+from celery.schedules import crontab
+
 from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -179,6 +181,24 @@ LOGOUT_REDIRECT_URL = 'home'  # only used when next queryparam is not set
 # Message tags updated to match bootstrap alert classes
 MESSAGE_TAGS = {
     messages.ERROR: 'danger',
+}
+
+##########
+# Celery #
+##########
+CELERY_BEAT_SCHEDULE = {
+    'refresh geoip': {
+        'task': 'core.tasks.refresh_geoip_database',
+        'schedule': crontab(hour=3, minute=0, day_of_week=1),
+    },
+    'verify servers': {
+        'task': 'server.tasks.verify_servers',
+        'schedule': crontab(hour=3, minute=10),
+    },
+    'remove old servers': {
+        'task': 'server.tasks.remove_old_servers',
+        'schedule': crontab(hour=3, minute=5),
+    },
 }
 
 try:
