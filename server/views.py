@@ -117,6 +117,11 @@ class ServerUpdateView(MyServerMixin, ContactVerificationMixin, UpdateView):
         if form.contact_changed:
             form.instance.contact_verified = self.is_contact_verified(form.instance)
 
+        if form.moderation_changed:
+            form.instance.moderated = None  # not yet moderated, False == failed
+            form.instance.moderators_notified = False
+            form.instance.moderation_message = ''
+
         # Save instance to database
         resp = super().form_valid(form)
 

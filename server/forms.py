@@ -107,3 +107,10 @@ class UpdateServerForm(ModelForm):
         if 'contact' in changed or 'contact_type' in changed:
             return True
         return False
+
+    def moderation_changed(self):
+        changed = self.changed_data
+        if 'website' in changed or 'policy_url' in changed or 'registration_url' in changed \
+                or 'launched' in changed:
+            return True
+        return False
