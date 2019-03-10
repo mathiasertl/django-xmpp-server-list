@@ -20,6 +20,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponse
 from django.urls import reverse_lazy
+from django.views.generic.base import RedirectView
 from django.views.generic.base import View
 from django.views.generic.detail import DetailView
 from django.views.generic.detail import SingleObjectMixin
@@ -146,6 +147,19 @@ class ModerateView(PermissionRequiredMixin, ListView):
     permission_required = 'server.moderate'
     queryset = Server.objects.order_by('domain').for_moderation()
     template_name = 'server/server_list_moderate.html'
+
+
+class AjaxServerReconsiderView(MyServerMixin, SingleObjectMixin, RedirectView):
+    pattern_name = 'server:status'
+
+    def get(self, request, *args, **kwargs):
+        server = self.get_object()
+        server.moderated = None
+        server.moderators_notified = False
+        server.moderation_message = ''
+        server.save()
+
+        return super().get(request, *args, **kwargs)
 
 
 class AjaxServerModerateView(PermissionRequiredMixin, SingleObjectMixin, View):

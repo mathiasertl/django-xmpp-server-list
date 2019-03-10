@@ -17,6 +17,7 @@
 from django.urls import path
 
 from server.views import AjaxServerModerateView
+from server.views import AjaxServerReconsiderView
 from server.views import ModerateView
 from server.views import MyServerListView
 from server.views import ServerCreateView
@@ -30,6 +31,7 @@ urlpatterns = [
     path('', MyServerListView.as_view(), name='list'),
     path('add/', ServerCreateView.as_view(), name='add'),
     path('edit/<int:pk>/', ServerUpdateView.as_view(), name='edit'),
+    path('reconsider/<int:pk>/', AjaxServerReconsiderView.as_view(), name='reconsider'),
     path('status/<int:pk>/', ServerStatusView.as_view(), name='status'),
     path('delete/<int:pk>/', ServerDeleteView.as_view(), name='delete'),
     path('moderate/', ModerateView.as_view(), name='moderate'),

@@ -7,7 +7,9 @@
 
 {% block content %}
 
-<a class="btn btn-primary mb-2" href="{% url 'server:edit' pk=object.pk %}" role="button">
+{% url 'server:edit' pk=object.pk as edit_url %}
+
+<a class="btn btn-primary mb-2" href="{{ edit_url }}" role="button">
   {% trans "Edit server" %}</a>
 
 <h3>{% trans "Technical aspects" %}</h3>
@@ -109,13 +111,16 @@ front page, both contact information for your account and for your server have t
         <i class="fas fa-times text-danger mr-1"></i> {% trans "Unverified" %}
         {% endif %}
       </td>
-      <td><a href="{% url 'server:edit' pk=object.pk %}">{% trans "change" %}</a></td>
+      <td><a href="{{ edit_url }}">{% trans "change" %}</a></td>
     </tr>
   </tbody>
 </table>
 
 <h3>{% trans "Moderation" %}</h3>
-<p>{% trans "We manually approve or reject all servers added to this site." %}</p>
+
+<p>{% blocktrans %}We manually approve or reject all servers added to this site. Changing the
+servers homepage or launch date will require this server to be approved
+again.{% endblocktrans %}</p>
 
 {% if not object.moderated %}
 <p>{% blocktrans %}Please note that this may take a few days. Only servers that where verified
@@ -136,10 +141,17 @@ considered by the moderation team.{% endblocktrans %}</p>
 {% else %}
 <div class="alert alert-danger" role="alert">
   <h5><i class="fas fa-times mr-1"></i> {% trans "Your server was rejected." %}</h5>
-  {% trans "We're sorry, but your server was rejected. Here's what moderators had to say:" %}
+  <p>{% trans "We're sorry, but your server was rejected. Here's what moderators had to say:" %}</p>
   <blockquote class="blockquote">
     <p class="ml-3 mb-0">{{ object.moderation_message }}</p>
   </blockquote>
+
+  <p>{% blocktrans %}
+If you want us to reconsider your server without 
+<a class="alert-link" href="{{ edit_url }}">updating</a> any information (e.g.
+because you have fixed your homepage), you can also ask us to reconsider:{% endblocktrans %}</p>
+  <a class="btn btn-outline-dark reconsider" href="{% url 'server:reconsider' pk=object.pk %}" role="button">
+     {% trans "Please reconsider" %}</a>
 </div>
 {% endif %}
 
