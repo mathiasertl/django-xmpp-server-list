@@ -18,6 +18,8 @@ import logging
 
 from celery import shared_task
 
+from confirm.models import ServerConfirmationKey
+
 from .models import Server
 
 log = logging.getLogger()
@@ -26,6 +28,23 @@ log = logging.getLogger()
 @shared_task
 def remove_old_servers():
     Server.objects.dead().delete()
+
+
+@shared_task
+def send_contact_confirmation(server_pk, host, is_secure=True):
+    server = Server.objects.get(pk=server_pk)
+
+    ServerConfirmationKey.objects.filter(subject=server).delete()
+    if server.contact_type == Server.CONTACT_TYPE_JID:
+        typ = ServerConfirmationKey.TYPE_JID
+    elif server.contact_type == Server.CONTACT_TYPE_EMAIL:
+        typ = ServerConfirmationKey.TYPE_EMAIL
+    else:
+        log.error('%s: Server has unknown contact type: %s', server.domain, server.contact_type)
+        return
+
+    key = ServerConfirmationKey.objects.create(subject=server, type=typ)
+    key.send('https' if is_secure else 'http', host)
 
 
 @shared_task

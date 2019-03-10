@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with django-xmpp-server-list.  If not, see <http://www.gnu.org/licenses/>.
 
+import logging
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponse
@@ -24,9 +26,12 @@ from django.views.generic.edit import CreateView
 from django.views.generic.edit import UpdateView
 from django.views.generic.list import ListView
 
-from server.forms import CreateServerForm
-from server.forms import UpdateServerForm
-from server.models import Server
+from .forms import CreateServerForm
+from .forms import UpdateServerForm
+from .models import Server
+from .tasks import send_contact_confirmation
+
+log = logging.getLogger(__name__)
 
 
 class MyServerMixin(LoginRequiredMixin):
@@ -55,8 +60,34 @@ class ServerCreateView(LoginRequiredMixin, CreateView):
     template_name_suffix = '_create'
 
     def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
+        server = form.instance
+        owner = self.request.user
+        server.user = owner
+
+        # If the servers contact information matches with the users information and it has already been
+        # confirmed, we do not need to confirm it again
+        if server.contact_type == Server.CONTACT_TYPE_EMAIL and server.contact == owner.email \
+                and owner.email_confirmed:
+            log.info('Not requesting server confirmation because it matches verified user contact')
+            server.contact_verified = True
+        elif server.contact_type == Server.CONTACT_TYPE_JID and server.contact == owner.jid \
+                and owner.jid_confirmed:
+            log.info('Not requesting server confirmation because it matches verified user contact')
+            server.contact_verified = True
+
+        # If there is a server with the same contact information, we do not have to verify it again
+        elif Server.objects.filter(user=server.user, contact_type=server.contact_type, contact=server.contact,
+                                   contact_verified=True):
+            log.info('Not requesting server confirmation because it matches another confirmed server')
+            server.contact_verified = True
+
+        resp = super().form_valid(form)
+
+        # Send out confirmation if account is not verified
+        if not server.contact_verified:
+            send_contact_confirmation.delay(server.pk, self.request.get_host(), self.request.is_secure())
+
+        return resp
 
 
 class ServerUpdateView(MyServerMixin, UpdateView):

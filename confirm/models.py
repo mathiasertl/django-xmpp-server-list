@@ -112,9 +112,13 @@ class UserConfirmationKey(ConfirmationKey, UserConfirmationMixin):
     def confirm(self):
         if self.type == ConfirmationKey.TYPE_EMAIL:
             self.subject.email_confirmed = True
+
+            # confirm any servers that have the same contact data
             self.subject.servers.email(self.subject.email).update(contact_verified=True)
         elif self.type == ConfirmationKey.TYPE_JID:
             self.subject.jid_confirmed = True
+
+            # confirm any servers that have the same contact data
             self.subject.servers.jid(self.subject.jid).update(contact_verified=True)
 
         self.subject.save()
@@ -140,11 +144,29 @@ class ServerConfirmationKey(ConfirmationKey):
 
     def __init__(self, *args, **kwargs):
         super(ServerConfirmationKey, self).__init__(*args, **kwargs)
+        # TODO: WHAT?
         if self.id:
             self.type = self.subject.contact_type
 
     def confirm(self):
-        self.subject.contact_verified = True
+        server = self.subject
+        owner = server.user
+        server.contact_verified = True
+
+        # If this confirms a JID and the owners JID is the same, it's confirmed too
+        # Note: We also check if the JID is actually unconfirmed so we call save() only when the user is
+        # really changed.
+        if server.contact_type == Server.CONTACT_TYPE_JID and server.contact == owner.jid \
+                and not owner.jid_confirmed:
+            owner.jid_confirmed = True
+            owner.save()
+
+        # same but for email address
+        elif server.contact_type == Server.CONTACT_TYPE_EMAIL and server.contact == owner.email \
+                and not owner.email_confirmed:
+            owner.email_confirmed = True
+            owner.save()
+
         self.subject.save()
 
     def __str__(self):
