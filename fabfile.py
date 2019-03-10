@@ -20,6 +20,7 @@ logging.basicConfig(level=logging.DEBUG)
 from six.moves import configparser
 
 from fabric.api import local
+from fabric.api import task
 from fabric.tasks import Task
 
 config = configparser.ConfigParser({
@@ -28,6 +29,15 @@ config = configparser.ConfigParser({
     'uwsgi-emperor': 'xmpp-server-list',
 })
 config.read('fab.conf')
+
+
+@task
+def test():
+    folders = 'account api bootstrapform confirm core server xmpp xmpplist'
+    local('isort --check-only --diff -rc %s' % folders)
+    local('flake8 %s' % folders)
+    local('python -Wd manage.py check')
+    local('python manage.py test')
 
 
 class DeployTask(Task):
