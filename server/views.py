@@ -19,10 +19,12 @@ import logging
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponse
+from django.urls import reverse_lazy
 from django.views.generic.base import View
 from django.views.generic.detail import DetailView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import CreateView
+from django.views.generic.edit import DeleteView
 from django.views.generic.edit import UpdateView
 from django.views.generic.list import ListView
 
@@ -119,6 +121,10 @@ class ServerUpdateView(MyServerMixin, UpdateView):
         self.send_contact_confirmation(form.instance)
 
         return resp
+
+
+class ServerDeleteView(MyServerMixin, DeleteView):
+    success_url = reverse_lazy('server:list')
 
 
 class ServerStatusView(MyServerMixin, DetailView):
