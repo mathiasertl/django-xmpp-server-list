@@ -1,9 +1,9 @@
-Django==2.1.5
+Django==2.1.7
 celery==4.2.1
-cryptography==2.5
+cryptography==2.6.1
 dnspython==1.16.0
 geoip2==2.9.0
-lxml==4.3.0
+lxml==4.3.2
 pyasn1-modules==0.2.4
 pyasn1==0.4.5
 requests==2.21.0
