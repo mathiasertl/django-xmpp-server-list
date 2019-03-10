@@ -21,6 +21,8 @@ CELERY_SERVICE_NAME=xmpp-server-list-celery.service
 CELERY_SERVICE_DEST=/etc/systemd/system/${CELERY_SERVICE_NAME}
 TMPFILE_NAME=xmpp-server-list.conf
 TMPFILE_DEST=/etc/tmpfiles.d/xmpp-server-list.tmpfiles.conf
+UWSGI_NAME=xmpp-server-list.init
+UWSGI_DEST=/etc/uwsgi-emperor/vassals/${UWSGI_NAME}
 
 if [[ "${INSTALL_APT_DEPENDENCIES}" == "y" ]]; then
     apt-get update
@@ -43,7 +45,6 @@ chown xmpp-server-list:xmpp-server-list /var/log/xmpp-server-list
 if [[ ! -e ${TMPFILE_DEST} ]]; then
     ln -s ${TMPFILE_DEST} `pwd`/files/tmpfiles/${TMPFILE_NAME}
 fi
-systemd-tmpfiles --create
 
 # install celery service
 if [[ ! -e ${CELERY_SERVICE_DEST} ]]; then
@@ -52,10 +53,11 @@ fi
 if [[ ! -e ${CELERY_CONF_DEST} ]]; then
     ln -s ${CELERY_CONF_DEST} `pwd`/files/celery/${CELERY_CONF_NAME}
 fi
+
 systemctl daemon-reload
+systemd-tmpfiles --create
 systemctl enable ${CELERY_SERVICE_NAME}
 systemctl restart ${CELERY_SERVICE_NAME}
 
-if [[ -n ${UWSGI_EMPEROR} && -e /etc/uwsgi-emperor/vassals/${UWSGI_EMPEROR} ]]; then
-    touch /etc/uwsgi-emperor/vassals/${UWSGI_EMPEROR}
-fi
+# copy uwsgi file - automatically restarts because of emperor
+cp files/uwsgi/${UWSGI_NAME} ${UWSGI_DEST}
