@@ -199,6 +199,10 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'server.tasks.remove_old_servers',
         'schedule': crontab(hour=3, minute=5),
     },
+    'moderation mails': {
+        'task': 'server.tasks.moderation_mails',
+        'schedule': crontab(hour=8, minute=0),
+    },
 }
 
 try:

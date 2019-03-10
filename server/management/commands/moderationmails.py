@@ -24,6 +24,7 @@ from django.template import Context
 from django.template import loader
 
 from server.models import Server
+from server.mails import send_moderation_mails
 
 User = get_user_model()
 
@@ -32,6 +33,7 @@ class Command(BaseCommand):
     help = 'Send an E-Mail to admins if a server needs moderation.'
 
     def handle(self, *args, **options):
+        send_moderation_mails()
         perm = Permission.objects.get(codename='moderate')
         query = Q(groups__permissions=perm) | Q(user_permissions=perm)
         users = User.objects.filter(query | Q(is_superuser=True)).distinct()

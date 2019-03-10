@@ -20,6 +20,7 @@ from celery import shared_task
 
 from confirm.models import ServerConfirmationKey
 
+from .mails import send_moderation_mails
 from .models import Server
 
 log = logging.getLogger()
@@ -61,3 +62,8 @@ def verify_servers(*domains):
 
     for domain in domains:
         verify_server.delay(domain)
+
+
+@shared_task
+def moderation_mails():
+    send_moderation_mails()
