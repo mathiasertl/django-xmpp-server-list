@@ -1,6 +1,5 @@
 Fabric3==1.14.post1
-flake8==3.7.4
 hiredis==1.0.0
 ipython
-isort==4.3.4
 redis==3.2.0
+-rrequirements-test.txt
