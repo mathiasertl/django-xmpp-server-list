@@ -35,6 +35,10 @@ pip install -U -r requirements.txt ${EXTRA_PIP_REQUIREMENTS}
 python manage.py migrate
 python manage.py collectstatic --noinput
 
+# create/chown log dir
+mkdir -p /var/log/xmpp-server-list
+chown xmpp-server-list:xmpp-server-list /var/log/xmpp-server-list
+
 # install tmpfiles
 if [[ ! -e ${TMPFILE_DEST} ]]; then
     ln -s ${TMPFILE_DEST} `pwd`/files/tmpfiles/${TMPFILE_NAME}
@@ -51,7 +55,6 @@ fi
 systemctl daemon-reload
 systemctl enable ${CELERY_SERVICE_NAME}
 systemctl restart ${CELERY_SERVICE_NAME}
-
 
 if [[ -n ${UWSGI_EMPEROR} && -e /etc/uwsgi-emperor/vassals/${UWSGI_EMPEROR} ]]; then
     touch /etc/uwsgi-emperor/vassals/${UWSGI_EMPEROR}
