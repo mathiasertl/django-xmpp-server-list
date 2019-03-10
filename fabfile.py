@@ -21,6 +21,8 @@ from six.moves import configparser
 
 from fabric.api import local
 from fabric.api import task
+from fabric.api import run
+from fabric.api import env
 from fabric.tasks import Task
 
 config = configparser.ConfigParser({
@@ -40,6 +42,16 @@ def test():
     local('python manage.py test')
 
 
+@task
+def update(section='DEFAULT'):
+    """Update a local installation."""
+
+    uwsgi_emperor = config.get(section, 'uwsgi-emperor')
+    local('git pull origin master')
+    local('python manage.py migrate')
+    local('touch /etc/uwsgi-emperor/vassals/%s.ini' % uwsgi_emperor)
+
+
 class DeployTask(Task):
     def run(self, section='DEFAULT'):
         host = config.get(section, 'host')
@@ -47,7 +59,6 @@ class DeployTask(Task):
         branch = config.get(section, 'branch')
         group = config.get(section, 'group')
         path = config.get(section, 'path')
-        uwsgi_emperor = config.get(section, 'uwsgi-emperor')
 
         local('git push %s %s' % (remote, branch))
         ssh = lambda cmd: local('ssh %s sudo sg %s -c \'"cd %s && %s"\'' % (host, group, path, cmd))
@@ -62,4 +73,4 @@ class DeployTask(Task):
         ssh("touch /etc/uwsgi-emperor/vassals/%s.ini" % uwsgi_emperor)
 
 
-deploy = DeployTask()
+#deploy = DeployTask()
