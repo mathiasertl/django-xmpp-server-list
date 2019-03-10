@@ -241,7 +241,7 @@ class Server(models.Model):
     moderators_notified = models.BooleanField(
         default=False, help_text=_('If moderators have already been notified about this server.'))
     moderation_message = models.TextField(
-        default='', help_text=_('Message that will be shown to user if server is rejected.'))
+        default='', blank=True, help_text=_('Message that will be shown to user if server is rejected.'))
 
     ###############
     # Maintenance #
