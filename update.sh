@@ -21,7 +21,7 @@ CELERY_SERVICE_NAME=xmpp-server-list-celery.service
 CELERY_SERVICE_DEST=/etc/systemd/system/${CELERY_SERVICE_NAME}
 TMPFILE_NAME=xmpp-server-list.conf
 TMPFILE_DEST=/etc/tmpfiles.d/xmpp-server-list.tmpfiles.conf
-UWSGI_NAME=xmpp-server-list.init
+UWSGI_NAME=xmpp-server-list.ini
 UWSGI_DEST=/etc/uwsgi-emperor/vassals/${UWSGI_NAME}
 
 if [[ "${INSTALL_APT_DEPENDENCIES}" == "y" ]]; then
