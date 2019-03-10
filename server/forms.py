@@ -19,9 +19,19 @@ from urllib.parse import urlparse
 from django.core import validators
 from django.forms import ModelForm
 from django.forms.forms import ValidationError
+from django.utils.translation import ugettext_lazy as _
 
 from .models import Features
 from .models import Server
+
+
+class ServerAdminForm(ModelForm):
+    class Meta:
+        help_texts = {
+            'website': _('Homepage for this server, defaults to https://&lt;domain&gt;.'),
+            'contact_type': _('Type of contact'),
+            'contact_name': _('Link text for the contact'),
+        }
 
 
 class CreateServerForm(ModelForm):

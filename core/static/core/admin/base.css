@@ -6,4 +6,9 @@
     .vURLField {
         width: 22em;
     }
+
+    .checkbox-row {
+        margin-left: 160px;
+        padding-left: 10px;
+    }
 }

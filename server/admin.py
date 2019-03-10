@@ -17,6 +17,7 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
+from .forms import ServerAdminForm
 from .models import Certificate
 from .models import CertificateAuthority
 from .models import Features
@@ -39,13 +40,14 @@ class ServerAdmin(admin.ModelAdmin):
             'fields': ['website', ('registration_url', 'policy_url', ), ],
         }),
         (_('Contact'), {
-            'fields': ['contact_type', ('contact', 'contact_name', ), 'contact_verified'],
+            'fields': [('contact_type', 'contact'), 'contact_name', 'contact_verified'],
         }),
         (_('Moderation'), {
             'fields': ['moderated', 'moderators_notified', 'moderation_message'],
             'description': _('Fields concerning the manual moderation.')
         }),
     ]
+    form = ServerAdminForm
     list_display = ('verified', 'moderated', 'domain', 'user', )
     list_display_links = ('domain', 'user', )
     readonly_fields = ['added', 'modified', 'last_checked', 'last_seen', ]
