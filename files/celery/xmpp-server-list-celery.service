@@ -1,0 +1,25 @@
+[Unit]
+Description=Celery workers for xmpp-server-list
+After=network.target redis-server.service
+Require=systemd-tmpfiles-setup.service redis-server.service
+
+[Service]
+Type=forking
+User=xmpp-server-list
+Group=xmpp-server-list
+EnvironmentFile=/etc/conf.d/xmpp-server-list-celery.conf
+WorkingDirectory=/usr/local/home/xmpp-server-list/django-xmpp-server-list
+RestartSec=5
+ExecStart=${CELERY_BIN} multi start $CELERYD_NODES \
+    -A xmpplist --pidfile=${CELERYD_PID_FILE} \
+    --logfile=${CELERYD_LOG_FILE} --loglevel="${CELERYD_LOG_LEVEL}" \
+    $CELERYD_OPTS
+ExecStop=${CELERY_BIN} multi stopwait $CELERYD_NODES \
+    --pidfile=${CELERYD_PID_FILE}
+ExecReload=${CELERY_BIN} multi restart $CELERYD_NODES \
+    -A xmpplist --pidfile=${CELERYD_PID_FILE} \
+    --logfile=${CELERYD_LOG_FILE} --loglevel="${CELERYD_LOG_LEVEL}" \
+    $CELERYD_OPTS
+
+[Install]
+WantedBy=multi-user.target
