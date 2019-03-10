@@ -30,6 +30,7 @@ from .forms import CreateServerForm
 from .forms import UpdateServerForm
 from .models import Server
 from .tasks import send_contact_confirmation
+from .tasks import verify_server
 
 log = logging.getLogger(__name__)
 
@@ -50,9 +51,7 @@ class MyServerMixin(LoginRequiredMixin):
 
         # Exclude server itself if this is not a new server
         if server.pk is not None:
-            print('excluding ourself!')
             qs.exclude(pk=server.pk)
-        print(qs)
 
         # If the servers contact information matches with the users information and it has already been
         # confirmed, we do not need to confirm it again
@@ -96,8 +95,9 @@ class ServerCreateView(LoginRequiredMixin, CreateView):
         # Save instance to database
         resp = super().form_valid(form)
 
-        # Send contact confirmation if necessary
+        # Send contact confirmation if necessary and start verification task immmediately
         self.send_contact_confirmation(form.instance)
+        verify_server.delay(form.instance.domain)
 
         return resp
 
@@ -114,6 +114,8 @@ class ServerUpdateView(MyServerMixin, UpdateView):
         resp = super().form_valid(form)
 
         # Send contact confirmation if necessary
+        # NOTE: This form does not allow you to update any technical aspects, so there is no need to run
+        #       verify_servers() again
         self.send_contact_confirmation(form.instance)
 
         return resp
