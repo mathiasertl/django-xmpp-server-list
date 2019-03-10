@@ -233,6 +233,16 @@ class Server(models.Model):
         help_text="If you want to display a custom link-text for your contact details, give it here.")
     contact_verified = models.BooleanField(default=False, help_text=_('If contact information is verified.'))
 
+    ##############
+    # Moderation #
+    ##############
+    moderated = models.BooleanField(default=None, null=True, help_text=(
+        'If this server was manually moderated. "Unkown" = Was not yet moderated, "No" = Rejected.'))
+    moderators_notified = models.BooleanField(
+        default=False, help_text=_('If moderators have already been notified about this server.'))
+    moderation_message = models.TextField(
+        default='', help_text=_('Message that will be shown to user if server is rejected.'))
+
     ###############
     # Maintenance #
     ###############
@@ -257,10 +267,6 @@ class Server(models.Model):
         related_name='servers', verbose_name='CA', blank=True, null=True,
         help_text="The Certificate Authority of the certificate used in SSL/TLS connections.")
 
-    # moderation:
-    moderated = models.NullBooleanField(default=None)
-    moderators_notified = models.BooleanField(default=False)
-    moderation_message = models.TextField(default='')
     features = models.OneToOneField(Features, on_delete=models.CASCADE, related_name='server')
 
     # queried information

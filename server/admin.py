@@ -41,6 +41,10 @@ class ServerAdmin(admin.ModelAdmin):
         (_('Contact'), {
             'fields': ['contact_type', ('contact', 'contact_name', ), 'contact_verified'],
         }),
+        (_('Moderation'), {
+            'fields': ['moderated', 'moderators_notified', 'moderation_message'],
+            'description': _('Fields concerning the manual moderation.')
+        }),
     ]
     list_display = ('verified', 'moderated', 'domain', 'user', )
     list_display_links = ('domain', 'user', )
