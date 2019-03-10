@@ -109,4 +109,28 @@ front page, both contact information for your account and for your server have t
     </tr>
   </tbody>
 </table>
+
+<h3>{% trans "Moderation" %}</h3>
+<p>{% trans "We manually approve or reject all servers added to this site." %}</p>
+
+{% if object.moderated %}
+<div class="alert alert-success" role="alert">
+  <h5><i class="fas fa-check mr-1"></i> {% trans "Your server was approved." %}</h5>
+  {% trans "Your server was approved by the moderation team." %}
+</div>
+{% elif object.moderated is None %}
+<div class="alert alert-warning" role="alert">
+  <h5><i class="fas fa-clock mr-1"></i> {% trans "Your server has not yet been moderated." %}</h5>
+  {% trans "Your server was not yet moderated." %}
+</div>
+{% else %}
+<div class="alert alert-danger" role="alert">
+  <h5><i class="fas fa-times mr-1"></i> {% trans "Your server was rejected." %}</h5>
+  {% trans "We're sorry, but your server was rejected. Here's what moderators had to say:" %}
+  <blockquote class="blockquote">
+    <p class="ml-3 mb-0">{{ object.moderation_message }}</p>
+  </blockquote>
+</div>
+{% endif %}
+
 {% endblock %}
