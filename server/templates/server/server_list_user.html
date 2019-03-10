@@ -1,8 +1,13 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n static %}
 
 {% block title %}Your servers{% endblock %}
 {% block pagetitle %}Your servers{% endblock %}
+
+{% block css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'server/user.css' %}"/>
+{% endblock %}
 
 {% block content %}
 {% url "account" as account_url %}
@@ -13,8 +18,9 @@
     <tr>
       <th>{% trans "domain" %}</th>
       <th></th>
-      <th>{% trans "Technical aspects" %}</th>
+      <th>{% trans "Technical" %}</th>
       <th>{% trans "Contact" %}</th>
+      <th>{% trans "Actions" %}</th>
     </tr>
   </thead><tbody>
   {% for server in object_list %}
@@ -28,6 +34,16 @@
     </td>
     <td>{% if server.contact_ok %}<i class="fas fa-check text-success mr-1"></i> {% trans "verified" %}
         {% else %}<i class="fas fa-times text-danger mr-1"></i> {% trans "unverified" %}{% endif %}
+    </td>
+    <td>
+      <a href="{% url 'server:edit' pk=server.pk %}" class="action-icon">
+        <i class="fas fa-edit text-success mr-2"
+           title="{% trans "Edit server information" %}"></i>
+      </a>
+      <a href="{% url 'server:delete' pk=server.pk %}" class="action_icon">
+        <i class="fas fa-trash-alt text-danger" 
+           title="{% trans "Delete server" %}"></i>
+      </a>
     </td>
   </tr>
   {% endfor %}

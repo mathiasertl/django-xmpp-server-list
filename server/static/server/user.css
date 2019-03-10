@@ -1,0 +1,6 @@
+/**
+ * CSS only visible to the logged-in user
+ */
+td a.action-icon {
+    text-decoration: none;
+}
