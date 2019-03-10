@@ -20,34 +20,10 @@ servers. This list is kindly brought to you by
 </p>
 
 <table class="table table-sm">
-  <thead>
-    <tr>
-      <th>{% trans "Server" %}</th>
-      <th>{% trans "Country" %}</th>
-      <th>{% trans "CA" %}</th>
-      <th>{% trans "Deployed" %}</th>
-      <th>{% trans "Contact" %}</th>
-    </tr>
-  </thead>
+  {% include "server/includes/server_row_header.html" %}
   <tbody>
 {% for server in object_list %}
-<tr id="server-{{server.id}}">
-  <td>{% include "server/includes/server_homepage.html" %}</td>
-  <td>{{ server.location }}</td>
-  <td>
-    {% if server.ca %}
-      {% if server.ca.website %}
-        <a href="{{ server.ca.website }}">{{ server.ca.get_display_name }}</a>
-      {% else %}
-        {{ server.ca.get_display_name }}
-      {% endif %}
-    {% else %}
-      {% trans "Unknown" %}
-    {% endif %}
-  </td>
-  <td>{{ server.launched }}</td>
-  <td>{% include "server/includes/server_contact.html" %}</td>
-</tr>
+{% include "server/includes/server_row.html" %}
 {% endfor %}
     </tbody>
 </table>

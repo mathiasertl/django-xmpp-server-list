@@ -8,8 +8,18 @@
 {% block content %}
 
 {% url 'server:edit' pk=object.pk as edit_url %}
+<p>{% trans "This is how this server would currently look on the homepage:" %}</p>
 
-<a class="btn btn-primary mb-2" href="{{ edit_url }}" role="button">
+<table class="table table-sm">
+  {% include "server/includes/server_row_header.html" %}
+  <tbody>
+	{% with server=object %}
+		{% include "server/includes/server_row.html" %}
+	{% endwith %}
+  </tbody>
+</table>
+
+<a class="btn btn-primary mb-3" href="{{ edit_url }}" role="button">
   {% trans "Edit server" %}</a>
 
 <h3>{% trans "Technical aspects" %}</h3>
