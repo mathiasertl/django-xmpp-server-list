@@ -1,0 +1,9 @@
+@media (min-width: 1025px) {
+    fieldset .fieldBox {
+        min-width: 492px;
+    }
+
+    .vURLField {
+        width: 22em;
+    }
+}

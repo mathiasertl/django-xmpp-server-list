@@ -53,7 +53,10 @@ class ServerAdmin(admin.ModelAdmin):
 
     class Media:
         css = {
-            'all': ('admin/server.css', ),
+            'all': (
+                'core/admin/base.css',
+                'admin/server.css',
+            ),
         }
 
     def verified(self, obj):
