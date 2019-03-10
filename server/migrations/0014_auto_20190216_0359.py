@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('updated', models.DateTimeField(auto_now=True)),
                 ('serial', models.CharField(help_text='The serial of the certificate.', max_length=64)),
-                ('pem', models.TextField(help_text='The full certificate as PEM.', unique=True)),
+                ('pem', models.TextField(help_text='The full certificate as PEM.')),
                 ('valid_from', models.DateTimeField(help_text='When this certificate was issued.')),
                 ('valid_until', models.DateTimeField(help_text='When this certificate expires.')),
                 ('first_seen', models.DateTimeField(help_text='When we first saw this certificate')),

@@ -101,7 +101,7 @@ class Certificate(BaseModel):
 
     # NOTE: Highly unlikely, it's possible for 2 certs to have the same serial (e.g. from different CAs)
     serial = models.CharField(max_length=64, help_text=_('The serial of the certificate.'))
-    pem = models.TextField(unique=True, help_text=_('The full certificate as PEM.'))
+    pem = models.TextField(help_text=_('The full certificate as PEM.'))
 
     valid_from = models.DateTimeField(help_text=_('When this certificate was issued.'))
     valid_until = models.DateTimeField(help_text=_('When this certificate expires.'))
