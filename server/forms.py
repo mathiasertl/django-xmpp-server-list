@@ -107,13 +107,3 @@ class UpdateServerForm(ModelForm):
         if 'contact' in changed or 'contact_type' in changed:
             return True
         return False
-
-    def save(self, commit=True):
-        server = super().save(commit=False)
-
-        if self.contact_changed():
-            server.contact_verified = False
-
-        if commit is True:
-            server.save()
-        return server
