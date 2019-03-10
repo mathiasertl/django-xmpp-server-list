@@ -21,7 +21,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 from django.core.mail import send_mail
 from django.db.models import Q
-from django.template import Context
 from django.template import loader
 
 from server.models import Server
@@ -48,13 +47,13 @@ def send_moderation_mails():
 
     t = loader.get_template('server/mail/moderationmail.html')
     for user in users:
-        c = Context({
+        c = {
             'servers': servers,
             'user': user,
             'sitename': settings.SITENAME,
             'protocol': protocol,
             'domain': domain,
-        })
+        }
 
         body = t.render(c)
 
