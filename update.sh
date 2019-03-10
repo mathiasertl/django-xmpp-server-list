@@ -43,15 +43,15 @@ chown xmpp-server-list:xmpp-server-list /var/log/xmpp-server-list
 
 # install tmpfiles
 if [[ ! -e ${TMPFILE_DEST} ]]; then
-    ln -s ${TMPFILE_DEST} `pwd`/files/tmpfiles/${TMPFILE_NAME}
+    ln -s `pwd`/files/tmpfiles/${TMPFILE_NAME} ${TMPFILE_DEST}
 fi
 
 # install celery service
 if [[ ! -e ${CELERY_SERVICE_DEST} ]]; then
-    ln -s ${CELERY_SERVICE_DEST} `pwd`/files/celery/${CELERY_SERVICE_NAME}
+    ln -s `pwd`/files/celery/${CELERY_SERVICE_NAME} ${CELERY_SERVICE_DEST}
 fi
 if [[ ! -e ${CELERY_CONF_DEST} ]]; then
-    ln -s ${CELERY_CONF_DEST} `pwd`/files/celery/${CELERY_CONF_NAME}
+    ln -s `pwd`/files/celery/${CELERY_CONF_NAME} ${CELERY_CONF_DEST}
 fi
 
 systemctl daemon-reload
