@@ -24,9 +24,9 @@ from datetime import datetime
 import geoip2.database
 import geoip2.errors
 from cryptography import x509
+from cryptography.hazmat.backends import default_backend
 from cryptography.x509.oid import ExtensionOID
 from cryptography.x509.oid import NameOID
-from cryptography.hazmat.backends import default_backend
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -36,8 +36,8 @@ from django.utils import timezone
 from django.utils.translation import ugettext as _
 
 from core.models import BaseModel
-from core.utils import int_to_hex
 from core.utils import bytes_to_hex
+from core.utils import int_to_hex
 from server.constants import C2S_STREAM_FEATURES
 from server.constants import CONTACT_TYPE_EMAIL
 from server.constants import CONTACT_TYPE_JID

@@ -1,0 +1,18 @@
+{% load i18n %}<tr id="server-{{server.id}}">
+<tr>
+  <td>{% include "server/includes/server_homepage.html" %}</td>
+  <td>{{ server.location }}</td>
+  <td>
+    {% if server.ca %}
+      {% if server.ca.website %}
+        <a href="{{ server.ca.website }}">{{ server.ca.get_display_name }}</a>
+      {% else %}
+        {{ server.ca.get_display_name }}
+      {% endif %}
+    {% else %}
+      {% trans "Unknown" %}
+    {% endif %}
+  </td>
+  <td>{{ server.launched }}</td>
+  <td>{% include "server/includes/server_contact.html" %}</td>
+</tr>

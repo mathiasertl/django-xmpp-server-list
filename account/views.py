@@ -28,9 +28,9 @@ from django.views.generic.edit import UpdateView
 
 from core.views import AnonymousRequiredMixin
 
-from .forms import UserCreationForm
 from .forms import PasswordChangeForm
 from .forms import PasswordResetForm
+from .forms import UserCreationForm
 from .tasks import send_email_confirmation
 from .tasks import send_jid_confirmation
 
