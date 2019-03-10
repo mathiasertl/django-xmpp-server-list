@@ -36,16 +36,16 @@ python manage.py migrate
 python manage.py collectstatic --noinput
 
 # install tmpfiles
-if [[ -e ${TMPFILE_DEST} ]]; then
+if [[ ! -e ${TMPFILE_DEST} ]]; then
     ln -s ${TMPFILE_DEST} `pwd`/files/tmpfiles/${TMPFILE_NAME}
 fi
 systemd-tmpfiles --create
 
 # install celery service
-if [[ -e ${CELERY_SERVICE_DEST} ]]; then
+if [[ ! -e ${CELERY_SERVICE_DEST} ]]; then
     ln -s ${CELERY_SERVICE_DEST} `pwd`/files/celery/${CELERY_SERVICE_NAME}
 fi
-if [[ -e ${CELERY_CONF_DEST} ]]; then
+if [[ ! -e ${CELERY_CONF_DEST} ]]; then
     ln -s ${CELERY_CONF_DEST} `pwd`/files/celery/${CELERY_CONF_NAME}
 fi
 systemctl daemon-reload
