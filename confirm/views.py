@@ -70,4 +70,4 @@ class UserConfirmationView(ConfirmationView):
 
 class ConfirmServerContactView(LoginRequiredMixin, ConfirmationView):
     model = ServerConfirmationKey
-    url = 'server'
+    url = 'server:list'
