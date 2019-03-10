@@ -17,7 +17,6 @@
   <thead>
     <tr>
       <th>{% trans "domain" %}</th>
-      <th></th>
       <th>{% trans "Technical" %}</th>
       <th>{% trans "Contact" %}</th>
       <th>{% trans "Moderated" %}</th>
@@ -27,9 +26,8 @@
   {% for server in object_list %}
   <tr>
     <td>
-      <a href="{% url 'server:edit' pk=server.pk %}">{{ server.domain }}</a>
+      <a href="{% url 'server:status' pk=server.pk %}">{{ server.domain }}</a>
     </td>
-    <td><a href="{% url 'server:status' pk=server.pk %}">{% trans "Status" %}</a></td>
     <td>{% if server.verified %}<i class="fas fa-check text-success mr-1"></i> {% trans "verified" %}
         {% else %}<i class="fas fa-times text-danger mr-1"></i> {% trans "unverified" %}{% endif %}
     </td>
