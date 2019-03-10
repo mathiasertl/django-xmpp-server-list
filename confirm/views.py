@@ -60,6 +60,9 @@ class ConfirmationView(RedirectView, SingleObjectMixin):
         queryset.invalidate(subject=key.subject, typ=key.type)  # delete all old ones for this user
         self.get_queryset().invalidate_outdated()  # delete expired keys
 
+        return self.get_success_url(key)
+
+    def get_success_url(self, key):
         return reverse(self.url)
 
 
@@ -70,4 +73,7 @@ class UserConfirmationView(ConfirmationView):
 
 class ConfirmServerContactView(LoginRequiredMixin, ConfirmationView):
     model = ServerConfirmationKey
-    url = 'server:list'
+    url = 'server:status'
+
+    def get_success_url(self, key):
+        return reverse(self.url, kwargs={'pk': key.subject.pk})
