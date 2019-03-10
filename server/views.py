@@ -99,9 +99,12 @@ class ServerCreateView(LoginRequiredMixin, ContactVerificationMixin, CreateView)
         # Save instance to database
         resp = super().form_valid(form)
 
-        # Send contact confirmation if necessary and start verification task immmediately
+        # Send contact confirmation if necessary
         self.send_contact_confirmation(form.instance)
-        verify_server.delay(form.instance.domain)
+
+        # Start verification task immediately if contact is already verified
+        if form.instance.contact_verified:
+            verify_server.delay(form.instance.domain)
 
         return resp
 
