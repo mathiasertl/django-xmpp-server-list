@@ -46,6 +46,8 @@ class MyServerMixin(LoginRequiredMixin):
         qs = super().get_queryset()
         return qs.filter(user=self.request.user)
 
+
+class ContactVerificationMixin:
     def is_contact_verified(self, server):
         owner = server.user
         qs = Server.objects.filter(user=server.user, contact_type=server.contact_type, contact=server.contact,
@@ -84,7 +86,7 @@ class MyServerListView(MyServerMixin, ListView):
     template_name_suffix = '_list_user'
 
 
-class ServerCreateView(LoginRequiredMixin, CreateView):
+class ServerCreateView(LoginRequiredMixin, ContactVerificationMixin, CreateView):
     form_class = CreateServerForm
     model = Server
     queryset = Server.objects.all()
@@ -104,7 +106,7 @@ class ServerCreateView(LoginRequiredMixin, CreateView):
         return resp
 
 
-class ServerUpdateView(MyServerMixin, UpdateView):
+class ServerUpdateView(MyServerMixin, ContactVerificationMixin, UpdateView):
     form_class = UpdateServerForm
     template_name_suffix = '_update'
 
