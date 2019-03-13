@@ -23,15 +23,15 @@ msgstr ""
 
 #: core/templates/base.html:30
 msgid "My servers"
-msgstr ""
+msgstr "Meine Server"
 
 #: core/templates/base.html:36
 msgid "Moderate"
-msgstr ""
+msgstr "Moderation"
 
 #: core/templates/base.html:44
 msgid "Account"
-msgstr ""
+msgstr "Konto"
 
 #: core/templates/base.html:48
 msgid "Logout"
@@ -43,7 +43,7 @@ msgstr ""
 
 #: core/templates/base.html:100
 msgid "© 2011-2019, Mathias Ertl unless otherwise noted."
-msgstr ""
+msgstr "© 2011-2019, Mathias Ertl"
 
 #: core/templates/base.html:103
 msgid ""

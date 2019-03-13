@@ -1,10 +1,11 @@
+*.mo
 *.pyc
-localsettings.py
-xmpplist.sqlite
-*.swp
 *.swo
+*.swp
+localsettings.py
 media
 mystatic
+xmpplist.sqlite
 /.tox/
 /bin/
 /build/
