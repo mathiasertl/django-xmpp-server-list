@@ -167,7 +167,7 @@ msgstr "Registrierung"
 #: server/templates/server/includes/server_homepage.html:4
 #: server/templates/server/includes/server_homepage.html:8
 msgid "Policy"
-msgstr "Nutzungsbedingungen"
+msgstr "ToS"
 
 #: server/templates/server/includes/server_row_header.html:3
 msgid "Server"
