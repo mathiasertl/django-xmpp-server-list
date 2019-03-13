@@ -8,6 +8,21 @@ div.row.content {
 }
 
 /**
+ * server row
+ */
+
+@media (min-width: 992px) {
+    tr.server-row .location-cc {
+        display: none;
+    }
+}
+@media (max-width: 991px) {
+    tr.server-row .location {
+        display: none;
+    }
+}
+
+/**
  * Footer
  */
 footer {

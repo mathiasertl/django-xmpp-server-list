@@ -253,8 +253,9 @@ class Server(models.Model):
     last_checked = models.DateTimeField(null=True, blank=True)  # last check completed (None == never checked)
 
     # geolocation:
-    country = models.CharField(default='', null=True, blank=True, max_length=100,
-                               help_text="Country the server is located in.")
+    country = models.CharField(max_length=100, help_text=_("Country the server is located in."))
+    country_cc = models.CharField(max_length=2, verbose_name=_('Country Code'),
+                                  help_text=_("Two-letter country-code the server is located in."))
 
     # information about the service:
     cert = models.ForeignKey(
@@ -488,6 +489,10 @@ class Server(models.Model):
     def location(self):
         return self.country or _('Unknown')
 
+    @property
+    def location_cc(self):
+        return self.country_cc or _('??')
+
     def pprint_host(self, host, port):
         host = '[%s]' % host if ':' in host else host
         return '%s:%s' % (host, port)
@@ -501,7 +506,9 @@ class Server(models.Model):
 
         try:
             reader = geoip2.database.Reader(settings.GEOIP_COUNTRY_DB)
-            self.country = reader.country(ip).country.name
+            data = reader.country(ip).country
+            self.country = data.name
+            self.country_cc = data.iso_code
         except geoip2.errors.GeoIP2Error as e:
             log.exception(e)
 

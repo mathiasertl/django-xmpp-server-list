@@ -1,7 +1,9 @@
-{% load i18n %}<tr id="server-{{server.id}}">
-<tr>
+{% load i18n %}<tr id="server-{{server.id}}" class="server-row">
   <td>{% include "server/includes/server_homepage.html" %}</td>
-  <td>{{ server.location }}</td>
+  <td>
+    <span class="location">{{ server.location }}</span>
+    <span class="location-cc">{{ server.location_cc }}</span>
+  </td>
   <td>
     {% if server.ca %}
       {% if server.ca.website %}

@@ -34,7 +34,7 @@ class ServerAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {
             'fields': [('domain', 'launched'), ('added', 'modified', ),
-                       ('last_checked', 'last_seen', )],
+                       ('last_checked', 'last_seen', ), ('country', 'country_cc')],
         }),
         (_('Homepage'), {
             'fields': ['website', ('registration_url', 'policy_url', ), ],
@@ -50,7 +50,7 @@ class ServerAdmin(admin.ModelAdmin):
     form = ServerAdminForm
     list_display = ('verified', 'moderated', 'domain', 'user', )
     list_display_links = ('domain', 'user', )
-    readonly_fields = ['added', 'modified', 'last_checked', 'last_seen', ]
+    readonly_fields = ['added', 'modified', 'last_checked', 'last_seen', 'country', 'country_cc']
     search_fields = ('domain', )
 
     class Media:
