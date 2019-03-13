@@ -93,6 +93,11 @@ class ServerCreateView(LoginRequiredMixin, ContactVerificationMixin, CreateView)
     queryset = Server.objects.all()
     template_name_suffix = '_create'
 
+    def get_initial(self):
+        return {
+            'contact': self.request.user.jid,
+        }
+
     def form_valid(self, form):
         form.instance.user = self.request.user
         form.instance.contact_verified = self.is_contact_verified(form.instance)
