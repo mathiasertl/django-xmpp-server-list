@@ -39,6 +39,12 @@ class ServerAdmin(admin.ModelAdmin):
         (_('Homepage'), {
             'fields': ['website', ('registration_url', 'policy_url', ), ],
         }),
+        (_('Technical verification'), {
+            'fields': [('c2s_srv_records', 's2s_srv_records'),
+                       ('c2s_tls_verified', 's2s_tls_verified'),
+                       ('c2s_starttls'),
+                       ],
+        }),
         (_('Contact'), {
             'fields': [('contact_type', 'contact'), 'contact_name', 'contact_verified'],
         }),
