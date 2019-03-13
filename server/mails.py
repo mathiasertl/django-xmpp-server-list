@@ -36,8 +36,7 @@ def send_moderation_mails():
     protocol = getattr(settings, 'DEFAULT_PROTOCOL', 'https')
     domain = getattr(settings, 'DEFAULT_DOMAIN', 'list.jabber.at')
 
-    servers = Server.objects.for_moderation()
-    servers = servers.filter(moderators_notified=False)
+    servers = Server.objects.for_moderation().filter(moderators_notified=False)
     if not servers.exists():
         return
 
