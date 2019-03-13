@@ -10,7 +10,7 @@
 {% url 'server:edit' pk=object.pk as edit_url %}
 <p>{% trans "This is how this server would currently look on the homepage:" %}</p>
 
-<table class="table table-sm">
+<table class="table table-sm table-responsive-md">
   {% include "server/includes/server_row_header.html" %}
   <tbody>
 	{% with server=object %}
