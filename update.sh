@@ -36,6 +36,7 @@ fi
 pip install -U -r requirements.txt ${EXTRA_PIP_REQUIREMENTS}
 python manage.py migrate
 python manage.py collectstatic --noinput
+python manage.py compilemessages -l de
 
 # create/chown log dir
 mkdir -p /var/log/xmpp-server-list
