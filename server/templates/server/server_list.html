@@ -31,14 +31,13 @@ servers. This list is kindly brought to you by
 {% if not user.is_authenticated %}
 {% url 'account:create' as create_url %}
 {% url 'account:login' as login_url %}
-<p>{% blocktrans with path=request.path%}
-To add your own server to the list, simply <a href="{{ create_url }}">create an account</a>
-or <a href="{{ login_url }}?next={{ path }}">login</a>.{% endblocktrans %}</p>
+<p>{% blocktrans with path=request.path%}To add your own server to the list, simply <a href="{{ create_url }}">create
+an account</a> or <a href="{{ login_url }}?next={{ path }}">login</a>.{% endblocktrans %}</p>
 {% endif %}
 
 {% url 'api:servers' as api_url %}
 {% url 'api:help' as api_help_url %}
-<p>{% blocktrans %}There also is an <a href="{{ api_url }}">API</a> for reading servers froma
-this list.  <a href="{{ api_help_url }}">Some documentation</a> is available
+<p>{% blocktrans %}There also is an <a href="{{ api_url }}">API</a> for reading servers from
+this list. <a href="{{ api_help_url }}">Some documentation</a> is available
 for it.{% endblocktrans %}</p>
 {% endblock content %}
