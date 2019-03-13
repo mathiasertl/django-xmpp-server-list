@@ -1,0 +1,715 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-03-13 14:45-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+#: server/admin.py:39
+msgid "Homepage"
+msgstr ""
+
+#: server/admin.py:42
+msgid "Technical verification"
+msgstr ""
+
+#: server/admin.py:48 server/templates/server/includes/server_row_header.html:7
+#: server/templates/server/server_list_user.html:21
+msgid "Contact"
+msgstr ""
+
+#: server/admin.py:51 server/templates/server/ajax/report.html:114
+#: server/templates/server/server_status.html:129
+msgid "Moderation"
+msgstr ""
+
+#: server/admin.py:53
+msgid "Fields concerning the manual moderation."
+msgstr ""
+
+#: server/forms.py:31
+msgid "Homepage for this server, defaults to https://&lt;domain&gt;."
+msgstr ""
+
+#: server/forms.py:32
+msgid "Type of contact"
+msgstr ""
+
+#: server/forms.py:33
+msgid "Link text for the contact"
+msgstr ""
+
+#: server/models.py:61
+msgid "Launch year may not be prior to 2001."
+msgstr ""
+
+#: server/models.py:63
+msgid "Launch year may not be in the future."
+msgstr ""
+
+#: server/models.py:87 server/models.py:103
+msgid "The serial of the certificate."
+msgstr ""
+
+#: server/models.py:90
+msgid "Certificate authorities"
+msgstr ""
+
+#: server/models.py:104
+msgid "The full certificate as PEM."
+msgstr ""
+
+#: server/models.py:106
+msgid "When this certificate was issued."
+msgstr ""
+
+#: server/models.py:107
+msgid "When this certificate expires."
+msgstr ""
+
+#: server/models.py:109
+msgid "When we first saw this certificate"
+msgstr ""
+
+#: server/models.py:110
+msgid "When we last saw this certificate"
+msgstr ""
+
+#: server/models.py:131
+msgid "Server software"
+msgstr ""
+
+#: server/models.py:147
+msgid "Features"
+msgstr ""
+
+#: server/models.py:211
+msgid ""
+"Homepage with information about your server. If left empty, the default is "
+"https://<domain>."
+msgstr ""
+
+#: server/models.py:213
+msgid "Policy URL"
+msgstr ""
+
+#: server/models.py:214
+msgid "A URL describing any terms and conditions for using your server."
+msgstr ""
+
+#: server/models.py:217
+msgid "Registration URL"
+msgstr ""
+
+#: server/models.py:218
+msgid "A URL where users can create an account on your server."
+msgstr ""
+
+#: server/models.py:234
+msgid "If contact information is verified."
+msgstr ""
+
+#: server/models.py:242
+msgid "If moderators have already been notified about this server."
+msgstr ""
+
+#: server/models.py:244
+msgid "Message that will be shown to user if server is rejected."
+msgstr ""
+
+#: server/models.py:256
+msgid "Country the server is located in."
+msgstr ""
+
+#: server/models.py:257
+msgid "Country Code"
+msgstr ""
+
+#: server/models.py:258
+msgid "Two-letter country-code the server is located in."
+msgstr ""
+
+#: server/models.py:262
+msgid "Current certificate"
+msgstr ""
+
+#: server/models.py:264
+msgid "The current certificate used by this server."
+msgstr ""
+
+#: server/models.py:490 server/templates/server/includes/server_row.html:15
+msgid "Unknown"
+msgstr ""
+
+#: server/models.py:494
+msgid "??"
+msgstr ""
+
+#: server/templates/server/ajax/report.html:2
+msgid "Summary"
+msgstr ""
+
+#: server/templates/server/ajax/report.html:5
+msgid "Your server will be checked with the next six hours."
+msgstr ""
+
+#: server/templates/server/ajax/report.html:10
+msgid ""
+"Technical aspects have been automatically verified. See below for any "
+"additional notes."
+msgstr ""
+
+#: server/templates/server/ajax/report.html:12
+msgid ""
+"Technical aspects (SRV, TLS, ...) will be automatically verified with 24 "
+"hours."
+msgstr ""
+
+#: server/templates/server/ajax/report.html:14
+msgid "This server failed verification. See below for details."
+msgstr ""
+
+#: server/templates/server/ajax/report.html:17
+#: server/templates/server/ajax/report.html:117
+msgid "Contact details and homepage have been verified."
+msgstr ""
+
+#: server/templates/server/ajax/report.html:19
+msgid "Contact details and/or homepage have not yet been verified."
+msgstr ""
+
+#: server/templates/server/ajax/report.html:22
+msgid ""
+"\n"
+"            Contact details and/or homepage have been rejected. Please make\n"
+"            sure you have a usable homepage and contact details.\n"
+"        "
+msgstr ""
+
+#: server/templates/server/ajax/report.html:28
+#, python-format
+msgid "A moderator noted: <strong>%(message)s</strong>"
+msgstr ""
+
+#: server/templates/server/ajax/report.html:34
+msgid "Server is verified and displayed on the front page."
+msgstr ""
+
+#: server/templates/server/ajax/report.html:36
+msgid ""
+"Server is not displayed on the front page. Please see additional details "
+"below."
+msgstr ""
+
+#: server/templates/server/ajax/report.html:39
+msgid "DNS records"
+msgstr ""
+
+#: server/templates/server/ajax/report.html:43
+msgid "xmpp-client SRV records ok."
+msgstr ""
+
+#: server/templates/server/ajax/report.html:45
+msgid "No xmpp-client SRV records."
+msgstr ""
+
+#: server/templates/server/ajax/report.html:50
+msgid "xmpp-server SRV records ok."
+msgstr ""
+
+#: server/templates/server/ajax/report.html:52
+msgid "No xmpp-server SRV records."
+msgstr ""
+
+#: server/templates/server/ajax/report.html:59
+msgid "All SRV records have IPv6 records"
+msgstr ""
+
+#: server/templates/server/ajax/report.html:61
+msgid "IPv6 record missing at one or more SRV records."
+msgstr ""
+
+#: server/templates/server/ajax/report.html:68
+msgid "Encryption"
+msgstr ""
+
+#: server/templates/server/ajax/report.html:72
+msgid ""
+"\n"
+"            Your server uses no Certificate Authority known by this website, "
+"hence your certificate was not validated.\n"
+"            If you use a common one, please consider sending <a href="
+"\"mailto:jabber@jabber.at\">an e-mail</a>.\n"
+"            "
+msgstr ""
+
+#: server/templates/server/ajax/report.html:82
+msgid "C2S certificate verified."
+msgstr ""
+
+#: server/templates/server/ajax/report.html:84
+msgid "C2S certificate could not be verified."
+msgstr ""
+
+#: server/templates/server/ajax/report.html:89
+msgid "C2S encryption not mandatory."
+msgstr ""
+
+#: server/templates/server/ajax/report.html:93
+msgid "Your server does not support TLS on C2S connections."
+msgstr ""
+
+#: server/templates/server/ajax/report.html:99
+msgid "S2S certificate verified."
+msgstr ""
+
+#: server/templates/server/ajax/report.html:101
+msgid "S2S certificate could not be verified."
+msgstr ""
+
+#: server/templates/server/ajax/report.html:106
+msgid "S2S encryption not mandatory."
+msgstr ""
+
+#: server/templates/server/ajax/report.html:110
+msgid "Your server does not support TLS on S2S connections."
+msgstr ""
+
+#: server/templates/server/ajax/report.html:119
+#: server/templates/server/ajax/report.html:138
+msgid "Homepage will be checked manually."
+msgstr ""
+
+#: server/templates/server/ajax/report.html:123
+#: server/templates/server/ajax/report.html:130
+#, python-format
+msgid ""
+"\n"
+"                    You should have received a verification message via "
+"%(medium)s.\n"
+"                    If you haven't, please resend the confirmation with the\n"
+"                    button on the very right of this row."
+msgstr ""
+
+#: server/templates/server/ajax/report.html:136
+msgid "Contact details will be verified manually."
+msgstr ""
+
+#: server/templates/server/ajax/report.html:144
+msgid "Log entries"
+msgstr ""
+
+#: server/templates/server/includes/server_homepage.html:3
+#: server/templates/server/includes/server_homepage.html:6
+msgid "Registration"
+msgstr ""
+
+#: server/templates/server/includes/server_homepage.html:4
+#: server/templates/server/includes/server_homepage.html:8
+msgid "Policy"
+msgstr ""
+
+#: server/templates/server/includes/server_row_header.html:3
+msgid "Server"
+msgstr ""
+
+#: server/templates/server/includes/server_row_header.html:4
+msgid "Country"
+msgstr ""
+
+#: server/templates/server/includes/server_row_header.html:5
+msgid "CA"
+msgstr ""
+
+#: server/templates/server/includes/server_row_header.html:6
+msgid "Deployed"
+msgstr ""
+
+#: server/templates/server/server_confirm_delete.html:4
+#, python-format
+msgid "%(domain)s - delete"
+msgstr ""
+
+#: server/templates/server/server_confirm_delete.html:5
+#, python-format
+msgid "Delete %(domain)s"
+msgstr ""
+
+#: server/templates/server/server_confirm_delete.html:10
+#, python-format
+msgid "\"Really want to delete %(domain)s? This action cannot be undone."
+msgstr ""
+
+#: server/templates/server/server_confirm_delete.html:13
+msgid "Delete"
+msgstr ""
+
+#: server/templates/server/server_create.html:5
+msgid "Add server"
+msgstr ""
+
+#: server/templates/server/server_create.html:6
+msgid "Add a new server"
+msgstr ""
+
+#: server/templates/server/server_create.html:11
+msgid "Create"
+msgstr ""
+
+#: server/templates/server/server_list.html:4
+msgid "XMPP servers"
+msgstr ""
+
+#: server/templates/server/server_list.html:5
+msgid "Public XMPP servers"
+msgstr ""
+
+#: server/templates/server/server_list.html:9
+msgid ""
+"This is a list of public\n"
+"<a href=\"http://en.wikipedia.org/wiki/"
+"Extensible_Messaging_and_Presence_Protocol\">XMPP</a>\n"
+"servers, free for everyone to use. XMPP is a open, free and decentralized\n"
+"instant messaging network."
+msgstr ""
+
+#: server/templates/server/server_list.html:14
+msgid ""
+"Due to its decentralized nature, there are thousands of XMPP servers "
+"available\n"
+"from which to choose from. You may choose any of the listed servers or a\n"
+"different server altogether, you can always communicate with users on other\n"
+"servers. This list is kindly brought to you by \n"
+"<a href=\"https://jabber.at\">jabber.at</a>, which is run by the\n"
+"<a href=\"https://fsinf.at\">Fachschaft Informatik</a>."
+msgstr ""
+
+#: server/templates/server/server_list.html:34
+#, python-format
+msgid ""
+"\n"
+"To add your own server to the list, simply <a href=\"%(create_url)s\">create "
+"an account</a>\n"
+"or <a href=\"%(login_url)s?next=%(path)s\">login</a>."
+msgstr ""
+
+#: server/templates/server/server_list.html:41
+#, python-format
+msgid ""
+"There also is an <a href=\"%(api_url)s\">API</a> for reading servers froma\n"
+"this list.  <a href=\"%(api_help_url)s\">Some documentation</a> is "
+"available\n"
+"for it."
+msgstr ""
+
+#: server/templates/server/server_list_moderate.html:21
+#: server/templates/server/server_list_moderate.html:35
+msgid "Approve"
+msgstr ""
+
+#: server/templates/server/server_list_moderate.html:22
+#: server/templates/server/server_list_moderate.html:39
+#: server/templates/server/server_list_moderate.html:60
+msgid "Reject"
+msgstr ""
+
+#: server/templates/server/server_list_moderate.html:52
+msgid "Reject server"
+msgstr ""
+
+#: server/templates/server/server_list_moderate.html:55
+msgid "Any reason for rejecting this server:"
+msgstr ""
+
+#: server/templates/server/server_list_moderate.html:59
+msgid "Cancel"
+msgstr ""
+
+#: server/templates/server/server_list_user.html:19
+msgid "domain"
+msgstr ""
+
+#: server/templates/server/server_list_user.html:20
+msgid "Technical"
+msgstr ""
+
+#: server/templates/server/server_list_user.html:22
+msgid "Moderated"
+msgstr ""
+
+#: server/templates/server/server_list_user.html:23
+msgid "Actions"
+msgstr ""
+
+#: server/templates/server/server_list_user.html:31
+msgid "OK"
+msgstr ""
+
+#: server/templates/server/server_list_user.html:32
+msgid "Failed"
+msgstr ""
+
+#: server/templates/server/server_list_user.html:34
+msgid "verified"
+msgstr ""
+
+#: server/templates/server/server_list_user.html:35
+msgid "unverified"
+msgstr ""
+
+#: server/templates/server/server_list_user.html:37
+msgid "Approved"
+msgstr ""
+
+#: server/templates/server/server_list_user.html:38
+msgid "Pending..."
+msgstr ""
+
+#: server/templates/server/server_list_user.html:39
+msgid "Rejected"
+msgstr ""
+
+#: server/templates/server/server_list_user.html:44
+msgid "Edit server information"
+msgstr ""
+
+#: server/templates/server/server_list_user.html:48
+msgid "Delete server"
+msgstr ""
+
+#: server/templates/server/server_list_user.html:58
+msgid "No servers yet added to your list."
+msgstr ""
+
+#: server/templates/server/server_list_user.html:62
+msgid "... add a new server"
+msgstr ""
+
+#: server/templates/server/server_list_user.html:65
+msgid "Requirements for being listed"
+msgstr ""
+
+#: server/templates/server/server_list_user.html:67
+msgid ""
+"<strong>Technical aspects:</strong> The most important aspects of your\n"
+"server configuration (SRV records, valid TLS certificate, ...) are\n"
+"automatically checked every six hours. If your server ever fails any check,\n"
+"your server will not be listed until the problems are fixed."
+msgstr ""
+
+#: server/templates/server/server_list_user.html:71
+msgid ""
+"<strong>Homepage:</strong> Your homepage has to include some details\n"
+"about your server. At the very least, it should indicate who (e.g. what\n"
+"organisation, or just you privately) is running your server and give the "
+"same\n"
+"contact address as given in the \"Contact\" field."
+msgstr ""
+
+#: server/templates/server/server_list_user.html:75
+#, python-format
+msgid ""
+"<strong>Contact:</strong> If you give a JID or E-Mail address, it has to be\n"
+"    verified (unless it was already verified via <a href=\"%(account_url)s"
+"\">your\n"
+"profile</a>) via an automatic message. Webpages or MUCs will be manually\n"
+"verified. <strong>Note:</strong> Your server will be rejected if a JID/E-"
+"Mail\n"
+"address is not verified."
+msgstr ""
+
+#: server/templates/server/server_status.html:5
+#, python-format
+msgid "%(domain)s - status"
+msgstr ""
+
+#: server/templates/server/server_status.html:6
+#, python-format
+msgid "Status for %(domain)s"
+msgstr ""
+
+#: server/templates/server/server_status.html:11
+msgid "This is how this server would currently look on the homepage:"
+msgstr ""
+
+#: server/templates/server/server_status.html:23
+msgid "Edit server"
+msgstr ""
+
+#: server/templates/server/server_status.html:25
+msgid "Technical aspects"
+msgstr ""
+
+#: server/templates/server/server_status.html:26
+msgid ""
+"\n"
+"We test some technical aspects of your server to make sure that users have\n"
+"good experience when using your server.\n"
+"</p>"
+msgstr ""
+
+#: server/templates/server/server_status.html:32
+msgid "Technical aspects are not yet verified"
+msgstr ""
+
+#: server/templates/server/server_status.html:33
+msgid ""
+"Verifying your server is automatic, but takes a little time. Please be "
+"patient."
+msgstr ""
+
+#: server/templates/server/server_status.html:39
+msgid "c2s SRV records"
+msgstr ""
+
+#: server/templates/server/server_status.html:42
+#: server/templates/server/server_status.html:52
+#: server/templates/server/server_status.html:62
+#: server/templates/server/server_status.html:72
+#: server/templates/server/server_status.html:95
+#: server/templates/server/server_status.html:107
+#: server/templates/server/server_status.html:119
+msgid "Verified"
+msgstr ""
+
+#: server/templates/server/server_status.html:44
+#: server/templates/server/server_status.html:54
+#: server/templates/server/server_status.html:64
+#: server/templates/server/server_status.html:74
+#: server/templates/server/server_status.html:97
+#: server/templates/server/server_status.html:109
+#: server/templates/server/server_status.html:121
+msgid "Unverified"
+msgstr ""
+
+#: server/templates/server/server_status.html:49
+msgid "s2s SRV records"
+msgstr ""
+
+#: server/templates/server/server_status.html:59
+msgid "c2s TLS connection"
+msgstr ""
+
+#: server/templates/server/server_status.html:69
+msgid "s2s TLS connection"
+msgstr ""
+
+#: server/templates/server/server_status.html:82
+msgid "Contact information"
+msgstr ""
+
+#: server/templates/server/server_status.html:83
+msgid ""
+"\n"
+"We require that your users have a means of contacting you for support. To "
+"have your server displayed on the\n"
+"front page, both contact information for your account and for your server "
+"have to be verified.\n"
+msgstr ""
+
+#: server/templates/server/server_status.html:91
+msgid "Account email"
+msgstr ""
+
+#: server/templates/server/server_status.html:100
+#: server/templates/server/server_status.html:112
+#: server/templates/server/server_status.html:124
+msgid "change"
+msgstr ""
+
+#: server/templates/server/server_status.html:103
+msgid "Account JID"
+msgstr ""
+
+#: server/templates/server/server_status.html:115
+msgid "Server contact"
+msgstr ""
+
+#: server/templates/server/server_status.html:131
+msgid ""
+"We manually approve or reject all servers added to this site. Changing the\n"
+"servers homepage or launch date will require this server to be approved\n"
+"again."
+msgstr ""
+
+#: server/templates/server/server_status.html:136
+msgid ""
+"Please note that this may take a few days. Only servers that where verified\n"
+"for their technical aspects and that have valid contact information are\n"
+"considered by the moderation team."
+msgstr ""
+
+#: server/templates/server/server_status.html:143
+msgid "Your server was approved."
+msgstr ""
+
+#: server/templates/server/server_status.html:144
+msgid "Your server was approved by the moderation team."
+msgstr ""
+
+#: server/templates/server/server_status.html:148
+msgid "Your server has not yet been moderated."
+msgstr ""
+
+#: server/templates/server/server_status.html:149
+msgid "Your server was not yet moderated."
+msgstr ""
+
+#: server/templates/server/server_status.html:153
+msgid "Your server was rejected."
+msgstr ""
+
+#: server/templates/server/server_status.html:154
+msgid ""
+"We're sorry, but your server was rejected. Here's what moderators had to say:"
+msgstr ""
+
+#: server/templates/server/server_status.html:159
+#, python-format
+msgid ""
+"\n"
+"If you want us to reconsider your server without \n"
+"<a class=\"alert-link\" href=\"%(edit_url)s\">updating</a> any information "
+"(e.g.\n"
+"because you have fixed your homepage), you can also ask us to reconsider:"
+msgstr ""
+
+#: server/templates/server/server_status.html:164
+msgid "Please reconsider"
+msgstr ""
+
+#: server/templates/server/server_update.html:4
+#, python-format
+msgid "%(domain)s - edit"
+msgstr ""
+
+#: server/templates/server/server_update.html:5
+#, python-format
+msgid "Edit %(domain)s"
+msgstr ""
+
+#: server/templates/server/server_update.html:8
+#, python-format
+msgid "Update information for %(domain)s."
+msgstr ""
+
+#: server/templates/server/server_update.html:11
+msgid ""
+"If you update the contact information, it will have to be verified again."
+msgstr ""
+
+#: server/templates/server/server_update.html:15
+msgid "Update"
+msgstr ""

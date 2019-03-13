@@ -1,0 +1,180 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-03-13 14:45-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+#: account/forms.py:44
+msgid "Username already exists."
+msgstr ""
+
+#: account/forms.py:50
+msgid "Confirm"
+msgstr ""
+
+#: account/forms.py:56
+msgid "JID or email"
+msgstr ""
+
+#: account/models.py:29
+msgid "email address"
+msgstr ""
+
+#: account/models.py:30 account/models.py:33
+msgid "Required, a confirmation message will be sent to this address."
+msgstr ""
+
+#: account/models.py:32
+msgid "JID"
+msgstr ""
+
+#: account/templates/account/index.html:14
+msgid "Username:"
+msgstr ""
+
+#: account/templates/account/index.html:17
+msgid "Email address:"
+msgstr ""
+
+#: account/templates/account/index.html:25
+msgid "JID:"
+msgstr ""
+
+#: account/templates/account/localuser_create.html:11
+msgid "Create"
+msgstr ""
+
+#: account/templates/account/localuser_form.html:10
+msgid "Use this form to update your contact information."
+msgstr ""
+
+#: account/templates/account/localuser_form.html:13
+msgid ""
+"If you change your email address or JID, you'll have to confirm them again.\n"
+"Your servers will not show up in the list until you have confirmed them."
+msgstr ""
+
+#: account/templates/account/localuser_form.html:19
+msgid "Update"
+msgstr ""
+
+#: account/templates/account/password_change_form.html:4
+#: account/templates/account/password_reset_confirm.html:4
+#: account/templates/account/password_reset_confirm.html:12
+#: account/templates/account/password_reset_form.html:4
+msgid "Reset password"
+msgstr ""
+
+#: account/templates/account/password_change_form.html:5
+#: account/templates/account/password_reset_confirm.html:5
+#: account/templates/account/password_reset_form.html:5
+msgid "Reset your password"
+msgstr ""
+
+#: account/templates/account/password_change_form.html:11
+msgid "Change password"
+msgstr ""
+
+#: account/templates/account/password_reset_complete.html:4
+#: account/templates/account/password_reset_complete.html:5
+msgid "Change successful"
+msgstr ""
+
+#: account/templates/account/password_reset_complete.html:10
+#, python-format
+msgid ""
+"You have successfully changed your password. You can now <a class=\"alert-"
+"link\" href=\"%(url)s\">login</a> using the new password."
+msgstr ""
+
+#: account/templates/account/password_reset_confirm.html:8
+msgid "Please give your new password twice to avoid any mistakes."
+msgstr ""
+
+#: account/templates/account/password_reset_done.html:4
+#: account/templates/account/password_reset_done.html:5
+msgid "Check your inbox!"
+msgstr ""
+
+#: account/templates/account/password_reset_done.html:9
+msgid ""
+"We have sent you an email and an XMPP message with a link where you can "
+"reset your password."
+msgstr ""
+
+#: account/templates/account/password_reset_form.html:8
+msgid ""
+"If you have forgotten your password, you can reset it here by giving either "
+"your JID or email address."
+msgstr ""
+
+#: account/templates/account/password_reset_form.html:12
+msgid ""
+"You will receive the same message via email and XMPP, but you only have to "
+"click on it once."
+msgstr ""
+
+#: account/templates/account/password_reset_form.html:17
+msgid "Request new password"
+msgstr ""
+
+#: account/templates/account/password_reset_xmpp.txt:6
+#, python-format
+msgid ""
+"You're receiving this message because you requested a password reset for "
+"your user account at %(site_name)s."
+msgstr ""
+
+#: account/templates/account/password_reset_xmpp.txt:8
+msgid "Please go to the following page and choose a new password:"
+msgstr ""
+
+#: account/templates/account/password_reset_xmpp.txt:12
+msgid "Your username, in case you've forgotten:"
+msgstr ""
+
+#: account/templates/account/password_reset_xmpp.txt:14
+msgid "Thanks for using our site!"
+msgstr ""
+
+#: account/templates/account/password_reset_xmpp.txt:16
+#, python-format
+msgid "The %(site_name)s team"
+msgstr ""
+
+#: account/templates/registration/login.html:6
+#: account/templates/registration/login.html:7
+#: account/templates/registration/login.html:25
+msgid "Login"
+msgstr ""
+
+#: account/templates/registration/login.html:11
+msgid "Please log in to add or update your public XMPP servers."
+msgstr ""
+
+#: account/templates/registration/login.html:14
+#, python-format
+msgid ""
+"<a href=\"%(url)s\">Create an account</a> if you don't have one already."
+msgstr ""
+
+#: account/templates/registration/login.html:22
+msgid "Forgot password?"
+msgstr ""
+
+#: account/views.py:123
+msgid "Password was successfully updated."
+msgstr ""
