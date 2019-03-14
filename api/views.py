@@ -62,8 +62,7 @@ class ApiView(View):
             root_element = etree.Element('query')
 
             if request_format == 'services-full.xml':
-                fields += ['software__name', 'contact', 'contact_type', 'website', 'country',
-                           'city', ]
+                fields += ['software__name', 'contact', 'contact_type', 'website', 'country']
 
             contact_prefixes = {'M': 'xmpp:', 'J': 'xmpp:', 'E': 'mailto:'}
 
@@ -85,7 +84,6 @@ class ApiView(View):
                     admin = '%s%s' % (contact_prefix, item['contact'])
                     etree.SubElement(item_element, 'primary-admin').text = admin
                     etree.SubElement(item_element, 'country').text = item['country']
-                    etree.SubElement(item_element, 'city').text = item['city']
                     etree.SubElement(item_element, 'description').text = None
 
             return HttpResponse(etree.tostring(root_element, pretty_print=True),
@@ -94,7 +92,7 @@ class ApiView(View):
         # we now continue by parsing the fields parameter
         if 'fields' in request.GET:
             custom_fields = request.GET['fields'].split(',')
-            valid_fields = ['launched', 'country', 'city', 'website', 'ca', 'software',
+            valid_fields = ['launched', 'country', 'website', 'ca', 'software',
                             'software_version', 'contact']
             if set(custom_fields) - set(valid_fields):
                 return HttpResponseForbidden("tried to retrieve forbidden fields.")
