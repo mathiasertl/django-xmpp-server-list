@@ -169,10 +169,6 @@ class ServerConfirmationKey(ConfirmationKey):
 
         self.subject.save()
 
-        # Start verification if the contact information is now all verified
-        from server.tasks import verify_server
-        verify_server.delay(self.subject.domain)
-
     def __str__(self):
         return self.subject.domain
 
