@@ -52,6 +52,7 @@ class IndexView(LoginRequiredMixin, TemplateView):
 
 
 class CreateUserView(AnonymousRequiredMixin, SendConfirmationMixin, CreateView):
+    authenticated_url = reverse_lazy('account:index')
     form_class = UserCreationForm
     model = UserModel
     success_url = reverse_lazy('account:index')
