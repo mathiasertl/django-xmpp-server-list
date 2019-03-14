@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-13 15:22-0500\n"
+"POT-Creation-Date: 2019-03-14 13:47-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -36,21 +36,31 @@ msgstr "E-Mail Adresse"
 
 #: account/models.py:30 account/models.py:33
 msgid "Required, a confirmation message will be sent to this address."
-msgstr "Pflichtfeld. Es wird eine Nachricht zur Bestätigung an diese Adresse gesandt."
+msgstr ""
+"Pflichtfeld. Es wird eine Nachricht zur Bestätigung an diese Adresse gesandt."
 
 #: account/models.py:32
 msgid "JID"
 msgstr ""
 
-#: account/templates/account/index.html:14
-msgid "Username:"
-msgstr "NameÖ"
+#: account/templates/account/index.html:11
+#, python-format
+msgid ""
+"You may want to <a href=\"%(edit_url)s\">edit your profile</a> or\n"
+"<a href=\"%(pwd_url)s\">set your password</a>."
+msgstr ""
+"Sie können ihre <a href=\"%(edit_url)s\">Kontaktdaten ändern</a> oder\n"
+"<a href=\"%(pwd_url)s\">ihr Passwort neu setzen</a>."
 
 #: account/templates/account/index.html:17
+msgid "Username:"
+msgstr "Name:"
+
+#: account/templates/account/index.html:20
 msgid "Email address:"
 msgstr "E-Mail Adresse"
 
-#: account/templates/account/index.html:25
+#: account/templates/account/index.html:28
 msgid "JID:"
 msgstr ""
 
@@ -67,8 +77,8 @@ msgid ""
 "If you change your email address or JID, you'll have to confirm them again.\n"
 "Your servers will not show up in the list until you have confirmed them."
 msgstr ""
-"Wenn sie ihre E-Mail Adresse oder JID ändern, müssen diese erneut bestätigt werden. "
-"Ihre Server werden so lange nicht auf der Homepage aufgeführt."
+"Wenn sie ihre E-Mail Adresse oder JID ändern, müssen diese erneut bestätigt "
+"werden. Ihre Server werden so lange nicht auf der Homepage aufgeführt."
 
 #: account/templates/account/localuser_form.html:19
 msgid "Update"
@@ -102,15 +112,17 @@ msgid ""
 "You have successfully changed your password. You can now <a class=\"alert-"
 "link\" href=\"%(url)s\">login</a> using the new password."
 msgstr ""
+"Sie haben ihr Passwort erfolgreich geändert. Sie können sich nun mit ihrem "
+"neuen Passwort <a class=\"alert-link\" href=\"%(url)s\">einloggen</a>."
 
 #: account/templates/account/password_reset_confirm.html:8
 msgid "Please give your new password twice to avoid any mistakes."
-msgstr ""
+msgstr "Bitte wiederholen sie ihr Passwort um Fehler auszuschließen."
 
 #: account/templates/account/password_reset_done.html:4
 #: account/templates/account/password_reset_done.html:5
 msgid "Check your inbox!"
-msgstr ""
+msgstr "Überprüfen sie ihre Inbox!"
 
 #: account/templates/account/password_reset_done.html:9
 msgid ""
@@ -147,22 +159,22 @@ msgstr ""
 
 #: account/templates/account/password_reset_xmpp.txt:12
 msgid "Your username, in case you've forgotten:"
-msgstr ""
+msgstr "Ihr Benutzername, falls sie es vergessen haben:"
 
 #: account/templates/account/password_reset_xmpp.txt:14
 msgid "Thanks for using our site!"
-msgstr ""
+msgstr "Danke, dass sie unsere Seite nutzen!"
 
 #: account/templates/account/password_reset_xmpp.txt:16
 #, python-format
 msgid "The %(site_name)s team"
-msgstr ""
+msgstr "Das %(site_name)s Team"
 
 #: account/templates/registration/login.html:6
 #: account/templates/registration/login.html:7
 #: account/templates/registration/login.html:25
 msgid "Login"
-msgstr ""
+msgstr "Einloggen"
 
 #: account/templates/registration/login.html:11
 msgid "Please log in to add or update your public XMPP servers."
@@ -172,12 +184,12 @@ msgstr ""
 #, python-format
 msgid ""
 "<a href=\"%(url)s\">Create an account</a> if you don't have one already."
-msgstr ""
+msgstr "<a href=\"%(url)s\">Registrieren</a> falls sie noch kein Konto haben."
 
 #: account/templates/registration/login.html:22
 msgid "Forgot password?"
-msgstr ""
+msgstr "Passwort vergessen?"
 
-#: account/views.py:123
+#: account/views.py:124
 msgid "Password was successfully updated."
-msgstr ""
+msgstr "Passwort erfolgreich aktualisiert."

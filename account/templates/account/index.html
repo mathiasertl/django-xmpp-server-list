@@ -6,8 +6,10 @@
 
 {% block content %}
 <p>
-    You may want to <a href="{% url 'account:edit' %}">edit your profile</a> or
-    <a href="{% url 'password_change' %}">set your password</a>.
+{% url 'account:edit' as edit_url %}
+{% url 'password_change' as pwd_url %}
+{% blocktrans %}You may want to <a href="{{ edit_url }}">edit your profile</a> or
+<a href="{{ pwd_url }}">set your password</a>.{% endblocktrans %}
 </p>
 <table id="profile-overview">
   <tr>
