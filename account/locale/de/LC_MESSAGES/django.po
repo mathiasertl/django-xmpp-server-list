@@ -20,23 +20,23 @@ msgstr ""
 
 #: account/forms.py:44
 msgid "Username already exists."
-msgstr ""
+msgstr "BenutzerIn existiert bereits."
 
 #: account/forms.py:50
 msgid "Confirm"
-msgstr ""
+msgstr "Bestätigen"
 
 #: account/forms.py:56
 msgid "JID or email"
-msgstr ""
+msgstr "JID oder E-Mail"
 
 #: account/models.py:29
 msgid "email address"
-msgstr ""
+msgstr "E-Mail Adresse"
 
 #: account/models.py:30 account/models.py:33
 msgid "Required, a confirmation message will be sent to this address."
-msgstr ""
+msgstr "Pflichtfeld. Es wird eine Nachricht zur Bestätigung an diese Adresse gesandt."
 
 #: account/models.py:32
 msgid "JID"
@@ -44,11 +44,11 @@ msgstr ""
 
 #: account/templates/account/index.html:14
 msgid "Username:"
-msgstr ""
+msgstr "NameÖ"
 
 #: account/templates/account/index.html:17
 msgid "Email address:"
-msgstr ""
+msgstr "E-Mail Adresse"
 
 #: account/templates/account/index.html:25
 msgid "JID:"
@@ -56,43 +56,45 @@ msgstr ""
 
 #: account/templates/account/localuser_create.html:11
 msgid "Create"
-msgstr ""
+msgstr "Erstellen"
 
 #: account/templates/account/localuser_form.html:10
 msgid "Use this form to update your contact information."
-msgstr ""
+msgstr "Hier können sie ihre Kontakt-Informationen aktualisieren."
 
 #: account/templates/account/localuser_form.html:13
 msgid ""
 "If you change your email address or JID, you'll have to confirm them again.\n"
 "Your servers will not show up in the list until you have confirmed them."
 msgstr ""
+"Wenn sie ihre E-Mail Adresse oder JID ändern, müssen diese erneut bestätigt werden. "
+"Ihre Server werden so lange nicht auf der Homepage aufgeführt."
 
 #: account/templates/account/localuser_form.html:19
 msgid "Update"
-msgstr ""
+msgstr "Aktualisieren"
 
 #: account/templates/account/password_change_form.html:4
 #: account/templates/account/password_reset_confirm.html:4
 #: account/templates/account/password_reset_confirm.html:12
 #: account/templates/account/password_reset_form.html:4
 msgid "Reset password"
-msgstr ""
+msgstr "Passwort zurück setzen"
 
 #: account/templates/account/password_change_form.html:5
 #: account/templates/account/password_reset_confirm.html:5
 #: account/templates/account/password_reset_form.html:5
 msgid "Reset your password"
-msgstr ""
+msgstr "Setzen sie ihr Passwort neu"
 
 #: account/templates/account/password_change_form.html:11
 msgid "Change password"
-msgstr ""
+msgstr "Passwort ändern"
 
 #: account/templates/account/password_reset_complete.html:4
 #: account/templates/account/password_reset_complete.html:5
 msgid "Change successful"
-msgstr ""
+msgstr "Änderung erfolgreich"
 
 #: account/templates/account/password_reset_complete.html:10
 #, python-format
