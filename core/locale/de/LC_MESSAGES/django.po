@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-13 15:22-0500\n"
+"POT-Creation-Date: 2019-03-16 04:20-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -36,11 +36,11 @@ msgstr "Konto"
 
 #: core/templates/base.html:48
 msgid "Logout"
-msgstr ""
+msgstr "Abmelden"
 
 #: core/templates/base.html:52
 msgid "Login"
-msgstr ""
+msgstr "Anmelden"
 
 #: core/templates/base.html:99
 msgid "© 2011-2019, Mathias Ertl"
@@ -48,14 +48,7 @@ msgstr "© 2011-2019, Mathias Ertl"
 
 #: core/templates/base.html:101
 msgid ""
-"This project is powered by \n"
-"<a href=\"https://www.djangoproject.com/\">Django</a>. The source code is\n"
-"available \n"
-"<a href=\"https://github.com/mathiasertl/django-xmpp-server-list\">\n"
-"on GitHub</a>. The logo is based on the Jabber logo by the\n"
-"<a href=\"http://jabber.org\">Jabber.org</a> team."
-msgstr ""
-"Dieses Projekt nutzt <a href=\"https://www.djangoproject.com/\">Django</a>. "
-"Der Quellcode ist <a href=\"https://github.com/mathiasertl/django-xmpp-"
-"server-list\">auf GitHub</a> verfügbar. Das Logo basiert auf dem Jabber logo "
-"des <a href=\"http://jabber.org\">Jabber.org</a> teams."
+"This project is powered by <a href=\"https://www.djangoproject.com/\">Django</a>. The source code is available\n"
+"<a href=\"https://github.com/mathiasertl/django-xmpp-server-list\">on GitHub</a>. The logo is based on the\n"
+"Jabber logo by the <a href=\"http://jabber.org\">Jabber.org</a> team."
+msgstr "Dieses Projekt nutzt <a href=\"https://www.djangoproject.com/\">Django</a>. Der Quellcode ist <a href=\"https://github.com/mathiasertl/django-xmpp-server-list\">auf GitHub</a> verfügbar. Das Logo basiert auf dem Jabber logo des <a href=\"http://jabber.org\">Jabber.org</a> teams."
