@@ -21,16 +21,29 @@ from .models import UserConfirmationKey
 
 
 class UserConfirmationKeyAdmin(admin.ModelAdmin):
+    actions = ['resend']
     list_display = ['subject', 'created', 'type']
     list_filter = ['type']
     ordering = ['created']
+
+    def resend(self, request, queryset):
+        proto = 'https' if request.is_secure() else 'http'
+        for obj in queryset:
+            obj.send(proto, request.get_host())
+    resend.short_description = 'Resend Confirmation'
 
 
 class ServerConfirmationKeyAdmin(admin.ModelAdmin):
+    actions = ['resend']
     list_display = ['subject', 'created', 'type']
     list_filter = ['type']
     ordering = ['created']
 
+    def resend(self, request, queryset):
+        proto = 'https' if request.is_secure() else 'http'
+        for obj in queryset:
+            obj.send(proto, request.get_host())
+    resend.short_description = 'Resend Confirmation'
 
 admin.site.register(UserConfirmationKey, UserConfirmationKeyAdmin)
 admin.site.register(ServerConfirmationKey, ServerConfirmationKeyAdmin)
