@@ -54,7 +54,7 @@ class ServerAdmin(admin.ModelAdmin):
         }),
     ]
     form = ServerAdminForm
-    list_display = ('verified', 'moderated', 'domain', 'user', )
+    list_display = ('verified', 'moderated', 'domain', 'user', 'last_seen')
     list_display_links = ('domain', 'user', )
     readonly_fields = ['added', 'modified', 'last_checked', 'last_seen', 'country', 'country_cc']
     search_fields = ('domain', )

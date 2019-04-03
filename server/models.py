@@ -249,8 +249,10 @@ class Server(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='servers')
     added = models.DateField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
-    last_seen = models.DateTimeField(null=True, blank=True)  # last seen online
-    last_checked = models.DateTimeField(null=True, blank=True)  # last check completed (None == never checked)
+    last_seen = models.DateTimeField(null=True, blank=True,
+                                     help_text=_('When this server was last seen online.'))
+    last_checked = models.DateTimeField(null=True, blank=True,
+                                        help_text=_('When this server was last checked.'))
 
     # geolocation:
     country = models.CharField(max_length=100, help_text=_("Country the server is located in."))
