@@ -1,9 +1,9 @@
-Django==2.1.7
-celery==4.2.1
+Django==2.2
+celery==4.3.0
 cryptography==2.6.1
 dnspython==1.16.0
 geoip2==2.9.0
-lxml==4.3.2
+lxml==4.3.3
 # NOTE: sleekxmpp is no longer maintained and pyasn1 doesn't work with it anymore
 #       we need slixmpp
 #pyasn1-modules==0.2.4

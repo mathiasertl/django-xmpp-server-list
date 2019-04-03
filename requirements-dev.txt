@@ -1,5 +1,5 @@
 Fabric3==1.14.post1
 hiredis==1.0.0
 ipython
-redis==3.2.0
+redis==3.2.1
 -rrequirements-test.txt
